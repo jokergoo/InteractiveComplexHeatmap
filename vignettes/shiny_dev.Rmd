@@ -32,7 +32,7 @@ knitr::opts_chunk$set(
 `ht_shiny()` can export heatmaps as a stand-alone Shiny app. **InteractiveComplexHeatmap** also provides two
 functions for integrating the interactive heatmap components into other Shiny apps. The two functions are:
 
-- `ComplexHeatmapOutput()`: for building UI.
+- `InteractiveComplexHeatmapOutput()`: for building UI.
 - `MakeInteractiveComplexHeatmap()`: for the processing on the sever side.
 
 The usage is simple. Following is an example that you can directly copy and paste to your R session.
@@ -47,7 +47,7 @@ ht = draw(ht)
 
 ui = fluidPage(
     h3("My first interactive ComplexHeatmap Shiny app"),
-    ComplexHeatmapOutput()
+    InteractiveComplexHeatmapOutput()
 )
 
 server = function(input, output, session) {
@@ -70,10 +70,10 @@ ht2 = draw(ht2)
 
 ui = fluidPage(
     h3("The first heatmap"),
-    ComplexHeatmapOutput("heatmap_1"),
+    InteractiveComplexHeatmapOutput("heatmap_1"),
     hr(),
     h3("The second heatmap"),
-    ComplexHeatmapOutput("heatmap_2")
+    InteractiveComplexHeatmapOutput("heatmap_2")
 )
 
 server = function(input, output, session) {

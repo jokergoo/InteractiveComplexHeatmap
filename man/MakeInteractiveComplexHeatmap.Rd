@@ -15,7 +15,7 @@ MakeInteractiveComplexHeatmap(ht_list, input, output, session, heatmap_id = shin
   \item{input}{Passed from the shiny server function.}
   \item{output}{Passed from the shiny server function.}
   \item{session}{Passed from the shiny server function.}
-  \item{heatmap_id}{The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app,  this argument does not need to be specified and it will use the current one specified in \code{\link{ComplexHeatmapOutput}}.}
+  \item{heatmap_id}{The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app,  this argument does not need to be specified and it will use the current one specified in \code{\link{InteractiveComplexHeatmapOutput}}.}
 
 }
 \examples{
@@ -24,7 +24,7 @@ ht = Heatmap(m)
 ht = draw(ht)
 
 ui = fluidPage(
-    ComplexHeatmapOutput()
+    InteractiveComplexHeatmapOutput()
 )
 
 server = function(input, output, session) {

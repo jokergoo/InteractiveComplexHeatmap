@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1004</span>
       </span>
     </div>
 
@@ -106,7 +106,7 @@ p {
 <p><code><a href="../reference/ht_shiny.html">ht_shiny()</a></code> can export heatmaps as a stand-alone Shiny app. <strong>InteractiveComplexHeatmap</strong> also provides two functions for integrating the interactive heatmap components into other Shiny apps. The two functions are:</p>
 <ul>
 <li>
-<code><a href="../reference/ComplexHeatmapOutput.html">ComplexHeatmapOutput()</a></code>: for building UI.</li>
+<code><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code>: for building UI.</li>
 <li>
 <code><a href="../reference/MakeInteractiveComplexHeatmap.html">MakeInteractiveComplexHeatmap()</a></code>: for the processing on the sever side.</li>
 </ul>
@@ -121,7 +121,7 @@ p {
 
 <span class="va">ui</span> <span class="op">=</span> <span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/fluidPage.html">fluidPage</a></span><span class="op">(</span>
     <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html">h3</a></span><span class="op">(</span><span class="st">"My first interactive ComplexHeatmap Shiny app"</span><span class="op">)</span>,
-    <span class="fu"><a href="../reference/ComplexHeatmapOutput.html">ComplexHeatmapOutput</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span>
 
 <span class="va">server</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span>
@@ -139,10 +139,10 @@ p {
 
 <span class="va">ui</span> <span class="op">=</span> <span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/fluidPage.html">fluidPage</a></span><span class="op">(</span>
     <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html">h3</a></span><span class="op">(</span><span class="st">"The first heatmap"</span><span class="op">)</span>,
-    <span class="fu"><a href="../reference/ComplexHeatmapOutput.html">ComplexHeatmapOutput</a></span><span class="op">(</span><span class="st">"heatmap_1"</span><span class="op">)</span>,
+    <span class="fu"><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput</a></span><span class="op">(</span><span class="st">"heatmap_1"</span><span class="op">)</span>,
     <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html">hr</a></span><span class="op">(</span><span class="op">)</span>,
     <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/builder.html">h3</a></span><span class="op">(</span><span class="st">"The second heatmap"</span><span class="op">)</span>,
-    <span class="fu"><a href="../reference/ComplexHeatmapOutput.html">ComplexHeatmapOutput</a></span><span class="op">(</span><span class="st">"heatmap_2"</span><span class="op">)</span>
+    <span class="fu"><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput</a></span><span class="op">(</span><span class="st">"heatmap_2"</span><span class="op">)</span>
 <span class="op">)</span>
 
 <span class="va">server</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span>

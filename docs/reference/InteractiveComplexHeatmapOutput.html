@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Select an area in the heatmap — selectArea • InteractiveComplexHeatmap</title>
+<title>HTML code generated for interactive ComplexHeatmap — InteractiveComplexHeatmapOutput • InteractiveComplexHeatmap</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Select an area in the heatmap — selectArea" />
-<meta property="og:description" content="Select an area in the heatmap" />
+<meta property="og:title" content="HTML code generated for interactive ComplexHeatmap — InteractiveComplexHeatmapOutput" />
+<meta property="og:description" content="HTML code generated for interactive ComplexHeatmap" />
 
 
 
@@ -126,81 +126,38 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Select an area in the heatmap</h1>
+    <h1>HTML code generated for interactive ComplexHeatmap</h1>
     
-    <div class="hidden name"><code>selectArea.Rd</code></div>
+    <div class="hidden name"><code>InteractiveComplexHeatmapOutput.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Select an area in the heatmap</p>
+    <p>HTML code generated for interactive ComplexHeatmap</p>
     </div>
 
-    <pre class="usage"><span class='fu'>selectArea</span><span class='op'>(</span><span class='va'>ht_list</span>, pos1 <span class='op'>=</span> <span class='cn'>NULL</span>, pos2 <span class='op'>=</span> <span class='cn'>NULL</span>, mark <span class='op'>=</span> <span class='cn'>TRUE</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
-    ht_pos <span class='op'>=</span> <span class='cn'>NULL</span>, include_annotation <span class='op'>=</span> <span class='cn'>FALSE</span>, calibrate <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>InteractiveComplexHeatmapOutput</span><span class='op'>(</span>heatmap_id <span class='op'>=</span> <span class='cn'>NULL</span>, brush_opt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>ht_list</th>
-      <td><p>A <code><a href='https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapList-class.html'>HeatmapList-class</a></code> object returned by <code>draw,Heatmap-method</code> or <code>draw,HeatmapList-method</code>.</p></td>
+      <th>heatmap_id</th>
+      <td><p>ID of the plot. If it is not specified, an internal ID is assigned.</p></td>
     </tr>
     <tr>
-      <th>mark</th>
-      <td><p>Whether to mark the selected area as a rectangle.</p></td>
-    </tr>
-    <tr>
-      <th>pos1</th>
-      <td><p>If the value is <code>NULL</code>, it can be selected by click on the heatmap (of cource, the heatmap should be on the interactive graphic device). If it is set, it must be a <code><a href='https://rdrr.io/r/grid/unit.html'>unit</a></code> object with length two which corresponds to the x and y position of the point.</p></td>
-    </tr>
-    <tr>
-      <th>pos2</th>
-      <td><p>Another point as <code>pos1</code>, together with <code>pos1</code> defines the selected region.</p></td>
-    </tr>
-    <tr>
-      <th>verbose</th>
-      <td><p>Whether to print messages.</p></td>
-    </tr>
-    <tr>
-      <th>ht_pos</th>
-      <td><p>A value returned by <code><a href='ht_pos_on_device.html'>ht_pos_on_device</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>include_annotation</th>
-      <td><p>Internally used.</p></td>
-    </tr>
-    <tr>
-      <th>calibrate</th>
-      <td><p>Internally used.</p></td>
+      <th>brush_opt</th>
+      <td><p>A list of parameters passed to <code><a href='https://shiny.rstudio.com/reference/shiny/latest/brushOpts.html'>brushOpts</a></code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>The regions can be selected interactively or manually by setting <code>pos1</code> and <code>pos2</code>.</p>
-    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
-
-    <p>A <code><a href='https://rdrr.io/pkg/S4Vectors/man/DataFrame-class.html'>DataFrame</a></code> object with row indices and column indices corresponding to the selected region.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p>Zuguang Gu &lt;z.gu@dkfz.de&gt;</p>
+    <p>This function generates HTML fragment for the interactive UI. See the example from <code><a href='MakeInteractiveComplexHeatmap.html'>MakeInteractiveComplexHeatmap</a></code> page.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>m</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
-<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
-
-<span class='va'>ht</span> <span class='op'>=</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span>
-<span class='va'>ht</span> <span class='op'>=</span> <span class='fu'>draw</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
-<span class='fu'>selectArea</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
-
-<span class='fu'><a href='https://rdrr.io/r/base/Random.html'>set.seed</a></span><span class='op'>(</span><span class='fl'>123</span><span class='op'>)</span>
-<span class='va'>ht</span> <span class='op'>=</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>m</span>, row_km <span class='op'>=</span> <span class='fl'>2</span>, column_km <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
-<span class='va'>ht</span> <span class='op'>=</span> <span class='fu'>draw</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
-<span class='fu'>selectArea</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
-<span class='op'>}</span>
-</div></pre>
+    <pre class="examples"><div class='input'><span class='co'># There is no example</span>
+<span class='cn'>NULL</span>
+</div><div class='output co'>#&gt; NULL</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
