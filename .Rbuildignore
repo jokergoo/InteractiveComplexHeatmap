@@ -1,0 +1,14 @@
+^\..*
+README.*
+tests_not_run/
+check.bat
+^.*\.Rproj$
+^\.Rproj\.user$
+.travis.yml
+vignettes_old
+revdep/
+
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
+build_pkg_site.R

@@ -6,7 +6,7 @@ shiny_env = new.env()
 # HTML code generated for interactive ComplexHeatmap
 #
 # == param
-# -heatmap_id ID of the plot.
+# -heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`.
 #
 # == details
@@ -19,10 +19,14 @@ ComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()) {
 		shiny_env$current_heatmap_id = heatmap_id
 	}
 
+	if(grepl("^\\d", heatmap_id)) {
+		stop_wrap("heatmap_id cannot start with digits.")
+	}
+
 	shiny_env[[heatmap_id]] = list()
 
 	fluidPage(
-		tags$script(HTML(paste(readLines(system.file("jquery-ui.js", package = "InteractiveComplexHeatmap"), warn = FALSE), collapse = "\n"))),
+		tags$script(HTML(paste(readLines(system.file("app", "jquery-ui.js", package = "InteractiveComplexHeatmap"), warn = FALSE), collapse = "\n"))),
 
 		tags$script(HTML(qq(
 '$( function() {
@@ -64,7 +68,7 @@ ComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()) {
    });
 });
 '))),
-		tags$style(paste(readLines(system.file("jquery-ui.css", package = "InteractiveComplexHeatmap")), collapse = "\n")),
+		tags$style(paste(readLines(system.file("app", "jquery-ui.css", package = "InteractiveComplexHeatmap")), collapse = "\n")),
 		tags$style(qq("
 #@{heatmap_id}_heatmap_wrap_div, #@{heatmap_id}_sub_heatmap_wrap_div {
 	float:left;
@@ -126,7 +130,7 @@ ComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()) {
 }
 
 # == title
-# Process the heatmaps in the sever side
+# Process the heatmaps on the sever side
 #
 # == param
 # -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object.
@@ -134,22 +138,22 @@ ComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()) {
 # -output Passed from the shiny server function.
 # -session Passed from the shiny server function.
 # -heatmap_id The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app, 
-#     this argument does not need to be specified and it will use the current one specified in UI.
+#     this argument does not need to be specified and it will use the current one specified in `ComplexHeatmapOutput`.
 #
 # == examples
 # if(interactive()) {
-# 	ht = Heatmap(m)
-# 	ht = draw(ht)
+# ht = Heatmap(m)
+# ht = draw(ht)
 #
-# 	ui = fluidPage(
-# 		ComplexHeatmapOutput()
-# 	)
+# ui = fluidPage(
+#     ComplexHeatmapOutput()
+# )
 #
-# 	server = function(input, output, session) {
-# 		MakeInteractiveComplexHeatmap(ht, input, output, session)
-# 	}
+# server = function(input, output, session) {
+#     MakeInteractiveComplexHeatmap(ht, input, output, session)
+# }
 #
-# 	shiny::shinyApp(ui, server)
+# shiny::shinyApp(ui, server)
 # }
 MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatmap_id = shiny_env$current_heatmap_id) {
 

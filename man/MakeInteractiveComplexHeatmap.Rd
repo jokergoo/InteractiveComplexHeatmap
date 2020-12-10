@@ -1,10 +1,10 @@
 \name{MakeInteractiveComplexHeatmap}
 \alias{MakeInteractiveComplexHeatmap}
 \title{
-Process the heatmaps in the sever side
+Process the heatmaps on the sever side
 }
 \description{
-Process the heatmaps in the sever side
+Process the heatmaps on the sever side
 }
 \usage{
 MakeInteractiveComplexHeatmap(ht_list, input, output, session, heatmap_id = shiny_env$current_heatmap_id)
@@ -15,21 +15,21 @@ MakeInteractiveComplexHeatmap(ht_list, input, output, session, heatmap_id = shin
   \item{input}{Passed from the shiny server function.}
   \item{output}{Passed from the shiny server function.}
   \item{session}{Passed from the shiny server function.}
-  \item{heatmap_id}{The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app,  this argument does not need to be specified and it will use the current one specified in UI.}
+  \item{heatmap_id}{The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app,  this argument does not need to be specified and it will use the current one specified in \code{\link{ComplexHeatmapOutput}}.}
 
 }
 \examples{
 if(interactive()) {
-	ht = Heatmap(m)
-	ht = draw(ht)
+ht = Heatmap(m)
+ht = draw(ht)
 
 ui = fluidPage(
-		ComplexHeatmapOutput()
-	)
+    ComplexHeatmapOutput()
+)
 
 server = function(input, output, session) {
-		MakeInteractiveComplexHeatmap(ht, input, output, session)
-	}
+    MakeInteractiveComplexHeatmap(ht, input, output, session)
+}
 
 shiny::shinyApp(ui, server)
 }

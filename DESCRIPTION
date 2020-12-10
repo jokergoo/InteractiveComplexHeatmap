@@ -1,16 +1,19 @@
 Package: InteractiveComplexHeatmap
 Type: Package
 Title: Make Interactive Complex Heatmaps
-Version: 0.99.0.1003
-Date: 2020-12-9
+Version: 0.99.0.1004
+Date: 2020-12-10
 Author: Zuguang Gu
 Maintainer: Zuguang Gu <z.gu@dkfz.de>
 Depends: R (>= 3.1.2), ComplexHeatmap
 Imports: grDevices, stats, shiny, grid, GetoptLong, S4Vectors (>= 0.26.1), 
     digest, IRanges
-Suggests: knitr, rmarkdown
+Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
-Description: Makes interactive heatmaps produced by ComplexHeatmap package.
+Description: This package can easily make interactive heatmaps produced 
+    by ComplexHeatmap package. It provides two two types of interactivity: 
+    1. on the interactive graphics device, and 2. on a Shiny app. It also provides 
+    functions for integrating the interactive heatmap components into other Shiny apps.
 biocViews: Software, Visualization, Sequencing
 URL: https://github.com/jokergoo/InteractiveComplexHeatmap
 License: MIT + file LICENSE
