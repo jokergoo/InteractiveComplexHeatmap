@@ -5,7 +5,7 @@
 #
 # == param
 # -ht_list A `ComplexHeatmap::HeatmapList-class` object returned by `ComplexHeatmap::draw,Heatmap-method` or `ComplexHeatmap::draw,HeatmapList-method`.
-# -mark Whether mark the selected area as a rectangle.
+# -mark Whether to mark the selected area as a rectangle.
 # -pos1 If the value is ``NULL``, it can be selected by click on the heatmap (of cource, the heatmap should be on
 #       the interactive graphic device). If it is set, it must be a `grid::unit` object with length two which
 #       corresponds to the x and y position of the point.
@@ -26,20 +26,19 @@
 #
 # == example
 # if(interactive()) {
-# 	m = matrix(rnorm(100), 10)
-# 	rownames(m) = 1:10
-# 	colnames(m) = 1:10
+# m = matrix(rnorm(100), 10)
+# rownames(m) = 1:10
+# colnames(m) = 1:10
 #
-# 	ht = Heatmap(m)
-# 	ht = draw(ht)
-# 	selectArea(ht)
+# ht = Heatmap(m)
+# ht = draw(ht)
+# selectArea(ht)
 #
-# 	set.seed(123)
-# 	ht = Heatmap(m, row_km = 2, column_km = 2)
-# 	ht = draw(ht)
-# 	selectArea(ht)
+# set.seed(123)
+# ht = Heatmap(m, row_km = 2, column_km = 2)
+# ht = draw(ht)
+# selectArea(ht)
 # }
-#
 selectArea = function(ht_list, pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = TRUE,
 	ht_pos = NULL, include_annotation = FALSE, calibrate = TRUE) {
 
@@ -128,7 +127,7 @@ selectArea = function(ht_list, pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = 
 	}
 	pos2 = lapply(pos2, as.numeric)
 	if(mark) grid.points(pos2$x, pos2$y, default.units = unit)
-	if(verbose) qqcat("  Point 2: x = @{sprintf('%.1f', pos2$x)} @{unit}, y = @{sprintf('%.1f', pos2$y)} @{unit} (measured in the graphic device)\n")
+	if(verbose) qqcat("  Point 2: x = @{sprintf('%.1f', pos2$x)} @{unit}, y = @{sprintf('%.1f', pos2$y)} @{unit} (measured in the graphics device)\n")
 	
 	if(verbose) cat("\n")
 
@@ -316,7 +315,7 @@ selectArea = function(ht_list, pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = 
 #
 # == param
 # -ht_list A `ComplexHeatmap::HeatmapList-class` object returned by `ComplexHeatmap::draw,Heatmap-method` or `ComplexHeatmap::draw,HeatmapList-method`.
-# -mark Whether mark the selected position as a point.
+# -mark Whether to mark the selected position as a point.
 # -pos If the value is ``NULL``, it can be selected by click on the heatmap (of cource, the heatmap should be on
 #       the interactive graphic device). If it is set, it must be a `grid::unit` object with length two which
 #       corresponds to the x and y position of the point.
@@ -325,25 +324,21 @@ selectArea = function(ht_list, pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = 
 # -calibrate Internally used.
 #
 # == value
-# A `S4Vectors::DataFrame` object with row index and column index corresponding to the selected position.
-#
-# == seealso
-# The code for this shiny app is at https://github.com/jokergoo/ComplexHeatmap/blob/master/inst/app/app.R
+# A `S4Vectors::DataFrame` object with row indices and column indices corresponding to the selected position.
 #
 # == author
 # Zuguang Gu <z.gu@dkfz.de>
 #
 # == example
 # if(interactive()) {
-# 	m = matrix(rnorm(100), 10)
-# 	rownames(m) = 1:10
-# 	colnames(m) = 1:10
+# m = matrix(rnorm(100), 10)
+# rownames(m) = 1:10
+# colnames(m) = 1:10
 #
-# 	ht = Heatmap(m)
-# 	ht = draw(ht)
-#	selectPosition(ht)
+# ht = Heatmap(m)
+# ht = draw(ht)
+# selectPosition(ht)
 # }
-#
 selectPosition = function(ht_list, pos = NULL, mark = TRUE, verbose = TRUE,
 	ht_pos = NULL, calibrate = TRUE) {
 
@@ -433,17 +428,17 @@ selectPosition = function(ht_list, pos = NULL, mark = TRUE, verbose = TRUE,
 
 	seekViewport("global")
 	upViewport()
-	if(mark) {
-		for(i in seq_len(nrow(ht_pos))) {
-		    x_min = ht_pos[i, "x_min"]
-		    x_max = ht_pos[i, "x_max"]
-		    y_min = ht_pos[i, "y_min"]
-		    y_max = ht_pos[i, "y_max"]
-		    grid.rect(x = x_min, y = y_min,
-		        width = x_max - x_min, height = y_max - y_min, gp = gpar(fill = "transparent"),
-		        just = c("left", "bottom"))
-		}
-	}
+	# if(mark) {
+	# 	for(i in seq_len(nrow(ht_pos))) {
+	# 	    x_min = ht_pos[i, "x_min"]
+	# 	    x_max = ht_pos[i, "x_max"]
+	# 	    y_min = ht_pos[i, "y_min"]
+	# 	    y_max = ht_pos[i, "y_max"]
+	# 	    grid.rect(x = x_min, y = y_min,
+	# 	        width = x_max - x_min, height = y_max - y_min, gp = gpar(fill = "transparent"),
+	# 	        just = c("left", "bottom"))
+	# 	}
+	# }
 
 	ht_pos$x_min = convertX(ht_pos$x_min, unit, valueOnly = TRUE)
 	ht_pos$x_max = convertX(ht_pos$x_max, unit, valueOnly = TRUE)
@@ -529,16 +524,16 @@ selectPosition = function(ht_list, pos = NULL, mark = TRUE, verbose = TRUE,
 # -calibrate Internally used.
 #
 # == value
-# It returns a `S4Vectors::DataFrame` object of the positions of every heatmap slice.
+# It returns a `S4Vectors::DataFrame` object of the position of every heatmap slice.
 #
 # == example
 # if(interactive()) {
-#	m = matrix(rnorm(100), 10)
-#	ht = Heatmap(m, row_km = 2, column_km = 2)
-#	ht = draw(ht)
-#	pos = ht_pos_on_device(ht)
+# m = matrix(rnorm(100), 10)
+# ht = Heatmap(m, row_km = 2, column_km = 2)
+# ht = draw(ht)
+# pos = ht_pos_on_device(ht)
 #
-#	ComplexHeatmap:::redraw_ht_vp(pos)
+# ComplexHeatmap:::redraw_ht_vp(pos)
 # }
 ht_pos_on_device = function(ht_list, unit = "inch", valueOnly = FALSE, include_annotation = FALSE, calibrate = TRUE) {
 	

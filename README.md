@@ -5,6 +5,14 @@
 
 <img src="https://user-images.githubusercontent.com/449218/82199376-e5eec600-98fd-11ea-9fca-ad95d405dc20.gif"  width='700'/>
 
+## Install
+
+Currently, it is only available on GitHub:
+
+```r
+devtools::install_github("jokergoo/InteractiveComplexHeatmap")
+```
+
 ## Usage
 
 With any `Heatmap`/`HeatmapList` object, directly send to `ht_shiny()` to create a shiny app for your heatmap:

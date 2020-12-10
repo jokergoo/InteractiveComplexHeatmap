@@ -19,7 +19,7 @@ ht_pos_on_device(ht_list, unit = "inch", valueOnly = FALSE, include_annotation =
 
 }
 \value{
-It returns a \code{\link[S4Vectors:DataFrame-class]{DataFrame}} object of the positions of every heatmap slice.
+It returns a \code{\link[S4Vectors:DataFrame-class]{DataFrame}} object of the position of every heatmap slice.
 }
 \examples{
 if(interactive()) {
