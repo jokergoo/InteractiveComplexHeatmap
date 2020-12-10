@@ -23,7 +23,7 @@ ht_shiny(ht_list)
 
 There are also two functions for shiny app development:
 
-- `ComplexHeatmapOutput()`: for the UI.
+- `InteractiveComplexHeatmapOutput()`: for the UI.
 - `MakeInteractiveComplexHeatmap()`: for the processing at the sever side.
 
 ```r
@@ -31,7 +31,7 @@ ht = Heatmap(m)
 ht = draw(ht)
 
 ui = fluidPage(
-	ComplexHeatmapOutput()
+	InteractiveComplexHeatmapOutput()
 )
 
 server = function(input, output, session) {
@@ -51,10 +51,10 @@ ht2 = draw(ht2)
 
 ui = fluidPage(
 	h3("The first heatmap"),
-	ComplexHeatmapOutput("ht1"),
+	InteractiveComplexHeatmapOutput("ht1"),
 	hr(),
 	h3("The second heatmap"),
-	ComplexHeatmapOutput("ht2")
+	InteractiveComplexHeatmapOutput("ht2")
 )
 
 server = function(input, output, session) {

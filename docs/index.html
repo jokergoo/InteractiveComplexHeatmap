@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1003</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1004</span>
       </span>
     </div>
 
@@ -108,7 +108,7 @@
 <p>There are also two functions for shiny app development:</p>
 <ul>
 <li>
-<code><a href="reference/ComplexHeatmapOutput.html">ComplexHeatmapOutput()</a></code>: for the UI.</li>
+<code><a href="reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code>: for the UI.</li>
 <li>
 <code><a href="reference/MakeInteractiveComplexHeatmap.html">MakeInteractiveComplexHeatmap()</a></code>: for the processing at the sever side.</li>
 </ul>
@@ -117,7 +117,7 @@
 <span class="va">ht</span> <span class="op">=</span> <span class="fu">draw</span><span class="op">(</span><span class="va">ht</span><span class="op">)</span>
 
 <span class="va">ui</span> <span class="op">=</span> <span class="fu">fluidPage</span><span class="op">(</span>
-    <span class="fu"><a href="reference/ComplexHeatmapOutput.html">ComplexHeatmapOutput</a></span><span class="op">(</span><span class="op">)</span>
+    <span class="fu"><a href="reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput</a></span><span class="op">(</span><span class="op">)</span>
 <span class="op">)</span>
 
 <span class="va">server</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span>
@@ -134,10 +134,10 @@
 
 <span class="va">ui</span> <span class="op">=</span> <span class="fu">fluidPage</span><span class="op">(</span>
     <span class="fu">h3</span><span class="op">(</span><span class="st">"The first heatmap"</span><span class="op">)</span>,
-    <span class="fu"><a href="reference/ComplexHeatmapOutput.html">ComplexHeatmapOutput</a></span><span class="op">(</span><span class="st">"ht1"</span><span class="op">)</span>,
+    <span class="fu"><a href="reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput</a></span><span class="op">(</span><span class="st">"ht1"</span><span class="op">)</span>,
     <span class="fu">hr</span><span class="op">(</span><span class="op">)</span>,
     <span class="fu">h3</span><span class="op">(</span><span class="st">"The second heatmap"</span><span class="op">)</span>,
-    <span class="fu"><a href="reference/ComplexHeatmapOutput.html">ComplexHeatmapOutput</a></span><span class="op">(</span><span class="st">"ht2"</span><span class="op">)</span>
+    <span class="fu"><a href="reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput</a></span><span class="op">(</span><span class="st">"ht2"</span><span class="op">)</span>
 <span class="op">)</span>
 
 <span class="va">server</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span>

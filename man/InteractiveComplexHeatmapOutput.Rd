@@ -1,5 +1,5 @@
-\name{ComplexHeatmapOutput}
-\alias{ComplexHeatmapOutput}
+\name{InteractiveComplexHeatmapOutput}
+\alias{InteractiveComplexHeatmapOutput}
 \title{
 HTML code generated for interactive ComplexHeatmap
 }
@@ -7,7 +7,7 @@ HTML code generated for interactive ComplexHeatmap
 HTML code generated for interactive ComplexHeatmap
 }
 \usage{
-ComplexHeatmapOutput(heatmap_id = NULL, brush_opt = list())
+InteractiveComplexHeatmapOutput(heatmap_id = NULL, brush_opt = list())
 }
 \arguments{
 
@@ -21,5 +21,4 @@ This function generates HTML fragment for the interactive UI. See the example fr
 \examples{
 # There is no example
 NULL
-
 }

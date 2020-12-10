@@ -1,4 +1,4 @@
-export("ComplexHeatmapOutput")
+export("InteractiveComplexHeatmapOutput")
 export("MakeInteractiveComplexHeatmap")
 export("ht_pos_on_device")
 export("ht_shiny")

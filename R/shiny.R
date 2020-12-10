@@ -12,7 +12,7 @@ shiny_env = new.env()
 # == details
 # This function generates HTML fragment for the interactive UI. See the example from `MakeInteractiveComplexHeatmap` page.
 #
-ComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()) {
+InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()) {
 
 	if(is.null(heatmap_id)) {
 		heatmap_id = paste0("hash_", digest(Sys.time()))
@@ -26,6 +26,7 @@ ComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()) {
 	shiny_env[[heatmap_id]] = list()
 
 	fluidPage(
+
 		tags$script(HTML(paste(readLines(system.file("app", "jquery-ui.js", package = "InteractiveComplexHeatmap"), warn = FALSE), collapse = "\n"))),
 
 		tags$script(HTML(qq(
@@ -91,7 +92,6 @@ ComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()) {
 	margin: 0px;
 }
 ")),
-
 	div(
 		h5("Original heatmap"),
 		div(
@@ -99,7 +99,10 @@ ComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()) {
 				        brush = do.call(brushOpts, c(list(id = qq("@{heatmap_id}_heatmap_brush")), brush_opt)),
 				        click = qq("@{heatmap_id}_heatmap_click")
 			),
-			style = "width:400px;height:350px;position:relative;border:1px solid grey;",
+			tags$script(HTML(qq("
+				$('#@{heatmap_id}_heatmap').html('<p style=\"position:relative;top:50%;\">Making heatmap, please wait...</p>');
+			"))),
+			style = "width:400px;height:350px;position:relative;border:1px solid grey;text-align:center;",
 			id = qq("@{heatmap_id}_heatmap_wrap")
 		),
 		id = qq("@{heatmap_id}_heatmap_wrap_div")
@@ -138,7 +141,7 @@ ComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()) {
 # -output Passed from the shiny server function.
 # -session Passed from the shiny server function.
 # -heatmap_id The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app, 
-#     this argument does not need to be specified and it will use the current one specified in `ComplexHeatmapOutput`.
+#     this argument does not need to be specified and it will use the current one specified in `InteractiveComplexHeatmapOutput`.
 #
 # == examples
 # if(interactive()) {
@@ -146,7 +149,7 @@ ComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()) {
 # ht = draw(ht)
 #
 # ui = fluidPage(
-#     ComplexHeatmapOutput()
+#     InteractiveComplexHeatmapOutput()
 # )
 #
 # server = function(input, output, session) {
@@ -165,7 +168,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 
 		shiny_env[[heatmap_id]]$ht_list = draw(ht_list)
 		shiny_env[[heatmap_id]]$ht_pos = ht_pos_on_device(shiny_env[[heatmap_id]]$ht_list, include_annotation = TRUE, calibrate = FALSE)
-		
+
 		message(qq("[@{Sys.time()}] make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
 	})
 
@@ -410,13 +413,13 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 					  qq("Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}"),
 					  "You can get the row and column indices by copying following code: ",
 					  "</pre>",
-					  "<p><input id='show_code' type='button' value='show/hide code' /></p>",
-					  "<pre id='code'>",
+					  "<p><input id='@{heatmap_id}_show_code' type='button' value='show/hide code' /></p>",
+					  "<pre id='@{heatmap_id}_code'>",
 					  dump_txt,
 					  "</pre>",
 					  "<script>",
-					  "$('#code').hide();",
-					  "$('#show_code').click(function(){ $('#code').toggle(); });",
+					  "$('#@{heatmap_id}_code').hide();",
+					  "$('#@{heatmap_id}_show_code').click(function(){ $('#@{heatmap_id}_code').toggle(); });",
 					  "</script>",
 					  
 					  sep = "\n"))
