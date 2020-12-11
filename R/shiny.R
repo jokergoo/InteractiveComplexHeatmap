@@ -7,12 +7,30 @@ shiny_env = new.env()
 #
 # == param
 # -heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
+# -width1 Width of the original heatmap.
+# -height1 Height of the original heatmap.
+# -width2 Width of the sub-heatmap.
+# -height2 Height of the sub-heatmap.
+# -nrow Should the two heatmap div put in one row or in two rows? Value should be either 1 or 2. 
 # -brush_opt A list of parameters passed to `shiny::brushOpts`.
+# -css Self-defined CSS code.
 #
 # == details
 # This function generates HTML fragment for the interactive UI. See the example from `MakeInteractiveComplexHeatmap` page.
 #
-InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()) {
+# It generates three div blocks. Assuming the heatmap id variable is ``heatmap_id``, the three div blocks are:
+#
+# - ``#{heatmap_id}_heatmap_wrap_div``: to put the original heatmap. This div contains two children elements. One is the title
+#    for the heatmap (with a ``h3`` tag) and one is a div block with ID ``#{heatmap_id}_heatmap_wrap``. ``#{heatmap_id}_heatmap_wrap``
+#    is for JQuery-UI and it wraps the div ``#{heatmap_id}_heatmap`` which is used by `shiny::plotOutput`.
+# - ``#{heatmap_id}_sub_heatmap_wrap_div``: to put the sub-heatmap. This div contains two children elements. One is the title
+#    for the heatmap (with a ``h3`` tag) and one is a div block with ID ``#{heatmap_id}_sub_heatmap_wrap``. ``#{heatmap_id}_sub_heatmap_wrap``
+#    is for JQuery-UI and it wraps the div ``#{heatmap_id}_sub_heatmap`` which is used by `shiny::plotOutput`.
+# - ``#{heatmap_id}_info``: to put the information of the selected position/area.
+#
+InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
+	width1 = 400, height1 = 350, width2 = 370, height2 = 350,
+	nrow = 1, brush_opt = list(), css = "") {
 
 	if(is.null(heatmap_id)) {
 		heatmap_id = paste0("hash_", digest(Sys.time()))
@@ -24,6 +42,10 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()
 	}
 
 	shiny_env[[heatmap_id]] = list()
+
+	if(is.null(css)) {css = ""}
+	css[is.na(css)] = ""
+	css = paste(css, collapse = "\n")
 
 	fluidPage(
 
@@ -72,37 +94,50 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()
 		tags$style(paste(readLines(system.file("app", "jquery-ui.css", package = "InteractiveComplexHeatmap")), collapse = "\n")),
 		tags$style(qq("
 #@{heatmap_id}_heatmap_wrap_div, #@{heatmap_id}_sub_heatmap_wrap_div {
-	float:left;
+	@{ifelse(nrow == 1, 'float:left;', '')}
 	margin-bottom: 10px;
 }
 #@{heatmap_id}_heatmap_wrap_div {
 	margin-right: 10px;
+}
+#@{heatmap_id}_heatmap_wrap {
+	width: @{width1}px;
+	height: @{height1}px;
+	position:relative;
+	border:1px solid grey;
+	text-align:center;
+}
+#@{heatmap_id}_sub_heatmap_wrap {
+	width: @{width2}px;
+	height: @{height2}px;
+	position: relative;
+	border: 1px solid grey;
 }
 #@{heatmap_id}_heatmap, #@{heatmap_id}_sub_heatmap {
 	display: block;
     margin: auto;
     margin: auto;
 }
-.checkbox {
+#@{heatmap_id}_sub_heatmap_wrap_div .checkbox {
 	padding:2px 0px;
 	margin:0px
 }
-.form-group {
+#@{heatmap_id}_sub_heatmap_wrap_div .form-group {
 	padding: 0px;
 	margin: 0px;
 }
+@{css}
 ")),
 	div(
 		h5("Original heatmap"),
 		div(
-			plotOutput(qq("@{heatmap_id}_heatmap"), height = 346, width = 396,
+			plotOutput(qq("@{heatmap_id}_heatmap"), height = height1 - 4, width = width1 - 4,
 				        brush = do.call(brushOpts, c(list(id = qq("@{heatmap_id}_heatmap_brush")), brush_opt)),
 				        click = qq("@{heatmap_id}_heatmap_click")
 			),
 			tags$script(HTML(qq("
 				$('#@{heatmap_id}_heatmap').html('<p style=\"position:relative;top:50%;\">Making heatmap, please wait...</p>');
 			"))),
-			style = "width:400px;height:350px;position:relative;border:1px solid grey;text-align:center;",
 			id = qq("@{heatmap_id}_heatmap_wrap")
 		),
 		id = qq("@{heatmap_id}_heatmap_wrap_div")
@@ -110,8 +145,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()
 	div(
 		h5("Selected sub-heatmap"),
 		div(
-			plotOutput(qq("@{heatmap_id}_sub_heatmap"), height = 346, width = 366),
-			style = "width:370px;height:350px;position:relative;;border:1px solid grey;",
+			plotOutput(qq("@{heatmap_id}_sub_heatmap"), height = height2 - 4, width = width2 - 4),
 			id = qq("@{heatmap_id}_sub_heatmap_wrap")
 		),
 		div(
@@ -172,7 +206,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 		shiny_env[[heatmap_id]]$selected = NULL
 
 		output[[qq("@{heatmap_id}_info")]] = renderUI({
-			HTML("<pre>Not selected.</pre>")
+			HTML("<p>No position is selected.</p>")
 		})
 
 		message(qq("[@{Sys.time()}] make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
@@ -187,7 +221,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 	})
 
 	output[[qq("@{heatmap_id}_info")]] = renderUI({
-		HTML("<pre>Not selected.</pre>")
+		HTML("<p>No position is selected.</p>")
 	})
 
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
@@ -389,10 +423,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 		output[[qq("@{heatmap_id}_info")]] = renderUI({
 			selected = shiny_env[[heatmap_id]]$selected
 			if(is.null(selected)) {
-				HTML(paste("<pre>",
-					  "Selected area should overlap to heatmap bodies.",
-					  "</pre>",
-					  sep = "\n"))
+				HTML("<p>Selected area should overlap to heatmap bodies.</p>")
 			} else {
 				n_ht = length(unique(selected$heatmap))
 
@@ -418,7 +449,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 				dump_txt = dump_txt[-1]
 				dump_txt = paste(dump_txt, collapse = "\n")
 				HTML(paste(
-					  qq("<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. You can get the row and column indices by copying following code:</p>"),
+					  qq("<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. Row and column indices can be obtained by copying following code:</p>"),
 					  qq("<p><input id='@{heatmap_id}_show_code' type='button' value='show/hide code' /></p>"),
 					  qq("<pre id='@{heatmap_id}_code'>"),
 					  dump_txt,
@@ -435,21 +466,13 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 	})
 
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_click")]], {
-
-		# if the click is from brush
-		if(!is.null(input[[qq("@{heatmap_id}_heatmap_brush")]])) {
-			return(NULL)
-		}
-			
+		
 		output[[qq("@{heatmap_id}_info")]] = renderUI({
 
 			pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]])
 		    
 		    if(is.null(pos1)) {
-		    	HTML(paste("<pre>",
-					  "Not selected.",
-					  "</pre>",
-					  sep = "\n"))
+		    	HTML("<p>No position is selected.</p>")
 		    } else {
 		    	showNotification(qq("Click on the heatmap."), duration = 2, type = "message")
 
@@ -457,10 +480,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 			    pos = selectPosition(ht_list, mark = FALSE, pos = pos1, verbose = FALSE, ht_pos = shiny_env[[heatmap_id]]$ht_pos, calibrate = FALSE)
 				
 				if(is.null(pos)) {
-					HTML(paste("<pre>",
-						  "You did not select inside the heatmap.",
-						  "</pre>",
-						  sep = "\n"))
+					HTML("<p>You did not select inside the heatmap.</p>")
 				} else {
 					ht_name = pos[1, "heatmap"]
 					slice_name = pos[1, "slice"]
