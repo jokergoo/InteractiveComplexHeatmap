@@ -305,7 +305,6 @@ selectArea = function(ht_list, pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = 
 		return(df)
 	} else {
 		if(verbose) cat("The selected area does not overlap to any heatmap.\n")
-		seekViewport("global")
 		return(NULL)
 	} 
 }
