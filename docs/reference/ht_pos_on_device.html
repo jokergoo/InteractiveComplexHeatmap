@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1007</span>
       </span>
     </div>
 
@@ -167,13 +167,13 @@
     <p>It returns a <code><a href='https://rdrr.io/pkg/S4Vectors/man/DataFrame-class.html'>DataFrame</a></code> object of the position of every heatmap slice.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/grDevices/dev.interactive.html'>dev.interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='va'>m</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span>
 <span class='va'>ht</span> <span class='op'>=</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>m</span>, row_km <span class='op'>=</span> <span class='fl'>2</span>, column_km <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 <span class='va'>ht</span> <span class='op'>=</span> <span class='fu'>draw</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
 <span class='va'>pos</span> <span class='op'>=</span> <span class='fu'>ht_pos_on_device</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
 
-<span class='fu'>ComplexHeatmap</span><span class='fu'>:::</span><span class='fu'>redraw_ht_vp</span><span class='op'>(</span><span class='va'>pos</span><span class='op'>)</span>
+<span class='fu'>InteractiveComplexHeatmap</span><span class='fu'>:::</span><span class='fu'>redraw_ht_vp</span><span class='op'>(</span><span class='va'>pos</span><span class='op'>)</span>
 <span class='op'>}</span>
 </div></pre>
   </div>

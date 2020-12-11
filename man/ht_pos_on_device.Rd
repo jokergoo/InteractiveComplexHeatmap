@@ -22,12 +22,12 @@ ht_pos_on_device(ht_list, unit = "inch", valueOnly = FALSE, include_annotation =
 It returns a \code{\link[S4Vectors:DataFrame-class]{DataFrame}} object of the position of every heatmap slice.
 }
 \examples{
-if(interactive()) {
+if(dev.interactive()) {
 m = matrix(rnorm(100), 10)
 ht = Heatmap(m, row_km = 2, column_km = 2)
 ht = draw(ht)
 pos = ht_pos_on_device(ht)
 
-ComplexHeatmap:::redraw_ht_vp(pos)
+InteractiveComplexHeatmap:::redraw_ht_vp(pos)
 }
 }

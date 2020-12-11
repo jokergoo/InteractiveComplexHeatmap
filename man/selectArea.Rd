@@ -32,7 +32,7 @@ A \code{\link[S4Vectors:DataFrame-class]{DataFrame}} object with row indices and
 Zuguang Gu <z.gu@dkfz.de>
 }
 \examples{
-if(interactive()) {
+if(dev.interactive()) {
 m = matrix(rnorm(100), 10)
 rownames(m) = 1:10
 colnames(m) = 1:10

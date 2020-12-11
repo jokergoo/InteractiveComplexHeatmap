@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1007</span>
       </span>
     </div>
 
@@ -142,7 +142,7 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>ht_list</th>
-      <td><p>A <code><a href='https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap-class.html'>Heatmap-class</a></code> or a <code><a href='https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapList-class.html'>HeatmapList-class</a></code> object. If it is not specified, a random heatmap is used.</p></td>
+      <td><p>A <code><a href='https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap-class.html'>Heatmap-class</a></code> or a <code><a href='https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapList-class.html'>HeatmapList-class</a></code> object. If it is not specified, a random heatmap is used. Better be updated by <code>draw()</code> function.</p></td>
     </tr>
     <tr>
       <th>...</th>
@@ -157,29 +157,34 @@
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># use a random heatmap</span>
 <span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='fu'>ht_shiny</span><span class='op'>(</span><span class='op'>)</span>
+<span class='fu'>ht_shiny</span><span class='op'>(</span><span class='op'>)</span>
 <span class='op'>}</span>
 
 <span class='co'># by providing a heatmap/heatmap list</span>
 <span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='va'>m</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
+<span class='va'>m</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
 
 <span class='va'>ht</span> <span class='op'>=</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span>
-    <span class='fu'>ht_shiny</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
+<span class='va'>ht</span> <span class='op'>=</span> <span class='fu'>draw</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
+<span class='fu'>ht_shiny</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
 <span class='op'>}</span>
 
 <span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-    <span class='va'>m1</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
-    <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
-    <span class='va'>ht1</span> <span class='op'>=</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>m1</span>, row_km <span class='op'>=</span> <span class='fl'>2</span>, column_km <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
+<span class='va'>m1</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
+<span class='va'>ht1</span> <span class='op'>=</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>m1</span>, row_km <span class='op'>=</span> <span class='fl'>2</span>, column_km <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
 
 <span class='va'>m2</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>letters</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>]</span>, <span class='fl'>100</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span>
-    <span class='va'>ht2</span> <span class='op'>=</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>m2</span><span class='op'>)</span>
-    <span class='fu'>ht_shiny</span><span class='op'>(</span><span class='va'>ht1</span> <span class='op'>+</span> <span class='va'>ht2</span><span class='op'>)</span>
-    <span class='fu'>ht_shiny</span><span class='op'>(</span><span class='va'>ht1</span> <span class='op'>%v%</span> <span class='va'>ht2</span><span class='op'>)</span>
+<span class='va'>ht2</span> <span class='op'>=</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>m2</span><span class='op'>)</span>
+
+<span class='va'>ht_list</span> <span class='op'>=</span> <span class='fu'>draw</span><span class='op'>(</span><span class='va'>ht1</span> <span class='op'>+</span> <span class='va'>ht2</span><span class='op'>)</span>
+<span class='fu'>ht_shiny</span><span class='op'>(</span><span class='va'>ht_list</span><span class='op'>)</span>
+
+<span class='va'>ht_list</span> <span class='op'>=</span> <span class='va'>ht1</span> <span class='op'>%v%</span> <span class='va'>ht2</span>
+<span class='fu'>ht_shiny</span><span class='op'>(</span><span class='va'>ht_list</span><span class='op'>)</span>
 <span class='op'>}</span>
 </div></pre>
   </div>
