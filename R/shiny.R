@@ -128,7 +128,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, brush_opt = list()
 		id = qq("@{heatmap_id}_sub_heatmap_wrap_div")
 	),
 	div(style = "clear: both;"),
-	htmlOutput(qq("@{heatmap_id}_click_info"))
+	htmlOutput(qq("@{heatmap_id}_info"))
 	)
 }
 
@@ -164,10 +164,16 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 		width = session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]]
     	height = session$clientData[[qq("output_@{heatmap_id}_heatmap_height")]]
     	
-    	showNotification("Making the original heatmap.", duration = 1, type = "message")
+    	showNotification("Making the original heatmap.", duration = 2, type = "message")
 
 		shiny_env[[heatmap_id]]$ht_list = draw(ht_list)
 		shiny_env[[heatmap_id]]$ht_pos = ht_pos_on_device(shiny_env[[heatmap_id]]$ht_list, include_annotation = TRUE, calibrate = FALSE)
+
+		shiny_env[[heatmap_id]]$selected = NULL
+
+		output[[qq("@{heatmap_id}_info")]] = renderUI({
+			HTML("<pre>Not selected.</pre>")
+		})
 
 		message(qq("[@{Sys.time()}] make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
 	})
@@ -176,9 +182,11 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 	output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 		grid.newpage()
 		grid.text("No area on the heatmap is selected.", 0.5, 0.5)
+
+		message(qq("[@{Sys.time()}] no area on the heatmap is selected, Do not make the sub-heatmap."))
 	})
 
-	output[[qq("@{heatmap_id}_click_info")]] = renderUI({
+	output[[qq("@{heatmap_id}_info")]] = renderUI({
 		HTML("<pre>Not selected.</pre>")
 	})
 
@@ -197,7 +205,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 				grid.text("No area on the heatmap is selected.", 0.5, 0.5)
     		} else {
     	
-				showNotification("Making the selected sub-heatmap.", duration = 1, type = "message")
+				showNotification("Making the selected sub-heatmap.", duration = 2, type = "message")
 
 			  	lt = get_pos_from_brush(input[[qq("@{heatmap_id}_heatmap_brush")]])
 			  	pos1 = lt[[1]]
@@ -378,7 +386,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 			}
 		})
 
-		output[[qq("@{heatmap_id}_click_info")]] = renderUI({
+		output[[qq("@{heatmap_id}_info")]] = renderUI({
 			selected = shiny_env[[heatmap_id]]$selected
 			if(is.null(selected)) {
 				HTML(paste("<pre>",
@@ -409,17 +417,15 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 				close(con)
 				dump_txt = dump_txt[-1]
 				dump_txt = paste(dump_txt, collapse = "\n")
-				HTML(paste("<pre>",
-					  qq("Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}"),
-					  "You can get the row and column indices by copying following code: ",
-					  "</pre>",
-					  "<p><input id='@{heatmap_id}_show_code' type='button' value='show/hide code' /></p>",
-					  "<pre id='@{heatmap_id}_code'>",
+				HTML(paste(
+					  qq("<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. You can get the row and column indices by copying following code:</p>"),
+					  qq("<p><input id='@{heatmap_id}_show_code' type='button' value='show/hide code' /></p>"),
+					  qq("<pre id='@{heatmap_id}_code'>"),
 					  dump_txt,
 					  "</pre>",
 					  "<script>",
-					  "$('#@{heatmap_id}_code').hide();",
-					  "$('#@{heatmap_id}_show_code').click(function(){ $('#@{heatmap_id}_code').toggle(); });",
+					  qq("$('#@{heatmap_id}_code').hide();"),
+					  qq("$('#@{heatmap_id}_show_code').click(function(){ $('#@{heatmap_id}_code').toggle(); });"),
 					  "</script>",
 					  
 					  sep = "\n"))
@@ -429,62 +435,77 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 	})
 
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_click")]], {
-		output[[qq("@{heatmap_id}_click_info")]] = renderUI({
-			showNotification("Click on the heatmap.", duration = 1, type = "message")
+
+		# if the click is from brush
+		if(!is.null(input[[qq("@{heatmap_id}_heatmap_brush")]])) {
+			return(NULL)
+		}
+			
+		output[[qq("@{heatmap_id}_info")]] = renderUI({
 
 			pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]])
 		    
-		    ht_list = shiny_env[[heatmap_id]]$ht_list
-		    pos = selectPosition(ht_list, mark = FALSE, pos = pos1, verbose = FALSE, ht_pos = shiny_env[[heatmap_id]]$ht_pos, calibrate = FALSE)
-			
-			if(is.null(pos)) {
-				HTML(paste("<pre>",
-					  "You did not select inside the heatmap.",
+		    if(is.null(pos1)) {
+		    	HTML(paste("<pre>",
+					  "Not selected.",
 					  "</pre>",
 					  sep = "\n"))
-			} else {
-				ht_name = pos[1, "heatmap"]
-				slice_name = pos[1, "slice"]
-		
-				row_index = pos[1, "row_index"][[1]]
-			    column_index = pos[1, "column_index"][[1]]
-			    m = ht_list@ht_list[[ht_name]]@matrix
-			    v = m[row_index, column_index]
-			    col = map_to_colors(ht_list@ht_list[[ht_name]]@matrix_color_mapping, v)
-			    row_label = rownames(m)[row_index]
-			    column_label = colnames(m)[column_index]
-			    if(is.null(row_label)) {
-			    	row_label = "NULL"
-			    } else {
-			    	# row_label = paste0("'", row_label, "'")
-			    }
-			    if(is.null(column_label)) {
-			    	column_label = "NULL"
-			    } else {
-			    	# column_label = paste0("'", column_label, "'")
-			    }
+		    } else {
+		    	showNotification(qq("Click on the heatmap."), duration = 2, type = "message")
 
-			    message(qq("[@{Sys.time()}] click on the heatmap @{slice_name}."))
+			    ht_list = shiny_env[[heatmap_id]]$ht_list
+			    pos = selectPosition(ht_list, mark = FALSE, pos = pos1, verbose = FALSE, ht_pos = shiny_env[[heatmap_id]]$ht_pos, calibrate = FALSE)
 				
-				HTML(paste("<pre>",
-					  qq("heatmap: @{ht_name}"),
-					  qq("heatmap slice: @{slice_name}"),
-					  qq("row index: @{row_index}"),
-					  qq("row label: @{row_label}"),
-					  qq("column index: @{column_index}"),
-					  qq("column_label: @{column_label}"),
-					  qq("value: @{v} <span style='background-color:@{col};width=10px;'>    </span>"),
-					  "</pre>",
-					  sep = "\n"))
+				if(is.null(pos)) {
+					HTML(paste("<pre>",
+						  "You did not select inside the heatmap.",
+						  "</pre>",
+						  sep = "\n"))
+				} else {
+					ht_name = pos[1, "heatmap"]
+					slice_name = pos[1, "slice"]
+			
+					row_index = pos[1, "row_index"][[1]]
+				    column_index = pos[1, "column_index"][[1]]
+				    m = ht_list@ht_list[[ht_name]]@matrix
+				    v = m[row_index, column_index]
+				    col = map_to_colors(ht_list@ht_list[[ht_name]]@matrix_color_mapping, v)
+				    row_label = rownames(m)[row_index]
+				    column_label = colnames(m)[column_index]
+				    if(is.null(row_label)) {
+				    	row_label = "NULL"
+				    } else {
+				    	# row_label = paste0("'", row_label, "'")
+				    }
+				    if(is.null(column_label)) {
+				    	column_label = "NULL"
+				    } else {
+				    	# column_label = paste0("'", column_label, "'")
+				    }
+
+				    message(qq("[@{Sys.time()}] click on the heatmap @{slice_name}."))
+					
+					HTML(paste("<p>Information of the clicked position:</p>",
+						  "<pre>",
+						  qq("heatmap: @{ht_name}"),
+						  qq("heatmap slice: @{slice_name}"),
+						  qq("row index: @{row_index}"),
+						  qq("row label: @{row_label}"),
+						  qq("column index: @{column_index}"),
+						  qq("column_label: @{column_label}"),
+						  qq("value: @{v} <span style='background-color:@{col};width=10px;'>    </span>"),
+						  "</pre>",
+						  sep = "\n"))
+				}
 			}
 		})
 	})
 }
 
 
-
 get_pos_from_brush = function(brush) {
 	coords = brush$coords_css
+	if(is.null(coords)) return(NULL)
     height = (brush$range$bottom - brush$range$top)/brush$img_css_ratio$y
     pos1 = unit(c(coords$xmin, height - coords$ymin), "pt")
     pos2 = unit(c(coords$xmax, height - coords$ymax), "pt")
@@ -494,7 +515,8 @@ get_pos_from_brush = function(brush) {
 
 get_pos_from_click = function(click) {
 	coords = click$coords_css
-    height = (click$range$bottom - click$range$top)/click$img_css_ratio$y
+	if(is.null(coords)) return(NULL)
+	height = (click$range$bottom - click$range$top)/click$img_css_ratio$y
     pos1 = unit(c(coords$x, height - coords$y), "pt")
     pos1
 }
