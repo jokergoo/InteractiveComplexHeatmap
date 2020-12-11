@@ -1,4 +1,4 @@
-# Make ComplexHeatmap interactive
+# Make ComplexHeatmap Interactive
 
 [![Build Status](https://travis-ci.org/jokergoo/InteractiveComplexHeatmap.svg)](https://travis-ci.org/jokergoo/InteractiveComplexHeatmap) 
 

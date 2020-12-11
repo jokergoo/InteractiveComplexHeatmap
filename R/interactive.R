@@ -25,7 +25,7 @@
 # Zuguang Gu <z.gu@dkfz.de>
 #
 # == example
-# if(interactive()) {
+# if(dev.interactive()) {
 # m = matrix(rnorm(100), 10)
 # rownames(m) = 1:10
 # colnames(m) = 1:10
@@ -329,7 +329,7 @@ selectArea = function(ht_list, pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = 
 # Zuguang Gu <z.gu@dkfz.de>
 #
 # == example
-# if(interactive()) {
+# if(dev.interactive()) {
 # m = matrix(rnorm(100), 10)
 # rownames(m) = 1:10
 # colnames(m) = 1:10
@@ -526,13 +526,13 @@ selectPosition = function(ht_list, pos = NULL, mark = TRUE, verbose = TRUE,
 # It returns a `S4Vectors::DataFrame` object of the position of every heatmap slice.
 #
 # == example
-# if(interactive()) {
+# if(dev.interactive()) {
 # m = matrix(rnorm(100), 10)
 # ht = Heatmap(m, row_km = 2, column_km = 2)
 # ht = draw(ht)
 # pos = ht_pos_on_device(ht)
 #
-# ComplexHeatmap:::redraw_ht_vp(pos)
+# InteractiveComplexHeatmap:::redraw_ht_vp(pos)
 # }
 ht_pos_on_device = function(ht_list, unit = "inch", valueOnly = FALSE, include_annotation = FALSE, calibrate = TRUE) {
 	
@@ -571,11 +571,18 @@ ht_pos_on_device = function(ht_list, unit = "inch", valueOnly = FALSE, include_a
 
 	
 	df = NULL
+	has_normal_matrix = FALSE
 	ht_main = ht_list@ht_list[[ ht_list@ht_list_param$main_heatmap ]]
 	for(i in seq_along(ht_list@ht_list)) {
 		if(inherits(ht_list@ht_list[[i]], "Heatmap")) {
 			ht = ht_list@ht_list[[i]]
 			ht_name = ht@name
+
+			if(nrow(ht@matrix) == 0 || ncol(ht@matrix) == 0) {
+				next
+			}
+
+			has_normal_matrix = TRUE
 
 			for(i in seq_along(ht@row_order_list)) {
 				for(j in seq_along(ht@column_order_list)) {
@@ -665,6 +672,10 @@ ht_pos_on_device = function(ht_list, unit = "inch", valueOnly = FALSE, include_a
 
 	if(!is.null(.ENV$RStudio_png_res)) { 
 		dev.off()
+	}
+
+	if(!has_normal_matrix) {
+		stop_wrap("There should be one normal heatmap (nrow > 0 and ncol > 0) in the heatmap list.")
 	}
 
 	if(!valueOnly) {

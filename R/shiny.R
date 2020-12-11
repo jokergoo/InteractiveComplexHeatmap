@@ -1,6 +1,6 @@
 
 shiny_env = new.env()
-
+shiny_env$history = list()
 
 # == title
 # HTML code generated for interactive ComplexHeatmap
@@ -280,7 +280,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 							if(show_annotation) {
 								top_annotation = ht_current_full@top_annotation
 								if(!is.null(top_annotation)) {
-									ind_subsettable = sapply(top_annotation@anno_list, function(x) x@subsetable)
+									ind_subsettable = sapply(top_annotation@anno_list, function(x) x@subsetable && !ha@anno_list[[1]]@fun@fun_name %in% c("anno_mark", "anno_zoom"))
 									if(length(ind_subsettable)) {
 										top_annotation = top_annotation[ci, ind_subsettable]
 										top_annotation@anno_list = lapply(top_annotation@anno_list, function(x) {
@@ -293,7 +293,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 								}
 								bottom_annotation = ht_current_full@bottom_annotation
 								if(!is.null(bottom_annotation)) {
-									ind_subsettable = sapply(bottom_annotation@anno_list, function(x) x@subsetable)
+									ind_subsettable = sapply(bottom_annotation@anno_list, function(x) x@subsetable && !ha@anno_list[[1]]@fun@fun_name %in% c("anno_mark", "anno_zoom"))
 									if(length(ind_subsettable)) {
 										bottom_annotation = bottom_annotation[ci, ind_subsettable]
 										bottom_annotation@anno_list = lapply(bottom_annotation@anno_list, function(x) {
@@ -306,7 +306,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 								}
 								left_annotation = ht_current_full@left_annotation
 								if(!is.null(left_annotation)) {
-									ind_subsettable = sapply(left_annotation@anno_list, function(x) x@subsetable)
+									ind_subsettable = sapply(left_annotation@anno_list, function(x) x@subsetable && !ha@anno_list[[1]]@fun@fun_name %in% c("anno_mark", "anno_zoom"))
 									if(length(ind_subsettable)) {
 										left_annotation = left_annotation[ri, ind_subsettable]
 										left_annotation@anno_list = lapply(left_annotation@anno_list, function(x) {
@@ -319,7 +319,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 								}
 								right_annotation = ht_current_full@right_annotation
 								if(!is.null(right_annotation)) {
-									ind_subsettable = sapply(right_annotation@anno_list, function(x) x@subsetable)
+									ind_subsettable = sapply(right_annotation@anno_list, function(x) x@subsetable && !ha@anno_list[[1]]@fun@fun_name %in% c("anno_mark", "anno_zoom"))
 									if(length(ind_subsettable)) {
 										right_annotation = right_annotation[ri, ind_subsettable]
 										right_annotation@anno_list = lapply(right_annotation@anno_list, function(x) {
@@ -382,7 +382,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 							if(show_annotation) {
 								ha = ht_current_full
 								if(ht_list@direction == "horizontal") {
-									ind_subsettable = sapply(ha@anno_list, function(x) x@subsetable)
+									ind_subsettable = sapply(ha@anno_list, function(x) x@subsetable && !ha@anno_list[[1]]@fun@fun_name %in% c("anno_mark", "anno_zoom"))
 									if(length(ind_subsettable)) {
 										ha = ha[ri, ind_subsettable]
 										ha@anno_list = lapply(ha@anno_list, function(x) {
@@ -391,7 +391,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 										})
 									}
 								} else {
-									ind_subsettable = sapply(ha@anno_list, function(x) x@subsetable)
+									ind_subsettable = sapply(ha@anno_list, function(x) x@subsetable && !ha@anno_list[[1]]@fun@fun_name %in% c("anno_mark", "anno_zoom"))
 									if(length(ind_subsettable)) {
 										ha = ha[ci, ind_subsettable]
 										ha@anno_list = lapply(ha@anno_list, function(x) {
@@ -443,6 +443,8 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 				}
 
 				selected_df = as.data.frame(selected)
+				shiny_env$history[[ digest(selected_df) ]] = selected_df
+
 				con = textConnection("dump_txt", "w")
 				dump("selected_df", file = con)
 				close(con)

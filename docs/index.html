@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1006</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1007</span>
       </span>
     </div>
 
@@ -89,7 +89,7 @@
   <div class="contents col-md-9">
 <div id="make-complexheatmap-interactive" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#make-complexheatmap-interactive" class="anchor"></a>Make ComplexHeatmap interactive</h1></div>
+<a href="#make-complexheatmap-interactive" class="anchor"></a>Make ComplexHeatmap Interactive</h1></div>
 
 <p><img src="https://user-images.githubusercontent.com/449218/82199376-e5eec600-98fd-11ea-9fca-ad95d405dc20.gif" width="700"></p>
 <div id="install" class="section level2">
@@ -102,15 +102,15 @@
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
-<p>With any <code>Heatmap</code>/<code>HeatmapList</code> object, directly send to <code><a href="reference/ht_shiny.html">ht_shiny()</a></code> to create a shiny app for your heatmap:</p>
+<p>With any <code>Heatmap</code>/<code>HeatmapList</code> object, directly send to <code><a href="reference/ht_shiny.html">ht_shiny()</a></code> to create a shiny app for your heatmap(s):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span></code></pre></div>
-<p>There are also two functions for shiny app development:</p>
+<p>There are also two functions for Shiny app development:</p>
 <ul>
 <li>
 <code><a href="reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code>: for the UI.</li>
 <li>
-<code><a href="reference/MakeInteractiveComplexHeatmap.html">MakeInteractiveComplexHeatmap()</a></code>: for the processing at the sever side.</li>
+<code><a href="reference/MakeInteractiveComplexHeatmap.html">MakeInteractiveComplexHeatmap()</a></code>: for processing on the sever side.</li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ht</span> <span class="op">=</span> <span class="fu">Heatmap</span><span class="op">(</span><span class="va">m</span><span class="op">)</span>
