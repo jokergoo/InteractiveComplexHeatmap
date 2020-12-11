@@ -1,7 +1,7 @@
 Package: InteractiveComplexHeatmap
 Type: Package
 Title: Make Interactive Complex Heatmaps
-Version: 0.99.0.1006
+Version: 0.99.0.1007
 Date: 2020-12-11
 Author: Zuguang Gu
 Maintainer: Zuguang Gu <z.gu@dkfz.de>
