@@ -8,8 +8,8 @@ HTML code generated for interactive ComplexHeatmap
 }
 \usage{
 InteractiveComplexHeatmapOutput(heatmap_id = NULL,
-    width1 = 400, height1 = 350, width2 = 370, height2 = 350,
-    nrow = 1, brush_opt = list(), css = "")
+    width1 = 400, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
+    action = c("click", "hover", "dblclick"), brush_opt = list(), css = "")
 }
 \arguments{
 
@@ -19,6 +19,7 @@ InteractiveComplexHeatmapOutput(heatmap_id = NULL,
   \item{width2}{Width of the sub-heatmap.}
   \item{height2}{Height of the sub-heatmap.}
   \item{nrow}{Should the two heatmap div put in one row or in two rows? Value should be either 1 or 2. }
+  \item{action}{Which action for capturing. Value should be \code{click}, \code{hover} or \code{dblclick}.}
   \item{brush_opt}{A list of parameters passed to \code{\link[shiny]{brushOpts}}.}
   \item{css}{Self-defined CSS code.}
 

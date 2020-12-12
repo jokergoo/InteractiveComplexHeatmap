@@ -53,6 +53,8 @@ ht_shiny = function(ht_list, ...) {
 	    colnames(m2) = rownames(m2) = paste0("b", 1:10)
 	    ht2 = Heatmap(m2, heatmap_legend_param = list(at = sort(unique(as.vector(m2)))))
 	    ht_list = draw(ht1 + ht2)
+	} else if(inherits(ht_list, "InputHeatmap")) {
+		ht_list = show(ht_list)
 	}
 
 	has_normal_matrix = FALSE
