@@ -353,6 +353,15 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 								right_annotation = NULL
 							}
 
+							row_labels = ht@row_names_param$labels
+							if(!is.null(row_labels)) {
+								row_labels = row_labels[ri]
+							}
+							column_labels = ht@column_names_param$labels
+							if(!is.null(column_labels)) {
+								column_labels = column_labels[ci]
+							}
+
 							if(show_cell_fun) {
 								cell_fun = ht_current_full@matrix_param$cell_fun
 								if(!is.null(cell_fun)) {
@@ -387,7 +396,9 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 						    	cluster_rows = FALSE, cluster_columns = FALSE,
 								row_title = NULL, column_title = NULL,
 								border = ht_current_full@matrix_param$border,
-								show_row_names = show_row_names, show_column_names = show_column_names,
+								row_labels = row_labels, column_labels = column_labels,
+								show_row_names = show_row_names, 
+								show_column_names = show_column_names,
 								top_annotation = top_annotation,
 								bottom_annotation = bottom_annotation,
 								left_annotation = left_annotation,
