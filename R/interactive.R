@@ -425,8 +425,8 @@ selectPosition = function(ht_list, pos = NULL, mark = TRUE, verbose = TRUE,
 		}
 	}
 
-	seekViewport("global")
-	upViewport()
+	# seekViewport("global")
+	# upViewport()
 	# if(mark) {
 	# 	for(i in seq_len(nrow(ht_pos))) {
 	# 	    x_min = ht_pos[i, "x_min"]
@@ -500,14 +500,12 @@ selectPosition = function(ht_list, pos = NULL, mark = TRUE, verbose = TRUE,
 				           column_slice = j_slice,
 				           row_index = row_index, 
 				           column_index = column_index)
-			seekViewport("global")
 			return(df)
 		}
 
 	}
 	if(verbose) cat("\n")
 	if(verbose) cat("The selected position does not sit in any heatmap.\n")
-	seekViewport("global")
 	return(NULL)
 }
 
