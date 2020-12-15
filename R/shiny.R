@@ -7,6 +7,8 @@ shiny_env$history = list()
 #
 # == param
 # -heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
+# -title1 Title of the original heatmap.
+# -title2 Title of the second heatmap.
 # -width1 Width of the original heatmap.
 # -height1 Height of the original heatmap.
 # -width2 Width of the sub-heatmap.
@@ -30,6 +32,7 @@ shiny_env$history = list()
 # - ``#{heatmap_id}_info``: to put the information of the selected position/area.
 #
 InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
+	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
 	width1 = 400, height1 = 350, width2 = 370, height2 = 350, nrow = 1, 
 	action = c("click", "hover", "dblclick"), brush_opt = list(), css = "") {
 
@@ -61,7 +64,12 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 
 	if(is.null(css)) {css = ""}
 	css[is.na(css)] = ""
-	css = paste(css, collapse = "\n")
+
+	if(file.exists(css)) {
+		css = paste(readLines(css), collapse = "\n")
+	} else {
+		css = paste(css, collapse = "\n")
+	}
 
 	fluidPage(
 
@@ -145,7 +153,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 @{css}
 ")),
 	div(
-		h5("Original heatmap"),
+		h5(title1),
 		div(
 			plotOutput(qq("@{heatmap_id}_heatmap"), height = height1 - 4, width = width1 - 4,
 				        brush = do.call(brushOpts, c(list(id = qq("@{heatmap_id}_heatmap_brush")), brush_opt)),
@@ -159,7 +167,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		id = qq("@{heatmap_id}_heatmap_wrap_div")
 	),
 	div(
-		h5("Selected sub-heatmap"),
+		h5(title2),
 		div(
 			plotOutput(qq("@{heatmap_id}_sub_heatmap"), height = height2 - 4, width = width2 - 4),
 			id = qq("@{heatmap_id}_sub_heatmap_wrap")
@@ -224,6 +232,20 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 		output[[qq("@{heatmap_id}_info")]] = renderUI({
 			HTML("<p>No position is selected.</p>")
 		})
+
+		for(i in seq_along(shiny_env[[heatmap_id]]$ht_list@ht_list)) {
+			if(inherits(shiny_env[[heatmap_id]]$ht_list@ht_list[[i]], "Heatmap")) {
+				if(!is.null(shiny_env[[heatmap_id]]$ht_list@ht_list[[i]]@heatmap_param$oncoprint_env)) {
+					updateCheckboxInput(session, qq("@{heatmap_id}_show_cell_fun_checkbox"), value = TRUE)
+					break
+				}
+
+				if(!is.null(attr(shiny_env[[heatmap_id]]$ht_list@ht_list[[i]], "UpSet"))) {
+					updateCheckboxInput(session, qq("@{heatmap_id}_show_cell_fun_checkbox"), value = TRUE)
+					break
+				}
+			}
+		}
 
 		message(qq("[@{Sys.time()}] make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
 	})
@@ -389,7 +411,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 								cell_fun = NULL
 								layer_fun = NULL
 							}
-							ht_current = Heatmap(subm,
+							ht_current = Heatmap(subm, rect_gp = ht_current_full@matrix_param$gp,
 								row_split = rs, column_split = cs,
 						    	col = ht_current_full@matrix_color_mapping,
 						    	show_heatmap_legend = FALSE,
@@ -405,6 +427,10 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 								right_annotation = right_annotation,
 								cell_fun = cell_fun, layer_fun = layer_fun
 							)
+							if(!is.null(ht_current_full@heatmap_param$oncoprint_env)) {
+								ht_current@top_annotation = NULL
+								ht_current@right_annotation = NULL
+							}
 						} else {
 							if(show_annotation) {
 								ha = ht_current_full
@@ -507,7 +533,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 
 			    ht_list = shiny_env[[heatmap_id]]$ht_list
 			    pos = selectPosition(ht_list, mark = FALSE, pos = pos1, verbose = FALSE, ht_pos = shiny_env[[heatmap_id]]$ht_pos, calibrate = FALSE)
-				
+					
 				if(is.null(pos)) {
 					HTML("<p>You did not select inside the heatmap.</p>")
 				} else {
@@ -518,7 +544,12 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 				    column_index = pos[1, "column_index"][[1]]
 				    m = ht_list@ht_list[[ht_name]]@matrix
 				    v = m[row_index, column_index]
-				    col = map_to_colors(ht_list@ht_list[[ht_name]]@matrix_color_mapping, v)
+
+				    if(is.null(ht@heatmap_param$oncoprint_env)) {
+				    	col = map_to_colors(ht_list@ht_list[[ht_name]]@matrix_color_mapping, v)
+				    } else {
+				    	col = NA
+				    }
 				    row_label = rownames(m)[row_index]
 				    column_label = colnames(m)[column_index]
 				    if(is.null(row_label)) {
@@ -542,7 +573,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 						  qq("row label: @{row_label}"),
 						  qq("column index: @{column_index}"),
 						  qq("column_label: @{column_label}"),
-						  qq("value: @{v} <span style='background-color:@{col};width=10px;'>    </span>"),
+						  ifelse(is.na(col), qq("value: @{v}"), qq("value: @{v} <span style='background-color:@{col};width=10px;'>    </span>")),
 						  "</pre>",
 						  sep = "\n"))
 				}
