@@ -1,5 +1,5 @@
 ---
-title: "InteractiveComplexHeatmap in an Rmarkdown document"
+title: "InteractiveComplexHeatmap in an R Markdown document"
 author: "Zuguang Gu"
 date: "16/12/2020"
 output: html_document
@@ -14,10 +14,47 @@ ht = Heatmap(m)
 ```
 
 
-```{r}
-InteractiveComplexHeatmapOutput()
+```{r, echo = FALSE}
+ui = fluidPage(
+    InteractiveComplexHeatmapOutput()
+)
 
-MakeInteractiveComplexHeatmap(ht, input, output, session)
+server = function(input, output, session) {
+    MakeInteractiveComplexHeatmap(ht, input, output, session)
+}
+
+shiny::shinyApp(ui, server, options = list(height = 700))
 ```
 
 
+The source code of this R Markdown document is:
+
+````markdown
+---
+title: "InteractiveComplexHeatmap in an Rmarkdown document"
+author: "Zuguang Gu"
+date: "16/12/2020"
+output: html_document
+runtime: shiny
+---
+
+
+`r ''````{r, echo=FALSE}
+library(InteractiveComplexHeatmap)
+m = matrix(rnorm(100*100), 100)
+ht = Heatmap(m)
+```
+
+
+`r ''````{r, echo=FALSE}
+ui = fluidPage(
+    InteractiveComplexHeatmapOutput()
+)
+
+server = function(input, output, session) {
+    MakeInteractiveComplexHeatmap(ht, input, output, session)
+}
+
+shiny::shinyApp(ui, server)
+```
+````

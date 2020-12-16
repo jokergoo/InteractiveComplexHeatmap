@@ -758,3 +758,8 @@ server = function(input, output, session) {
 
 shinyApp(ui, server)
 
+
+# title: Integrate in an interactive R Markdown document
+
+
+

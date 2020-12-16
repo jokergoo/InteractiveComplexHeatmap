@@ -132,6 +132,11 @@ ht_shiny_example = function(which) {
 		which = which[1]
 		code = examples[[which]]$code
 
+		if(identical(code, "library(InteractiveComplexHeatmap)")) {
+			rmarkdown::run(system.file("examples", "rmarkdown.Rmd", package = "InteractiveComplexHeatmap"))
+			return(invisible(NULL))
+		}
+
 		library_calls = code[grepl("library\\(.*\\)", code)]
 		if(length(library_calls)) {
 			required_pkgs = gsub("library\\((.*)\\)", "\\1", library_calls)
