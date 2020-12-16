@@ -85,4 +85,3 @@ shinyApp(ui, server)
 ```
 
 <img src="app_demo2.png" width="100%" />
-

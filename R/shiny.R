@@ -16,6 +16,7 @@ shiny_env$history = list()
 # -nrow Should the two heatmap div put in one row or in two rows? Value should be either 1 or 2. 
 # -action Which action for capturing. Value should be ``click``, ``hover`` or ``dblclick``.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`.
+# -output_div Whether to add the output ``div``
 # -css Self-defined CSS code.
 #
 # == details
@@ -33,8 +34,9 @@ shiny_env$history = list()
 #
 InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
-	width1 = 400, height1 = 350, width2 = 370, height2 = 350, nrow = 1, 
-	action = c("click", "hover", "dblclick"), brush_opt = list(), css = "") {
+	width1 = 400, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
+	action = c("click", "hover", "dblclick"), brush_opt = list(), 
+	output_div = TRUE, css = "") {
 
 	if(is.null(heatmap_id)) {
 		heatmap_id = paste0("hash_", digest(Sys.time()))
@@ -186,7 +188,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		id = qq("@{heatmap_id}_sub_heatmap_wrap_div")
 	),
 	div(style = "clear: both;"),
-	htmlOutput(qq("@{heatmap_id}_info"))
+	if(output_div) htmlOutput(qq("@{heatmap_id}_info")) else NULL
 	)
 }
 
@@ -200,6 +202,10 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 # -session Passed from the shiny server function.
 # -heatmap_id The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app, 
 #     this argument does not need to be specified and it will use the current one specified in `InteractiveComplexHeatmapOutput`.
+# -click_action The action at the sever side when receiving a click event on the UI.
+# -brush_action The action at the sever side when receiving a brush event on the UI.
+# -default_click_action Whether to apply the default click action on the sever side.
+# -default_brush_action Whether to apply the default brush action on the sever side.
 #
 # == examples
 # if(interactive()) {
@@ -216,7 +222,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 #
 # shiny::shinyApp(ui, server)
 # }
-MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatmap_id = shiny_env$current_heatmap_id) {
+MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatmap_id = shiny_env$current_heatmap_id,
+	click_action = NULL, brush_action = NULL, default_click_action = TRUE, default_brush_action = TRUE) {
 
 	output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
 		width = session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]]
@@ -235,12 +242,11 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 
 		for(i in seq_along(shiny_env[[heatmap_id]]$ht_list@ht_list)) {
 			if(inherits(shiny_env[[heatmap_id]]$ht_list@ht_list[[i]], "Heatmap")) {
-				if(!is.null(shiny_env[[heatmap_id]]$ht_list@ht_list[[i]]@heatmap_param$oncoprint_env)) {
+				if(!is.null(shiny_env[[heatmap_id]]$ht_list@ht_list[[i]]@matrix_param$cell_fun)) {
 					updateCheckboxInput(session, qq("@{heatmap_id}_show_cell_fun_checkbox"), value = TRUE)
 					break
 				}
-
-				if(!is.null(attr(shiny_env[[heatmap_id]]$ht_list@ht_list[[i]], "UpSet"))) {
+				if(!is.null(shiny_env[[heatmap_id]]$ht_list@ht_list[[i]]@matrix_param$layer_fun)) {
 					updateCheckboxInput(session, qq("@{heatmap_id}_show_cell_fun_checkbox"), value = TRUE)
 					break
 				}
@@ -263,6 +269,19 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 	})
 
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
+
+		if(is.null(input[[qq("@{heatmap_id}_heatmap_brush")]])) {
+			shiny_env[[heatmap_id]]$selected = NULL
+		} else {
+			lt = get_pos_from_brush(input[[qq("@{heatmap_id}_heatmap_brush")]])
+		  	pos1 = lt[[1]]
+		  	pos2 = lt[[2]]
+		    
+		    ht_list = shiny_env[[heatmap_id]]$ht_list
+		    selected = selectArea(ht_list, mark = FALSE, pos1 = pos1, pos2 = pos2, verbose = FALSE, ht_pos = shiny_env[[heatmap_id]]$ht_pos, include_annotation = TRUE, calibrate = FALSE)
+		    shiny_env[[heatmap_id]]$selected = selected
+		}
+
 		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 			width = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_width")]]
     		height = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_height")]]
@@ -279,14 +298,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
     	
 				showNotification("Making the selected sub-heatmap.", duration = 2, type = "message")
 
-			  	lt = get_pos_from_brush(input[[qq("@{heatmap_id}_heatmap_brush")]])
-			  	pos1 = lt[[1]]
-			  	pos2 = lt[[2]]
-			    
-			    ht_list = shiny_env[[heatmap_id]]$ht_list
-			    selected = selectArea(ht_list, mark = FALSE, pos1 = pos1, pos2 = pos2, verbose = FALSE, ht_pos = shiny_env[[heatmap_id]]$ht_pos, include_annotation = TRUE, calibrate = FALSE)
-			    shiny_env[[heatmap_id]]$selected = selected
-
+				selected = shiny_env[[heatmap_id]]$selected
 			    if(is.null(selected)) {
 			    	grid.newpage()
 					grid.text("Selected area should overlap to heatmap bodies", 0.5, 0.5)
@@ -318,7 +330,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 							if(show_annotation) {
 								top_annotation = ht_current_full@top_annotation
 								if(!is.null(top_annotation)) {
-									ind_subsettable = sapply(top_annotation@anno_list, function(x) x@subsetable && !x@fun@fun_name %in% c("anno_mark", "anno_zoom"))
+									ind_subsettable = which(sapply(top_annotation@anno_list, function(x) x@subsetable))
 									if(length(ind_subsettable)) {
 										top_annotation = top_annotation[ci, ind_subsettable]
 										top_annotation@anno_list = lapply(top_annotation@anno_list, function(x) {
@@ -331,7 +343,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 								}
 								bottom_annotation = ht_current_full@bottom_annotation
 								if(!is.null(bottom_annotation)) {
-									ind_subsettable = sapply(bottom_annotation@anno_list, function(x) x@subsetable && !x@fun@fun_name %in% c("anno_mark", "anno_zoom"))
+									ind_subsettable = which(sapply(bottom_annotation@anno_list, function(x) x@subsetable))
 									if(length(ind_subsettable)) {
 										bottom_annotation = bottom_annotation[ci, ind_subsettable]
 										bottom_annotation@anno_list = lapply(bottom_annotation@anno_list, function(x) {
@@ -344,7 +356,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 								}
 								left_annotation = ht_current_full@left_annotation
 								if(!is.null(left_annotation)) {
-									ind_subsettable = sapply(left_annotation@anno_list, function(x) x@subsetable && !x@fun@fun_name %in% c("anno_mark", "anno_zoom"))
+									ind_subsettable = which(sapply(left_annotation@anno_list, function(x) x@subsetable))
 									if(length(ind_subsettable)) {
 										left_annotation = left_annotation[ri, ind_subsettable]
 										left_annotation@anno_list = lapply(left_annotation@anno_list, function(x) {
@@ -357,7 +369,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 								}
 								right_annotation = ht_current_full@right_annotation
 								if(!is.null(right_annotation)) {
-									ind_subsettable = sapply(right_annotation@anno_list, function(x) x@subsetable && !x@fun@fun_name %in% c("anno_mark", "anno_zoom"))
+									ind_subsettable = which(sapply(right_annotation@anno_list, function(x) x@subsetable))
 									if(length(ind_subsettable)) {
 										right_annotation = right_annotation[ri, ind_subsettable]
 										right_annotation@anno_list = lapply(right_annotation@anno_list, function(x) {
@@ -375,11 +387,11 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 								right_annotation = NULL
 							}
 
-							row_labels = ht@row_names_param$labels
+							row_labels = ht_current_full@row_names_param$labels
 							if(!is.null(row_labels)) {
 								row_labels = row_labels[ri]
 							}
-							column_labels = ht@column_names_param$labels
+							column_labels = ht_current_full@column_names_param$labels
 							if(!is.null(column_labels)) {
 								column_labels = column_labels[ci]
 							}
@@ -411,6 +423,49 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 								cell_fun = NULL
 								layer_fun = NULL
 							}
+
+							ignored_anno = c("anno_oncoprint_barplot", "anno_mark", "anno_zoom")
+							if(!is.null(top_annotation)) {
+								if(length(top_annotation) == 1) {
+									if(top_annotation@anno_list[[1]]@fun@fun_name %in% ignored_anno) {
+										top_annotation = NULL
+									}
+								} else {
+									ind = which(sapply(top_annotation@anno_list, function(x) !x@fun@fun_name %in% ignored_anno))
+									top_annotation = top_annotation[, ind]
+								}
+							}
+							if(!is.null(bottom_annotation)) {
+								if(length(bottom_annotation) == 1) {
+									if(bottom_annotation@anno_list[[1]]@fun@fun_name %in% ignored_anno) {
+										bottom_annotation = NULL
+									}
+								} else {
+									ind = which(sapply(bottom_annotation@anno_list, function(x) !x@fun@fun_name %in% ignored_anno))
+									bottom_annotation = bottom_annotation[, ind]
+								}
+							}
+							if(!is.null(left_annotation)) {
+								if(length(left_annotation) == 1) {
+									if(left_annotation@anno_list[[1]]@fun@fun_name %in% ignored_anno) {
+										left_annotation = NULL
+									}
+								} else {
+									ind = which(sapply(left_annotation@anno_list, function(x) !x@fun@fun_name %in% ignored_anno))
+									left_annotation = left_annotation[, ind]
+								}
+							}
+							if(!is.null(right_annotation)) {
+								if(length(right_annotation) == 1) {
+									if(right_annotation@anno_list[[1]]@fun@fun_name %in% ignored_anno) {
+										right_annotation = NULL
+									}
+								} else {
+									ind = which(sapply(right_annotation@anno_list, function(x) !x@fun@fun_name %in% ignored_anno))
+									right_annotation = right_annotation[, ind]
+								}
+							}
+							
 							ht_current = Heatmap(subm, rect_gp = ht_current_full@matrix_param$gp,
 								row_split = rs, column_split = cs,
 						    	col = ht_current_full@matrix_color_mapping,
@@ -427,10 +482,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 								right_annotation = right_annotation,
 								cell_fun = cell_fun, layer_fun = layer_fun
 							)
-							if(!is.null(ht_current_full@heatmap_param$oncoprint_env)) {
-								ht_current@top_annotation = NULL
-								ht_current@right_annotation = NULL
-							}
+							
 						} else {
 							if(show_annotation) {
 								ha = ht_current_full
@@ -472,113 +524,132 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 				}
 			}
 		})
-
-		output[[qq("@{heatmap_id}_info")]] = renderUI({
-			selected = shiny_env[[heatmap_id]]$selected
-			if(is.null(selected)) {
-				HTML("<p>Selected area should overlap to heatmap bodies.</p>")
-			} else {
-				n_ht = length(unique(selected$heatmap))
-
-				ht_list = shiny_env[[heatmap_id]]$ht_list
-				if(ht_list@direction == "horizontal") {
-					l1 = !duplicated(selected$row_slice)
-					nr = length(unlist(selected$row_index[l1]))
-
-					l2 = !duplicated(paste0(selected$heatmap, selected$column_slice))
-					nc = length(unlist(selected$column_index[l2]))
+	
+		if(default_brush_action) {
+			output[[qq("@{heatmap_id}_info")]] = renderUI({
+				selected = shiny_env[[heatmap_id]]$selected
+				if(is.null(selected)) {
+					HTML("<p>Selected area should overlap to heatmap bodies.</p>")
 				} else {
-					l1 = !duplicated(paste0(selected$heatmap, selected$row_slice))
-					nr = length(unlist(selected$row_index[l1]))
+					n_ht = length(unique(selected$heatmap))
 
-					l2 = !duplicated(selected$column_slice)
-					nc = length(unlist(selected$column_index[l2]))
+					ht_list = shiny_env[[heatmap_id]]$ht_list
+					if(ht_list@direction == "horizontal") {
+						l1 = !duplicated(selected$row_slice)
+						nr = length(unlist(selected$row_index[l1]))
+
+						l2 = !duplicated(paste0(selected$heatmap, selected$column_slice))
+						nc = length(unlist(selected$column_index[l2]))
+					} else {
+						l1 = !duplicated(paste0(selected$heatmap, selected$row_slice))
+						nr = length(unlist(selected$row_index[l1]))
+
+						l2 = !duplicated(selected$column_slice)
+						nc = length(unlist(selected$column_index[l2]))
+					}
+
+					selected_df = as.data.frame(selected)
+					shiny_env$history[[ digest(selected_df) ]] = selected_df
+
+					con = textConnection("dump_txt", "w")
+					dump("selected_df", file = con)
+					close(con)
+					dump_txt = dump_txt[-1]
+					dump_txt = paste(dump_txt, collapse = "\n")
+					HTML(paste(
+						  qq("<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. Row and column indices can be obtained by copying following code:</p>"),
+						  qq("<p><input id='@{heatmap_id}_show_code' type='button' value='show/hide code' /></p>"),
+						  qq("<pre id='@{heatmap_id}_code'>"),
+						  dump_txt,
+						  "</pre>",
+						  "<script>",
+						  qq("$('#@{heatmap_id}_code').hide();"),
+						  qq("$('#@{heatmap_id}_show_code').click(function(){ $('#@{heatmap_id}_code').toggle(); });"),
+						  "</script>",
+						  
+						  sep = "\n"))
 				}
+			})
+		}
 
-				selected_df = as.data.frame(selected)
-				shiny_env$history[[ digest(selected_df) ]] = selected_df
-
-				con = textConnection("dump_txt", "w")
-				dump("selected_df", file = con)
-				close(con)
-				dump_txt = dump_txt[-1]
-				dump_txt = paste(dump_txt, collapse = "\n")
-				HTML(paste(
-					  qq("<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. Row and column indices can be obtained by copying following code:</p>"),
-					  qq("<p><input id='@{heatmap_id}_show_code' type='button' value='show/hide code' /></p>"),
-					  qq("<pre id='@{heatmap_id}_code'>"),
-					  dump_txt,
-					  "</pre>",
-					  "<script>",
-					  qq("$('#@{heatmap_id}_code').hide();"),
-					  qq("$('#@{heatmap_id}_show_code').click(function(){ $('#@{heatmap_id}_code').toggle(); });"),
-					  "</script>",
-					  
-					  sep = "\n"))
-			}
-		})
+		if(!is.null(brush_action)) {
+			brush_action(shiny_env[[heatmap_id]]$selected, output)
+		}
 		
 	})
 
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_click")]], {
 		
-		output[[qq("@{heatmap_id}_info")]] = renderUI({
-
-			pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]])
-		    
-		    if(is.null(pos1)) {
-		    	HTML("<p>No position is selected.</p>")
-		    } else {
-		    	showNotification(qq("Click on the heatmap."), duration = 2, type = "message")
-
-			    ht_list = shiny_env[[heatmap_id]]$ht_list
-			    pos = selectPosition(ht_list, mark = FALSE, pos = pos1, verbose = FALSE, ht_pos = shiny_env[[heatmap_id]]$ht_pos, calibrate = FALSE)
+		pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]])
+		  
+		if(is.null(pos1)) {
+			shiny_env[[heatmap_id]]$selected = NULL
+		} else {
+			ht_list = shiny_env[[heatmap_id]]$ht_list
+			pos = selectPosition(ht_list, mark = FALSE, pos = pos1, verbose = FALSE, ht_pos = shiny_env[[heatmap_id]]$ht_pos, calibrate = FALSE)
 					
-				if(is.null(pos)) {
-					HTML("<p>You did not select inside the heatmap.</p>")
-				} else {
-					ht_name = pos[1, "heatmap"]
-					slice_name = pos[1, "slice"]
-			
-					row_index = pos[1, "row_index"][[1]]
-				    column_index = pos[1, "column_index"][[1]]
-				    m = ht_list@ht_list[[ht_name]]@matrix
-				    v = m[row_index, column_index]
+			shiny_env[[heatmap_id]]$selected = pos
+		}
 
-				    if(is.null(ht@heatmap_param$oncoprint_env)) {
-				    	col = map_to_colors(ht_list@ht_list[[ht_name]]@matrix_color_mapping, v)
-				    } else {
-				    	col = NA
-				    }
-				    row_label = rownames(m)[row_index]
-				    column_label = colnames(m)[column_index]
-				    if(is.null(row_label)) {
-				    	row_label = "NULL"
-				    } else {
-				    	# row_label = paste0("'", row_label, "'")
-				    }
-				    if(is.null(column_label)) {
-				    	column_label = "NULL"
-				    } else {
-				    	# column_label = paste0("'", column_label, "'")
-				    }
+		if(default_click_action) {
+			output[[qq("@{heatmap_id}_info")]] = renderUI({
 
-				    message(qq("[@{Sys.time()}] click on the heatmap @{slice_name}."))
-					
-					HTML(paste("<p>Information of the clicked position:</p>",
-						  "<pre>",
-						  qq("heatmap: @{ht_name}"),
-						  qq("heatmap slice: @{slice_name}"),
-						  qq("row index: @{row_index}"),
-						  qq("row label: @{row_label}"),
-						  qq("column index: @{column_index}"),
-						  qq("column_label: @{column_label}"),
-						  ifelse(is.na(col), qq("value: @{v}"), qq("value: @{v} <span style='background-color:@{col};width=10px;'>    </span>")),
-						  "</pre>",
-						  sep = "\n"))
+			    if(is.null(pos1)) {
+			    	HTML("<p>No position is selected.</p>")
+			    } else {
+			    	showNotification(qq("Click on the heatmap."), duration = 2, type = "message")
+			    	pos = shiny_env[[heatmap_id]]$selected
+
+					if(is.null(pos)) {
+						HTML("<p>You did not select inside the heatmap.</p>")
+					} else {
+						ht_name = pos[1, "heatmap"]
+						slice_name = pos[1, "slice"]
+				
+						row_index = pos[1, "row_index"][[1]]
+					    column_index = pos[1, "column_index"][[1]]
+					    m = ht_list@ht_list[[ht_name]]@matrix
+					    v = m[row_index, column_index]
+
+					    if(is.null(ht_list@ht_list[[ht_name]]@heatmap_param$oncoprint_env)) {
+					    	col = map_to_colors(ht_list@ht_list[[ht_name]]@matrix_color_mapping, v)
+					    } else {
+					    	col = NA
+					    }
+					    row_label = rownames(m)[row_index]
+					    column_label = colnames(m)[column_index]
+					    if(is.null(row_label)) {
+					    	row_label = "NULL"
+					    } else {
+					    	# row_label = paste0("'", row_label, "'")
+					    }
+					    if(is.null(column_label)) {
+					    	column_label = "NULL"
+					    } else {
+					    	# column_label = paste0("'", column_label, "'")
+					    }
+
+					    message(qq("[@{Sys.time()}] click on the heatmap @{slice_name}."))
+						
+						HTML(paste("<p>Information of the clicked position:</p>",
+							  "<pre>",
+							  qq("heatmap: @{ht_name}"),
+							  qq("heatmap slice: @{slice_name}"),
+							  qq("row index: @{row_index}"),
+							  qq("row label: @{row_label}"),
+							  qq("column index: @{column_index}"),
+							  qq("column_label: @{column_label}"),
+							  ifelse(is.na(col), qq("value: @{v}"), qq("value: @{v} <span style='background-color:@{col};width=10px;'>    </span>")),
+							  "</pre>",
+							  sep = "\n"))
+					}
 				}
-			}
-		})
+			})
+		}
+
+		if(!is.null(click_action)) {
+			click_action(shiny_env[[heatmap_id]]$selected, output)
+		}
 	})
 }
 

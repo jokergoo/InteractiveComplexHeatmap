@@ -1,0 +1,23 @@
+---
+title: "InteractiveComplexHeatmap in an Rmarkdown document"
+author: "Zuguang Gu"
+date: "16/12/2020"
+output: html_document
+runtime: shiny
+---
+
+
+```{r}
+library(InteractiveComplexHeatmap)
+m = matrix(rnorm(100*100), 100)
+ht = Heatmap(m)
+```
+
+
+```{r}
+InteractiveComplexHeatmapOutput()
+
+MakeInteractiveComplexHeatmap(ht, input, output, session)
+```
+
+

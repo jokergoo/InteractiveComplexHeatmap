@@ -7,12 +7,13 @@ Interactive heatmaps with a shiny app
 Interactive heatmaps with a shiny app
 }
 \usage{
-ht_shiny(ht_list, ...)
+ht_shiny(ht_list, ..., html = NULL)
 }
 \arguments{
 
   \item{ht_list}{A \code{\link[ComplexHeatmap]{Heatmap-class}} or a \code{\link[ComplexHeatmap]{HeatmapList-class}} object. If it is not specified, a random heatmap is used. Better be updated by \code{draw()} function.}
   \item{...}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{html}{HTML fragment inserted below the heatmap.}
 
 }
 \seealso{
