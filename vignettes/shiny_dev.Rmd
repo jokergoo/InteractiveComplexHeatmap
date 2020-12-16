@@ -85,3 +85,8 @@ shinyApp(ui, server)
 ```
 
 <img src="app_demo2.png" width="100%" />
+
+## Work with R Markdown documents
+
+## Self-define output
+
