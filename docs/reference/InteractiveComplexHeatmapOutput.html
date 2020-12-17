@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>HTML code generated for interactive ComplexHeatmap — InteractiveComplexHeatmapOutput • InteractiveComplexHeatmap</title>
+<title>UI for the interactive ComplexHeatmap — InteractiveComplexHeatmapOutput • InteractiveComplexHeatmap</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="HTML code generated for interactive ComplexHeatmap — InteractiveComplexHeatmapOutput" />
-<meta property="og:description" content="HTML code generated for interactive ComplexHeatmap" />
+<meta property="og:title" content="UI for the interactive ComplexHeatmap — InteractiveComplexHeatmapOutput" />
+<meta property="og:description" content="UI for the interactive ComplexHeatmap" />
 
 
 
@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1007</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1015</span>
       </span>
     </div>
 
@@ -126,18 +126,20 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>HTML code generated for interactive ComplexHeatmap</h1>
+    <h1>UI for the interactive ComplexHeatmap</h1>
     
     <div class="hidden name"><code>InteractiveComplexHeatmapOutput.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>HTML code generated for interactive ComplexHeatmap</p>
+    <p>UI for the interactive ComplexHeatmap</p>
     </div>
 
     <pre class="usage"><span class='fu'>InteractiveComplexHeatmapOutput</span><span class='op'>(</span>heatmap_id <span class='op'>=</span> <span class='cn'>NULL</span>,
-    width1 <span class='op'>=</span> <span class='fl'>400</span>, height1 <span class='op'>=</span> <span class='fl'>350</span>, width2 <span class='op'>=</span> <span class='fl'>370</span>, height2 <span class='op'>=</span> <span class='fl'>350</span>,
-    nrow <span class='op'>=</span> <span class='fl'>1</span>, brush_opt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>, css <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span></pre>
+    title1 <span class='op'>=</span> <span class='st'>"Original heatmap"</span>, title2 <span class='op'>=</span> <span class='st'>"Selected sub-heatmap"</span>,
+    width1 <span class='op'>=</span> <span class='fl'>400</span>, height1 <span class='op'>=</span> <span class='fl'>350</span>, width2 <span class='op'>=</span> <span class='fl'>370</span>, height2 <span class='op'>=</span> <span class='fl'>350</span>, nrow <span class='op'>=</span> <span class='fl'>1</span>,
+    action <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"click"</span>, <span class='st'>"hover"</span>, <span class='st'>"dblclick"</span><span class='op'>)</span>, brush_opt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+    output_div <span class='op'>=</span> <span class='cn'>TRUE</span>, css <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -145,6 +147,14 @@
     <tr>
       <th>heatmap_id</th>
       <td><p>ID of the plot. If it is not specified, an internal ID is assigned.</p></td>
+    </tr>
+    <tr>
+      <th>title1</th>
+      <td><p>Title of the original heatmap.</p></td>
+    </tr>
+    <tr>
+      <th>title2</th>
+      <td><p>Title of the sub-heatmap.</p></td>
     </tr>
     <tr>
       <th>width1</th>
@@ -164,11 +174,19 @@
     </tr>
     <tr>
       <th>nrow</th>
-      <td><p>Should the two heatmap div put in one row or in two rows? Value should be either 1 or 2.</p></td>
+      <td><p>Should the two heatmap <code>div</code> be put in one row or in two rows? Value should be either 1 or 2.</p></td>
+    </tr>
+    <tr>
+      <th>action</th>
+      <td><p>Which action for selecting the cell on the heatmap? Value should be <code>click</code>, <code>hover</code> or <code>dblclick</code>.</p></td>
     </tr>
     <tr>
       <th>brush_opt</th>
       <td><p>A list of parameters passed to <code><a href='https://shiny.rstudio.com/reference/shiny/latest/brushOpts.html'>brushOpts</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>output_div</th>
+      <td><p>Whether to add the output <code>div</code></p></td>
     </tr>
     <tr>
       <th>css</th>
@@ -186,6 +204,9 @@
 <li><p><code>#{heatmap_id}_info</code>: to put the information of the selected position/area.</p></li>
 </ul>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A UI that can be used in shiny.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='co'># There is no example</span>

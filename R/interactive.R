@@ -21,9 +21,6 @@
 # == value
 # A `S4Vectors::DataFrame` object with row indices and column indices corresponding to the selected region.
 #
-# == author
-# Zuguang Gu <z.gu@dkfz.de>
-#
 # == example
 # if(dev.interactive()) {
 # m = matrix(rnorm(100), 10)
@@ -325,9 +322,6 @@ selectArea = function(ht_list, pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = 
 # == value
 # A `S4Vectors::DataFrame` object with row indices and column indices corresponding to the selected position.
 #
-# == author
-# Zuguang Gu <z.gu@dkfz.de>
-#
 # == example
 # if(dev.interactive()) {
 # m = matrix(rnorm(100), 10)
@@ -532,7 +526,8 @@ selectPosition = function(ht_list, pos = NULL, mark = TRUE, verbose = TRUE,
 #
 # InteractiveComplexHeatmap:::redraw_ht_vp(pos)
 # }
-ht_pos_on_device = function(ht_list, unit = "inch", valueOnly = FALSE, include_annotation = FALSE, calibrate = TRUE) {
+ht_pos_on_device = function(ht_list, unit = "inch", valueOnly = FALSE, 
+	include_annotation = FALSE, calibrate = TRUE) {
 	
 	if(calibrate) {
 		if(validate_RStudio_desktop()) {

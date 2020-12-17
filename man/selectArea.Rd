@@ -30,6 +30,7 @@ A \code{\link[S4Vectors:DataFrame-class]{DataFrame}} object with row indices and
 }
 \author{
 Zuguang Gu <z.gu@dkfz.de>
+
 }
 \examples{
 if(dev.interactive()) {

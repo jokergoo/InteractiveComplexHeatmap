@@ -2,6 +2,7 @@
 
 m = matrix(rnorm(100*100), 100)
 ht = Heatmap(m)
+ht = draw(ht)
 
 ht_shiny(ht)
 
@@ -9,10 +10,11 @@ ht_shiny(ht)
 
 m = matrix(sample(letters[1:10], 100*100, replace = TRUE), 100)
 ht = Heatmap(m)
+ht = draw(ht)
 
 ht_shiny(ht)
 
-# title: With heatmap annotations on both rows and columns.
+# title: A single heatmap with annotations on both rows and columns.
 
 m = matrix(rnorm(100*100), 100)
 rownames(m) = paste0("R", 1:100)
@@ -21,6 +23,7 @@ ht = Heatmap(m,
 	top_annotation = HeatmapAnnotation(foo = runif(100)),
 	left_annotation = rowAnnotation(bar = anno_points(1:100)),
 	show_row_names = FALSE, show_column_names = FALSE)
+ht = draw(ht)
 
 ht_shiny(ht)
 
@@ -34,6 +37,7 @@ ht = Heatmap(m,
 	left_annotation = rowAnnotation(bar = anno_points(1:100)),
 	show_row_names = FALSE, show_column_names = FALSE,
 	row_km = 2, column_km = 3)
+ht = draw(ht)
 
 ht_shiny(ht)
 
@@ -55,12 +59,15 @@ ht2 = Heatmap(m,
 	right_annotation = rowAnnotation(bar2 = anno_points(1:100)),
 	show_row_names = FALSE, show_column_names = FALSE)
 
-ht_shiny(ht1 + ht2, width1 = 600)
+ht_list = ht1 + ht2
+ht_list = draw(ht_ist)
+ht_shiny(ht_list, width1 = 600)
 
 # title: A density heatmap.
 
 m = matrix(rnorm(100*100), 100)
 ht = densityHeatmap(m)
+ht = draw(ht)
 
 ht_shiny(ht)
 
@@ -111,6 +118,7 @@ ht = oncoPrint(mat,
 	left_annotation = rowAnnotation(foo2 = 1:26),
 	right_annotation = rowAnnotation(bar2 = anno_barplot(1:26)),
 	column_title = column_title, heatmap_legend_param = heatmap_legend_param)
+ht = draw(ht)
 
 ht_shiny(ht, width1 = 800)
 
@@ -122,6 +130,7 @@ movies = read.csv(system.file("extdata", "movies.csv", package = "UpSetR"),
 m = make_comb_mat(movies, top_n_sets = 10)
 m = m[comb_degree(m) > 0]
 ht = UpSet(m)
+ht = draw(ht)
 
 ht_shiny(ht, width1 = 800)
 
@@ -153,6 +162,7 @@ ann_colors = list(
 
 p = pheatmap(test, annotation_col = annotation_col, annotation_row = annotation_row, 
     annotation_colors = ann_colors)
+p = draw(p)
 
 ht_shiny(p)
 
@@ -167,6 +177,8 @@ ht = ComplexHeatmap::heatmap(x, col = cm.colors(256), scale = "column",
               RowSideColors = rc, ColSideColors = cc, margins = c(5,10),
               xlab = "specification variables", ylab =  "Car Models",
               main = "heatmap(<Mtcars data>, ..., scale = \"column\")")
+ht = draw(ht)
+
 ht_shiny(ht)
 
 
@@ -177,6 +189,7 @@ x = as.matrix(mtcars)
 
 # note `heatmap.2()` should be from ComplexHeatmap package
 ht = ComplexHeatmap::heatmap.2(x, col = gplots::bluered, scale = "column", tracecol = "#303030")
+ht = draw(ht)
 
 ht_shiny(ht)
 
@@ -194,10 +207,11 @@ col_fun = colorRamp2(quantile(mat1, c(0, 0.99)), c("white", "red"))
 
 ht = EnrichedHeatmap(mat1, col = col_fun, name = "H3K4me3", row_km = 3,
     column_title = "Enrichment of H3K4me3", row_title_rot = 0)
+ht = draw(ht)
 
 ht_shiny(ht, width1 = 300, height1 = 600)
 
-# title: A list of multiple enriched heatmaps.
+# title: A list of enriched heatmaps.
 
 library(EnrichedHeatmap)
 load(system.file("extdata", "chr21_test_data.RData", package = "EnrichedHeatmap"))
@@ -213,13 +227,14 @@ mat2 = normalizeToMatrix(meth, tss, value_column = "meth", mean_mode = "absolute
     extend = 5000, w = 50, background = NA, smooth = TRUE)
 meth_col_fun = colorRamp2(c(0, 0.5, 1), c("blue", "white", "red"))
 
-ht = EnrichedHeatmap(mat1, col = col_fun, name = "H3K4me3",
-    top_annotation = HeatmapAnnotation(enrich = anno_enriched(axis_param = list(side = "left")))) + 
-EnrichedHeatmap(mat2, col = meth_col_fun, name = "methylation") +
-Heatmap(log2(rpkm+1), col = c("white", "orange"), name = "log2(rpkm+1)", 
-    show_row_names = FALSE, width = unit(5, "mm"))
+ht_list = EnrichedHeatmap(mat1, col = col_fun, name = "H3K4me3",
+	    top_annotation = HeatmapAnnotation(enrich = anno_enriched(axis_param = list(side = "left")))) + 
+	EnrichedHeatmap(mat2, col = meth_col_fun, name = "methylation") +
+	Heatmap(log2(rpkm+1), col = c("white", "orange"), name = "log2(rpkm+1)", 
+	    show_row_names = FALSE, width = unit(5, "mm"))
+ht_list = draw(ht_list)
 
-ht_shiny(ht, width1 = 600, height1 = 600)
+ht_shiny(ht_list, width1 = 600, height1 = 600)
 
 # title: An enriched heatmap with discrete signals. Note, this example may take long time for preparing the data for heatmaps.
 
@@ -277,6 +292,7 @@ tss_chr1 = tss[seqnames(tss) == "chr1"]
 mat_states = normalizeToMatrix(states, tss_chr1, value_column = "states_simplified")
 
 ht = EnrichedHeatmap(mat_states, name = "states", col = states_col, cluster_rows = TRUE)
+ht = draw(ht)
 
 ht_shiny(ht, width1 = 300, height1 = 600)
 
@@ -298,6 +314,7 @@ mtcars_heatmap <-
     mtcars_tidy %>% 
         heatmap(`Car name`, Property, Value ) %>%
         add_tile(hp)
+mtcars_heatmap = draw(mtcars_heatmap)
 
 ht_shiny(mtcars_heatmap)
 
@@ -681,16 +698,19 @@ shinyApp(ui, server)
 m = matrix(rnorm(100*100), 100)
 rownames(m) = paste0("R", 1:100)
 colnames(m) = paste0("C", 1:100)
-ht = Heatmap(m)
+ht = Heatmap(m, show_row_names = FALSE, show_column_names = FALSE, row_km = 2, column_km = 2)
+ht = draw(ht)
 
 ui = fluidPage(
-    InteractiveComplexHeatmapOutput(output_div = FALSE),
-    htmlOutput("test")
+    InteractiveComplexHeatmapOutput(),
+    htmlOutput("info")
 )
 
 click_action = function(df, output) {
-	output[["test"]] = renderUI({
-		HTML(qq("<p style='background-color:#FF8080;color:white;padding:5px;'>You have clicked on heatmap @{df$heatmap}, row @{df$row_index}, column @{df$column_index}</p>"))
+	output[["info"]] = renderUI({
+		if(!is.null(df)) {
+			HTML(qq("<p style='background-color:#FF8080;color:white;padding:5px;'>You have clicked on heatmap @{df$heatmap}, row @{df$row_index}, column @{df$column_index}</p>"))
+		}
 	})
 }
 
@@ -698,8 +718,10 @@ library(kableExtra)
 brush_action = function(df, output) {
 	row_index = unlist(df$row_index)
 	column_index = unlist(df$column_index)
-	output[["test"]] = renderUI({
-		HTML(kable_styling(kbl(m[row_index, column_index, drop = FALSE], digits = 2, format = "html")))
+	output[["info"]] = renderUI({
+		if(!is.null(df)) {
+			HTML(kable_styling(kbl(m[row_index, column_index, drop = FALSE], digits = 2, format = "html")))
+		}
 	})
 }
 
@@ -728,6 +750,7 @@ m = matrix(rnorm(n*n), n)
 rownames(m) = names(query)
 
 ht = Heatmap(m, show_row_names = FALSE)
+ht = draw(ht)
 
 ui = fluidPage(
     InteractiveComplexHeatmapOutput(),
@@ -736,10 +759,11 @@ ui = fluidPage(
 
 click_action = function(df, output) {
 	output[["gene_info"]] = renderUI({
-		g = rownames(m)[df$row_index]
+		if(!is.null(df)) {
+			g = rownames(m)[df$row_index]
 
-		to_str = function(x) paste(unique(x), collapse = ", ")
-		HTML(qq(
+			to_str = function(x) paste(unique(x), collapse = ", ")
+			HTML(qq(
 "<pre>
 Ensembl: <a href='https://www.ensembl.org/Homo_sapiens/Gene/Summary?g=@{g}' target='_blank'>@{g}</a>
 SYMBOL: @{to_str(query[[g]][, 'SYMBOL'])}
@@ -747,7 +771,7 @@ REFSEQ: @{to_str(query[[g]][, 'REFSEQ'])}
 UNIPROT: @{to_str(query[[g]][, 'UNIPROT'])}
 </pre>"
 ))
-
+		}
 	})
 }
 

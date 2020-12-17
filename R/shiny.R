@@ -3,18 +3,18 @@ shiny_env = new.env()
 shiny_env$history = list()
 
 # == title
-# HTML code generated for interactive ComplexHeatmap
+# UI for the interactive ComplexHeatmap
 #
 # == param
 # -heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
 # -title1 Title of the original heatmap.
-# -title2 Title of the second heatmap.
+# -title2 Title of the sub-heatmap.
 # -width1 Width of the original heatmap.
 # -height1 Height of the original heatmap.
 # -width2 Width of the sub-heatmap.
 # -height2 Height of the sub-heatmap.
-# -nrow Should the two heatmap div put in one row or in two rows? Value should be either 1 or 2. 
-# -action Which action for capturing. Value should be ``click``, ``hover`` or ``dblclick``.
+# -nrow Should the two heatmap ``div`` be put in one row or in two rows? Value should be either 1 or 2. 
+# -action Which action for selecting the cell on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`.
 # -output_div Whether to add the output ``div``
 # -css Self-defined CSS code.
@@ -32,6 +32,8 @@ shiny_env$history = list()
 #    is for JQuery-UI and it wraps the div ``#{heatmap_id}_sub_heatmap`` which is used by `shiny::plotOutput`.
 # - ``#{heatmap_id}_info``: to put the information of the selected position/area.
 #
+# == value
+# A UI that can be used in shiny.
 InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
 	width1 = 400, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
@@ -202,10 +204,14 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 # -session Passed from the shiny server function.
 # -heatmap_id The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app, 
 #     this argument does not need to be specified and it will use the current one specified in `InteractiveComplexHeatmapOutput`.
-# -click_action The action at the sever side when receiving a click event on the UI.
+# -click_action The action at the sever side when receiving a click event on the UI. If ``action`` is selected as ``hover``
+#        or ``dblclick`` in `InteractiveComplexHeatmapOutput`, then this argument controls the action for the hover or dblclick event.
 # -brush_action The action at the sever side when receiving a brush event on the UI.
 # -default_click_action Whether to apply the default click action on the sever side.
 # -default_brush_action Whether to apply the default brush action on the sever side.
+#
+# == value
+# No value is returned.
 #
 # == examples
 # if(interactive()) {
@@ -222,8 +228,18 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 #
 # shiny::shinyApp(ui, server)
 # }
-MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatmap_id = shiny_env$current_heatmap_id,
-	click_action = NULL, brush_action = NULL, default_click_action = TRUE, default_brush_action = TRUE) {
+MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, 
+	heatmap_id = shiny_env$current_heatmap_id,
+	click_action = NULL, brush_action = NULL, 
+	default_click_action = TRUE, default_brush_action = TRUE) {
+
+	if(inherits(ht_list, "Heatmap")) {
+		message("The heatmap is suggested to be updated by e.g. `ht = draw(ht)` before sending to the Shiny app.")
+	} else if(inherits(ht_list, "HeatmapList")) {
+		if(!ht_list@layout$initialized) {
+			message("The heatmap list is suggested to be udpated by e.g. `ht_list = draw(ht_list)` before sending to the Shiny app.")
+		}
+	}
 
 	output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
 		width = session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]]
@@ -236,9 +252,11 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 
 		shiny_env[[heatmap_id]]$selected = NULL
 
-		output[[qq("@{heatmap_id}_info")]] = renderUI({
-			HTML("<p>No position is selected.</p>")
-		})
+		if(default_click_action || default_brush_action) {
+			output[[qq("@{heatmap_id}_info")]] = renderUI({
+				HTML("<p>No position is selected.</p>")
+			})
+		}
 
 		for(i in seq_along(shiny_env[[heatmap_id]]$ht_list@ht_list)) {
 			if(inherits(shiny_env[[heatmap_id]]$ht_list@ht_list[[i]], "Heatmap")) {
@@ -264,9 +282,11 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, heatma
 		message(qq("[@{Sys.time()}] no area on the heatmap is selected, Do not make the sub-heatmap."))
 	})
 
-	output[[qq("@{heatmap_id}_info")]] = renderUI({
-		HTML("<p>No position is selected.</p>")
-	})
+	if(default_click_action || default_brush_action) {
+		output[[qq("@{heatmap_id}_info")]] = renderUI({
+			HTML("<p>No position is selected.</p>")
+		})
+	}
 
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
 

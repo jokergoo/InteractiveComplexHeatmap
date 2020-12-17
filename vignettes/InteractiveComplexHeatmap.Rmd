@@ -4,6 +4,7 @@ author: "Zuguang Gu ( z.gu@dkfz.de )"
 date: "`r Sys.Date()`"
 output: 
     rmarkdown::html_vignette:
+        self_contained: false
         width: 8
         fig_width: 5
 vignette: >
@@ -22,7 +23,7 @@ knitr::opts_chunk$set(
     warning = FALSE,
     fig.align = "center"
 )
-library(InteractiveComplexHeatmap)
+suppressPackageStartupMessages(library(InteractiveComplexHeatmap))
 ```
 
 <style>
@@ -31,6 +32,8 @@ p {
 }
 </style>
 
+## Usage
+
 The **InteractiveComplexHeatmap** package is very straightforward to use. For
 any heatmap (or list of heatmaps as a `Heatmap` or `HeatmapList` object)
 produced from **ComplexHeatmap** package, you just use the function
@@ -38,7 +41,7 @@ produced from **ComplexHeatmap** package, you just use the function
 
 You can copy and paste the following code:
 
-```{r, eval = FALSE}
+```r
 library(InteractiveComplexHeatmap)
 m = matrix(rnorm(100*100), nrow = 100)
 ht = Heatmap(ht)
@@ -65,13 +68,12 @@ The data is from
 with slightly changing the original code for making heatmaps.
 
 In this Shiny app, users can click on the orignal heatmap or select an area
-from it. The information of the area selected by users can be found in the
-text below the heatmaps. If an area is selected, the row and column indices
-for all selected heatmaps can be obtained from a automatically generated
-sourcable code, which can also be found below the heatmap. Both heatmaps can
-be resized by dragging from the bottom right.
+from it. The information of the position or the area selected by users can be
+found in the text below the heatmaps. If an area is selected, a sub-heatmap is
+drawn on the right side of the app. Both heatmaps can be resized by dragging
+from the bottom right.
 
-<p><img width='100%' style='border:1px solid grey;padding: 4px;'  src='example3.gif' /></p>
+<p><img width='100%' style='border:1px solid grey;padding: 4px;'  src='https://user-images.githubusercontent.com/449218/102546398-dfa11200-40b7-11eb-92ef-2e2c579472bc.gif' /></p>
 
 Please note, if the heatmap is too huge or you resize the heatmap too
 frequently, the heatmap might not be correctly updated. You can just slightly
@@ -87,10 +89,11 @@ There are two other vignettes focusing on more specific topics:
 
 ## Live examples
 
-The following code demostrates two horizontally concatenated heatmaps. Check
-Please visit https://jokergoo.shinyapps.io/interactive_complexheatmap/ for a live demo.
+The following code demostrates two horizontally concatenated heatmaps. Please
+visit https://jokergoo.shinyapps.io/interactive_complexheatmap/ for a live
+demo.
 
-```{r, eval = FALSE}
+```r
 set.seed(123)
 mat1 = matrix(rnorm(100), 10)
 rownames(mat1) = colnames(mat1) = paste0("a", 1:10)
@@ -99,61 +102,186 @@ rownames(mat2) = colnames(mat2) = paste0("b", 1:10)
 
 ht_list = Heatmap(mat1, name = "mat_a", row_km = 2, column_km = 2) +
     Heatmap(mat2, name = "mat_b")
+ht_shiny(ht_list)
 ```
 
 The following code demostrates two vertically concatenated heatmaps. Check
 https://jokergoo.shinyapps.io/interactive_complexheatmap_vertical/ for a live demo.
 
-```{r, eval = FALSE}
+```r
 ht_list = Heatmap(mat1, name = "mat_a", row_km = 2, column_km = 2) %v%
     Heatmap(mat2, name = "mat_b")
 ht_shiny(ht_list)
 ```
 
-`ComplexHeatmap::densityHeatmap()` returns a `Heatmap` object, so it can also be exported into a Shiny app.
-Check https://jokergoo.shinyapps.io/interactive_densityheatmap/ for a live demo.
 
-```{r, eval = FALSE}
-ht = densityHeatmap(mat1)
+## Integrate with other plots and packages 
+
+The functionality of the interactivity is general. It can be applied to any
+heatmap as long as it is generated from the **ComplexHeatmap** package. Thus,
+it can trun many other plots into an interactive app.
+
+### Interactive density heatmap
+
+`ComplexHeatmap::densityHeatmap()` returns a `Heatmap` object, so it can
+be exported as a Shiny app. Check
+https://jokergoo.shinyapps.io/interactive_densityheatmap/ for a live demo. The
+example can also be run locally by executing `ht_shiny_example(12)`. The usage
+of `ht_shiny_example()` will be introduced later and in the webpage opened by
+`ht_shiny_example()` there is also the source code for generating this Shiny app.
+
+```r
+ht = densityHeatmap(...)
 ht_shiny(ht)
 ```
 
-[**EnrichedHeatmap**](https://www.bioconductor.org/packages/release/bioc/html/EnrichedHeatmap.html)
-also outputs `Heatmap` objects, thus, an "enriched heatmap" can be exported
-into a Shiny app as well. Check
-https://jokergoo.shinyapps.io/interactive_enrichedheatmap/ for a live demo.
+### Interactive oncoPrint
 
-```{r, eval = FALSE}
-library(EnrichedHeatmap)
-load(system.file("extdata", "chr21_test_data.RData", package = "EnrichedHeatmap"))
-mat_meth = normalizeToMatrix(meth, cgi, value_column = "meth", 
-  mean_mode = "absolute", extend = 5000, w = 50, smooth = TRUE)
-ht = EnrichedHeatmap(mat_meth, name = "methylation", 
-  column_title = "methylation near CGI")
+`ComplexHeatmap::oncoPrint()` returns a `Heatmap` object, thus, the oncoPrint can be interactive.
+Example code is as follows. Check https://jokergoo.shinyapps.io/interactive_oncoprint/ for a live demo.
+The example can be run locally by executing `ht_shiny_example(7)`.
+
+```r
+ht = oncoPrint(...)
+ht_shiny(ht)
+
+ht = oncoPrint(...) + Heatmap(...) + rowAnnotation(...)
 ht_shiny(ht)
 ```
 
-Since **ComplexHeatmap** can [seamlessly integrate **pheatmap**](https://jokergoo.github.io/2020/05/06/translate-from-pheatmap-to-complexheatmap/), this means your pheatmap can be interactive!
+### Interactive UpSet plot
 
-```{r, eval = FALSE}
-ht = pheatmap(mat1)
+`ComplexHeatmap::UpSet()` returns a `Heatmap` object, thus, the UpSet plot generated by **ComplexHeatmap**
+can be interactive. It might be useful when you visualize many sets as the same time. Example code is as follows.
+Check https://jokergooo.shinyapps.io/interactive_upset/ for a live demo. The example can be run locally by executing `ht_shiny_example(8)`.
+
+```r
+cm = make_comb_mat(...)
+ht = UpSet(cm, ...)
 ht_shiny(ht)
 ```
+
+### Interactive enriched heatmap
+
+[**EnrichedHeatmap**](https://www.bioconductor.org/packages/release/bioc/html/EnrichedHeatmap.html) inherits
+**ComplexHeatmap** and it outputs `Heatmap` objects, thus, an "enriched heatmap" can be exported
+as a Shiny app as well. Check
+https://jokergoo.shinyapps.io/interactive_enrichedheatmap/ for a live demo. The example can be run locally by executing `ht_shiny_example(12)`.
+
+```r
+mat = normalizeToMatrix(...)
+ht = EnrichedHeatmap(mat, ...)
+ht_shiny(ht)
+```
+
+### Interactive pheatmap
+
+Since **ComplexHeatmap** can [seamlessly integrate
+**pheatmap**](https://jokergoo.github.io/2020/05/06/translate-from-pheatmap-to-complexheatmap/),
+this means your pheatmap can be interactive! Check
+https://jokergooo.shinyapps.io/interactive_pheatmap/. The example can be run locally by executing `ht_shiny_example(9)`.
+
+`ComplexHeatmap::pheatmap()` and `pheatmap::pheatmap()` have the same set of
+arguments and generate almost the same heatmaps, but be careful when you
+directly use `pheatmap()` without the namespace (the package name) prefix, you need
+to make sure it is from **ComplexHeatmap** if you want to use the interactive
+functionality. 
+
+```r
+ht = pheatmap(...) # ComplexHeatmap::pheatmap should overwrite pheatmap::pheatmap
+ht_shiny(ht)
+```
+
+
+### Interactive heatmap
+
+To facilitate the users who are still using `heatmap()` and `heatmap.2()`
+functions, to make the output of these two functions can be exported as
+interactive Shiny apps as well, from **ComplexHeatmap** version 2.7.2, two
+similar translation functions `ComplexHeatmap::heatmap()` and
+`ComplexHeatmap::heatmap.2()` which use the same set of arguments as the
+original functions and generate almost identical heatmaps. Then an interactive
+`heatmap()` will look like:
+
+```r
+ht = heatmap(...) # ComplexHeatmap::heatmap should overwrite stats::heatmap
+ht_shiny(ht)
+```
+
+An live example is at https://jokergooo.shinyapps.io/interactive_heatmap/. The
+example can be run locally by executing `ht_shiny_example(10)`.
+
+
+### Interactive heatmap.2
+
+Similarly, an interactive `heatmap.2()` looks like:
+
+```r
+ht = heatmap.2(...) # ComplexHeatmap::heatmap.2 should overwrite gplots::heatmap.2
+ht_shiny(ht)
+```
+
+An live example is at https://jokergooo.shinyapps.io/interactive_heatmap_2/.
+The example can be run locally by executing `ht_shiny_example(11)`.
+
+
+### Interactive tidyHeatmap
+
+[The **tidyHeatmap** package](https://CRAN.R-project.org/package=tidyHeatmap)
+basically wraps **ComplexHeatmap** and provides "a tidy way" for generating
+heatmaps. Since the final heatmap is actually generated by **ComplexHeatmap**,
+it can be directly exported as an interactive app. You can directly apply `ht_shiny()`
+on the object generated from **tidyHeatmap**. Check
+https://jokergooo.shinyapps.io/interactive_tidyheatmap/. The example can be
+run locally by executing `ht_shiny_example(15)`.
+
+
+```r
+library(tidyverse)
+library(tidyHeatmap)
+mtcars_tidy <- 
+    mtcars %>% 
+    as_tibble(rownames="Car name") %>% 
+    
+    # Scale
+    mutate_at(vars(-`Car name`, -hp, -vs), scale) %>%
+    
+    # tidyfy
+    pivot_longer(cols = -c(`Car name`, hp, vs), names_to = "Property", values_to = "Value")
+
+mtcars_heatmap <- 
+    mtcars_tidy %>% 
+        heatmap(`Car name`, Property, Value ) %>%
+        add_tile(hp)
+
+ht_shiny(mtcars_heatmap)
+```
+
 
 ## Examples shipped with the package
 
-There are many examples in the package which ...
+There are many other examples shipped with the **InteractiveComplexHeatmap**
+package. The list of examples can be obtained by executing
+`ht_shiny_example()` with no argument.
 
 
 ```{r}
 ht_shiny_example()
 ```
 
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
-<br />
+And you can select one specific example by sending the corresponding index to
+`ht_shiny_example()`, e.g. to run the example "4. A single heatmap where rows
+and columns are split.", simply run:
+
+```r
+ht_shiny_example(4)
+```
+
+Then the interactive heatmaps as well as the source code for generating the app
+will be available in the webpage.
+
+## SessionInfo
+
+```{r}
+sessionInfo()
+```

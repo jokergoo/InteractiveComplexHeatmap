@@ -19,6 +19,9 @@ ht_shiny(ht_list, ..., html = NULL)
 \seealso{
 \url{https://jokergoo.shinyapps.io/interactive_complexHeatmap/}
 }
+\value{
+No value is returned.
+}
 \examples{
 # use a random heatmap
 if(interactive()) {
