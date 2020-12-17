@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
     warning = FALSE,
     fig.align = "center"
 )
+library(InteractiveComplexHeatmap)
 ```
 
 <style>
@@ -31,9 +32,9 @@ p {
 </style>
 
 The **InteractiveComplexHeatmap** package is very straightforward to use. For
-any heatmap (or list of heatmaps, in a `Heatmap` or `HeatmapList` object)
-produced from **ComplexHeatmap** package, you can just use the function
-`ht_shiny()` to export it in a Shiny app.
+any heatmap (or list of heatmaps as a `Heatmap` or `HeatmapList` object)
+produced from **ComplexHeatmap** package, you just use the function
+`ht_shiny()` to export it as a Shiny app.
 
 You can copy and paste the following code:
 
@@ -41,7 +42,7 @@ You can copy and paste the following code:
 library(InteractiveComplexHeatmap)
 m = matrix(rnorm(100*100), nrow = 100)
 ht = Heatmap(ht)
-ht = draw(ht)
+ht = draw(ht) # not necessary, but recommended
 
 ht_shiny(ht)
 ```
@@ -52,11 +53,53 @@ To use `ht_shiny()`, the `Heatmap`/`HeatmapList` object is not necessary to be
 updated with `draw()` and it will be applied inside `ht_shiny()`
 automatically. However, updating by `draw()` will speed up the loading of the
 Shiny app because `draw()` applies clustering (which is normally the most
-time-consuming part) and saves it into the heatmap object. If your heatmap includes
-randomness, such as k-means clustring by setting `row_km` or `column_km` argument, then you
-must execute `draw()` before sending to `ht_shiny()`.
+time-consuming part) and the clustering results are saved the heatmap object.
+If your heatmap includes randomness, such as k-means clustring by setting
+`row_km` or `column_km` argument, then you must execute `draw()` before
+sending to `ht_shiny()`.
 
+
+Following screenshot demonstrates the Shiny app on rather complex heatmaps.
+The data is from
+[here](http://jokergoo.github.io/supplementary/ComplexHeatmap-supplementary1-4/supplS2_scRNASeq/supplS2_scRNAseq.html)
+with slightly changing the original code for making heatmaps.
+
+In this Shiny app, users can click on the orignal heatmap or select an area
+from it. The information of the area selected by users can be found in the
+text below the heatmaps. If an area is selected, the row and column indices
+for all selected heatmaps can be obtained from a automatically generated
+sourcable code, which can also be found below the heatmap. Both heatmaps can
+be resized by dragging from the bottom right.
+
+<p><img width='100%' style='border:1px solid grey;padding: 4px;'  src='example3.gif' /></p>
+
+Please note, if the heatmap is too huge or you resize the heatmap too
+frequently, the heatmap might not be correctly updated. You can just slightly
+resize the heatmap again and wait for several seconds (you might have already observed
+from the previous screenshot that the right heatmap was not properly drawn when I first
+resized it).
+
+There are two other vignettes focusing on more specific topics:
+
+- [How interactive ComplexHeatmap is implemented](implementation.html)
+- [Functions for Shiny app development](shiny_dev.html)
+
+
+## Live examples
+
+The following code demostrates two horizontally concatenated heatmaps. Check
 Please visit https://jokergoo.shinyapps.io/interactive_complexheatmap/ for a live demo.
+
+```{r, eval = FALSE}
+set.seed(123)
+mat1 = matrix(rnorm(100), 10)
+rownames(mat1) = colnames(mat1) = paste0("a", 1:10)
+mat2 = matrix(sample(letters[1:10], 100, replace = TRUE), 10)
+rownames(mat2) = colnames(mat2) = paste0("b", 1:10)
+
+ht_list = Heatmap(mat1, name = "mat_a", row_km = 2, column_km = 2) +
+    Heatmap(mat2, name = "mat_b")
+```
 
 The following code demostrates two vertically concatenated heatmaps. Check
 https://jokergoo.shinyapps.io/interactive_complexheatmap_vertical/ for a live demo.
@@ -97,28 +140,14 @@ ht = pheatmap(mat1)
 ht_shiny(ht)
 ```
 
-Following screenshot demonstrates the Shiny app on rather complex heatmaps. The data is from [here](http://jokergoo.github.io/supplementary/ComplexHeatmap-supplementary1-4/supplS2_scRNASeq/supplS2_scRNAseq.html) with slightly changing
-the original code for making heatmaps.
+## Examples shipped with the package
 
-In this Shiny app, users can click on the orignal heatmap or select an area
-from it. The information of the area selected by users can be found in the
-text below the heatmaps. If an area is selected, the row and column indices
-for all selected heatmaps can be obtained from a automatically generated
-sourcable code, which can also be found below the heatmap. Both heatmaps can
-be resized by dragging from the bottom right.
+There are many examples in the package which ...
 
-<p><img width='100%' style='border:1px solid grey;padding: 4px;'  src='example3.gif' /></p>
 
-Please note, if the heatmap is too huge or you resize the heatmap too
-frequently, the heatmap might not be correctly updated. You can just slightly
-resize the heatmap again and wait for several seconds (you might have already observed
-from the previous screenshot that the right heatmap was not properly drawn when I first
-resized it).
-
-There are two other vignettes focusing on more specific topics:
-
-- [How interactive ComplexHeatmap is implemented](implementation.html)
-- [Functions for Shiny app development](shiny_dev.html)
+```{r}
+ht_shiny_example()
+```
 
 <br />
 <br />

@@ -132,8 +132,9 @@ ht_shiny_example = function(which) {
 		which = which[1]
 		code = examples[[which]]$code
 
-		if(identical(code, "library(InteractiveComplexHeatmap)")) {
-			rmarkdown::run(system.file("examples", "rmarkdown.Rmd", package = "InteractiveComplexHeatmap"))
+		k = which(grepl("rmarkdown::run\\(", code))
+		if(length(k)) {
+			eval(parse(text = code[k]))
 			return(invisible(NULL))
 		}
 
