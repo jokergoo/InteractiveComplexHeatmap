@@ -761,5 +761,5 @@ shinyApp(ui, server)
 
 # title: Integrate in an interactive R Markdown document
 
-
+rmarkdown::run(system.file("examples", "rmarkdown.Rmd", package = "InteractiveComplexHeatmap"))
 
