@@ -11,6 +11,9 @@
 # == seealso
 # https://jokergoo.shinyapps.io/interactive_complexHeatmap/
 #
+# == value
+# No value is returned.
+#
 # == example
 # # use a random heatmap
 # if(interactive()) {
@@ -110,18 +113,26 @@ ht_shiny = function(ht_list, ..., html = NULL) {
 # Examples of the interactive complex heatmaps
 #
 # == param
-# -which an integer of which example to use. The list of all examples can be obtained by calling `ht_shiny_example` which no argument.
+# -which An integer of which example to use. The list of all examples can be obtained by executing `ht_shiny_example` with no argument.
 #
 # == details
 # The source code of all examples are in ``systm.file("examples", "examples.R")``.
 #
+# == value
+# No value is returned.
+#
+# == example
+# ht_shiny_example
+# if(interactive()) {
+#     ht_shiny_example(4)
+# }
 ht_shiny_example = function(which) {
 	examples = get_examples()
 	if(missing(which)) {
 		cat("There are following examples:\n\n")
 		title = sapply(examples, function(x) x$title)
 		for(i in seq_along(title)) {
-			lines = strwrap(title[i], width = 0.9 * getOption("width") - 5)
+			lines = strwrap(title[i], width = getOption("width") - 5)
 			lines[1] = paste0(ifelse(nchar(i) == 1, " ", ""), i, ". ", lines[1])
 			lines[-1] = paste0(strrep(" ", nchar(i)+2), lines[-1])
 			cat(paste(lines, collapse = "\n"))

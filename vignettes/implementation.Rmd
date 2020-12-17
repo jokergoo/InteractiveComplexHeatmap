@@ -4,6 +4,7 @@ author: "Zuguang Gu ( z.gu@dkfz.de )"
 date: "`r Sys.Date()`"
 output: 
     rmarkdown::html_vignette:
+        self_contained: false
         width: 8
         fig_width: 5
 vignette: >
@@ -243,7 +244,7 @@ will be automatically re-executed.
 
 The next image shows an example of using `selectPosition()`. 
 
-<p><img width='100%' style='border:1px solid grey;padding: 4px;'  src='example1.gif' /></p>
+<p><img width='100%' style='border:1px solid grey;padding: 4px;'  src='https://user-images.githubusercontent.com/449218/102546377-d7e16d80-40b7-11eb-88ae-421e7d5a71b1.gif' /></p>
 
 Interactively, the function asks user to click one position on the heatmap.
 The function returns a `DataFrame` which contains the heatmap name, slice name
@@ -269,7 +270,7 @@ returns `NULL`.
 Similarly, the `selectArea()` function asks user to click two positions on the
 heatmap which defines an area. 
 
-<p><img width='100%' style='border:1px solid grey;padding: 4px;' src='example2.gif' /></p>
+<p><img width='100%' style='border:1px solid grey;padding: 4px;' src='https://user-images.githubusercontent.com/449218/102546394-ddd74e80-40b7-11eb-990a-1b95bc52feca.gif' /></p>
 
 Note since the selected area may overlap over multiple heatmaps and slices,
 the function returns a `DataFrame` with multiple rows which contains the

@@ -7,7 +7,8 @@ Get the heatmap positions on the graphic device
 Get the heatmap positions on the graphic device
 }
 \usage{
-ht_pos_on_device(ht_list, unit = "inch", valueOnly = FALSE, include_annotation = FALSE, calibrate = TRUE)
+ht_pos_on_device(ht_list, unit = "inch", valueOnly = FALSE,
+    include_annotation = FALSE, calibrate = TRUE)
 }
 \arguments{
 

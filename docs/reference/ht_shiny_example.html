@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Select a position in the heatmap — selectPosition • InteractiveComplexHeatmap</title>
+<title>Examples of the interactive complex heatmaps — ht_shiny_example • InteractiveComplexHeatmap</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Select a position in the heatmap — selectPosition" />
-<meta property="og:description" content="Select a position in the heatmap" />
+<meta property="og:title" content="Examples of the interactive complex heatmaps — ht_shiny_example" />
+<meta property="og:description" content="Examples of the interactive complex heatmaps" />
 
 
 
@@ -126,63 +126,96 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Select a position in the heatmap</h1>
+    <h1>Examples of the interactive complex heatmaps</h1>
     
-    <div class="hidden name"><code>selectPosition.Rd</code></div>
+    <div class="hidden name"><code>ht_shiny_example.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Select a position in the heatmap</p>
+    <p>Examples of the interactive complex heatmaps</p>
     </div>
 
-    <pre class="usage"><span class='fu'>selectPosition</span><span class='op'>(</span><span class='va'>ht_list</span>, pos <span class='op'>=</span> <span class='cn'>NULL</span>, mark <span class='op'>=</span> <span class='cn'>TRUE</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
-    ht_pos <span class='op'>=</span> <span class='cn'>NULL</span>, calibrate <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>ht_shiny_example</span><span class='op'>(</span><span class='va'>which</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>ht_list</th>
-      <td><p>A <code><a href='https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapList-class.html'>HeatmapList-class</a></code> object returned by <code>draw,Heatmap-method</code> or <code>draw,HeatmapList-method</code>.</p></td>
-    </tr>
-    <tr>
-      <th>mark</th>
-      <td><p>Whether to mark the selected position as a point.</p></td>
-    </tr>
-    <tr>
-      <th>pos</th>
-      <td><p>If the value is <code>NULL</code>, it can be selected by click on the heatmap (of cource, the heatmap should be on the interactive graphic device). If it is set, it must be a <code><a href='https://rdrr.io/r/grid/unit.html'>unit</a></code> object with length two which corresponds to the x and y position of the point.</p></td>
-    </tr>
-    <tr>
-      <th>verbose</th>
-      <td><p>Whether to print messages.</p></td>
-    </tr>
-    <tr>
-      <th>ht_pos</th>
-      <td><p>A value returned by <code><a href='ht_pos_on_device.html'>ht_pos_on_device</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>calibrate</th>
-      <td><p>Internally used.</p></td>
+      <th>which</th>
+      <td><p>An integer of which example to use. The list of all examples can be obtained by executing <code>ht_shiny_example</code> with no argument.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The source code of all examples are in <code>systm.file("examples", "examples.R")</code>.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code><a href='https://rdrr.io/pkg/S4Vectors/man/DataFrame-class.html'>DataFrame</a></code> object with row indices and column indices corresponding to the selected position.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p>Zuguang Gu &lt;z.gu@dkfz.de&gt;</p>
+    <p>No value is returned.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/grDevices/dev.interactive.html'>dev.interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
-<span class='va'>m</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
-<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
-
-<span class='va'>ht</span> <span class='op'>=</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span>
-<span class='va'>ht</span> <span class='op'>=</span> <span class='fu'>draw</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
-<span class='fu'>selectPosition</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
+    <pre class="examples"><div class='input'><span class='va'>ht_shiny_example</span>
+</div><div class='output co'>#&gt; function (which) 
+#&gt; {
+#&gt;     examples = get_examples()
+#&gt;     if (missing(which)) {
+#&gt;         cat("There are following examples:\n\n")
+#&gt;         title = sapply(examples, function(x) x$title)
+#&gt;         for (i in seq_along(title)) {
+#&gt;             lines = strwrap(title[i], width = getOption("width") - 
+#&gt;                 5)
+#&gt;             lines[1] = paste0(ifelse(nchar(i) == 1, " ", ""), 
+#&gt;                 i, ". ", lines[1])
+#&gt;             lines[-1] = paste0(strrep(" ", nchar(i) + 2), lines[-1])
+#&gt;             cat(paste(lines, collapse = "\n"))
+#&gt;             cat("\n")
+#&gt;         }
+#&gt;         cat("\n")
+#&gt;     }
+#&gt;     else {
+#&gt;         which = which[1]
+#&gt;         code = examples[[which]]$code
+#&gt;         k = which(grepl("rmarkdown::run\\(", code))
+#&gt;         if (length(k)) {
+#&gt;             eval(parse(text = code[k]))
+#&gt;             return(invisible(NULL))
+#&gt;         }
+#&gt;         library_calls = code[grepl("library\\(.*\\)", code)]
+#&gt;         if (length(library_calls)) {
+#&gt;             required_pkgs = gsub("library\\((.*)\\)", "\\1", 
+#&gt;                 library_calls)
+#&gt;             for (pkg in required_pkgs) {
+#&gt;                 if (!requireNamespace(pkg, quietly = TRUE)) {
+#&gt;                   stop_wrap(paste0("Package", pkg, "should be installed for running this example."))
+#&gt;                 }
+#&gt;             }
+#&gt;         }
+#&gt;         cat("Processing the heatmaps... It takes different time depending on examples.\n")
+#&gt;         if (any(grepl("ht_shiny\\(", code))) {
+#&gt;             code2 = paste(code, collapse = "\n")
+#&gt;             code2 = gsub("^\\s+||\\s+$", "", code2)
+#&gt;             original_ht_shiny = ht_shiny
+#&gt;             ht_shiny = function(ht, ...) {
+#&gt;                 html = qq("\n&lt;hr /&gt;\n&lt;div&gt;\n&lt;h4&gt;Source code for exporting this Shiny app&lt;/h4&gt;\n&lt;pre&gt;\n@{code2}\n&lt;/pre&gt;\n&lt;/div&gt;")
+#&gt;                 original_ht_shiny(ht, ..., html = HTML(html))
+#&gt;             }
+#&gt;         }
+#&gt;         else {
+#&gt;             i = which(grepl("shinyApp\\(", code))
+#&gt;             code2 = c(code[1:(i - 1)], "", code[seq(i, length(code))])
+#&gt;             code_line = paste(code, collapse = "\n")
+#&gt;             code_line = gsub("'", "\\\\'", code_line)
+#&gt;             code_line = gsub("&lt;", "&amp;lt;", code_line)
+#&gt;             code_line = gsub("&gt;", "&amp;gt;", code_line)
+#&gt;             code2[i] = qq("\nui = fluidPage(\n    ui,\nHTML('&lt;hr /&gt;&lt;div&gt;\n&lt;h4&gt;Source code for exporting this Shiny app&lt;/h4&gt;\n&lt;pre&gt;\n@{code_line}\n&lt;/pre&gt;\n&lt;/div&gt;')\n)\n")
+#&gt;             code = code2
+#&gt;         }
+#&gt;         eval(parse(text = code))
+#&gt;     }
+#&gt; }
+#&gt; &lt;bytecode: 0x7fee3ac9ab10&gt;
+#&gt; &lt;environment: namespace:InteractiveComplexHeatmap&gt;</div><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='fu'>ht_shiny_example</span><span class='op'>(</span><span class='fl'>4</span><span class='op'>)</span>
 <span class='op'>}</span>
 </div></pre>
   </div>

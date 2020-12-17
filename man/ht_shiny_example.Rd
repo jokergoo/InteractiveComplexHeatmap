@@ -11,14 +11,18 @@ ht_shiny_example(which)
 }
 \arguments{
 
-  \item{which}{an integer of which example to use. The list of all examples can be obtained by calling \code{\link{ht_shiny_example}} which no argument.}
+  \item{which}{An integer of which example to use. The list of all examples can be obtained by executing \code{\link{ht_shiny_example}} with no argument.}
 
 }
 \details{
 The source code of all examples are in \code{systm.file("examples", "examples.R")}.
 }
+\value{
+No value is returned.
+}
 \examples{
-# There is no example
-NULL
-
+ht_shiny_example
+if(interactive()) {
+    ht_shiny_example(4)
+}
 }
