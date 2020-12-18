@@ -3,7 +3,8 @@ pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
   InteractiveComplexHeatmap: InteractiveComplexHeatmap.html
+  decoration: decoration.html
   implementation: implementation.html
   shiny_dev: shiny_dev.html
-last_built: 2020-12-18T13:24Z
+last_built: 2020-12-18T20:18Z
 
