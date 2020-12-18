@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1016</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1017</span>
       </span>
     </div>
 
@@ -57,6 +57,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
+      <a href="../articles/decoration.html">Decorations on the heatmaps</a>
+    </li>
+    <li>
       <a href="../articles/implementation.html">How interactive ComplexHeatmap is implemented</a>
     </li>
     <li>
@@ -114,8 +117,8 @@ p {
 <span class="va">mat2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="fl">10</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">mat2</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">mat2</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"b"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
 
-<span class="va">ht_list</span> <span class="op">=</span> <span class="fu">Heatmap</span><span class="op">(</span><span class="va">mat1</span>, name <span class="op">=</span> <span class="st">"mat_a"</span>, row_km <span class="op">=</span> <span class="fl">2</span>, column_km <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">Heatmap</span><span class="op">(</span><span class="va">mat2</span>, name <span class="op">=</span> <span class="st">"mat_b"</span><span class="op">)</span></code></pre></div>
+<span class="va">ht_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">mat1</span>, name <span class="op">=</span> <span class="st">"mat_a"</span>, row_km <span class="op">=</span> <span class="fl">2</span>, column_km <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">mat2</span>, name <span class="op">=</span> <span class="st">"mat_b"</span><span class="op">)</span></code></pre></div>
 <p><strong>InteractiveComplexHeatmap</strong> implements two types of interactivity:</p>
 <ol style="list-style-type: decimal">
 <li>on the interactive graphics device,</li>
@@ -129,9 +132,9 @@ p {
 <p>I will first explain how <strong>InteractiveComplexHeatmap</strong> captures the positions that user clicked on the device and how it is associated to the values in the matrix.</p>
 <p>When user clicks on the device, the physical locations relative in the device are captured by <code><a href="https://rdrr.io/r/grid/grid.locator.html">grid::grid.locator()</a></code>. The physical locations of the heatmaps (more precisely, the heatmap slices) can also be captured by <code><a href="https://rdrr.io/r/grid/deviceLoc.html">grid::deviceLoc()</a></code>. With knowing the exact positions of the selected points and the heatmaps, it is possible to tell which heatmap the selected points are in. Furthermore, by calculating the relative distance of the selected points in that heatmap, it is also possible to know which rows and columns the selected points correspond to.</p>
 <p>For associating user’s points and the heatmaps, we first need to calculate the positions of all heatmaps. There is a helper function <code><a href="../reference/ht_pos_on_device.html">ht_pos_on_device()</a></code> that does this job.</p>
-<p>Before executing <code><a href="../reference/ht_pos_on_device.html">ht_pos_on_device()</a></code>, the heatmap should be drawn on the device and the layout of heatmaps should have been done. Thus, the heatmap object <code>ht_list</code> should be updated explictly by the <code>draw()</code> function.</p>
+<p>Before executing <code><a href="../reference/ht_pos_on_device.html">ht_pos_on_device()</a></code>, the heatmap should be drawn on the device and the layout of heatmaps should have been done. Thus, the heatmap object <code>ht_list</code> should be updated explictly by the <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw()</a></code> function.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ht_list</span> <span class="op">=</span> <span class="fu">draw</span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">ht_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span>
 <span class="va">pos</span> <span class="op">=</span> <span class="fu"><a href="../reference/ht_pos_on_device.html">ht_pos_on_device</a></span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span></code></pre></div>
 <p><img src="implementation_files/figure-html/unnamed-chunk-3-1.png" width="576" style="display: block; margin: auto;"></p>
 <p>The returned object <code>pos</code> is a <code>DataFrame</code> object that contains the positions of all heatmap slices. A <code>DataFrame</code> object (the <code>DataFrame</code> class is defined in <a href="https://bioconductor.org/packages/release/bioc/html/S4Vectors.html"><strong>S4Vectors</strong> package</a>) is bacially very similar to a data frame, but it can store more complex data types, such as the <code>simpleUnit</code> vectors (generated by <code><a href="https://rdrr.io/r/grid/unit.html">grid::unit()</a></code>).</p>
@@ -190,7 +193,7 @@ p {
 <p><span class="math display">\[ i_c = \lceil \frac{a - x_1}{x_2 - x_1} \cdot n_c \rceil \]</span> <span class="math display">\[ i_r = \lceil \frac{b - y_1}{y_2 - y_1} \cdot n_r \rceil \]</span></p>
 <p>where the symbol <span class="math inline">\(\lceil x \rceil\)</span> means the ceiling of the numeric value <span class="math inline">\(x\)</span>. In <strong>ComplexHeatmap</strong>, the row with index 1 is always put on the top of the heatmap, then <span class="math inline">\(i_r\)</span> should be calculated as:</p>
 <p><span class="math display">\[ i_r = n_r - \lceil \frac{b - y_1}{y_2 - y_1} \cdot n_r \rceil + 1 \]</span></p>
-<p>The subset of row and column indices of the original matrix that belongs to the selected heatmap slice is already stored in <code>ht_list</code> object (they can be retrieved by <code>row_order()</code> and <code>column_order()</code> function), thus, we can obtain the row and column index of the original matrix that corresponds to user’s point easily with <span class="math inline">\(i_r\)</span> and <span class="math inline">\(i_c\)</span>.</p>
+<p>The subset of row and column indices of the original matrix that belongs to the selected heatmap slice is already stored in <code>ht_list</code> object (they can be retrieved by <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/row_order-dispatch.html">row_order()</a></code> and <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/column_order-dispatch.html">column_order()</a></code> function), thus, we can obtain the row and column index of the original matrix that corresponds to user’s point easily with <span class="math inline">\(i_r\)</span> and <span class="math inline">\(i_c\)</span>.</p>
 <p>Denote the matrix for the complete heatmap (without slicing) as <span class="math inline">\(M\)</span>, and denote the subset of row and column indices in that heatmap as <span class="math inline">\(o_r\)</span>, <span class="math inline">\(o_c\)</span>. Note, <span class="math inline">\(o_r\)</span> and <span class="math inline">\(o_c\)</span> can be reordered due to clustering. Then the row and column indices (<span class="math inline">\(j_r\)</span> and <span class="math inline">\(j_c\)</span>) for the selected point in <span class="math inline">\(M\)</span> are</p>
 <p><span class="math display">\[j_r = o_{r, i_r}\]</span> <span class="math display">\[j_c = o_{c, i_c}\]</span></p>
 <p>And the corresponding value in <span class="math inline">\(M\)</span> is <span class="math inline">\(M_{j_r, j_c}\)</span>.</p>
@@ -206,7 +209,7 @@ p {
 ##   column_index
 ##      &lt;integer&gt;
 ## 1            1</code></pre>
-<p>The output means, the position user clicked corresponds to <code>mat[9, 1]</code> where <code>mat</code> is the original matrix that was sent to <code>Heatmap()</code>.</p>
+<p>The output means, the position user clicked corresponds to <code>mat[9, 1]</code> where <code>mat</code> is the original matrix that was sent to <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap()</a></code>.</p>
 <p>If the position clicked is not in any of the heatmap slices, the function returns <code>NULL</code>.</p>
 <p>Similarly, the <code><a href="../reference/selectArea.html">selectArea()</a></code> function asks user to click two positions on the heatmap which defines an area.</p>
 <p>
@@ -239,7 +242,7 @@ p {
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># pdf(...) or png(...) or other devices, because under this vignette generation, it is</span>
 <span class="co"># already under a png() device, I don't need to call `png()` explictly.</span>
-<span class="va">ht_list</span> <span class="op">=</span> <span class="fu">draw</span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span>
+<span class="va">ht_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span>
 <span class="va">pos</span> <span class="op">=</span> <span class="fu"><a href="../reference/selectPosition.html">selectPosition</a></span><span class="op">(</span><span class="va">ht_list</span>, pos <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="implementation_files/figure-html/unnamed-chunk-8-1.png" width="576" style="display: block; margin: auto;"></p>
 <pre><code>##   Point: x = 3.0 cm, y = 3.0 cm (measured in the graphics device)
@@ -260,7 +263,7 @@ p {
 <code class="sourceCode R"><span class="co"># remember to dev.off()</span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># pdf(...) or png(...) or other devices</span>
-<span class="va">ht_list</span> <span class="op">=</span> <span class="fu">draw</span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span>
+<span class="va">ht_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span>
 <span class="va">pos</span> <span class="op">=</span> <span class="fu"><a href="../reference/selectArea.html">selectArea</a></span><span class="op">(</span><span class="va">ht_list</span>, pos1 <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">3</span><span class="op">)</span>, <span class="st">"cm"</span><span class="op">)</span>, pos2 <span class="op">=</span> <span class="fu">unit</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span>, <span class="fl">5</span><span class="op">)</span>, <span class="st">"cm"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="implementation_files/figure-html/unnamed-chunk-9-1.png" width="576" style="display: block; margin: auto;"></p>
 <pre><code>##   Point 1: x = 3.0 cm, y = 3.0 cm (measured in the graphics device)
