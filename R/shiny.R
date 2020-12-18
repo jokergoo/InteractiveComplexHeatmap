@@ -239,6 +239,31 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		if(!ht_list@layout$initialized) {
 			message("The heatmap list is suggested to be udpated by e.g. `ht_list = draw(ht_list)` before sending to the Shiny app.")
 		}
+	} else {
+		stop_wrap("`ht_list` can only be a Heatmap/heatmapList object.")
+	}
+
+	has_normal_matrix = FALSE
+	if(inherits(ht_list, "Heatmap")) {
+		if(nrow(ht_list@matrix) > 0 && ncol(ht_list@matrix) > 0) {
+			has_normal_matrix = TRUE
+		}
+	} else {
+		for(i in seq_along(ht_list@ht_list)) {
+			if(inherits(ht_list@ht_list[[i]], "Heatmap")) {
+				ht = ht_list@ht_list[[i]]
+				
+				if(nrow(ht@matrix) == 0 || ncol(ht@matrix) == 0) {
+					next
+				} else {
+					has_normal_matrix = TRUE
+					break
+				}
+			}
+		}
+	}
+	if(!has_normal_matrix) {
+		stop_wrap("There should be at least one normal heatmap (nrow > 0 and ncol > 0) in the heatmap list.")
 	}
 
 	output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
@@ -247,7 +272,15 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
     	
     	showNotification("Making the original heatmap.", duration = 2, type = "message")
 
-		shiny_env[[heatmap_id]]$ht_list = draw(ht_list)
+    	if(inherits(ht_list, "Heatmap")) {
+    		shiny_env[[heatmap_id]]$ht_list = draw(ht_list)
+    	} else {
+    		if(ht_list@layout$initialized) {
+    			shiny_env[[heatmap_id]]$ht_list = do.call(draw, c(list(object = ht_list), ht_list@ht_list_param$called_arguments))
+    		} else {
+    			shiny_env[[heatmap_id]]$ht_list = draw(ht_list)
+    		}
+    	}
 		shiny_env[[heatmap_id]]$ht_pos = ht_pos_on_device(shiny_env[[heatmap_id]]$ht_list, include_annotation = TRUE, calibrate = FALSE)
 
 		shiny_env[[heatmap_id]]$selected = NULL
@@ -506,26 +539,21 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 						} else {
 							if(show_annotation) {
 								ha = ht_current_full
-								if(ht_list@direction == "horizontal") {
-									ind_subsettable = sapply(ha@anno_list, function(x) x@subsetable && !x@fun@fun_name %in% c("anno_mark", "anno_zoom"))
-									if(length(ind_subsettable)) {
+								ind_subsettable = which(sapply(ha@anno_list, function(x) x@subsetable && !x@fun@fun_name %in% ignored_anno))
+								if(length(ind_subsettable)) {
+									if(ht_list@direction == "horizontal") {
 										ha = ha[ri, ind_subsettable]
-										ha@anno_list = lapply(ha@anno_list, function(x) {
-											x@show_legend = FALSE
-											x
-										})
-									}
-								} else {
-									ind_subsettable = sapply(ha@anno_list, function(x) x@subsetable && !x@fun@fun_name %in% c("anno_mark", "anno_zoom"))
-									if(length(ind_subsettable)) {
+									} else {
 										ha = ha[ci, ind_subsettable]
-										ha@anno_list = lapply(ha@anno_list, function(x) {
-											x@show_legend = FALSE
-											x
-										})
 									}
+									ha@anno_list = lapply(ha@anno_list, function(x) {
+										x@show_legend = FALSE
+										x
+									})
+									ht_current = ha
+								} else {
+									ht_current = NULL
 								}
-								ht_current = ha
 							} else {
 								ht_current = NULL
 							}
@@ -537,9 +565,8 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 						} else {
 							ht_select = ht_select %v% ht_current
 						}
-						draw(ht_select)
 		    		}
-				    
+				    draw(ht_select)
 				    message(qq("[@{Sys.time()}] make the sub-heatmap (device size: @{width}x@{height} px)."))
 				}
 			}
@@ -636,6 +663,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 					    } else {
 					    	col = NA
 					    }
+					    if(is.na(v)) v = "NA"
 					    row_label = rownames(m)[row_index]
 					    column_label = colnames(m)[column_index]
 					    if(is.null(row_label)) {

@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1015</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1016</span>
       </span>
     </div>
 
@@ -154,67 +154,40 @@
     <p>No value is returned.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='va'>ht_shiny_example</span>
-</div><div class='output co'>#&gt; function (which) 
-#&gt; {
-#&gt;     examples = get_examples()
-#&gt;     if (missing(which)) {
-#&gt;         cat("There are following examples:\n\n")
-#&gt;         title = sapply(examples, function(x) x$title)
-#&gt;         for (i in seq_along(title)) {
-#&gt;             lines = strwrap(title[i], width = getOption("width") - 
-#&gt;                 5)
-#&gt;             lines[1] = paste0(ifelse(nchar(i) == 1, " ", ""), 
-#&gt;                 i, ". ", lines[1])
-#&gt;             lines[-1] = paste0(strrep(" ", nchar(i) + 2), lines[-1])
-#&gt;             cat(paste(lines, collapse = "\n"))
-#&gt;             cat("\n")
-#&gt;         }
-#&gt;         cat("\n")
-#&gt;     }
-#&gt;     else {
-#&gt;         which = which[1]
-#&gt;         code = examples[[which]]$code
-#&gt;         k = which(grepl("rmarkdown::run\\(", code))
-#&gt;         if (length(k)) {
-#&gt;             eval(parse(text = code[k]))
-#&gt;             return(invisible(NULL))
-#&gt;         }
-#&gt;         library_calls = code[grepl("library\\(.*\\)", code)]
-#&gt;         if (length(library_calls)) {
-#&gt;             required_pkgs = gsub("library\\((.*)\\)", "\\1", 
-#&gt;                 library_calls)
-#&gt;             for (pkg in required_pkgs) {
-#&gt;                 if (!requireNamespace(pkg, quietly = TRUE)) {
-#&gt;                   stop_wrap(paste0("Package", pkg, "should be installed for running this example."))
-#&gt;                 }
-#&gt;             }
-#&gt;         }
-#&gt;         cat("Processing the heatmaps... It takes different time depending on examples.\n")
-#&gt;         if (any(grepl("ht_shiny\\(", code))) {
-#&gt;             code2 = paste(code, collapse = "\n")
-#&gt;             code2 = gsub("^\\s+||\\s+$", "", code2)
-#&gt;             original_ht_shiny = ht_shiny
-#&gt;             ht_shiny = function(ht, ...) {
-#&gt;                 html = qq("\n&lt;hr /&gt;\n&lt;div&gt;\n&lt;h4&gt;Source code for exporting this Shiny app&lt;/h4&gt;\n&lt;pre&gt;\n@{code2}\n&lt;/pre&gt;\n&lt;/div&gt;")
-#&gt;                 original_ht_shiny(ht, ..., html = HTML(html))
-#&gt;             }
-#&gt;         }
-#&gt;         else {
-#&gt;             i = which(grepl("shinyApp\\(", code))
-#&gt;             code2 = c(code[1:(i - 1)], "", code[seq(i, length(code))])
-#&gt;             code_line = paste(code, collapse = "\n")
-#&gt;             code_line = gsub("'", "\\\\'", code_line)
-#&gt;             code_line = gsub("&lt;", "&amp;lt;", code_line)
-#&gt;             code_line = gsub("&gt;", "&amp;gt;", code_line)
-#&gt;             code2[i] = qq("\nui = fluidPage(\n    ui,\nHTML('&lt;hr /&gt;&lt;div&gt;\n&lt;h4&gt;Source code for exporting this Shiny app&lt;/h4&gt;\n&lt;pre&gt;\n@{code_line}\n&lt;/pre&gt;\n&lt;/div&gt;')\n)\n")
-#&gt;             code = code2
-#&gt;         }
-#&gt;         eval(parse(text = code))
-#&gt;     }
-#&gt; }
-#&gt; &lt;bytecode: 0x7fee3ac9ab10&gt;
-#&gt; &lt;environment: namespace:InteractiveComplexHeatmap&gt;</div><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'><span class='fu'>ht_shiny_example</span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; There are following examples:
+#&gt; 
+#&gt;  1. A single heatmap with minimal arguments.
+#&gt;  2. A single heatmap from a character matrix.
+#&gt;  3. A single heatmap with annotations on both rows and columns.
+#&gt;  4. A single heatmap where rows and columns are split.
+#&gt;  5. A list of two heatmaps.
+#&gt;  6. A density heatmap.
+#&gt;  7. An oncoPrint.
+#&gt;  8. A UpSet plot.
+#&gt;  9. An interactive heatmap by `pheatmap()`.
+#&gt; 10. An interactive heatmap by `heatmap()`.
+#&gt; 11. An interactive heatmap by `heatmap.2()`.
+#&gt; 12. An enriched heatmap.
+#&gt; 13. A list of enriched heatmaps.
+#&gt; 14. An enriched heatmap with discrete signals. Note, this example may take
+#&gt;     long time for preparing the data for heatmaps.
+#&gt; 15. A heatmap produced from tidyHeatmap package.
+#&gt; 16. An example from Lewis et al 2019. GitHub repo:
+#&gt;     https://github.com/kevinblighe/E-MTAB-6141
+#&gt; 17. Visualize cell heterogeneity from single cell RNASeq. This is from
+#&gt;     Supplementary S2 of the ComplexHeatmap paper.
+#&gt;     https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
+#&gt; 18. Correlations between methylation, expression and other genomic features.
+#&gt;     This is from Supplementary S3 of the ComplexHeatmap paper.
+#&gt;     https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
+#&gt; 19. A single shiny app with two interactive heatmap widgets.
+#&gt; 20. Self-define the output.
+#&gt; 21. Self-define the output. A more complicated example.
+#&gt; 22. Integrate in an interactive R Markdown document.
+#&gt; 23. Visualize Gene Ontology similarities where the output is self-defined.
+#&gt; 24. Genome-scale heatmaps.
+#&gt; </div><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
     <span class='fu'>ht_shiny_example</span><span class='op'>(</span><span class='fl'>4</span><span class='op'>)</span>
 <span class='op'>}</span>
 </div></pre>

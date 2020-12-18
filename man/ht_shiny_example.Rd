@@ -21,7 +21,7 @@ The source code of all examples are in \code{systm.file("examples", "examples.R"
 No value is returned.
 }
 \examples{
-ht_shiny_example
+ht_shiny_example()
 if(interactive()) {
     ht_shiny_example(4)
 }
