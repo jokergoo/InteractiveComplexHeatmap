@@ -68,30 +68,6 @@ ht_shiny = function(ht_list, ..., html = NULL) {
 		stop(oe)
 	}
 	
-	has_normal_matrix = FALSE
-	if(inherits(ht_list, "Heatmap")) {
-		if(nrow(ht_list@matrix) > 0 && ncol(ht_list@matrix) > 0) {
-			has_normal_matrix = TRUE
-		}
-	} else {
-		for(i in seq_along(ht_list@ht_list)) {
-			if(inherits(ht_list@ht_list[[i]], "Heatmap")) {
-				ht = ht_list@ht_list[[i]]
-				
-				if(nrow(ht@matrix) == 0 || ncol(ht@matrix) == 0) {
-					next
-				} else {
-					has_normal_matrix = TRUE
-					break
-				}
-			}
-		}
-	}
-	if(!has_normal_matrix) {
-		stop_wrap("There should be one normal heatmap (nrow > 0 and ncol > 0) in the heatmap list.")
-	}
-
-	
 	ui = fluidPage(
 		titlePanel("ComplexHeatmap Shiny App"),
 
@@ -122,7 +98,7 @@ ht_shiny = function(ht_list, ..., html = NULL) {
 # No value is returned.
 #
 # == example
-# ht_shiny_example
+# ht_shiny_example()
 # if(interactive()) {
 #     ht_shiny_example(4)
 # }
@@ -226,8 +202,10 @@ get_examples = function() {
 				break
 			}
 		}
+		title = gsub("^#+\\s*title:\\s+", "", text[ind[i]])
 		code = gsub("\\t", "    ", code)
-		examples[[i]] = list(title = gsub("^#+\\s*title:\\s+", "", text[ind[i]]), 
+		examples[[i]] = list(
+			title = title, 
 			code = code
 		)
 	}

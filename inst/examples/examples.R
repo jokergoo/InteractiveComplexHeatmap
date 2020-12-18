@@ -670,7 +670,7 @@ ht_list = draw(ht_list, newpage = FALSE, column_title = "Comprehensive correspon
 
 ht_shiny(ht_list, width1 = 700, height1 = 800)
 
-# title: A single shiny app with two interactive heatmaps applications.
+# title: A single shiny app with two interactive heatmap widgets.
 
 m = matrix(rnorm(100*100), 100)
 ht1 = Heatmap(m, col = c("white", "blue"))
@@ -783,7 +783,146 @@ server = function(input, output, session) {
 shinyApp(ui, server)
 
 
-# title: Integrate in an interactive R Markdown document
+# title: Integrate in an interactive R Markdown document.
 
 rmarkdown::run(system.file("examples", "rmarkdown.Rmd", package = "InteractiveComplexHeatmap"))
 
+# title: Visualize Gene Ontology similarities where the output is self-defined.
+
+library(simplifyEnrichment)
+
+mat = readRDS(system.file("extdata", "random_GO_BP_sim_mat.rds",
+     package = "simplifyEnrichment"))
+cl = binary_cut(mat)
+ht = ht_clusters(mat, cl, word_cloud_grob_param = list(max_width = 80))
+
+library(GO.db)
+get_go_term = function(go_id) {
+	suppressMessages(select(GO.db, keys = go_id, columns = "TERM")$TERM)
+}
+
+ui = fluidPage(
+    InteractiveComplexHeatmapOutput(width1 = 700, height1 = 450),
+    htmlOutput("go_info")
+)
+
+library(GetoptLong)
+click_action = function(df, output) {
+	output[["go_info"]] = renderUI({
+		if(!is.null(df)) {
+			go_id1 = rownames(mat)[df$row_index]
+			go_id2 = colnames(mat)[df$column_index]
+
+			HTML(qq(
+"<pre>
+## Row GO ID
+@{go_id1}: @{get_go_term(go_id1)}
+
+## Column GO ID:
+@{go_id2}: @{get_go_term(go_id2)}
+</pre>"
+))
+		}
+	})
+}
+
+brush_action = function(df, output) {
+	output[["go_info"]] = renderUI({
+		if(!is.null(df)) {
+			row_index = unlist(df$row_index)
+			column_index = unlist(df$column_index)
+			go_id1 = rownames(mat)[row_index]
+			go_id2 = colnames(mat)[column_index]
+
+			go_text1 = qq("@{go_id1}: @{get_go_term(go_id1)}\n")
+			go_text2 = qq("@{go_id2}: @{get_go_term(go_id2)}\n")
+			HTML(qq(
+"<pre>
+## Row GO ID
+@{go_text1}
+
+## Column GO ID:
+@{go_text2}
+</pre>"
+))
+		}
+	})
+}
+
+server = function(input, output, session) {
+    MakeInteractiveComplexHeatmap(ht, input, output, session, 
+    	click_action = click_action, brush_action = brush_action)
+}
+
+shinyApp(ui, server)
+
+
+# title: Genome-scale heatmaps.
+
+library(ComplexHeatmap)
+library(circlize)
+library(GenomicRanges)
+
+chr_window = bin_genome("hg19")
+
+#### the first is a numeric matrix #######
+bed1 = generateRandomBed(nr = 1000, nc = 10)
+gr1 = GRanges(seqnames = bed1[, 1], ranges = IRanges(bed1[, 2], bed1[, 3]))
+
+num_mat = normalize_genomic_signals_to_bins(gr1, bed1[, -(1:3)])
+
+#### the second is a character matrix ######
+bed_list = lapply(1:10, function(i) {
+    generateRandomBed(nr = 1000, nc = 1, 
+        fun = function(n) sample(c("gain", "loss"), n, replace = TRUE))
+})
+char_mat = NULL
+for(i in 1:10) {
+    bed = bed_list[[i]]
+    bed = bed[sample(nrow(bed), 20), , drop = FALSE]
+    gr_cnv = GRanges(seqnames = bed[, 1], ranges = IRanges(bed[, 2], bed[, 3]))
+
+    char_mat = cbind(char_mat, normalize_genomic_signals_to_bins(gr_cnv, bed[, 4]))
+}
+
+#### two numeric columns ##########
+bed2 = generateRandomBed(nr = 100, nc = 2)
+gr2 = GRanges(seqnames = bed2[, 1], ranges = IRanges(bed2[, 2], bed2[, 3]))
+
+v = normalize_genomic_signals_to_bins(gr2, bed2[, 4:5])
+
+##### a list of genes need to be marked
+bed3 = generateRandomBed(nr = 40, nc = 0)
+gr3 = GRanges(seqnames = bed3[, 1], ranges = IRanges(bed3[, 2], bed3[, 2]))
+gr3$gene = paste0("gene_", 1:length(gr3))
+
+mtch = as.matrix(findOverlaps(chr_window, gr3))
+at = mtch[, 1]
+labels = mcols(gr3)[mtch[, 2], 1]
+
+##### order of the chromosomes ########
+chr = as.vector(seqnames(chr_window))
+chr_level = paste0("chr", c(1:22, "X", "Y"))
+chr = factor(chr, levels = chr_level)
+
+#### make the heatmap #######
+subgroup = rep(c("A", "B"), each = 5)
+
+ht_opt$TITLE_PADDING = unit(c(4, 4), "points")
+ht_list = Heatmap(num_mat, name = "mat", col = colorRamp2(c(-1, 0, 1), c("green", "white", "red")),
+        row_split = chr, cluster_rows = FALSE, show_column_dend = FALSE,
+        column_split = subgroup, cluster_column_slices = FALSE,
+        column_title = "numeric matrix",
+        top_annotation = HeatmapAnnotation(subgroup = subgroup, annotation_name_side = "left"),
+        row_title_rot = 0, row_title_gp = gpar(fontsize = 10), border = TRUE,
+        row_gap = unit(0, "points")) +
+    Heatmap(char_mat, name = "CNV", col = c("gain" = "red", "loss" = "blue"),
+        border = TRUE, column_title = "character matrix") +
+    rowAnnotation(label = anno_mark(at = at, labels = labels)) +
+    rowAnnotation(pt = anno_points(v, gp = gpar(col = 4:5), pch = c(1, 16)), 
+        width = unit(2, "cm")) +
+    rowAnnotation(bar = anno_barplot(v[, 1], gp = gpar(col = ifelse(v[ ,1] > 0, 2, 3))), 
+        width = unit(2, "cm"))
+ht_list = draw(ht_list, merge_legend = TRUE)
+
+ht_shiny(ht_list, width1 = 600, height1 = 700)

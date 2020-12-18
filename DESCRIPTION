@@ -1,8 +1,8 @@
 Package: InteractiveComplexHeatmap
 Type: Package
 Title: Make Complex Heatmaps Interactive
-Version: 0.99.0.1016
-Date: 2020-12-17
+Version: 0.99.0.1017
+Date: 2020-12-18
 Author: Zuguang Gu
 Maintainer: Zuguang Gu <z.gu@dkfz.de>
 Depends: R (>= 4.0.0), ComplexHeatmap (>= 2.7.2)
