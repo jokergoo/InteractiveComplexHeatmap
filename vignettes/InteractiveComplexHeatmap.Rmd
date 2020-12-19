@@ -4,7 +4,6 @@ author: "Zuguang Gu ( z.gu@dkfz.de )"
 date: "`r Sys.Date()`"
 output: 
     rmarkdown::html_vignette:
-        self_contained: false
         width: 8
         fig_width: 5
 vignette: >
@@ -23,6 +22,9 @@ knitr::opts_chunk$set(
     warning = FALSE,
     fig.align = "center"
 )
+```
+
+```{r, eval = FALSE}
 suppressPackageStartupMessages(library(InteractiveComplexHeatmap))
 ```
 
@@ -41,7 +43,7 @@ produced from **ComplexHeatmap** package, you just use the function
 
 You can copy and paste the following code:
 
-```r
+```{r, eval = FALSE}
 library(InteractiveComplexHeatmap)
 m = matrix(rnorm(100*100), nrow = 100)
 ht = Heatmap(ht)
@@ -73,7 +75,7 @@ found in the text below the heatmaps. If an area is selected, a sub-heatmap is
 drawn on the right side of the app. Both heatmaps can be resized by dragging
 from the bottom right.
 
-<p><img width='100%' style='border:1px solid grey;padding: 4px;'  src='https://user-images.githubusercontent.com/449218/102546398-dfa11200-40b7-11eb-92ef-2e2c579472bc.gif' /></p>
+<p><img width='100%' style='border:1px solid grey;padding: 4px;' src='https://jokergoo.github.io/images/example3.gif' /></p>
 
 Please note, if the heatmap is too huge or you resize the heatmap too
 frequently, the heatmap might not be correctly updated. You can just slightly
@@ -81,10 +83,11 @@ resize the heatmap again and wait for several seconds (you might have already ob
 from the previous screenshot that the right heatmap was not properly drawn when I first
 resized it).
 
-There are two other vignettes focusing on more specific topics:
+There are three other vignettes focusing on more specific topics:
 
 - [How interactive ComplexHeatmap is implemented](implementation.html)
 - [Functions for Shiny app development](shiny_dev.html)
+- [Decorations on the heatmaps](decoration.html)
 
 
 ## Live examples
@@ -93,7 +96,7 @@ The following code demostrates two horizontally concatenated heatmaps. Please
 visit https://jokergoo.shinyapps.io/interactive_complexheatmap/ for a live
 demo.
 
-```r
+```{r, eval = FALSE}
 set.seed(123)
 mat1 = matrix(rnorm(100), 10)
 rownames(mat1) = colnames(mat1) = paste0("a", 1:10)
@@ -108,7 +111,7 @@ ht_shiny(ht_list)
 The following code demostrates two vertically concatenated heatmaps. Check
 https://jokergoo.shinyapps.io/interactive_complexheatmap_vertical/ for a live demo.
 
-```r
+```{r, eval = FALSE}
 ht_list = Heatmap(mat1, name = "mat_a", row_km = 2, column_km = 2) %v%
     Heatmap(mat2, name = "mat_b")
 ht_shiny(ht_list)
@@ -130,7 +133,7 @@ example can also be run locally by executing `ht_shiny_example(12)`. The usage
 of `ht_shiny_example()` will be introduced later and in the webpage opened by
 `ht_shiny_example()` there is also the source code for generating this Shiny app.
 
-```r
+```{r, eval = FALSE}
 ht = densityHeatmap(...)
 ht_shiny(ht)
 ```
@@ -141,7 +144,7 @@ ht_shiny(ht)
 Example code is as follows. Check https://jokergoo.shinyapps.io/interactive_oncoprint/ for a live demo.
 The example can be run locally by executing `ht_shiny_example(7)`.
 
-```r
+```{r, eval = FALSE}
 ht = oncoPrint(...)
 ht_shiny(ht)
 
@@ -155,7 +158,7 @@ ht_shiny(ht)
 can be interactive. It might be useful when you visualize many sets as the same time. Example code is as follows.
 Check https://jokergooo.shinyapps.io/interactive_upset/ for a live demo. The example can be run locally by executing `ht_shiny_example(8)`.
 
-```r
+```{r, eval = FALSE}
 cm = make_comb_mat(...)
 ht = UpSet(cm, ...)
 ht_shiny(ht)
@@ -168,7 +171,7 @@ ht_shiny(ht)
 as a Shiny app as well. Check
 https://jokergoo.shinyapps.io/interactive_enrichedheatmap/ for a live demo. The example can be run locally by executing `ht_shiny_example(12)`.
 
-```r
+```{r, eval = FALSE}
 mat = normalizeToMatrix(...)
 ht = EnrichedHeatmap(mat, ...)
 ht_shiny(ht)
@@ -187,7 +190,7 @@ directly use `pheatmap()` without the namespace (the package name) prefix, you n
 to make sure it is from **ComplexHeatmap** if you want to use the interactive
 functionality. 
 
-```r
+```{r, eval = FALSE}
 ht = pheatmap(...) # ComplexHeatmap::pheatmap should overwrite pheatmap::pheatmap
 ht_shiny(ht)
 ```
@@ -203,7 +206,7 @@ similar translation functions `ComplexHeatmap::heatmap()` and
 original functions and generate almost identical heatmaps. Then an interactive
 `heatmap()` will look like:
 
-```r
+```{r, eval = FALSE}
 ht = heatmap(...) # ComplexHeatmap::heatmap should overwrite stats::heatmap
 ht_shiny(ht)
 ```
@@ -216,7 +219,7 @@ example can be run locally by executing `ht_shiny_example(10)`.
 
 Similarly, an interactive `heatmap.2()` looks like:
 
-```r
+```{r, eval = FALSE}
 ht = heatmap.2(...) # ComplexHeatmap::heatmap.2 should overwrite gplots::heatmap.2
 ht_shiny(ht)
 ```
@@ -236,7 +239,7 @@ https://jokergooo.shinyapps.io/interactive_tidyheatmap/. The example can be
 run locally by executing `ht_shiny_example(15)`.
 
 
-```r
+```{r, eval = FALSE}
 library(tidyverse)
 library(tidyHeatmap)
 mtcars_tidy <- 
@@ -265,7 +268,7 @@ package. The list of examples can be obtained by executing
 `ht_shiny_example()` with no argument.
 
 
-```{r}
+```{r, eval = FALSE}
 ht_shiny_example()
 ```
 
@@ -273,7 +276,7 @@ And you can select one specific example by sending the corresponding index to
 `ht_shiny_example()`, e.g. to run the example "4. A single heatmap where rows
 and columns are split.", simply run:
 
-```r
+```{r, eval = FALSE}
 ht_shiny_example(4)
 ```
 

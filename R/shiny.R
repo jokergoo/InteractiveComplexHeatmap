@@ -453,8 +453,8 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 								cell_fun = ht_current_full@matrix_param$cell_fun
 								if(!is.null(cell_fun)) {
 									cell_fun2 = cell_fun
-									ri_reverse_map = structure(ri, names = 1:length(ri))
-									ci_reverse_map = structure(ci, names = 1:length(ci))
+									ri_reverse_map = structure(ri, names = seq_along(ri))
+									ci_reverse_map = structure(ci, names = seq_along(ci))
 									cell_fun = function(j, i, x, y, w, h, fill) {
 										cell_fun2(ci_reverse_map[as.character(j)], 
 											ri_reverse_map[as.character(i)], 
@@ -464,8 +464,8 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 								layer_fun = ht_current_full@matrix_param$layer_fun
 								if(!is.null(layer_fun)) {
 									layer_fun2 = layer_fun
-									ri_reverse_map = structure(ri, names = 1:length(ri))
-									ci_reverse_map = structure(ci, names = 1:length(ci))
+									ri_reverse_map = structure(ri, names = seq_along(ri))
+									ci_reverse_map = structure(ci, names = seq_along(ci))
 									layer_fun = function(j, i, x, y, w, h, fill) {
 										layer_fun2(ci_reverse_map[as.character(j)], 
 											ri_reverse_map[as.character(i)], 
