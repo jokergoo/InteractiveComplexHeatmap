@@ -39,7 +39,7 @@ functions for integrating the interactive heatmap widgets into other Shiny apps.
 
 The usage is simple. Following is an example that you can directly copy and paste to your R session.
 
-```r
+```{r, eval = FALSE}
 library(InteractiveComplexHeatmap)
 library(shiny)
 
@@ -59,14 +59,16 @@ server = function(input, output, session) {
 shinyApp(ui, server)
 ```
 
-<img src="app_demo1.png" width="100%" />
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/app_demo1.png")
+```
 
 You can also put multiple interactive heatmaps widgets in a single Shiny app,
 but this time you must assign a "heatmap id" for each one, so that
 `MakeInteractiveComplexHeatmap()` can find the correct heatmap to response.
 The heatmap id should start with letters.
 
-```r
+```{r, eval = FALSE}
 ht1 = Heatmap(m, col = c("white", "blue"))
 ht1 = draw(ht1)
 ht2 = Heatmap(m, col = c("white", "red"))
@@ -88,7 +90,10 @@ server = function(input, output, session) {
 shinyApp(ui, server)
 ```
 
-<img src="app_demo2.png" width="100%" />
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/app_demo2.png")
+```
+
 
 ## Customize the widgets
 
@@ -145,7 +150,9 @@ shiny::shinyApp(ui, server)
 ```
 ````
 
-<img src="rmarkdown.png" width="100%" />
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/rmarkdown.png")
+```
 
 
 ## Self-define the output
@@ -167,7 +174,7 @@ be first setup in the UI, then the Shiny app can know where to update the output
 
 The `click_action` or `brush_action` is basically defined as follows (assume the id set in `htmlOutput()` is `"info"`:
 
-```r
+```{r, eval = FALSE}
 function(df, output) {
     output[["info"]] = renderUI({  # or output$info = ...
         if(!is.null(df)) {
@@ -221,7 +228,7 @@ FALSE` in `MakeInteractiveComplexHeatmap()` to turn off the default responses.
 
 You can also run the following example simply by `ht_shiny_example(20)`.
 
-```r
+```{r, eval = FALSE}
 library(GetoptLong)  # for the qq() function
 m = matrix(rnorm(100*100), 100)
 rownames(m) = paste0("R", 1:100)
@@ -262,14 +269,15 @@ server = function(input, output, session) {
 shinyApp(ui, server)
 ```
 
-<img src="customize_output.png" width="100%" />
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/customize_output.png")
+```
 
 `ht_shiny_example(21)` gives another scenario where the output needs to be
 self-defined. In that example, an gene expression matrix is visualized and
 clicking on the heatmap will print the corresponding gene and some other
 annotations related to this gene. Run `ht_shiny_example(21)` to see how this is implemented.
 
-<img src="customize_output2.png" width="100%" />
-
-
-
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/customize_output2.png")
+```

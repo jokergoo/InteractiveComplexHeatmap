@@ -4,7 +4,6 @@ author: "Zuguang Gu ( z.gu@dkfz.de )"
 date: "`r Sys.Date()`"
 output: 
     rmarkdown::html_vignette:
-        self_contained: false
         width: 8
         fig_width: 5
 vignette: >
@@ -14,34 +13,48 @@ vignette: >
 ---
 
 
+```{r, echo = FALSE}
+library(knitr)
+knitr::opts_chunk$set(
+    error = FALSE,
+    tidy  = FALSE,
+    message = FALSE,
+    warning = FALSE,
+    fig.align = "center"
+)
+suppressPackageStartupMessages(library(InteractiveComplexHeatmap))
+```
+
 In **ComplexHeatmap**, we use `decorate_*()` function to add graphics after
 the heatmap are drawn. To also put the decoration graphics in the heatmaps in
 the Shiny app, you need to wrap all the decoration code into a function and
 send it to `post_fun` argument in `draw()` function. For example, the following
 code to generate a decorated heatmap:
 
-```r
+```{r, eval = FALSE}
 library(ComplexHeatmap)
 m = matrix(rnorm(100), 10)
 ht = Heatmap(m, name = "foo")
 ht = draw(ht)
 decorate_heatmap_body("foo", {
-	grid.text("some text", gp = gpar(fontsize = 30))
+    grid.text("some text", gp = gpar(fontsize = 30))
 })
 ```
 
 To export it as a Shiny app also with decorations, the code needs to be slightly 
 adjusted as:
 
-```r
+```{r, eval = FALSE}
 library(InteractiveComplexHeatmap)
 post_fun = function(ht_list) {
-	decorate_heatmap_body("foo", {
-		grid.text("some text", gp = gpar(fontsize = 30))
-	})
+    decorate_heatmap_body("foo", {
+        grid.text("some text", gp = gpar(fontsize = 30))
+    })
 }
 ht = draw(ht, post_fun = post_fun)
 ht_shiny(ht)
 ```
 
-<img src="decoration.png" width="100%" />
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/decoration.png")
+```
