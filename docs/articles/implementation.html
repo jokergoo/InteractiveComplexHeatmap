@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1017</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1019</span>
       </span>
     </div>
 
@@ -92,7 +92,7 @@
       <h1 data-toc-skip>How interactive ComplexHeatmap is implemented</h1>
                         <h4 class="author">Zuguang Gu ( <a href="mailto:z.gu@dkfz.de" class="email">z.gu@dkfz.de</a> )</h4>
             
-            <h4 class="date">2020-12-18</h4>
+            <h4 class="date">2020-12-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jokergoo/InteractiveComplexHeatmap/blob/master/vignettes/implementation.Rmd"><code>vignettes/implementation.Rmd</code></a></small>
       <div class="hidden name"><code>implementation.Rmd</code></div>
@@ -200,7 +200,7 @@ p {
 <p><strong>InteractiveComplexHeatmap</strong> has two functions <code><a href="../reference/selectPosition.html">selectPosition()</a></code> and <code><a href="../reference/selectArea.html">selectArea()</a></code> which allows users to pick single positions or select areas from the heatmaps. Under the interactive graphics device, users do not need to run <code><a href="../reference/ht_pos_on_device.html">ht_pos_on_device()</a></code> explicitly. The positions of heatmaps are automatically calculated, cached and reused if the heatmaps are the same and the device has not changed its size. If users changed the device size, <code><a href="../reference/ht_pos_on_device.html">ht_pos_on_device()</a></code> will be automatically re-executed.</p>
 <p>The next image shows an example of using <code><a href="../reference/selectPosition.html">selectPosition()</a></code>.</p>
 <p>
-<img width="100%" style="border:1px solid grey;padding: 4px;" src="https://user-images.githubusercontent.com/449218/102546377-d7e16d80-40b7-11eb-88ae-421e7d5a71b1.gif"></p>
+<img width="100%" style="border:1px solid grey;padding: 4px;" src="https://jokergoo.github.io/images/example1.gif"></p>
 <p>Interactively, the function asks user to click one position on the heatmap. The function returns a <code>DataFrame</code> which contains the heatmap name, slice name and the row/column index of the matrix in that heatmap.</p>
 <pre><code>## DataFrame with 1 row and 6 columns
 ##       heatmap                  slice row_slice column_slice row_index
@@ -213,7 +213,7 @@ p {
 <p>If the position clicked is not in any of the heatmap slices, the function returns <code>NULL</code>.</p>
 <p>Similarly, the <code><a href="../reference/selectArea.html">selectArea()</a></code> function asks user to click two positions on the heatmap which defines an area.</p>
 <p>
-<img width="100%" style="border:1px solid grey;padding: 4px;" src="https://user-images.githubusercontent.com/449218/102546394-ddd74e80-40b7-11eb-990a-1b95bc52feca.gif"></p>
+<img width="100%" style="border:1px solid grey;padding: 4px;" src="https://jokergoo.github.io/images/example2.gif"></p>
 <p>Note since the selected area may overlap over multiple heatmaps and slices, the function returns a <code>DataFrame</code> with multiple rows which contains the heatmap names, slice names and the row/column indices in that heatmap. An example output can be found by clicking the button below.</p>
 <pre><code>## DataFrame with 4 rows and 6 columns
 ##       heatmap                  slice row_slice column_slice     row_index

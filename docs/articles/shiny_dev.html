@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1017</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1019</span>
       </span>
     </div>
 
@@ -92,7 +92,7 @@
       <h1 data-toc-skip>Functions for Shiny app development</h1>
                         <h4 class="author">Zuguang Gu ( <a href="mailto:z.gu@dkfz.de" class="email">z.gu@dkfz.de</a> )</h4>
             
-            <h4 class="date">2020-12-18</h4>
+            <h4 class="date">2020-12-19</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jokergoo/InteractiveComplexHeatmap/blob/master/vignettes/shiny_dev.Rmd"><code>vignettes/shiny_dev.Rmd</code></a></small>
       <div class="hidden name"><code>shiny_dev.Rmd</code></div>
@@ -135,7 +135,7 @@ p {
 <span class="op">}</span>
 
 <span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/shinyApp.html">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></code></pre></div>
-<p><img src="app_demo1.png" width="100%"></p>
+<p><img src="https://jokergoo.github.io/images/app_demo1.png" width="100%" style="display: block; margin: auto;"></p>
 <p>You can also put multiple interactive heatmaps widgets in a single Shiny app, but this time you must assign a “heatmap id” for each one, so that <code><a href="../reference/MakeInteractiveComplexHeatmap.html">MakeInteractiveComplexHeatmap()</a></code> can find the correct heatmap to response. The heatmap id should start with letters.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ht1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">m</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span>
@@ -157,7 +157,7 @@ p {
 <span class="op">}</span>
 
 <span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/shinyApp.html">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></code></pre></div>
-<p><img src="app_demo2.png" width="100%"></p>
+<p><img src="https://jokergoo.github.io/images/app_demo2.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div id="customize-the-widgets" class="section level2">
 <h2 class="hasAnchor">
@@ -197,7 +197,7 @@ p {
 <span id="cb3-25"><a href="#cb3-25"></a></span>
 <span id="cb3-26"><a href="#cb3-26"></a><span class="in">shiny::shinyApp(ui, server)</span></span>
 <span id="cb3-27"><a href="#cb3-27"></a><span class="in">```</span></span></code></pre></div>
-<p><img src="rmarkdown.png" width="100%"></p>
+<p><img src="https://jokergoo.github.io/images/rmarkdown.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
 <div id="self-define-the-output" class="section level2">
 <h2 class="hasAnchor">
@@ -280,9 +280,9 @@ p {
 <span class="op">}</span>
 
 <span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/shinyApp.html">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></code></pre></div>
-<p><img src="customize_output.png" width="100%"></p>
+<p><img src="https://jokergoo.github.io/images/customize_output.png" width="100%" style="display: block; margin: auto;"></p>
 <p><code><a href="../reference/ht_shiny_example.html">ht_shiny_example(21)</a></code> gives another scenario where the output needs to be self-defined. In that example, an gene expression matrix is visualized and clicking on the heatmap will print the corresponding gene and some other annotations related to this gene. Run <code><a href="../reference/ht_shiny_example.html">ht_shiny_example(21)</a></code> to see how this is implemented.</p>
-<p><img src="customize_output2.png" width="100%"></p>
+<p><img src="https://jokergoo.github.io/images/customize_output2.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
   </div>
 
