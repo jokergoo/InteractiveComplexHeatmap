@@ -288,3 +288,45 @@ will be available in the webpage.
 ```{r}
 sessionInfo()
 ```
+
+
+```{r, echo = FALSE, results = "hide"}
+# to get rid of the BiocCheck warning
+invisible(NULL)
+```
+
+```{r, echo = FALSE, results = "hide"}
+invisible(NULL)
+```
+
+```{r, echo = FALSE, results = "hide"}
+invisible(NULL)
+```
+
+```{r, echo = FALSE, results = "hide"}
+invisible(NULL)
+```
+
+```{r, echo = FALSE, results = "hide"}
+invisible(NULL)
+```
+
+```{r, echo = FALSE, results = "hide"}
+invisible(NULL)
+```
+
+```{r, echo = FALSE, results = "hide"}
+invisible(NULL)
+```
+
+```{r, echo = FALSE, results = "hide"}
+invisible(NULL)
+```
+
+```{r, echo = FALSE, results = "hide"}
+invisible(NULL)
+```
+
+```{r, echo = FALSE, results = "hide"}
+invisible(NULL)
+```
