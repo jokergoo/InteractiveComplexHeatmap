@@ -3,7 +3,7 @@ Type: Package
 Title: Make Complex Heatmaps Interactive
 Version: 0.99.1
 Date: 2020-12-19
-Authors@R: c(person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"))
+Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"))
 Depends: R (>= 4.0.0), ComplexHeatmap (>= 2.7.2)
 Imports: grDevices, stats, shiny, grid, GetoptLong, S4Vectors (>= 0.26.1), 
     digest, IRanges
