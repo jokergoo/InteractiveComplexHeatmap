@@ -58,3 +58,9 @@ ht_shiny(ht)
 ```{r, echo = FALSE, out.width = "100%"}
 include_graphics("https://jokergoo.github.io/images/decoration.png")
 ```
+
+
+`post_fun` is a self-defined function and always needs on argument `ht_list`.
+
+Note the decorations will not be applied on the sub-heatmap.
+

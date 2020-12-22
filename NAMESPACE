@@ -1,8 +1,8 @@
 export("InteractiveComplexHeatmapOutput")
-export("MakeInteractiveComplexHeatmap")
 export("ht_pos_on_device")
 export("ht_shiny")
 export("ht_shiny_example")
+export("renderInteractiveComplexHeatmap")
 export("selectArea")
 export("selectPosition")
 

@@ -18,7 +18,7 @@ ht_shiny_example(which)
 The source code of all examples are in \code{systm.file("examples", "examples.R")}.
 }
 \value{
-No value is returned.
+A shiny app object.
 }
 \examples{
 ht_shiny_example()

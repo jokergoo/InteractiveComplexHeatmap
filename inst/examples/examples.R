@@ -699,8 +699,8 @@ ui = fluidPage(
 )
 
 server = function(input, output, session) {
-    MakeInteractiveComplexHeatmap(ht1, input, output, session, "heatmap_1")
-    MakeInteractiveComplexHeatmap(ht2, input, output, session, "heatmap_2")
+    renderInteractiveComplexHeatmap(ht1, input, output, session, "heatmap_1")
+    renderInteractiveComplexHeatmap(ht2, input, output, session, "heatmap_2")
 }
 
 shinyApp(ui, server)
@@ -738,7 +738,7 @@ brush_action = function(df, output) {
 }
 
 server = function(input, output, session) {
-    MakeInteractiveComplexHeatmap(ht, input, output, session,
+    renderInteractiveComplexHeatmap(ht, input, output, session,
     	click_action = click_action, brush_action = brush_action,
     	default_click_action = FALSE, default_brush_action = FALSE)
 }
@@ -788,7 +788,7 @@ UNIPROT: @{to_str(query[[g]][, 'UNIPROT'])}
 }
 
 server = function(input, output, session) {
-    MakeInteractiveComplexHeatmap(ht, input, output, session, 
+    renderInteractiveComplexHeatmap(ht, input, output, session, 
     	click_action = click_action)
 }
 
@@ -862,7 +862,7 @@ brush_action = function(df, output) {
 }
 
 server = function(input, output, session) {
-    MakeInteractiveComplexHeatmap(ht, input, output, session, 
+    renderInteractiveComplexHeatmap(ht, input, output, session, 
     	click_action = click_action, brush_action = brush_action)
 }
 
