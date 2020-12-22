@@ -60,7 +60,7 @@ ht2 = Heatmap(m,
 	show_row_names = FALSE, show_column_names = FALSE)
 
 ht_list = ht1 + ht2
-ht_list = draw(ht_ist)
+ht_list = draw(ht_list)
 ht_shiny(ht_list, width1 = 600)
 
 # title: A density heatmap.
@@ -195,14 +195,14 @@ ht_shiny(ht)
 
 # title: An enriched heatmap.
 
-library(EnrichedHeatmap)
+suppressPackageStartupMessages(library(EnrichedHeatmap))
 load(system.file("extdata", "chr21_test_data.RData", package = "EnrichedHeatmap"))
 
 tss = promoters(genes, upstream = 0, downstream = 1)
 mat1 = normalizeToMatrix(H3K4me3, tss, value_column = "coverage", 
     extend = 5000, mean_mode = "w0", w = 50)
 
-library(circlize)
+suppressPackageStartupMessages(library(circlize))
 col_fun = colorRamp2(quantile(mat1, c(0, 0.99)), c("white", "red"))
 
 ht = EnrichedHeatmap(mat1, col = col_fun, name = "H3K4me3", row_km = 3,
@@ -213,14 +213,14 @@ ht_shiny(ht, width1 = 300, height1 = 600)
 
 # title: A list of enriched heatmaps.
 
-library(EnrichedHeatmap)
+suppressPackageStartupMessages(library(EnrichedHeatmap))
 load(system.file("extdata", "chr21_test_data.RData", package = "EnrichedHeatmap"))
 
 tss = promoters(genes, upstream = 0, downstream = 1)
 mat1 = normalizeToMatrix(H3K4me3, tss, value_column = "coverage", 
     extend = 5000, mean_mode = "w0", w = 50)
 
-library(circlize)
+suppressPackageStartupMessages(library(circlize))
 col_fun = colorRamp2(quantile(mat1, c(0, 0.99)), c("white", "red"))
 
 mat2 = normalizeToMatrix(meth, tss, value_column = "meth", mean_mode = "absolute",
@@ -236,12 +236,16 @@ ht_list = draw(ht_list)
 
 ht_shiny(ht_list, width1 = 600, height1 = 600)
 
-# title: An enriched heatmap with discrete signals. Note, this example may take long time for preparing the data for heatmaps.
+# title: An enriched heatmap with discrete signals.
 
-library(GenomicRanges)
-library(data.table)
-library(EnrichedHeatmap)
-library(circlize)
+suppressPackageStartupMessages(library(EnrichedHeatmap))
+
+if(0) {
+# note the following code takes several minutes to run, so the result objects are already generated
+# and you will find the links after the end of this code chunk. (This code chunk is runnable.)
+suppressPackageStartupMessages(library(GenomicRanges))
+suppressPackageStartupMessages(library(data.table))
+suppressPackageStartupMessages(library(circlize))
 
 states_bed = fread("http://egg2.wustl.edu/roadmap/data/byFileType/chromhmmSegmentations/ChmmModels/coreMarks/jointModel/final/E003_15_coreMarks_mnemonics.bed.gz")
 states = GRanges(seqnames = states_bed[[1]], 
@@ -279,7 +283,7 @@ states_col = c(
 states_name = names(states_col)
 n_states = length(states_col)
 
-library(GenomicFeatures)
+suppressPackageStartupMessages(library(GenomicFeatures))
 # following code build the txdb object
 download.file("http://egg2.wustl.edu/roadmap/data/byDataType/rna/annotations/gen10.long.gtf.gz", "gen10.long.gtf.gz")
 txdb = makeTxDbFromGFF("gen10.long.gtf.gz")  # this takes long runtime
@@ -291,6 +295,15 @@ tss_chr1 = tss[seqnames(tss) == "chr1"]
 # column "states_simplified" is in character mode
 mat_states = normalizeToMatrix(states, tss_chr1, value_column = "states_simplified")
 
+saveRDS(mat_states, file = "~/project/jokergoo.github.io/public/files/interactive_complexheatmap_mat_states.rds")
+saveRDS(states_col, file = "~/project/jokergoo.github.io/public/files/interactive_complexheatmap_states_col.rds")
+
+}
+
+mat_states = readRDS(url("https://jokergoo.github.io/files/interactive_complexheatmap_mat_states.rds"))
+states_col = readRDS(url("https://jokergoo.github.io/files/interactive_complexheatmap_states_col.rds"))
+
+
 ht = EnrichedHeatmap(mat_states, name = "states", col = states_col, cluster_rows = TRUE)
 ht = draw(ht)
 
@@ -298,8 +311,8 @@ ht_shiny(ht, width1 = 300, height1 = 600)
 
 # title: A heatmap produced from tidyHeatmap package.
 
-library(tidyverse)
-library(tidyHeatmap)
+suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(tidyHeatmap))
 mtcars_tidy <- 
     mtcars %>% 
     as_tibble(rownames="Car name") %>% 
@@ -314,17 +327,16 @@ mtcars_heatmap <-
     mtcars_tidy %>% 
         heatmap(`Car name`, Property, Value ) %>%
         add_tile(hp)
-mtcars_heatmap = draw(mtcars_heatmap)
 
 ht_shiny(mtcars_heatmap)
 
 # title: An example from Lewis et al 2019. GitHub repo: https://github.com/kevinblighe/E-MTAB-6141
 
-require(RColorBrewer)
-require(ComplexHeatmap)
-require(circlize)
-require(digest)
-require(cluster)
+suppressPackageStartupMessages(require(RColorBrewer))
+suppressPackageStartupMessages(require(ComplexHeatmap))
+suppressPackageStartupMessages(require(circlize))
+suppressPackageStartupMessages(require(digest))
+suppressPackageStartupMessages(require(cluster))
 
 mat <- read.table('https://github.com/kevinblighe/E-MTAB-6141/raw/master/rdata/mat.tsv', sep = '\t', row.names = 1,
 	header = TRUE, stringsAsFactors = FALSE)
@@ -573,9 +585,9 @@ ht_shiny(ht, width1 = 900, height1 = 1200)
 
 # title: Visualize cell heterogeneity from single cell RNASeq. This is from Supplementary S2 of the ComplexHeatmap paper. https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
 
-library(circlize)
-library(ComplexHeatmap)
-library(GetoptLong)
+suppressPackageStartupMessages(library(circlize))
+suppressPackageStartupMessages(library(ComplexHeatmap))
+suppressPackageStartupMessages(library(GetoptLong))
 
 expr = read.table("https://raw.githubusercontent.com/jokergoo/supplementary/master/ComplexHeatmap-supplementary1-4/supplS2_scRNASeq/mouse_scRNAseq_corrected.txt", sep = "\t", header = TRUE)
 expr = expr[!duplicated(expr[[1]]), ]
@@ -617,14 +629,14 @@ ht_list = Heatmap(mat2, col = colorRamp2(c(-1.5, 0, 1.5), c("blue", "white", "re
         heatmap_legend_param = list(title = "Correlation"))
 ht_list = draw(ht_list, main_heatmap = "cor")
 
-ht_shiny(ht_list, width1 = 900, height1 = 600)
+ht_shiny(ht_list, width1 = 900, height1 = 600, width2 = 500)
 
 
 # title: Correlations between methylation, expression and other genomic features. This is from Supplementary S3 of the ComplexHeatmap paper. https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
 
-library(ComplexHeatmap)
-library(circlize)
-library(RColorBrewer)
+suppressPackageStartupMessages(library(ComplexHeatmap))
+suppressPackageStartupMessages(library(circlize))
+suppressPackageStartupMessages(library(RColorBrewer))
 
 res_list = readRDS(url("https://github.com/jokergoo/supplementary/raw/master/ComplexHeatmap-supplementary1-4/supplS3_methylation/meth.rds"))
 type = res_list$type
@@ -680,10 +692,10 @@ ht2 = draw(ht2)
 
 ui = fluidPage(
     h3("The first heatmap"),
-    InteractiveComplexHeatmapOutput("heatmap_1"),
+    InteractiveComplexHeatmapOutput("heatmap_1", height1 = 200, height2 = 200),
     hr(),
     h3("The second heatmap"),
-    InteractiveComplexHeatmapOutput("heatmap_2")
+    InteractiveComplexHeatmapOutput("heatmap_2", height1 = 200, height2 = 200)
 )
 
 server = function(input, output, session) {
@@ -693,7 +705,7 @@ server = function(input, output, session) {
 
 shinyApp(ui, server)
 
-# title: Self-define the output.
+# title: Self-define the output. The selected sub-matrix is shown as a text table.
 
 m = matrix(rnorm(100*100), 100)
 rownames(m) = paste0("R", 1:100)
@@ -714,7 +726,7 @@ click_action = function(df, output) {
 	})
 }
 
-library(kableExtra)
+suppressPackageStartupMessages(library(kableExtra))
 brush_action = function(df, output) {
 	row_index = unlist(df$row_index)
 	column_index = unlist(df$column_index)
@@ -733,16 +745,16 @@ server = function(input, output, session) {
 
 shinyApp(ui, server)
 
-# title: Self-define the output. A more complicated example.
+# title: Self-define the output. Additional annotations for the selected gene are shown.
 
-library(EnrichedHeatmap)
+suppressPackageStartupMessages(library(EnrichedHeatmap))
 load(system.file("extdata", "chr21_test_data.RData", package = "EnrichedHeatmap"))
 
 gene_id = names(rpkm)[1:100]
 gene_id = gsub("\\.\\d+$", "", gene_id)
 
-library(org.Hs.eg.db)
-query = select(org.Hs.eg.db, keys = gene_id, columns = c("SYMBOL", "REFSEQ", "UNIPROT"), keytype= "ENSEMBL")
+suppressPackageStartupMessages(library(org.Hs.eg.db))
+query = AnnotationDbi::select(org.Hs.eg.db, keys = gene_id, columns = c("SYMBOL", "REFSEQ", "UNIPROT"), keytype = "ENSEMBL")
 query = split(query, query[, 1])
 
 n = length(query)
@@ -787,18 +799,18 @@ shinyApp(ui, server)
 
 rmarkdown::run(system.file("examples", "rmarkdown.Rmd", package = "InteractiveComplexHeatmap"))
 
-# title: Visualize Gene Ontology similarities where the output is self-defined.
+# title: Visualize Gene Ontology similarities. A list of selected GO IDs as well as their descriptions are shown in the output.
 
-library(simplifyEnrichment)
+suppressPackageStartupMessages(library(simplifyEnrichment))
 
 mat = readRDS(system.file("extdata", "random_GO_BP_sim_mat.rds",
      package = "simplifyEnrichment"))
 cl = binary_cut(mat)
 ht = ht_clusters(mat, cl, word_cloud_grob_param = list(max_width = 80))
 
-library(GO.db)
+suppressPackageStartupMessages(library(GO.db))
 get_go_term = function(go_id) {
-	suppressMessages(select(GO.db, keys = go_id, columns = "TERM")$TERM)
+	suppressMessages(AnnotationDbi::select(GO.db, keys = go_id, columns = "TERM")$TERM)
 }
 
 ui = fluidPage(
@@ -859,9 +871,9 @@ shinyApp(ui, server)
 
 # title: Genome-scale heatmaps.
 
-library(ComplexHeatmap)
-library(circlize)
-library(GenomicRanges)
+suppressPackageStartupMessages(library(ComplexHeatmap))
+suppressPackageStartupMessages(library(circlize))
+suppressPackageStartupMessages(library(GenomicRanges))
 
 chr_window = bin_genome("hg19")
 

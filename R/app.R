@@ -111,7 +111,12 @@ ht_shiny_example = function(which) {
 		cat("\n")
 	} else {
 		which = which[1]
+
+		if(which > length(examples) || which < 1) {
+			stop(qq("The value of `which` should be between 1 and @{length(examples)}."))
+		}
 		code = examples[[which]]$code
+		title = examples[[which]]$title
 
 		k = which(grepl("rmarkdown::run\\(", code))
 		if(length(k)) {
@@ -119,16 +124,22 @@ ht_shiny_example = function(which) {
 			return(invisible(NULL))
 		}
 
-		library_calls = code[grepl("library\\(.*\\)", code)]
+		library_calls = code[grepl("(library|require)\\(.*?\\)", code)]
 		if(length(library_calls)) {
-			required_pkgs = gsub("library\\((.*)\\)", "\\1", library_calls)
+			required_pkgs = gsub("^.*(library|require)\\(([^)]*)\\).*$", "\\2", library_calls)
+			loaded_pkgs = search()
+			loaded_pkgs = loaded_pkgs[grepl("^package", loaded_pkgs)]
+			loaded_pkgs = gsub("^package:", "", loaded_pkgs)
 			for(pkg in required_pkgs) {
 				if(!requireNamespace(pkg, quietly = TRUE)) {
-					stop_wrap(paste0("Package '", pkg, "' should be installed for running this example."))
+					stop(paste0("Package '", pkg, "' should be installed for running this example."))
+				}
+				if(!pkg %in% loaded_pkgs) {
+					message(paste0("Note: Namespace 'package:", pkg, "' is inserted into the search list. It might bring conflicts for some functions."))
 				}
 			}
 		}
-		cat("Processing the heatmaps... It takes different time depending on examples.\n")
+		message("Processing the heatmaps. It takes different time depending on examples...\n")
 
 		if(any(grepl("ht_shiny\\(", code))) {
 
@@ -141,7 +152,10 @@ ht_shiny_example = function(which) {
 			html = qq("
 <hr />
 <div>
-<h4>Source code for exporting this Shiny app</h4>
+<h3>Information of this Shiny app<h3>
+<h5>Description</h5>
+<pre>@{title}</pre>
+<h5>Source code</h5>
 <pre>
 @{code2}
 </pre>
@@ -159,7 +173,10 @@ ht_shiny_example = function(which) {
 ui = fluidPage(
     ui,
 HTML('<hr /><div>
-<h4>Source code for exporting this Shiny app</h4>
+<h3>Information of this Shiny app<h3>
+<h5>Description</h5>
+<pre>@{title}</pre>
+<h5>Source code</h5>
 <pre>
 @{code_line}
 </pre>
@@ -195,10 +212,10 @@ get_examples = function() {
 	for(i in seq_along(ind)) {
 		code = text[seq(ind[i]+1, ind2[i])]
 		if(!any(grepl("(library|require)\\(ComplexHeatmap\\)", code))) {
-			code = c("library(ComplexHeatmap)", code)
+			code = c("suppressPackageStartupMessages(library(ComplexHeatmap))", code)
 		}
 		if(!any(grepl("(library|require)\\(InteractiveComplexHeatmap\\)", code))) {
-			code = c("library(InteractiveComplexHeatmap)", code)
+			code = c("suppressPackageStartupMessages(library(InteractiveComplexHeatmap))", code)
 		}
 
 		for(k in rev(seq_along(code))) {
