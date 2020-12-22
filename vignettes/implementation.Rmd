@@ -32,7 +32,7 @@ p {
 </style>
 
 Heatmaps are mainly for visualizing common patterns that are shared by groups
-of rows and columns. After the patterns have been observed, the next step is
+of rows and columns. After the patterns are observed, the next step is
 to extract the corresponding groups of rows and columns from the heatmap,
 which requires interactivity on the heatmaps. The **ComplexHeatmap** package
 is well known for generating **static heatmaps** (a single heatmap or a list
@@ -77,7 +77,8 @@ how the interactivity is implemneted with the interactive graphic device.
 ## On the interactive graphics device
 
 Here the "interactive graphics device" is the window that is opened for
-generating plots in your R session, or the figure panel in Rstudio IDE.
+generating plots in your R session if you use R in the terminal or in a native R
+GUI, or the figure panel in Rstudio IDE.
 
 I will first explain how **InteractiveComplexHeatmap** captures the positions
 that user clicked on the device and how it is associated to the values in the
@@ -91,7 +92,7 @@ to tell which heatmap the selected points are in. Furthermore, by calculating
 the relative distance of the selected points in that heatmap, it is also possible to
 know which rows and columns the selected points correspond to.
 
-For associating user's points and the heatmaps, we first need to calculate the
+For associating user's clicked points and the heatmaps, we first need to calculate the
 positions of all heatmaps. There is a helper function `ht_pos_on_device()`
 that does this job.
 
@@ -138,7 +139,7 @@ for(i in seq_len(nrow(pos))) {
 }
 ```
 
-Yes, the positions of all heatmap slices are correct!
+Yes, the positions of all heatmap slices are correctly captured!
 
 Since now we know the location of the point that user clicked (by
 `grid::grid.locator()`) and the positions of all heatmap slices, it is
@@ -166,7 +167,7 @@ $$ i_r = \lceil \frac{b - y_1}{y_2 - y_1} \cdot n_r \rceil $$
 
 where the symbol $\lceil x \rceil$ means the ceiling of the numeric value $x$.
 In **ComplexHeatmap**, the row with index 1 is always put on the top of the
-heatmap, then $i_r$ should be calculated as:
+heatmap, then $i_r$ should be adjusted as:
 
 $$ i_r = n_r - \lceil \frac{b - y_1}{y_2 - y_1} \cdot n_r \rceil + 1 $$
 
@@ -211,8 +212,9 @@ and the row/column index of the matrix in that heatmap.
 ## 1            1
 ```
 
-The output means, the position user clicked corresponds to `mat[9, 1]` where `mat`
-is the original matrix that was sent to `Heatmap()`.
+The output means, the position user clicked is in a heatmap called "mat_a", in its first row
+slice and the second column slice. Assume `mat` is the matrix sent to heatmap "mat_a", then the
+clicked point correspond to the value `mat[9, 1]`.
 
 If the position clicked is not in any of the heatmap slices, the function
 returns `NULL`.
@@ -259,10 +261,10 @@ The rectangle and the points that mark the area can be turned off by setting
 `mark` argument to `FALSE`.
 
 
-## On non-interactive graphics devices
+## On off-screen graphics devices
 
 It is also possible to use `selectPosition()` and `selectArea()` on other
-non-interactive graphics devices, such as `pdf()` or `png()`. Now you cannot
+off-screen graphics devices, such as `pdf()` or `png()`. Now you cannot
 select the positions interactively, but instead you can specify `pos` argument
 in `selectPosition()` and `pos1`/`pos2` in `selectArea()` to simulate clicks.
 The values for `pos`, `pos1` and `pos2` all should be a `unit` object of
@@ -285,10 +287,10 @@ pos
 # remember to dev.off()
 ```
 
-Users do not need to use it directly with a non-interactive graphics device,
-however, it is very useful when developing a Shiny app where the plot is
-actually under a non-interactive graphics device. I will explain in the next
-section.
+Users do not need to use this functionality directly with an off-screen
+graphics device, however, it is very useful when developing a Shiny app where
+the plot is actually under an off-screen graphics device. I will explain it in
+the next section.
 
 ## Shiny app
 
@@ -296,11 +298,12 @@ With the three functions `ht_pos_on_device()`, `selectPosition()` and
 `selectArea()`, it is possible to implement Shiny apps for interactively
 working with heatmaps. Now the problem is how does the server side capture the
 positions that user clicked on the web page. Luckily, there is a solution for
-this. The output heatmap is normally put with `plotOutput()` and
+this. The output heatmap is normally put with a `shiny::plotOutput()` and
 `plotOutput()` provides two actions `click` and `brush`. Then on the server
-side, it is possible to get the information of the positions that user clicked.
-The positions can be set to `selectPosition()` and
-`selectArea()` via `pos` or `pos1`/`pos2` arguments to correspond to the matrices.
+side, it is possible to get the information of the positions that user
+clicked. The positions can be set to `selectPosition()` and `selectArea()` via
+`pos` or `pos1`/`pos2` arguments to correctly correspond to the original
+matrices.
 
 
 <br />

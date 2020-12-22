@@ -30,13 +30,13 @@ InteractiveComplexHeatmapOutput(heatmap_id = NULL,
 
 }
 \details{
-This function generates HTML fragment for the interactive UI. See the example from \code{\link{MakeInteractiveComplexHeatmap}} page.
+This function generates HTML fragment for the interactive UI. See the example from \code{\link{renderInteractiveComplexHeatmap}} page.
 
 It generates three div blocks. Assuming the heatmap id variable is \code{heatmap_id}, the three div blocks are:
 
 \itemize{
-  \item \code{#{heatmap_id}_heatmap_wrap_div}: to put the original heatmap. This div contains two children elements. One is the title for the heatmap (with a \code{h3} tag) and one is a div block with ID \code{#{heatmap_id}_heatmap_wrap}. \code{#{heatmap_id}_heatmap_wrap} is for JQuery-UI and it wraps the div \code{#{heatmap_id}_heatmap} which is used by \code{\link[shiny]{plotOutput}}.
-  \item \code{#{heatmap_id}_sub_heatmap_wrap_div}: to put the sub-heatmap. This div contains two children elements. One is the title for the heatmap (with a \code{h3} tag) and one is a div block with ID \code{#{heatmap_id}_sub_heatmap_wrap}. \code{#{heatmap_id}_sub_heatmap_wrap} is for JQuery-UI and it wraps the div \code{#{heatmap_id}_sub_heatmap} which is used by \code{\link[shiny]{plotOutput}}.
+  \item \code{#{heatmap_id}_heatmap_wrap_outer}: to put the original heatmap. This div contains two children elements. One is the title for the heatmap (with a \code{h3} tag) and one is a div block with ID \code{#{heatmap_id}_heatmap_wrap}. \code{#{heatmap_id}_heatmap_wrap} is for JQuery-UI and it wraps the div \code{#{heatmap_id}_heatmap} which is used by \code{\link[shiny]{plotOutput}}.
+  \item \code{#{heatmap_id}_sub_heatmap_wrap_outer}: to put the sub-heatmap. This div contains two children elements. One is the title for the heatmap (with a \code{h3} tag) and one is a div block with ID \code{#{heatmap_id}_sub_heatmap_wrap}. \code{#{heatmap_id}_sub_heatmap_wrap} is for JQuery-UI and it wraps the div \code{#{heatmap_id}_sub_heatmap} which is used by \code{\link[shiny]{plotOutput}}.
   \item \code{#{heatmap_id}_info}: to put the information of the selected position/area.
 }
 }

@@ -20,7 +20,7 @@ shiny_env$history = list()
 # -css Self-defined CSS code.
 #
 # == details
-# This function generates HTML fragment for the interactive UI. See the example from `MakeInteractiveComplexHeatmap` page.
+# This function generates HTML fragment for the interactive UI. See the example from `renderInteractiveComplexHeatmap` page.
 #
 # It generates three div blocks. Assuming the heatmap id variable is ``heatmap_id``, the three div blocks are:
 #
@@ -204,11 +204,12 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 # -session Passed from the shiny server function.
 # -heatmap_id The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app, 
 #     this argument does not need to be specified and it will use the current one specified in `InteractiveComplexHeatmapOutput`.
-# -click_action The action at the sever side when receiving a click event on the UI. If ``action`` is selected as ``hover``
+# -click_action Additional action at the sever side when receiving a click event on the UI. If ``action`` is selected as ``hover``
 #        or ``dblclick`` in `InteractiveComplexHeatmapOutput`, then this argument controls the action for the hover or dblclick event.
-# -brush_action The action at the sever side when receiving a brush event on the UI.
+# -brush_action Additional action at the sever side when receiving a brush event on the UI.
 # -default_click_action Whether to apply the default click action on the sever side.
-# -default_brush_action Whether to apply the default brush action on the sever side.
+# -default_brush_action Whether to apply the default brush action on the sever side. There are two default brush actions on the server side.
+#       One is to draw the sub-heatmap, and the second is to print text messages. This argument only controls the second default brush action.
 #
 # == value
 # No value is returned.
@@ -223,12 +224,12 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 # )
 #
 # server = function(input, output, session) {
-#     MakeInteractiveComplexHeatmap(ht, input, output, session)
+#     renderInteractiveComplexHeatmap(ht, input, output, session)
 # }
 #
 # shiny::shinyApp(ui, server)
 # }
-MakeInteractiveComplexHeatmap = function(ht_list, input, output, session, 
+renderInteractiveComplexHeatmap = function(ht_list, input, output, session, 
 	heatmap_id = shiny_env$current_heatmap_id,
 	click_action = NULL, brush_action = NULL, 
 	default_click_action = TRUE, default_brush_action = TRUE) {

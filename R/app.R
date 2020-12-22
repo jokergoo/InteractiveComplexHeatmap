@@ -4,7 +4,7 @@
 #
 # == param
 # -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object. If it is not specified, a random heatmap is used.
-#     Better be updated by ``draw()`` function.
+#     Better already updated by ``draw()`` function.
 # -... Pass to `InteractiveComplexHeatmapOutput`.
 # -html HTML fragment inserted below the heatmap.
 #
@@ -12,7 +12,7 @@
 # https://jokergoo.shinyapps.io/interactive_complexHeatmap/
 #
 # == value
-# No value is returned.
+# A shiny app object.
 #
 # == example
 # # use a random heatmap
@@ -65,7 +65,7 @@ ht_shiny = function(ht_list, ..., html = NULL) {
 	ui = fluidPage(
 		titlePanel("ComplexHeatmap Shiny App"),
 
-		p("You can click a position or select an area from the heatmap(s). The original heatmap and the selected sub-heatmap can be resized by dragging from the bottom right. If the heatmap is too huge or you resize the heatmap too frequently, the heatmap might not be correctly updated. You can just need to slightly resize the heatmap again and wait for several seconds."),
+		p("You can click a position or select an area from the heatmap(s). The original heatmap and the selected sub-heatmap can be resized by dragging from the bottom right of the box. If the heatmap is too huge or you resize the heatmap too frequently, the heatmap might not be correctly updated. You can just need to slightly resize the heatmap again and wait for several seconds."),
 		hr(),
 
 		InteractiveComplexHeatmapOutput(...), 
@@ -73,7 +73,7 @@ ht_shiny = function(ht_list, ..., html = NULL) {
 	)
 
 	server = function(input, output, session) {
-		MakeInteractiveComplexHeatmap(ht_list, input, output, session)
+		renderInteractiveComplexHeatmap(ht_list, input, output, session)
 	}
 
 	shiny::shinyApp(ui, server)

@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r, eval = FALSE}
+```{r, echo = FALSE}
 suppressPackageStartupMessages(library(InteractiveComplexHeatmap))
 ```
 
@@ -47,7 +47,7 @@ You can copy and paste the following code:
 library(ComplexHeatmap)
 library(InteractiveComplexHeatmap)
 m = matrix(rnorm(100*100), nrow = 100)
-ht = Heatmap(ht)
+ht = Heatmap(m)
 ht = draw(ht) # not necessary, but recommended
 
 ht_shiny(ht)
@@ -202,15 +202,19 @@ ht_shiny(ht)
 To facilitate the users who are still using `heatmap()` and `heatmap.2()`
 functions, to make the output of these two functions can be exported as
 interactive Shiny apps as well, from **ComplexHeatmap** version 2.7.2, two
-similar translation functions `ComplexHeatmap::heatmap()` and
-`ComplexHeatmap::heatmap.2()` which use the same set of arguments as the
+similar translation functions `ComplexHeatmap:::heatmap()` and
+`ComplexHeatmap:::heatmap.2()` which use the same set of arguments as the
 original functions and generate almost identical heatmaps. Then an interactive
 `heatmap()` will look like:
 
 ```{r, eval = FALSE}
-ht = heatmap(...) # ComplexHeatmap::heatmap should overwrite stats::heatmap
+ht = ComplexHeatmap:::heatmap(...)
 ht_shiny(ht)
 ```
+
+As you see, `heatmap()` function is not exported from **ComplexHeatmap** (so
+it will not conflict with **stats** package) and it should be explicitly
+specifid with `:::`.
 
 An live example is at https://jokergooo.shinyapps.io/interactive_heatmap/. The
 example can be run locally by executing `ht_shiny_example(10)`.
@@ -221,9 +225,12 @@ example can be run locally by executing `ht_shiny_example(10)`.
 Similarly, an interactive `heatmap.2()` looks like:
 
 ```{r, eval = FALSE}
-ht = heatmap.2(...) # ComplexHeatmap::heatmap.2 should overwrite gplots::heatmap.2
+ht = ComplexHeatmap:::heatmap.2(...)
 ht_shiny(ht)
 ```
+
+Also `heatmap.2()` is not exported from **ComplexHeatmap** (so it will not
+conflict with **glots** package) and it should be specified with `:::`.
 
 An live example is at https://jokergooo.shinyapps.io/interactive_heatmap_2/.
 The example can be run locally by executing `ht_shiny_example(11)`.
@@ -246,11 +253,7 @@ library(tidyHeatmap)
 mtcars_tidy <- 
     mtcars %>% 
     as_tibble(rownames="Car name") %>% 
-    
-    # Scale
     mutate_at(vars(-`Car name`, -hp, -vs), scale) %>%
-    
-    # tidyfy
     pivot_longer(cols = -c(`Car name`, hp, vs), names_to = "Property", values_to = "Value")
 
 mtcars_heatmap <- 
@@ -269,11 +272,11 @@ package. The list of examples can be obtained by executing
 `ht_shiny_example()` with no argument.
 
 
-```{r, eval = FALSE}
+```{r}
 ht_shiny_example()
 ```
 
-And you can select one specific example by sending the corresponding index to
+You can select one specific example by sending the corresponding index to
 `ht_shiny_example()`, e.g. to run the example "4. A single heatmap where rows
 and columns are split.", simply run:
 
@@ -283,6 +286,7 @@ ht_shiny_example(4)
 
 Then the interactive heatmaps as well as the source code for generating the app
 will be available in the webpage.
+
 
 ## SessionInfo
 
