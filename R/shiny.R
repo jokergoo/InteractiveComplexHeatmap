@@ -485,7 +485,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 								layer_fun = NULL
 							}
 
-							ignored_anno = c("anno_oncoprint_barplot", "anno_zoom")
+							ignored_anno = c("anno_oncoprint_barplot", "anno_zoom", "anno_empty")
 							if(!is.null(top_annotation)) {
 								if(length(top_annotation) == 1) {
 									if(top_annotation@anno_list[[1]]@fun@fun_name %in% ignored_anno) {
@@ -526,6 +526,42 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 									right_annotation = right_annotation[, ind]
 								}
 							}
+
+							if(any(c("", attr(ht_current_full, "translate_from")) %in% c("heatmap", "heatmap.2"))) {
+								if(!is.null(right_annotation)) {
+									if(show_row_names) {
+										show_row_names = FALSE
+									} else {
+										right_annotation = right_annotation[, "ylab"]
+									}
+								}
+								if(!is.null(bottom_annotation)) {
+									if(show_column_names) {
+										show_column_names = FALSE
+									} else {
+										bottom_annotation = bottom_annotation[, "xlab"]
+									}
+								}
+							}
+
+							heatmap_width = unit(1, "npc")
+							width = NULL
+							heatmap_height = unit(1, "npc")
+							height = NULL
+							if(is_abs_unit(ht_current_full@heatmap_param$width)) {
+								heatmap_width = ht_current_full@heatmap_param$width
+							}
+							if(is_abs_unit(ht_current_full@heatmap_param$height)) {
+								heatmap_height = ht_current_full@heatmap_param$height
+							}
+							if(is_abs_unit(ht_current_full@matrix_param$width)) {
+								width = ht_current_full@matrix_param$width
+								heatmap_width = unit(1, "npc")
+							}
+							if(is_abs_unit(ht_current_full@matrix_param$height)) {
+								height = ht_current_full@matrix_param$height
+								heatmap_height = unit(1, "npc")
+							}
 							
 							ht_current = Heatmap(subm, rect_gp = ht_current_full@matrix_param$gp,
 								row_split = rs, column_split = cs,
@@ -535,13 +571,15 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 								row_title = NULL, column_title = NULL,
 								border = ht_current_full@matrix_param$border,
 								row_labels = row_labels, column_labels = column_labels,
-								show_row_names = show_row_names,
-								show_column_names = show_column_names,
+								show_row_names = show_row_names, row_names_side = ht_current_full@row_names_param$side,
+								show_column_names = show_column_names, column_names_side = ht_current_full@column_names_param$side,
 								top_annotation = top_annotation,
 								bottom_annotation = bottom_annotation,
 								left_annotation = left_annotation,
 								right_annotation = right_annotation,
-								cell_fun = cell_fun, layer_fun = layer_fun
+								cell_fun = cell_fun, layer_fun = layer_fun,
+								heatmap_width = heatmap_width, width = width,
+								heatmap_height = heatmap_height, height = height
 							)
 							
 						} else {
