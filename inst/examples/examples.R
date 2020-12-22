@@ -173,7 +173,7 @@ rc = rainbow(nrow(x), start = 0, end = 0.3)
 cc = rainbow(ncol(x), start = 0, end = 0.3)
 
 ## note `heatmap()` should be from ComplexHeatmap package
-ht = ComplexHeatmap::heatmap(x, col = cm.colors(256), scale = "column",
+ht = ComplexHeatmap:::heatmap(x, col = cm.colors(256), scale = "column",
               RowSideColors = rc, ColSideColors = cc, margins = c(5,10),
               xlab = "specification variables", ylab =  "Car Models",
               main = "heatmap(<Mtcars data>, ..., scale = \"column\")")
@@ -188,7 +188,7 @@ data(mtcars)
 x = as.matrix(mtcars)
 
 # note `heatmap.2()` should be from ComplexHeatmap package
-ht = ComplexHeatmap::heatmap.2(x, col = gplots::bluered, scale = "column", tracecol = "#303030")
+ht = ComplexHeatmap:::heatmap.2(x, col = gplots::bluered, scale = "column", tracecol = "#303030")
 ht = draw(ht)
 
 ht_shiny(ht)
@@ -569,7 +569,7 @@ ht = draw(hmap + genelabels,
 	annotation_legend_side = 'right',
 	row_sub_title_side = 'left')
 
-ht_shiny(ht, width1 = 900, height = 1200)
+ht_shiny(ht, width1 = 900, height1 = 1200)
 
 # title: Visualize cell heterogeneity from single cell RNASeq. This is from Supplementary S2 of the ComplexHeatmap paper. https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
 

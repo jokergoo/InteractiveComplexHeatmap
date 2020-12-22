@@ -44,6 +44,7 @@ produced from **ComplexHeatmap** package, you just use the function
 You can copy and paste the following code:
 
 ```{r, eval = FALSE}
+library(ComplexHeatmap)
 library(InteractiveComplexHeatmap)
 m = matrix(rnorm(100*100), nrow = 100)
 ht = Heatmap(ht)

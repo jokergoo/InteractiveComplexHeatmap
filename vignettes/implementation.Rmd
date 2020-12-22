@@ -53,6 +53,7 @@ clustering on the numeric heatmap.
 
 
 ```{r}
+library(ComplexHeatmap)
 library(InteractiveComplexHeatmap)
 set.seed(123)
 mat1 = matrix(rnorm(100), 10)
