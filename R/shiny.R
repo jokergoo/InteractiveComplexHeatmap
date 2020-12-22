@@ -24,10 +24,10 @@ shiny_env$history = list()
 #
 # It generates three div blocks. Assuming the heatmap id variable is ``heatmap_id``, the three div blocks are:
 #
-# - ``#{heatmap_id}_heatmap_wrap_div``: to put the original heatmap. This div contains two children elements. One is the title
+# - ``#{heatmap_id}_heatmap_wrap_outer``: to put the original heatmap. This div contains two children elements. One is the title
 #    for the heatmap (with a ``h3`` tag) and one is a div block with ID ``#{heatmap_id}_heatmap_wrap``. ``#{heatmap_id}_heatmap_wrap``
 #    is for JQuery-UI and it wraps the div ``#{heatmap_id}_heatmap`` which is used by `shiny::plotOutput`.
-# - ``#{heatmap_id}_sub_heatmap_wrap_div``: to put the sub-heatmap. This div contains two children elements. One is the title
+# - ``#{heatmap_id}_sub_heatmap_wrap_outer``: to put the sub-heatmap. This div contains two children elements. One is the title
 #    for the heatmap (with a ``h3`` tag) and one is a div block with ID ``#{heatmap_id}_sub_heatmap_wrap``. ``#{heatmap_id}_sub_heatmap_wrap``
 #    is for JQuery-UI and it wraps the div ``#{heatmap_id}_sub_heatmap`` which is used by `shiny::plotOutput`.
 # - ``#{heatmap_id}_info``: to put the information of the selected position/area.
@@ -121,11 +121,11 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 '))),
 		tags$style(paste(readLines(system.file("app", "jquery-ui.css", package = "InteractiveComplexHeatmap")), collapse = "\n")),
 		tags$style(qq("
-#@{heatmap_id}_heatmap_wrap_div, #@{heatmap_id}_sub_heatmap_wrap_div {
+#@{heatmap_id}_heatmap_wrap_outer, #@{heatmap_id}_sub_heatmap_wrap_outer {
 	@{ifelse(nrow == 1, 'float:left;', '')}
 	margin-bottom: 10px;
 }
-#@{heatmap_id}_heatmap_wrap_div {
+#@{heatmap_id}_heatmap_wrap_outer {
 	margin-right: 10px;
 }
 #@{heatmap_id}_heatmap_wrap {
@@ -146,11 +146,11 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
     margin: auto;
     margin: auto;
 }
-#@{heatmap_id}_sub_heatmap_wrap_div .checkbox {
+#@{heatmap_id}_sub_heatmap_wrap_outer .checkbox {
 	padding:2px 0px;
 	margin:0px
 }
-#@{heatmap_id}_sub_heatmap_wrap_div .form-group {
+#@{heatmap_id}_sub_heatmap_wrap_outer .form-group {
 	padding: 0px;
 	margin: 0px;
 }
@@ -168,7 +168,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 			"))),
 			id = qq("@{heatmap_id}_heatmap_wrap")
 		),
-		id = qq("@{heatmap_id}_heatmap_wrap_div")
+		id = qq("@{heatmap_id}_heatmap_wrap_outer")
 	),
 	div(
 		h5(title2),
@@ -187,7 +187,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 				checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = FALSE)
 			)
 		),
-		id = qq("@{heatmap_id}_sub_heatmap_wrap_div")
+		id = qq("@{heatmap_id}_sub_heatmap_wrap_outer")
 	),
 	div(style = "clear: both;"),
 	if(output_div) htmlOutput(qq("@{heatmap_id}_info")) else NULL
@@ -266,21 +266,27 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		stop_wrap("There should be at least one normal heatmap (nrow > 0 and ncol > 0) in the heatmap list.")
 	}
 
+	shiny_env[[heatmap_id]] = list()
+
 	output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
 		width = session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]]
     	height = session$clientData[[qq("output_@{heatmap_id}_heatmap_height")]]
     	
     	showNotification("Making the original heatmap.", duration = 2, type = "message")
 
-    	if(inherits(ht_list, "Heatmap")) {
-    		shiny_env[[heatmap_id]]$ht_list = draw(ht_list)
+    	if(!is.null(shiny_env[[heatmap_id]]$ht_list)) {
+    		draw(shiny_env[[heatmap_id]]$ht_list)
     	} else {
-    		if(ht_list@layout$initialized) {
-    			shiny_env[[heatmap_id]]$ht_list = do.call(draw, c(list(object = ht_list), ht_list@ht_list_param$called_arguments))
-    		} else {
-    			shiny_env[[heatmap_id]]$ht_list = draw(ht_list)
-    		}
-    	}
+	    	if(inherits(ht_list, "Heatmap")) {
+	    		shiny_env[[heatmap_id]]$ht_list = draw(ht_list)
+	    	} else {
+	    		if(ht_list@layout$initialized) {
+	    			shiny_env[[heatmap_id]]$ht_list = do.call(draw, c(list(object = ht_list), ht_list@ht_list_param$called_arguments))
+	    		} else {
+	    			shiny_env[[heatmap_id]]$ht_list = draw(ht_list)
+	    		}
+	    	}
+	    }
 		shiny_env[[heatmap_id]]$ht_pos = ht_pos_on_device(shiny_env[[heatmap_id]]$ht_list, include_annotation = TRUE, calibrate = FALSE)
 
 		shiny_env[[heatmap_id]]$selected = NULL
@@ -331,7 +337,9 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		  	pos2 = lt[[2]]
 		    
 		    ht_list = shiny_env[[heatmap_id]]$ht_list
+		    dev.null()
 		    selected = selectArea(ht_list, mark = FALSE, pos1 = pos1, pos2 = pos2, verbose = FALSE, ht_pos = shiny_env[[heatmap_id]]$ht_pos, include_annotation = TRUE, calibrate = FALSE)
+		    dev.off2()
 		    shiny_env[[heatmap_id]]$selected = selected
 		}
 
@@ -477,7 +485,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 								layer_fun = NULL
 							}
 
-							ignored_anno = c("anno_oncoprint_barplot", "anno_mark", "anno_zoom")
+							ignored_anno = c("anno_oncoprint_barplot", "anno_zoom")
 							if(!is.null(top_annotation)) {
 								if(length(top_annotation) == 1) {
 									if(top_annotation@anno_list[[1]]@fun@fun_name %in% ignored_anno) {
@@ -527,7 +535,7 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 								row_title = NULL, column_title = NULL,
 								border = ht_current_full@matrix_param$border,
 								row_labels = row_labels, column_labels = column_labels,
-								show_row_names = show_row_names, 
+								show_row_names = show_row_names,
 								show_column_names = show_column_names,
 								top_annotation = top_annotation,
 								bottom_annotation = bottom_annotation,
@@ -633,8 +641,9 @@ MakeInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			shiny_env[[heatmap_id]]$selected = NULL
 		} else {
 			ht_list = shiny_env[[heatmap_id]]$ht_list
+			dev.null()
 			pos = selectPosition(ht_list, mark = FALSE, pos = pos1, verbose = FALSE, ht_pos = shiny_env[[heatmap_id]]$ht_pos, calibrate = FALSE)
-					
+			dev.off2()
 			shiny_env[[heatmap_id]]$selected = pos
 		}
 

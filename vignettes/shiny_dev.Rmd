@@ -40,6 +40,7 @@ functions for integrating the interactive heatmap widgets into other Shiny apps.
 The usage is simple. Following is an example that you can directly copy and paste to your R session.
 
 ```{r, eval = FALSE}
+library(ComplexHeatmap)
 library(InteractiveComplexHeatmap)
 library(shiny)
 
