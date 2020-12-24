@@ -324,19 +324,53 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 				if(inherits(x, "Heatmap")) x@name else NA
 			})
 			all_ht_name = all_ht_name[!is.na(all_ht_name)]
+
+			has_row_labels = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
+				if(inherits(x, "Heatmap")) {
+					!is.null(x@row_names_param$labels)
+				} else {
+					FALSE
+				}
+			})
+			has_column_labels = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
+				if(inherits(x, "Heatmap")) {
+					!is.null(x@column_names_param$labels)
+				} else {
+					FALSE
+				}
+			})
+			if(!any(has_row_labels) && !any(has_column_labels)) {
+				return(NULL)
+			}
+			if(any(has_row_labels) && any(has_column_labels)) {
+				where_choices = list("on rows" = 1, "on columns" = 2)
+			} else if(!any(has_row_labels)) {
+				where_choices = list("on columns" = 2)
+			} else if(!any(has_column_labels)) {
+				where_choices = list("on rows" = 1)
+			}
 			html = div(
 				div(textInput(qq("@{heatmap_id}_keyword"), placeholder = "Multiple keywords separated by ','", label = ""), style = "width:250px;float:left;"),
 				div(checkboxInput(qq("@{heatmap_id}_search_regexpr"), label = "Regular expression", value = FALSE), style = "width:150px;float:left;padding-top:15px;padding-left:4px;"),
 				div(style = "clear: both;"),
-				radioButtons(qq("@{heatmap_id}_search_where"), label = "Which dimension to search", choices = list("on rows" = 1, "on columns" = 2), selected = 1, inline = TRUE),
+				radioButtons(qq("@{heatmap_id}_search_where"), label = "Which dimension to search", choices = where_choices, selected = where_choices[[1]], inline = TRUE),
 				if(length(all_ht_name) > 1) {
 					checkboxGroupInput(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search", choiceNames = unname(all_ht_name), choiceValues = seq_along(all_ht_name), selected = seq_along(all_ht_name))
+				} else if(length(all_ht_name) == 1) {
+					radioButtons(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search", choices = {foo = list(1);names(foo) = all_ht_name;foo}, selected = 1, inline = TRUE)
 				} else {
 					NULL
 				},
 				actionButton(qq("@{heatmap_id}_search_action"), label = "Search"),
 				tags$script(HTML(qq("
 					$('#@{heatmap_id}_keyword').click(function() {$('#@{heatmap_id}_heatmap_brush').remove();});
+					$('#@{heatmap_id}_search_regexpr').change(function() {
+						if(this.checked) {
+							$('#@{heatmap_id}_keyword').attr('placeholder', 'A single regular expression');
+						} else {
+							$('#@{heatmap_id}_keyword').attr('placeholder', \"Multiple keywords separated by ','\");
+						}
+					})
 				")))
 			)
 			HTML(qq("<details><summary style='font-weight: 500;padding:5px 0px;'>Search heatmaps</summary>@{as.character(html)}</details>"))
@@ -397,7 +431,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 	observeEvent(input[[qq("@{heatmap_id}_search_action")]], {
 		if(input[[qq("@{heatmap_id}_keyword")]] == "") return(invisible(NULL))
 
-		keywords = input[[qq("@{heatmap_id}_keyword")]]
+		keywords2 = keywords = input[[qq("@{heatmap_id}_keyword")]]
 
 		where = input[[qq("@{heatmap_id}_search_where")]]
 		is_regexpr = input[[qq("@{heatmap_id}_search_regexpr")]]
@@ -430,7 +464,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			
     		if(is.null(shiny_env[[heatmap_id]]$selected)) {
     			grid.newpage()
-				grid.text("No area on the heatmap is selected.", 0.5, 0.5)
+				grid.text(paste(strwrap(qq("Found nothing from the heatmaps with the keywords '@{keywords2}'."), width = 60), collapse = "\n"), 0.5, 0.5)
     		} else {
     			make_sub_heatmap(input, output, session, heatmap_id)
 			}
