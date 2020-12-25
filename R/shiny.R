@@ -332,6 +332,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 					FALSE
 				}
 			})
+			has_row_labels = has_row_labels[all_ht_name]
 			has_column_labels = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
 				if(inherits(x, "Heatmap")) {
 					!is.null(x@column_names_param$labels)
@@ -339,28 +340,36 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 					FALSE
 				}
 			})
+			has_column_labels = has_column_labels[all_ht_name]
 			if(!any(has_row_labels) && !any(has_column_labels)) {
 				return(NULL)
 			}
 			if(any(has_row_labels) && any(has_column_labels)) {
-				where_choices = list("on rows" = 1, "on columns" = 2)
+				if(length(all_ht_name) == 1 && has_row_labels[1] && has_column_labels[1]) {
+					where_choices = list("on rows" = 1, "on columns" = 2, "both" = 3)
+				} else {
+					where_choices = list("on rows" = 1, "on columns" = 2)
+				}
 			} else if(!any(has_row_labels)) {
 				where_choices = list("on columns" = 2)
 			} else if(!any(has_column_labels)) {
 				where_choices = list("on rows" = 1)
 			}
+
+			heatmaps_to_search = all_ht_name[has_row_labels | has_column_labels]
 			html = div(
 				div(textInput(qq("@{heatmap_id}_keyword"), placeholder = "Multiple keywords separated by ','", label = ""), style = "width:250px;float:left;"),
 				div(checkboxInput(qq("@{heatmap_id}_search_regexpr"), label = "Regular expression", value = FALSE), style = "width:150px;float:left;padding-top:15px;padding-left:4px;"),
 				div(style = "clear: both;"),
-				radioButtons(qq("@{heatmap_id}_search_where"), label = "Which dimension to search", choices = where_choices, selected = where_choices[[1]], inline = TRUE),
-				if(length(all_ht_name) > 1) {
-					checkboxGroupInput(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search", choiceNames = unname(all_ht_name), choiceValues = seq_along(all_ht_name), selected = seq_along(all_ht_name))
-				} else if(length(all_ht_name) == 1) {
-					radioButtons(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search", choices = {foo = list(1);names(foo) = all_ht_name;foo}, selected = 1, inline = TRUE)
+				radioButtons(qq("@{heatmap_id}_search_where"), label = "Which dimension to search?", choices = where_choices, selected = where_choices[[1]], inline = TRUE),
+				if(length(heatmaps_to_search) > 1) {
+					checkboxGroupInput(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = unname(heatmaps_to_search), choiceValues = unname(heatmaps_to_search), selected = unname(heatmaps_to_search))
+				} else if(length(heatmaps_to_search) == 1) {
+					radioButtons(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choices = {foo = list(1);names(foo) = heatmaps_to_search;foo}, selected = 1, inline = TRUE)
 				} else {
 					NULL
 				},
+				checkboxGroupInput(qq("@{heatmap_id}_search_extend"), label = "Extend to all heatmaps?", choiceNames = "yes", choiceValues = 1, selected = NULL),
 				actionButton(qq("@{heatmap_id}_search_action"), label = "Search"),
 				tags$script(HTML(qq("
 					$('#@{heatmap_id}_keyword').click(function() {$('#@{heatmap_id}_heatmap_brush').remove();});
@@ -429,15 +438,28 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 	})
 
 	observeEvent(input[[qq("@{heatmap_id}_search_action")]], {
-		if(input[[qq("@{heatmap_id}_keyword")]] == "") return(invisible(NULL))
+		if(input[[qq("@{heatmap_id}_keyword")]] == "") {
+			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+				grid.newpage()
+				grid.text("Query keyword is empty.", 0.5, 0.5)
+			})
+			return(invisible(NULL))
+		}
 
 		keywords2 = keywords = input[[qq("@{heatmap_id}_keyword")]]
 
 		where = input[[qq("@{heatmap_id}_search_where")]]
 		is_regexpr = input[[qq("@{heatmap_id}_search_regexpr")]]
-		sht = as.numeric(input[[qq("@{heatmap_id}_search_heatmaps")]])
+		sht = input[[qq("@{heatmap_id}_search_heatmaps")]]
+		extend = input[[qq("@{heatmap_id}_search_extend")]]
 
-		if(length(sht) == 0) return(invisible(NULL))
+		if(length(sht) == 0) {
+			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+				grid.newpage()
+				grid.text("No heatmap is selected for searching.", 0.5, 0.5)
+			})
+			return(invisible(NULL))
+		}
 
 		ht_list = shiny_env[[heatmap_id]]$ht_list
 
@@ -454,9 +476,11 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		}
 
 		if(where == 1) {
-			selected = selectByLabels(ht_list, row_keyword = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = all_ht_name[sht])
+			selected = selectByLabels(ht_list, row_keyword = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend))
+		} else if(where == 2) {
+			selected = selectByLabels(ht_list, column_keyword = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend))
 		} else {
-			selected = selectByLabels(ht_list, column_keyword = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = all_ht_name[sht])
+			selected = selectByLabels(ht_list, row_keyword = keywords, column_keyword = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend))
 		}
 		shiny_env[[heatmap_id]]$selected = selected
 
@@ -464,7 +488,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			
     		if(is.null(shiny_env[[heatmap_id]]$selected)) {
     			grid.newpage()
-				grid.text(paste(strwrap(qq("Found nothing from the heatmaps with the keywords '@{keywords2}'."), width = 60), collapse = "\n"), 0.5, 0.5)
+				grid.text(paste(strwrap(qq("Found nothing from heatmaps with keywords '@{keywords2}'."), width = 60), collapse = "\n"), 0.5, 0.5)
     		} else {
     			make_sub_heatmap(input, output, session, heatmap_id)
 			}
@@ -501,6 +525,43 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		if(!is.null(click_action)) {
 			click_action(shiny_env[[heatmap_id]]$selected, output)
 		}
+	})
+
+	observeEvent(input[[qq("@{heatmap_id}_search_heatmaps")]], {
+		selected_ht_names = input[[qq("@{heatmap_id}_search_heatmaps")]]
+
+		has_row_labels = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
+			if(inherits(x, "Heatmap")) {
+				!is.null(x@row_names_param$labels)
+			} else {
+				FALSE
+			}
+		})
+		has_row_labels = has_row_labels[selected_ht_names]
+		has_column_labels = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
+			if(inherits(x, "Heatmap")) {
+				!is.null(x@column_names_param$labels)
+			} else {
+				FALSE
+			}
+		})
+		has_column_labels = has_column_labels[selected_ht_names]
+		
+
+		if(any(has_row_labels) && any(has_column_labels)) {
+			if(length(selected_ht_names) == 1 && has_row_labels[1] && has_column_labels[1]) {
+				where_choices = list("on rows" = 1, "on columns" = 2, "both" = 3)
+			} else {
+				where_choices = list("on rows" = 1, "on columns" = 2)
+			}
+		} else if(!any(has_row_labels)) {
+			where_choices = list("on columns" = 2)
+		} else if(!any(has_column_labels)) {
+			where_choices = list("on rows" = 1)
+		}
+
+		updateRadioButtons(session, qq("@{heatmap_id}_search_where"), label = "Which dimension to search", choices = where_choices, selected = where_choices[[1]], inline = TRUE)
+
 	})
 }
 
