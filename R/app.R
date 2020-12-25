@@ -135,7 +135,7 @@ ht_shiny_example = function(which) {
 					stop(paste0("Package '", pkg, "' should be installed for running this example."))
 				}
 				if(!pkg %in% loaded_pkgs) {
-					message(paste0("Note: Namespace 'package:", pkg, "' is inserted into the search list. It might bring conflicts for some functions."))
+					message(paste0("Note: Namespace 'package:", pkg, "' is inserted into the search list. It might bring conflicts to some functions."))
 				}
 			}
 		}
