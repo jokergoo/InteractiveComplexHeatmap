@@ -712,7 +712,6 @@ seek_root_vp = function() {
 }
 
 # given a vector of row keywords or column keywords, 
-# let's assume  row_keywords and column keywords can not be both set 
 selectByLabels = function(ht_list, row_keywords = NULL, column_keywords = NULL, 
 	keyword_is_regexpr = FALSE, heatmap = NULL, 
 	all = TRUE, include_annotation = FALSE) {
