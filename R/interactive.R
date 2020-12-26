@@ -899,18 +899,21 @@ selectByLabels = function(ht_list, row_keywords = NULL, column_keywords = NULL,
 }
 
 reformat_df = function(df, ht_list) {
-	fa = paste(df[, 1], df[, 2], df[, 3], df[, 4], sep = ":")
-	df2 = S4Vectors::DataFrame(heatmap = as.vector(tapply(df$heatmap, fa, function(x) x[1])), 
-			           slice = as.vector(tapply(df$slice, fa, function(x) x[1])), 
-			           row_slice = as.vector(tapply(df$row_slice, fa, function(x) x[1])),
-		               column_slice = as.vector(tapply(df$column_slice, fa, function(x) x[1])),
-			           row_index = IntegerList(tapply(df$row_index, fa, function(lt) unique(unlist(lt)))), 
-			           column_index = IntegerList(tapply(df$column_index, fa, function(lt) unique(unlist(lt))))
+	df_ht = df[!is.na(df$slice), , drop = FALSE]
+	df_anno = df[is.na(df$slice), , drop = FALSE]
+	
+	fa = paste(df_ht[, 1], df_ht[, 2], df_ht[, 3], df_ht[, 4], sep = ":")
+	df_ht = S4Vectors::DataFrame(heatmap = as.vector(tapply(df_ht$heatmap, fa, function(x) x[1])), 
+			           slice = as.vector(tapply(df_ht$slice, fa, function(x) x[1])), 
+			           row_slice = as.vector(tapply(df_ht$row_slice, fa, function(x) x[1])),
+		               column_slice = as.vector(tapply(df_ht$column_slice, fa, function(x) x[1])),
+			           row_index = IntegerList(tapply(df_ht$row_index, fa, function(lt) unique(unlist(lt)))), 
+			           column_index = IntegerList(tapply(df_ht$column_index, fa, function(lt) unique(unlist(lt))))
 	)
 
-	for(i in seq_len(nrow(df2))) {
-		df2$row_index[[i]] = intersect(ht_list@ht_list[[ df2$heatmap[i] ]]@row_order_list[[ df2$row_slice[i] ]], df2$row_index[[i]])
-		df2$column_index[[i]] = intersect(ht_list@ht_list[[ df2$heatmap[i] ]]@column_order_list[[ df2$column_slice[i] ]], df2$column_index[[i]])
+	for(i in seq_len(nrow(df_ht))) {
+		df_ht$row_index[[i]] = intersect(ht_list@ht_list[[ df_ht$heatmap[i] ]]@row_order_list[[ df_ht$row_slice[i] ]], df_ht$row_index[[i]])
+		df_ht$column_index[[i]] = intersect(ht_list@ht_list[[ df_ht$heatmap[i] ]]@column_order_list[[ df_ht$column_slice[i] ]], df_ht$column_index[[i]])
 	}
-	df2
+	rbind(df_ht, df_anno)
 }
