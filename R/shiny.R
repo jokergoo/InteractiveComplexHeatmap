@@ -185,7 +185,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 			),
 			div(
 				checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
-				checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = FALSE)
+				checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = FALSE),
+				actionLink(qq("@{heatmap_id}_show_table", "Open tables"))
 			)
 		),
 		id = qq("@{heatmap_id}_sub_heatmap_wrap_outer")
@@ -362,14 +363,12 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 				div(checkboxInput(qq("@{heatmap_id}_search_regexpr"), label = "Regular expression", value = FALSE), style = "width:150px;float:left;padding-top:15px;padding-left:4px;"),
 				div(style = "clear: both;"),
 				radioButtons(qq("@{heatmap_id}_search_where"), label = "Which dimension to search?", choices = where_choices, selected = where_choices[[1]], inline = TRUE),
-				if(length(heatmaps_to_search) > 1) {
+				if(length(heatmaps_to_search) > 0) {
 					checkboxGroupInput(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = unname(heatmaps_to_search), choiceValues = unname(heatmaps_to_search), selected = unname(heatmaps_to_search))
-				} else if(length(heatmaps_to_search) == 1) {
-					radioButtons(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choices = {foo = list(1);names(foo) = heatmaps_to_search;foo}, selected = 1, inline = TRUE)
 				} else {
 					NULL
 				},
-				checkboxGroupInput(qq("@{heatmap_id}_search_extend"), label = "Extend to all heatmaps?", choiceNames = "yes", choiceValues = 1, selected = NULL),
+				checkboxGroupInput(qq("@{heatmap_id}_search_extend"), label = "Extend to all heatmaps and annotations?", choiceNames = "yes", choiceValues = 1, selected = NULL),
 				actionButton(qq("@{heatmap_id}_search_action"), label = "Search"),
 				tags$script(HTML(qq("
 					$('#@{heatmap_id}_keyword').click(function() {$('#@{heatmap_id}_heatmap_brush').remove();});
