@@ -186,7 +186,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 			div(
 				checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
 				checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = FALSE),
-				actionLink(qq("@{heatmap_id}_open_table"), label = "Open tables")
+				actionButton(qq("@{heatmap_id}_open_table"), label = "Open tables")
 			)
 		),
 		id = qq("@{heatmap_id}_sub_heatmap_wrap_outer")
@@ -572,28 +572,54 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 				footer = modalButton("Close")
 			))
 		} else {
-			tb = get_sub_matrix(heatmap_id)
 			showModal(modalDialog(
 				title = "The selected matrices",
 				htmlOutput(qq("@{heatmap_id}_selected_table")),
-				if(any(sapply(tb, is.numeric))) numericInput(qq("@{heatmap_id}_digits"), "Digits of numeric values", value = 2, min = 0, width = "170px") else NULL,
+				numericInput(qq("@{heatmap_id}_digits"), "Digits of numeric values", value = 2, min = 0, width = "170px"),
 				easyClose = TRUE,
 				footer = div(downloadButton(qq("@{heatmap_id}_download_table"), "Download"), modalButton("Close")),
 				size = "l"
 			))
 
 			output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
-				HTML(scroll_box(kable_styling(kbl(tb, digits = 2, format = "html"), full_width = FALSE, position = "left"), width = "100%", height = "100%"))
+				HTML(format_html_table(heatmap_id))
 			})
 
 		}
 	})
 
-	observeEvent(input[[qq("@{heatmap_id}_digits")]], {
-		tb = get_sub_matrix(heatmap_id)
+	format_html_table = function(heatmap_id, digits = 2) {
+		tb = get_sub_matrix(heatmap_id, digits = digits)
+		is_cn = attr(tb, "is_cn")
+		is_rn = attr(tb, "is_rn")
+		row_group = attr(tb, "row_group")
+		column_group = attr(tb, "column_group")
 		digits = round(input[[qq("@{heatmap_id}_digits")]])
+		
+		kb = kbl(tb, format = "html")
+		if(shiny_env[[heatmap_id]]$ht_list@direction == "horizontal") {
+			for(i in which(is_rn)) {
+				kb = column_spec(kb, i, bold = TRUE)
+			}
+		} else {
+			for(i in which(is_cn)) {
+				kb = row_spec(kb, i, bold = TRUE)
+			}
+		}
+
+		kb = scroll_box(
+			kable_styling(kb, full_width = FALSE, position = "left"), 
+			width = "100%",
+			box_css = "border: 1px solid #ddd; padding: 5px; max-height:600px;"
+		)
+		kb
+	}
+
+	observeEvent(input[[qq("@{heatmap_id}_digits")]], {
+		
+
 		output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
-			HTML(scroll_box(kable_styling(kbl(tb, digits = digits, format = "html"), full_width = FALSE, position = "left"), width = "100%", height = "100%"))
+			HTML(format_html_table(heatmap_id, input[[qq("@{heatmap_id}_digits")]]))
 		})
 	})
 
@@ -893,19 +919,42 @@ make_sub_heatmap = function(input, output, session, heatmap_id) {
 				ht_select = ht_select %v% ht_current
 			}
 		}
-	    draw(ht_select)
+	    ht_select = draw(ht_select)
 	    message(qq("[@{Sys.time()}] make the sub-heatmap (device size: @{width}x@{height} px)."))
 	}
 }
 
-get_sub_matrix = function(heatmap_id) {
+get_sub_matrix = function(heatmap_id, digits = 2) {
+
+	message(qq("[@{Sys.time()}] fetch selected tables."))
+
 	selected = shiny_env[[heatmap_id]]$selected
 	all_ht_name = unique(selected$heatmap)
 
 	ht_list = shiny_env[[heatmap_id]]$ht_list
 
+	cbind2 = function(df, ...) {
+		if(is.null(df)) {
+			return(do.call(cbind, list(...)))
+		} else {
+			cbind(df, ...)
+		}
+	}
+
+	rbind2 = function(df, ...) {
+		if(is.null(df)) {
+			return(do.call(rbind, list(...)))
+		} else {
+			rbind(df, ...)
+		}
+	}
+
 	tb = NULL
 	global_rn = NULL
+	is_rn = NULL
+	is_cn = NULL
+	row_group = NULL
+	column_group = NULL
 	global_cn = NULL
 	ht_select = NULL
 	for(ht_name in all_ht_name) {
@@ -931,46 +980,65 @@ get_sub_matrix = function(heatmap_id) {
 			cn = colnames(subm)
 			dimnames(subm) = NULL
 
+			subm = round(subm, digits = digits)
+
 			if(ht_list@direction == "horizontal") {
 				colnames(subm) = cn
-				if(is.null(tb)) {
-					tb = as.data.frame(subm)
-				} else {
-					tb = cbind(tb, as.data.frame(subm))
+				if(!is.null(rn)) {
+					tb = cbind2(tb, rn)
+					global_cn = c(global_cn, " ")
+					is_rn = c(is_rn, TRUE)
 				}
+				tb = cbind2(tb, as.data.frame(subm))
+				column_group = c(column_group, rep(ht_name, ncol(subm) + is.null(rn)))
+				
 				if(is.null(cn)) {
 					global_cn = c(global_cn, rep(" ", ncol(subm)))
+					is_rn = c(is_rn, rep(FALSE, ncol(subm)))
 				} else {
 					global_cn = c(global_cn, cn)
+					is_rn = c(is_rn, rep(FALSE, ncol(subm)))
 				}
-				if(!is.null(rn)) {
-					tb = cbind(tb, rn)
-					global_cn = c(global_cn, " ")
-				}
+				
 			} else {
 				rownames(subm) = rn
-				if(is.null(tb)) {
-					tb = as.data.frame(subm)
-				} else {
-					tb = rbind(tb, as.data.frame(subm))
+
+				if(!is.null(cn)) {
+					tb = rbind2(tb, cn)
+					global_rn = c(global_rn, " ")
+					is_cn = c(is_cn, TRUE)
 				}
+				tb = rbind2(tb, as.data.frame(subm))
+				row_group = c(row_group, rep(ht_name, nrow(subm) + is.null(cn)))
+				
 				if(is.null(rn)) {
 					global_rn = c(global_rn, rep(" ", nrow(subm)))
+					is_cn = c(is_cn, rep(FALSE, nrow(subm)))
 				} else {
 					global_rn = c(global_rn, rn)
+					is_cn = c(is_cn, rep(FALSE, nrow(subm)))
 				}
-				if(!is.null(cn)) {
-					tb = rbind(tb, cn)
-					global_rn = c(global_rn, " ")
-				}
+				
 			}
 		}
 	}
 	if(ht_list@direction == "horizontal") {
 		colnames(tb) = global_cn
 	} else {
+		if(is_cn[1]) {
+			tb2 = tb[-1, , drop = FALSE]
+			is_cn = is_cn[-1]
+			global_rn = global_rn[-1]
+			colnames(tb2) = unlist(tb[1, ])
+			tb = tb2
+		}
 		rownames(tb) = global_rn
 	}
+
+	attr(tb, "is_cn") = is_cn
+	attr(tb, "is_rn") = is_rn
+	attr(tb, "row_group") = row_group
+	attr(tb, "column_group") = column_group
 	return(tb)
 }
 
