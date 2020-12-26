@@ -41,7 +41,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	output_div = TRUE, css = "") {
 
 	if(is.null(heatmap_id)) {
-		heatmap_id = paste0("hash_", digest(Sys.time()))
+		heatmap_id = paste0("ht_", digest(Sys.time()))
 		shiny_env$current_heatmap_id = heatmap_id
 	}
 
@@ -186,7 +186,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 			div(
 				checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
 				checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = FALSE),
-				actionLink(qq("@{heatmap_id}_show_table", "Open tables"))
+				actionLink(qq("@{heatmap_id}_open_table"), label = "Open tables")
 			)
 		),
 		id = qq("@{heatmap_id}_sub_heatmap_wrap_outer")
@@ -562,6 +562,50 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		updateRadioButtons(session, qq("@{heatmap_id}_search_where"), label = "Which dimension to search", choices = where_choices, selected = where_choices[[1]], inline = TRUE)
 
 	})
+
+	observeEvent(input[[qq("@{heatmap_id}_open_table")]], {
+		if(is.null(shiny_env[[heatmap_id]]$selected)) {
+			showModal(modalDialog(
+				title = "The selected matrices",
+				p("Rows or columns are not selected."),
+				easyClose = TRUE,
+				footer = modalButton("Close")
+			))
+		} else {
+			tb = get_sub_matrix(heatmap_id)
+			showModal(modalDialog(
+				title = "The selected matrices",
+				htmlOutput(qq("@{heatmap_id}_selected_table")),
+				if(any(sapply(tb, is.numeric))) numericInput(qq("@{heatmap_id}_digits"), "Digits of numeric values", value = 2, min = 0, width = "170px") else NULL,
+				easyClose = TRUE,
+				footer = div(downloadButton(qq("@{heatmap_id}_download_table"), "Download"), modalButton("Close")),
+				size = "l"
+			))
+
+			output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
+				HTML(scroll_box(kable_styling(kbl(tb, digits = 2, format = "html"), full_width = FALSE, position = "left"), width = "100%", height = "100%"))
+			})
+
+		}
+	})
+
+	observeEvent(input[[qq("@{heatmap_id}_digits")]], {
+		tb = get_sub_matrix(heatmap_id)
+		digits = round(input[[qq("@{heatmap_id}_digits")]])
+		output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
+			HTML(scroll_box(kable_styling(kbl(tb, digits = digits, format = "html"), full_width = FALSE, position = "left"), width = "100%", height = "100%"))
+		})
+	})
+
+	output[[qq("@{heatmap_id}_download_table")]] = downloadHandler(
+		filename = function() {
+			qq("@{heatmap_id}_download_table.csv")
+		},
+		content = function(file) {
+			tb = get_sub_matrix(heatmap_id)
+			write.csv(tb, file)
+		}
+	)
 }
 
 
@@ -852,6 +896,82 @@ make_sub_heatmap = function(input, output, session, heatmap_id) {
 	    draw(ht_select)
 	    message(qq("[@{Sys.time()}] make the sub-heatmap (device size: @{width}x@{height} px)."))
 	}
+}
+
+get_sub_matrix = function(heatmap_id) {
+	selected = shiny_env[[heatmap_id]]$selected
+	all_ht_name = unique(selected$heatmap)
+
+	ht_list = shiny_env[[heatmap_id]]$ht_list
+
+	tb = NULL
+	global_rn = NULL
+	global_cn = NULL
+	ht_select = NULL
+	for(ht_name in all_ht_name) {
+		ht_current_full = ht_list@ht_list[[ht_name]]
+
+		if(inherits(ht_current_full, "Heatmap")) {
+			selected_current = selected[selected$heatmap == ht_name, ]
+			l1 = !duplicated(selected_current$row_slice)
+			rlt = selected_current$row_index[l1]
+			l2 = !duplicated(selected_current$column_slice)
+			clt = selected_current$column_index[l2]
+
+			ri = unlist(rlt)
+			ci = unlist(clt)
+			rs = rep(seq_along(rlt), times = sapply(rlt, length))
+			cs = rep(seq_along(clt), times = sapply(clt, length))
+			if(length(rlt) == 1) rs = NULL
+			if(length(clt) == 1) cs = NULL
+
+			m = ht_current_full@matrix
+			subm = m[ri, ci, drop = FALSE]
+			rn = rownames(subm)
+			cn = colnames(subm)
+			dimnames(subm) = NULL
+
+			if(ht_list@direction == "horizontal") {
+				colnames(subm) = cn
+				if(is.null(tb)) {
+					tb = as.data.frame(subm)
+				} else {
+					tb = cbind(tb, as.data.frame(subm))
+				}
+				if(is.null(cn)) {
+					global_cn = c(global_cn, rep(" ", ncol(subm)))
+				} else {
+					global_cn = c(global_cn, cn)
+				}
+				if(!is.null(rn)) {
+					tb = cbind(tb, rn)
+					global_cn = c(global_cn, " ")
+				}
+			} else {
+				rownames(subm) = rn
+				if(is.null(tb)) {
+					tb = as.data.frame(subm)
+				} else {
+					tb = rbind(tb, as.data.frame(subm))
+				}
+				if(is.null(rn)) {
+					global_rn = c(global_rn, rep(" ", nrow(subm)))
+				} else {
+					global_rn = c(global_rn, rn)
+				}
+				if(!is.null(cn)) {
+					tb = rbind(tb, cn)
+					global_rn = c(global_rn, " ")
+				}
+			}
+		}
+	}
+	if(ht_list@direction == "horizontal") {
+		colnames(tb) = global_cn
+	} else {
+		rownames(tb) = global_rn
+	}
+	return(tb)
 }
 
 
