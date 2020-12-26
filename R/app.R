@@ -60,6 +60,10 @@ ht_shiny = function(ht_list, ..., html = NULL) {
 	    ht_list = ht1 + ht2
 	} else if(inherits(ht_list, "InputHeatmap")) {
 		ht_list = show(ht_list)
+	} else {
+		if(is.numeric(ht_list)) {
+			stop_wrap("Maybe you are looking for `ht_shiny_example()`?")
+		}
 	}
 	
 	ui = fluidPage(
