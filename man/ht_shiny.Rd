@@ -11,7 +11,7 @@ ht_shiny(ht_list, ..., html = NULL)
 }
 \arguments{
 
-  \item{ht_list}{A \code{\link[ComplexHeatmap]{Heatmap-class}} or a \code{\link[ComplexHeatmap]{HeatmapList-class}} object. If it is not specified, a random heatmap is used. Better be updated by \code{draw()} function.}
+  \item{ht_list}{A \code{\link[ComplexHeatmap]{Heatmap-class}} or a \code{\link[ComplexHeatmap]{HeatmapList-class}} object. If it is not specified, a random heatmap is used. Better already updated by \code{draw()} function.}
   \item{...}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{html}{HTML fragment inserted below the heatmap.}
 
@@ -20,7 +20,7 @@ ht_shiny(ht_list, ..., html = NULL)
 \url{https://jokergoo.shinyapps.io/interactive_complexHeatmap/}
 }
 \value{
-No value is returned.
+A shiny app object.
 }
 \examples{
 # use a random heatmap

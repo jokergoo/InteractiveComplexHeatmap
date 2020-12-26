@@ -22,16 +22,6 @@ shiny_env$history = list()
 # == details
 # This function generates HTML fragment for the interactive UI. See the example from `renderInteractiveComplexHeatmap` page.
 #
-# It generates three div blocks. Assuming the heatmap id variable is ``heatmap_id``, the three div blocks are:
-#
-# - ``#{heatmap_id}_heatmap_wrap_outer``: to put the original heatmap. This div contains two children elements. One is the title
-#    for the heatmap (with a ``h3`` tag) and one is a div block with ID ``#{heatmap_id}_heatmap_wrap``. ``#{heatmap_id}_heatmap_wrap``
-#    is for JQuery-UI and it wraps the div ``#{heatmap_id}_heatmap`` which is used by `shiny::plotOutput`.
-# - ``#{heatmap_id}_sub_heatmap_wrap_outer``: to put the sub-heatmap. This div contains two children elements. One is the title
-#    for the heatmap (with a ``h3`` tag) and one is a div block with ID ``#{heatmap_id}_sub_heatmap_wrap``. ``#{heatmap_id}_sub_heatmap_wrap``
-#    is for JQuery-UI and it wraps the div ``#{heatmap_id}_sub_heatmap`` which is used by `shiny::plotOutput`.
-# - ``#{heatmap_id}_info``: to put the information of the selected position/area.
-#
 # == value
 # A UI that can be used in shiny.
 InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
@@ -475,11 +465,11 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		}
 
 		if(where == 1) {
-			selected = selectByLabels(ht_list, row_keyword = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend))
+			selected = selectByLabels(ht_list, row_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend))
 		} else if(where == 2) {
-			selected = selectByLabels(ht_list, column_keyword = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend))
+			selected = selectByLabels(ht_list, column_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend))
 		} else {
-			selected = selectByLabels(ht_list, row_keyword = keywords, column_keyword = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend))
+			selected = selectByLabels(ht_list, row_keywords = keywords, column_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend))
 		}
 		shiny_env[[heatmap_id]]$selected = selected
 
