@@ -167,18 +167,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 			plotOutput(qq("@{heatmap_id}_sub_heatmap"), height = height2 - 4, width = width2 - 4),
 			id = qq("@{heatmap_id}_sub_heatmap_wrap")
 		),
-		div(
-			div(
-				div(checkboxInput(qq("@{heatmap_id}_show_row_names_checkbox"), label = "Show row names", value = TRUE), style = "float:left;width:170px"),
-				div(checkboxInput(qq("@{heatmap_id}_show_column_names_checkbox"), label = "Show column names", value = TRUE), style = "float:left;width:170px"),
-				div(style = "clear: both;")
-			),
-			div(
-				checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
-				checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = FALSE),
-				actionButton(qq("@{heatmap_id}_open_table"), label = "Open tables")
-			)
-		),
+		htmlOutput(qq("@{heatmap_id}_sub_heatmap_control")),
 		id = qq("@{heatmap_id}_sub_heatmap_wrap_outer")
 	),
 	div(style = "clear: both;"),
@@ -294,19 +283,6 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 				})
 			}
 
-			for(i in seq_along(shiny_env[[heatmap_id]]$ht_list@ht_list)) {
-				if(inherits(shiny_env[[heatmap_id]]$ht_list@ht_list[[i]], "Heatmap")) {
-					if(!is.null(shiny_env[[heatmap_id]]$ht_list@ht_list[[i]]@matrix_param$cell_fun)) {
-						updateCheckboxInput(session, qq("@{heatmap_id}_show_cell_fun_checkbox"), value = TRUE)
-						break
-					}
-					if(!is.null(shiny_env[[heatmap_id]]$ht_list@ht_list[[i]]@matrix_param$layer_fun)) {
-						updateCheckboxInput(session, qq("@{heatmap_id}_show_cell_fun_checkbox"), value = TRUE)
-						break
-					}
-				}
-			}
-
 			message(qq("[@{Sys.time()}] make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
 		})
 
@@ -416,6 +392,12 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
     			make_sub_heatmap(input, output, session, heatmap_id)
 			}
 		})
+
+		output[[qq("@{heatmap_id}_sub_heatmap_control")]] = renderUI({
+			if(!is.null(shiny_env[[heatmap_id]]$selected)) {
+				sub_heatmap_control_ui(heatmap_id)
+			}
+		})
 	
 		if(default_brush_action) {
 			default_brush_action(input, output, session, heatmap_id)
@@ -483,6 +465,12 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			}
 		})
 
+		output[[qq("@{heatmap_id}_sub_heatmap_control")]] = renderUI({
+			if(!is.null(shiny_env[[heatmap_id]]$selected)) {
+				sub_heatmap_control_ui(heatmap_id)
+			}
+		})
+
 		if(default_brush_action) {
 			default_brush_action(input, output, session, heatmap_id)
 		}
@@ -514,6 +502,15 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		if(!is.null(click_action)) {
 			click_action(shiny_env[[heatmap_id]]$selected, output)
 		}
+
+		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+			grid.newpage()
+			grid.text("No area on the heatmap is selected.", 0.5, 0.5)
+		})
+
+		output[[qq("@{heatmap_id}_sub_heatmap_control")]] = renderUI({
+			NULL
+		})
 	})
 
 	observeEvent(input[[qq("@{heatmap_id}_search_heatmaps")]], {
@@ -558,6 +555,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			showModal(modalDialog(
 				title = "The selected matrices",
 				p("Rows or columns are not selected."),
+				tags$script(HTML("$('.modal-content').draggable();")),
 				easyClose = TRUE,
 				footer = modalButton("Close")
 			))
@@ -566,6 +564,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 				title = "The selected matrices",
 				htmlOutput(qq("@{heatmap_id}_selected_table")),
 				numericInput(qq("@{heatmap_id}_digits"), "Digits of numeric values", value = 2, min = 0, width = "170px"),
+				tags$script(HTML("$('.modal-content').draggable();")),
 				easyClose = TRUE,
 				footer = div(downloadButton(qq("@{heatmap_id}_download_table"), "Download"), modalButton("Close")),
 				size = "l"
@@ -579,34 +578,37 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 	})
 
 	format_html_table = function(heatmap_id, digits = 2) {
-		tb = get_sub_matrix(heatmap_id, digits = digits)
+		tb = get_sub_matrix(heatmap_id, digits = round(digits))
 		is_cn = attr(tb, "is_cn")
 		is_rn = attr(tb, "is_rn")
-		row_group = attr(tb, "row_group")
-		column_group = attr(tb, "column_group")
-		digits = round(input[[qq("@{heatmap_id}_digits")]])
-		
-		kb = kbl(tb, format = "html")
-		if(shiny_env[[heatmap_id]]$ht_list@direction == "horizontal") {
-			for(i in which(is_rn)) {
-				kb = column_spec(kb, i, bold = TRUE)
-			}
-		} else {
-			for(i in which(is_cn)) {
-				kb = row_spec(kb, i, bold = TRUE)
-			}
-		}
+		hline = attr(tb, "hline")
+		vline = attr(tb, "vline")
 
+		kb = kbl(tb, format = "html")
+		for(i in which(is_rn)) {
+			kb = column_spec(kb, i, bold = TRUE)
+		}
+		for(i in which(is_cn)) {
+			kb = row_spec(kb, i, bold = TRUE)
+		}
+		kb = column_spec(kb, 1, border_left = TRUE)
+		for(i in which(vline)) {
+			kb = column_spec(kb, i, border_right = TRUE)
+		}
+		for(i in which(hline)) {
+			kb = row_spec(kb, i, extra_css = "border-bottom: 1px solid")
+		}
+		kb = row_spec(kb, 1, extra_css = "border-top: 1px solid")
+		
 		kb = scroll_box(
 			kable_styling(kb, full_width = FALSE, position = "left"), 
 			width = "100%",
-			box_css = "border: 1px solid #ddd; padding: 5px; max-height:600px;"
+			box_css = "border: 1px solid #ddd; padding: 5px; max-height:500px;"
 		)
 		kb
 	}
 
 	observeEvent(input[[qq("@{heatmap_id}_digits")]], {
-		
 
 		output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
 			HTML(format_html_table(heatmap_id, input[[qq("@{heatmap_id}_digits")]]))
@@ -654,6 +656,11 @@ make_sub_heatmap = function(input, output, session, heatmap_id) {
 	show_annotation = input[[qq("@{heatmap_id}_show_annotation_checkbox")]]
 	show_cell_fun = input[[qq("@{heatmap_id}_show_cell_fun_checkbox")]]
 
+	if(is.null(show_row_names)) show_row_names = TRUE
+	if(is.null(show_column_names)) show_column_names = TRUE
+	if(is.null(show_annotation)) show_annotation = TRUE
+	if(is.null(show_cell_fun)) show_cell_fun = TRUE
+
 	selected = shiny_env[[heatmap_id]]$selected
     if(is.null(selected)) {
     	grid.newpage()
@@ -663,6 +670,8 @@ make_sub_heatmap = function(input, output, session, heatmap_id) {
     	all_ht_name = unique(selected$heatmap)
 
     	ht_list = shiny_env[[heatmap_id]]$ht_list
+
+    	ignored_anno = c("anno_oncoprint_barplot", "anno_zoom", "anno_empty")
 
     	ht_select = NULL
 		for(ht_name in all_ht_name) {
@@ -782,7 +791,6 @@ make_sub_heatmap = function(input, output, session, heatmap_id) {
 					layer_fun = NULL
 				}
 
-				ignored_anno = c("anno_oncoprint_barplot", "anno_zoom", "anno_empty")
 				if(!is.null(top_annotation)) {
 					if(length(top_annotation) == 1) {
 						if(top_annotation@anno_list[[1]]@fun@fun_name %in% ignored_anno) {
@@ -885,8 +893,19 @@ make_sub_heatmap = function(input, output, session, heatmap_id) {
 					ind_subsettable = which(sapply(ha@anno_list, function(x) x@subsetable && !x@fun@fun_name %in% ignored_anno))
 					if(length(ind_subsettable)) {
 						if(ht_list@direction == "horizontal") {
+							selected_ht = selected[selected$heatmap == selected$heatmap[!is.na(selected$slice)][1], ]
+			    			l1 = !duplicated(selected_ht$row_slice)
+			    			rlt = selected_ht$row_index[l1]
+			    			ri = unlist(rlt)
+							
 							ha = ha[ri, ind_subsettable]
 						} else {
+							selected_ht = selected[selected$heatmap == selected$heatmap[!is.na(selected$slice)][1], ]
+			    			l2 = !duplicated(selected_ht$column_slice)
+			    			clt = selected_ht$column_index[l2]
+
+			    			ci = unlist(clt)
+							
 							ha = ha[ci, ind_subsettable]
 						}
 						ha@anno_list = lapply(ha@anno_list, function(x) {
@@ -914,7 +933,8 @@ make_sub_heatmap = function(input, output, session, heatmap_id) {
 	}
 }
 
-get_sub_matrix = function(heatmap_id, digits = 2) {
+# if annotation is included, top/bottom annotation are all put at the bottom of the matrix
+get_sub_matrix = function(heatmap_id, digits = 2, include_annotation = TRUE) {
 
 	message(qq("[@{Sys.time()}] fetch selected tables."))
 
@@ -923,30 +943,9 @@ get_sub_matrix = function(heatmap_id, digits = 2) {
 
 	ht_list = shiny_env[[heatmap_id]]$ht_list
 
-	cbind2 = function(df, ...) {
-		if(is.null(df)) {
-			return(do.call(cbind, list(...)))
-		} else {
-			cbind(df, ...)
-		}
-	}
+	data_anno = c("anno_points", "anno_lines", "anno_barplot", "anno_text", "anno_simple")
 
-	rbind2 = function(df, ...) {
-		if(is.null(df)) {
-			return(do.call(rbind, list(...)))
-		} else {
-			rbind(df, ...)
-		}
-	}
-
-	tb = NULL
-	global_rn = NULL
-	is_rn = NULL
-	is_cn = NULL
-	row_group = NULL
-	column_group = NULL
-	global_cn = NULL
-	ht_select = NULL
+	mat_list = list()
 	for(ht_name in all_ht_name) {
 		ht_current_full = ht_list@ht_list[[ht_name]]
 
@@ -966,72 +965,237 @@ get_sub_matrix = function(heatmap_id, digits = 2) {
 
 			m = ht_current_full@matrix
 			subm = m[ri, ci, drop = FALSE]
-			rn = rownames(subm)
-			cn = colnames(subm)
-			dimnames(subm) = NULL
 
-			subm = round(subm, digits = digits)
+			if(is.numeric(subm)) subm = round(subm, digits)
 
-			if(ht_list@direction == "horizontal") {
-				colnames(subm) = cn
-				if(!is.null(rn)) {
-					tb = cbind2(tb, rn)
-					global_cn = c(global_cn, " ")
-					is_rn = c(is_rn, TRUE)
+			if(include_annotation) {
+				top_annotation_data = NULL
+				top_annotation = ht_current_full@top_annotation
+				if(!is.null(top_annotation)) {
+					ind_data = which(sapply(top_annotation@anno_list, function(x) x@fun@fun_name %in% data_anno))
+					if(length(ind_data)) {
+						top_annotation = top_annotation[ci, ind_data]
+						top_annotation_data = collect_data_frame_from_anno(top_annotation, digits, direction = "vertical")
+					}
 				}
-				tb = cbind2(tb, as.data.frame(subm))
-				column_group = c(column_group, rep(ht_name, ncol(subm) + is.null(rn)))
-				
-				if(is.null(cn)) {
-					global_cn = c(global_cn, rep(" ", ncol(subm)))
-					is_rn = c(is_rn, rep(FALSE, ncol(subm)))
-				} else {
-					global_cn = c(global_cn, cn)
-					is_rn = c(is_rn, rep(FALSE, ncol(subm)))
+				bottom_annotation_data = NULL
+				bottom_annotation = ht_current_full@bottom_annotation
+				if(!is.null(bottom_annotation)) {
+					ind_data = which(sapply(bottom_annotation@anno_list, function(x) x@fun@fun_name %in% data_anno))
+					if(length(ind_data)) {
+						bottom_annotation = bottom_annotation[ci, ind_data]
+						bottom_annotation_data = collect_data_frame_from_anno(bottom_annotation, digits, direction = "vertical")
+					}
 				}
-				
-			} else {
-				rownames(subm) = rn
+				left_annotation_data = NULL
+				left_annotation = ht_current_full@left_annotation
+				if(!is.null(left_annotation)) {
+					ind_data = which(sapply(left_annotation@anno_list, function(x) x@fun@fun_name %in% data_anno))
+					if(length(ind_data)) {
+						left_annotation = left_annotation[ri, ind_data]
+						left_annotation_data = collect_data_frame_from_anno(left_annotation, digits, direction = "horizontal")
+					}
+				}
+				right_annotation_data = NULL
+				right_annotation = ht_current_full@right_annotation
+				if(!is.null(right_annotation)) {
+					ind_data = which(sapply(right_annotation@anno_list, function(x) x@fun@fun_name %in% data_anno))
+					if(length(ind_data)) {
+						right_annotation = right_annotation[ri, ind_data]
+						right_annotation_data = collect_data_frame_from_anno(right_annotation, digits, direction = "horizontal")
+					}
+				}
 
-				if(!is.null(cn)) {
-					tb = rbind2(tb, cn)
-					global_rn = c(global_rn, " ")
-					is_cn = c(is_cn, TRUE)
-				}
-				tb = rbind2(tb, as.data.frame(subm))
-				row_group = c(row_group, rep(ht_name, nrow(subm) + is.null(cn)))
-				
-				if(is.null(rn)) {
-					global_rn = c(global_rn, rep(" ", nrow(subm)))
-					is_cn = c(is_cn, rep(FALSE, nrow(subm)))
-				} else {
-					global_rn = c(global_rn, rn)
-					is_cn = c(is_cn, rep(FALSE, nrow(subm)))
-				}
-				
+				column_annotation_data = rbind(top_annotation_data, bottom_annotation_data)
+				row_annotation_data = cbind(left_annotation_data, right_annotation_data)
+				attr(subm, "column_annotation_data") = column_annotation_data
+				attr(subm, "row_annotation_data") = row_annotation_data
+			}
+
+			mat_list[[ht_name]] = subm
+		} else {
+			if(include_annotation) {
+				ha = ht_current_full
+				ind_data = which(sapply(ha@anno_list, function(x) x@fun@fun_name %in% data_anno))
+				if(length(ind_data)) {
+					if(ht_list@direction == "horizontal") {
+						if(!exists("ri")) {
+							selected_ht = selected[selected$heatmap == selected$heatmap[!is.na(selected$slice)][1], ]
+			    			l1 = !duplicated(selected_ht$row_slice)
+			    			rlt = selected_ht$row_index[l1]
+			    			
+			    			ri = unlist(rlt)
+						}
+						ha = ha[ri, ind_data]
+						mat_list[[ht_name]] = collect_data_frame_from_anno(ha, digits, direction = "horizontal")
+					} else {
+						if(!exists("ci")) {
+							selected_ht = selected[selected$heatmap == selected$heatmap[!is.na(selected$slice)][1], ]
+			    			l2 = !duplicated(selected_ht$column_slice)
+			    			clt = selected_ht$column_index[l2]
+
+			    			ci = unlist(clt)
+						}
+						ha = ha[ci, ind_data]
+						mat_list[[ht_name]] = collect_data_frame_from_anno(ha, digits, direction = "vertical")
+					}
+
+					attr(mat_list[[ht_name]], "anno") = TRUE
+				} 
 			}
 		}
 	}
-	if(ht_list@direction == "horizontal") {
-		colnames(tb) = global_cn
-	} else {
-		if(is_cn[1]) {
-			tb2 = tb[-1, , drop = FALSE]
-			is_cn = is_cn[-1]
-			global_rn = global_rn[-1]
-			colnames(tb2) = unlist(tb[1, ])
-			tb = tb2
+
+	mat_list2 = lapply(mat_list, function(m) {
+		dim = dim(m)
+		from_anno = attr(m, "anno")
+		if(is.null(from_anno)) {
+			rn = rownames(m)
+			cn = colnames(m)
+			row_annotation_data = attr(m, "row_annotation_data")
+			column_annotation_data = attr(m, "column_annotation_data")
+			
+			if(is.null(rn)) rn = rep("", nrow(m))
+			if(is.null(cn)) cn = rep("", ncol(m))
+
+			hline = c(rep(FALSE, nrow(m)-1), TRUE)
+
+			m = rbind(cn, m)
+			hline = c(FALSE, hline)
+			rn = c("", rn)
+			m = cbind(rn, m)
+			vline = c(rep(FALSE, ncol(m)-1), TRUE)
+
+			if(!is.null(row_annotation_data)) {
+				m = cbind(m, rbind(colnames(row_annotation_data), row_annotation_data))
+				vline = c(vline, c(rep(FALSE, ncol(row_annotation_data) - 1), TRUE))
+			}
+
+			if(!is.null(column_annotation_data)) {
+				m = rbind(m, cbind(rownames(column_annotation_data), cbind(column_annotation_data, matrix("", nrow = nrow(column_annotation_data), ncol = ncol(m) - ncol(column_annotation_data) - 1))))
+				hline = c(hline, c(rep(FALSE, nrow(column_annotation_data) - 1), TRUE))
+			}
+
+			dimnames(m) = NULL
+		} else {
+			if(ht_list@direction == "horizontal") {
+				cn = colnames(m)
+				m = rbind(cn, m)
+			} else {
+				rn = rownames(m)
+				m = cbind(rn, m)
+			}
+			vline = c(rep(FALSE, ncol(m) - 1), TRUE)
+			hline = c(rep(FALSE, nrow(m) - 1), TRUE)
+			dimnames(m) = NULL
 		}
-		rownames(tb) = global_rn
+
+		attr(m, "original_dim") = dim
+		attr(m, "hline") = hline
+		attr(m, "vline") = vline
+		attr(m, "anno") = from_anno
+		m
+	})
+
+	if(ht_list@direction == "horizontal") {
+		nr = max(sapply(mat_list2, nrow))
+
+		tb = do.call(cbind, lapply(mat_list2, function(m) {
+			if(nrow(m) < nr) {
+				m = rbind(m, matrix("", nrow = nr - nrow(m), ncol = ncol(m)))
+			}
+			m
+		}))
+		is_cn = c(TRUE, rep(FALSE, nr - 1))
+		is_rn = unlist(lapply(mat_list2, function(m) {
+			if(is.null(attr(m, "anno"))) {
+				c(TRUE, rep(FALSE, ncol(m) - 1))
+			} else {
+				rep(FALSE, ncol(m))
+			}
+		}))
+
+		hline = lapply(mat_list2, function(x) attr(x, "hline"))
+		vline = lapply(mat_list2, function(x) attr(x, "vline"))
+		hline = hline[[which.max(sapply(hline, length))[1]]]
+		vline = unlist(vline)
+
+		if(all(tb[1, ] == "")) {
+			is_cn = is_cn[-1]
+			tb = tb[-1, , drop = FALSE]
+			hline = hline[-1]
+		}
+		l = apply(tb, 2, function(x) all(x == ""))
+		tb = tb[, !l, drop = FALSE]
+		is_rn = is_rn[!l]
+		vline = vline[!l]
+	} else {
+		nc = max(sapply(mat_list2, ncol))
+
+		tb = do.call(rbind, lapply(mat_list2, function(m) {
+			if(ncol(m) < nc) {
+				m = cbind(m, matrix("", ncol = nc - ncol(m), nrow = nrow(m)))
+			}
+			m
+		}))
+		is_rn = c(TRUE, rep(FALSE, nc - 1))
+		is_cn = unlist(lapply(mat_list2, function(m) {
+			if(is.null(attr(m, "anno"))) {
+				c(TRUE, rep(FALSE, nrow(m) - 1))
+			} else {
+				rep(FALSE, nrow(m))
+			}
+		}))
+
+		hline = lapply(mat_list2, function(x) attr(x, "hline"))
+		vline = lapply(mat_list2, function(x) attr(x, "vline"))
+		vline = vline[[which.max(sapply(vline, length))[1]]]
+		hline = unlist(hline)
+
+		if(all(tb[, 1] == "")) {
+			is_rn = is_rn[-1]
+			tb = tb[, -1, drop = FALSE]
+			vline = vline[-1]
+		}
+		l = apply(tb, 1, function(x) all(x == ""))
+		tb = tb[!l, , drop = FALSE]
+		is_cn = is_cn[!l]
+		hline = hline[!l]
 	}
 
 	attr(tb, "is_cn") = is_cn
 	attr(tb, "is_rn") = is_rn
-	attr(tb, "row_group") = row_group
-	attr(tb, "column_group") = column_group
+	attr(tb, "hline") = hline
+	attr(tb, "vline") = vline
 	return(tb)
 }
 
+collect_data_frame_from_anno = function(ha, digits, direction) {
+	lt = lapply(ha@anno_list, function(x) {
+		nm = x@name
+		v = x@fun@var_env$value
+		if(is.matrix(v) || is.data.frame(v)) {
+			v = as.matrix(v)
+			if(is.null(colnames(v))) {
+				nm = paste0(nm, seq_len(ncol(v)))
+			} else {
+				nm = colnames(v)
+			}
+		}
+		v = as.matrix(v)
+		if(is.numeric(v)) v = round(v, digits)
+		colnames(v) = nm
+		rownames(v) = NULL
+		v
+	})
+
+	df = do.call(cbind, lt)
+
+	if(direction == "vertical") {
+		df = t(as.matrix(df))
+	}
+	as.matrix(df)
+}
 
 default_brush_action = function(input, output, session, heatmap_id) {
 	output[[qq("@{heatmap_id}_info")]] = renderUI({
@@ -1140,4 +1304,22 @@ default_click_action = function(input, output, session, heatmap_id) {
 			}
 		}
 	})
+}
+
+sub_heatmap_control_ui = function(heatmap_id) {
+
+	html = div(
+		div(
+			div(checkboxInput(qq("@{heatmap_id}_show_row_names_checkbox"), label = "Show row names", value = TRUE), style = "float:left;width:170px"),
+			div(checkboxInput(qq("@{heatmap_id}_show_column_names_checkbox"), label = "Show column names", value = TRUE), style = "float:left;width:170px"),
+			div(style = "clear: both;")
+		),
+		div(
+			checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
+			checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = TRUE),
+			actionButton(qq("@{heatmap_id}_open_table"), label = "Open tables")
+		)
+	)
+	HTML(qq("<details><summary style='font-weight: 500;padding:5px 0px;'>Settings of sub-heatmaps</summary>@{as.character(html)}</details>"))
+
 }
