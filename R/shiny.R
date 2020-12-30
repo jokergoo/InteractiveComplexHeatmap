@@ -563,7 +563,10 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			showModal(modalDialog(
 				title = "The selected matrices",
 				htmlOutput(qq("@{heatmap_id}_selected_table")),
-				numericInput(qq("@{heatmap_id}_digits"), "Digits of numeric values", value = 2, min = 0, width = "170px"),
+				div(
+					numericInput(qq("@{heatmap_id}_digits"), "Digits of numeric values", value = 2, min = 0, width = "170px"),
+					style = "margin-top:5px"
+				),
 				tags$script(HTML("$('.modal-content').draggable();")),
 				easyClose = TRUE,
 				footer = div(downloadButton(qq("@{heatmap_id}_download_table"), "Download"), modalButton("Close")),
@@ -586,10 +589,10 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 
 		kb = kbl(tb, format = "html")
 		for(i in which(is_rn)) {
-			kb = column_spec(kb, i, bold = TRUE)
+			kb = column_spec(kb, i, bold = TRUE, background = "#EFEFEF")
 		}
 		for(i in which(is_cn)) {
-			kb = row_spec(kb, i, bold = TRUE)
+			kb = row_spec(kb, i, bold = TRUE, background = "#EFEFEF")
 		}
 		kb = column_spec(kb, 1, border_left = TRUE)
 		for(i in which(vline)) {
@@ -935,8 +938,10 @@ make_sub_heatmap = function(input, output, session, heatmap_id) {
 
 # if annotation is included, top/bottom annotation are all put at the bottom of the matrix
 get_sub_matrix = function(heatmap_id, digits = 2, include_annotation = TRUE) {
-
 	message(qq("[@{Sys.time()}] fetch selected tables."))
+
+	dev.null()
+	on.exit(dev.off2())
 
 	selected = shiny_env[[heatmap_id]]$selected
 	all_ht_name = unique(selected$heatmap)
