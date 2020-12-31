@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1019</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3.1011</span>
       </span>
     </div>
 
@@ -199,14 +199,7 @@
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function generates HTML fragment for the interactive UI. See the example from <code><a href='MakeInteractiveComplexHeatmap.html'>MakeInteractiveComplexHeatmap</a></code> page.</p>
-<p>It generates three div blocks. Assuming the heatmap id variable is <code>heatmap_id</code>, the three div blocks are:</p>
-<ul>
-<li><p><code>#{heatmap_id}_heatmap_wrap_div</code>: to put the original heatmap. This div contains two children elements. One is the title for the heatmap (with a <code>h3</code> tag) and one is a div block with ID <code>#{heatmap_id}_heatmap_wrap</code>. <code>#{heatmap_id}_heatmap_wrap</code> is for JQuery-UI and it wraps the div <code>#{heatmap_id}_heatmap</code> which is used by <code><a href='https://shiny.rstudio.com/reference/shiny/latest/plotOutput.html'>plotOutput</a></code>.</p></li>
-<li><p><code>#{heatmap_id}_sub_heatmap_wrap_div</code>: to put the sub-heatmap. This div contains two children elements. One is the title for the heatmap (with a <code>h3</code> tag) and one is a div block with ID <code>#{heatmap_id}_sub_heatmap_wrap</code>. <code>#{heatmap_id}_sub_heatmap_wrap</code> is for JQuery-UI and it wraps the div <code>#{heatmap_id}_sub_heatmap</code> which is used by <code><a href='https://shiny.rstudio.com/reference/shiny/latest/plotOutput.html'>plotOutput</a></code>.</p></li>
-<li><p><code>#{heatmap_id}_info</code>: to put the information of the selected position/area.</p></li>
-</ul>
-
+    <p>This function generates HTML fragment for the interactive UI. See the example from <code><a href='renderInteractiveComplexHeatmap.html'>renderInteractiveComplexHeatmap</a></code> page.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A UI that can be used in shiny.</p>
