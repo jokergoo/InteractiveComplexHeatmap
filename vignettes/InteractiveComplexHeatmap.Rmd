@@ -91,6 +91,45 @@ There are three other vignettes focusing on more specific topics:
 - [Decorations on the heatmaps](decoration.html)
 
 
+## Use last generated heatmaps
+
+**ComplexHeatmap** is broadly used in many other scripts and packages where
+they do not directly return the `Heatmap`/`HeatmapList` object. This is of no
+problem to make these heatmaps interactive because the last generated heatmap
+object is automatically saved and calling `ht_shiny()` without the heatmap
+object will automatically use the last one. I demonstrate this functionality
+with [the **cola** pacakge](https://bioconductor.org/packages/cola/).
+
+**cola** package heavily uses **ComplexHeatmap** to implement various customized heatmaps
+to visualize consensus clustering results as well as downstream analysis. As an example,
+the function `get_signatures()` extracts signatures that are significantly different between
+the predicted subgroups. `get_signatures()` makes one heatmap and returns a data frame of the 
+signatures as well as various statistics for the test.
+
+When `get_signatures()` draws the heatmap, the heatmap object is saved internally, then directly
+calling `ht_shiny()` without the heatmap object will convert the static signature heatmap into an
+interactive one:
+
+```{r, eval = FALSE}
+# the following code is runable
+library(cola)  # cola is from Bioconductor
+data(golub_cola)
+get_signatures(golub_cola["ATC:skmeans"], k = 2) # this makes the heatmap
+ht_shiny()
+```
+
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/signature_heatmap.png")
+```
+
+Note the functionality of autonatically saving the last heatmap is only truned
+on when **InteractiveComplexHeatmap** packags is loaded, which means,
+`library(InteractiveComplexHeatmap)` should be called before making the
+heatmap.
+
+Nevertheless, if possible, I still suggest to explictly put the heatmap object
+in `ht_shiny()` which makes it clear which heatmap is becoming interactive.
+
 ## Live examples
 
 The following code demostrates two horizontally concatenated heatmaps. Please

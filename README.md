@@ -21,6 +21,14 @@ With any `Heatmap`/`HeatmapList` object, directly send to `ht_shiny()` to create
 ht_shiny(ht_list)
 ```
 
+If the heatmaps are already drawn, `ht_list` can be omitted and the last heatmap object is retrieved automatically:
+
+```r
+# this only works in the interactive environment
+Heatmap(...) # or other functions that internally use Heatmap()
+ht_shiny()
+```
+
 There are also two functions for Shiny app development:
 
 - `InteractiveComplexHeatmapOutput()`: for the UI.

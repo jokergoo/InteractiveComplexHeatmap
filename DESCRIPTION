@@ -1,11 +1,11 @@
 Package: InteractiveComplexHeatmap
 Type: Package
 Title: Make Complex Heatmaps Interactive
-Version: 0.99.3.1010
-Date: 2020-12-30
+Version: 0.99.3.1011
+Date: 2020-12-31
 Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"))
 Depends: R (>= 4.0.0), 
-Imports: ComplexHeatmap (>= 2.7.2), grDevices, stats, shiny, grid, GetoptLong, 
+Imports: ComplexHeatmap (>= 2.7.4), grDevices, stats, shiny, grid, GetoptLong, 
     S4Vectors (>= 0.26.1), digest, IRanges, kableExtra, utils
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
