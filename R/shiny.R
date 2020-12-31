@@ -309,7 +309,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			})
 			has_column_labels = has_column_labels[all_ht_name]
 			if(!any(has_row_labels) && !any(has_column_labels)) {
-				return(NULL)
+				return(p("Search functionality is disabled."))
 			}
 			if(any(has_row_labels) && any(has_column_labels)) {
 				if(length(all_ht_name) == 1 && has_row_labels[1] && has_column_labels[1]) {
@@ -569,7 +569,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 				),
 				tags$script(HTML("$('.modal-content').draggable();")),
 				easyClose = TRUE,
-				footer = div(downloadButton(qq("@{heatmap_id}_download_table"), "Download"), modalButton("Close")),
+				footer = div(span("This frame is draggable."), downloadButton(qq("@{heatmap_id}_download_table"), "Download"), modalButton("Close")),
 				size = "l"
 			))
 
@@ -931,7 +931,7 @@ make_sub_heatmap = function(input, output, session, heatmap_id) {
 				ht_select = ht_select %v% ht_current
 			}
 		}
-	    ht_select = draw(ht_select)
+	    ht_select = draw(ht_select, save_last = FALSE)
 	    message(qq("[@{Sys.time()}] make the sub-heatmap (device size: @{width}x@{height} px)."))
 	}
 }
@@ -1322,7 +1322,7 @@ sub_heatmap_control_ui = function(heatmap_id) {
 		div(
 			checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
 			checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = TRUE),
-			actionButton(qq("@{heatmap_id}_open_table"), label = "Open tables")
+			actionButton(qq("@{heatmap_id}_open_table"), label = "Open tables in text")
 		)
 	)
 	HTML(qq("<details><summary style='font-weight: 500;padding:5px 0px;'>Settings of sub-heatmaps</summary>@{as.character(html)}</details>"))

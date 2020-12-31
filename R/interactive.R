@@ -36,7 +36,7 @@
 # ht = draw(ht)
 # selectArea(ht)
 # }
-selectArea = function(ht_list, pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = TRUE,
+selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = TRUE,
 	ht_pos = NULL, include_annotation = FALSE, calibrate = TRUE) {
 
 	if(missing(ht_list)) {
@@ -332,7 +332,7 @@ selectArea = function(ht_list, pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = 
 # ht = draw(ht)
 # selectPosition(ht)
 # }
-selectPosition = function(ht_list, pos = NULL, mark = TRUE, verbose = TRUE,
+selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verbose = TRUE,
 	ht_pos = NULL, calibrate = TRUE) {
 
 	if(missing(ht_list)) {
@@ -526,7 +526,7 @@ selectPosition = function(ht_list, pos = NULL, mark = TRUE, verbose = TRUE,
 #
 # InteractiveComplexHeatmap:::redraw_ht_vp(pos)
 # }
-ht_pos_on_device = function(ht_list, unit = "inch", valueOnly = FALSE, 
+ht_pos_on_device = function(ht_list = get_last_ht(), unit = "inch", valueOnly = FALSE, 
 	include_annotation = FALSE, calibrate = TRUE) {
 	
 	if(calibrate) {
@@ -712,7 +712,7 @@ seek_root_vp = function() {
 }
 
 # given a vector of row keywords or column keywords, 
-selectByLabels = function(ht_list, row_keywords = NULL, column_keywords = NULL, 
+selectByLabels = function(ht_list = get_last_ht(), row_keywords = NULL, column_keywords = NULL, 
 	keyword_is_regexpr = FALSE, heatmap = NULL, 
 	all = TRUE, include_annotation = FALSE) {
 

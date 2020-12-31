@@ -46,18 +46,10 @@
 # ht_list = ht1 \%v\% ht2
 # ht_shiny(ht_list)
 # }
-ht_shiny = function(ht_list, ..., html = NULL) {
+ht_shiny = function(ht_list = get_last_ht(), ..., html = NULL) {
 
-	if(missing(ht_list)) {
-		cat("No heatmap is provided, use random heatmap\n")
-	    m1 = matrix(rnorm(100), 10)
-	    colnames(m1) = rownames(m1) = paste0("a", seq_len(10))
-	    ht1 = Heatmap(m1, row_km = 2, column_km = 2)
-
-	    m2 = matrix(sample(letters[seq_len(10)], 100, replace = TRUE), 10)
-	    colnames(m2) = rownames(m2) = paste0("b", seq_len(10))
-	    ht2 = Heatmap(m2, heatmap_legend_param = list(at = sort(unique(as.vector(m2)))))
-	    ht_list = ht1 + ht2
+	if(is.null(ht_list)) {
+		stop_wrap("No heatmap is detected.")
 	} else if(inherits(ht_list, "InputHeatmap")) {
 		ht_list = show(ht_list)
 	} else {
