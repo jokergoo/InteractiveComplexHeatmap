@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1019</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3.1011</span>
       </span>
     </div>
 
@@ -92,7 +92,7 @@
       <h1 data-toc-skip>How to visualize heatmaps interactively</h1>
                         <h4 class="author">Zuguang Gu ( <a href="mailto:z.gu@dkfz.de" class="email">z.gu@dkfz.de</a> )</h4>
             
-            <h4 class="date">2020-12-19</h4>
+            <h4 class="date">2020-12-31</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jokergoo/InteractiveComplexHeatmap/blob/master/vignettes/InteractiveComplexHeatmap.Rmd"><code>vignettes/InteractiveComplexHeatmap.Rmd</code></a></small>
       <div class="hidden name"><code>InteractiveComplexHeatmap.Rmd</code></div>
@@ -101,8 +101,6 @@
 
     
     
-<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/message.html">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/InteractiveComplexHeatmap">InteractiveComplexHeatmap</a></span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <style>
 p {
     margin: 1em 0;
@@ -113,15 +111,16 @@ p {
 <a href="#usage" class="anchor"></a>Usage</h2>
 <p>The <strong>InteractiveComplexHeatmap</strong> package is very straightforward to use. For any heatmap (or list of heatmaps as a <code>Heatmap</code> or <code>HeatmapList</code> object) produced from <strong>ComplexHeatmap</strong> package, you just use the function <code><a href="../reference/ht_shiny.html">ht_shiny()</a></code> to export it as a Shiny app.</p>
 <p>You can copy and paste the following code:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/InteractiveComplexHeatmap">InteractiveComplexHeatmap</a></span><span class="op">)</span>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/ComplexHeatmap">ComplexHeatmap</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/InteractiveComplexHeatmap">InteractiveComplexHeatmap</a></span><span class="op">)</span>
 <span class="va">m</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">*</span><span class="fl">100</span><span class="op">)</span>, nrow <span class="op">=</span> <span class="fl">100</span><span class="op">)</span>
-<span class="va">ht</span> <span class="op">=</span> <span class="fu">Heatmap</span><span class="op">(</span><span class="va">ht</span><span class="op">)</span>
-<span class="va">ht</span> <span class="op">=</span> <span class="fu">draw</span><span class="op">(</span><span class="va">ht</span><span class="op">)</span> <span class="co"># not necessary, but recommended</span>
+<span class="va">ht</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span>
+<span class="va">ht</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span><span class="op">(</span><span class="va">ht</span><span class="op">)</span> <span class="co"># not necessary, but recommended</span>
 
 <span class="fu"><a href="../reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="va">ht</span><span class="op">)</span></code></pre></div>
 <p>A link will be opend in your web browser automatically (or a pop-up window in RStudio IDE).</p>
-<p>To use <code><a href="../reference/ht_shiny.html">ht_shiny()</a></code>, the <code>Heatmap</code>/<code>HeatmapList</code> object is not necessary to be updated with <code>draw()</code> and it will be applied inside <code><a href="../reference/ht_shiny.html">ht_shiny()</a></code> automatically. However, updating by <code>draw()</code> will speed up the loading of the Shiny app because <code>draw()</code> applies clustering (which is normally the most time-consuming part) and the clustering results are saved the heatmap object. If your heatmap includes randomness, such as k-means clustring by setting <code>row_km</code> or <code>column_km</code> argument, then you must execute <code>draw()</code> before sending to <code><a href="../reference/ht_shiny.html">ht_shiny()</a></code>.</p>
+<p>To use <code><a href="../reference/ht_shiny.html">ht_shiny()</a></code>, the <code>Heatmap</code>/<code>HeatmapList</code> object is not necessary to be updated with <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw()</a></code> and it will be applied inside <code><a href="../reference/ht_shiny.html">ht_shiny()</a></code> automatically. However, updating by <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw()</a></code> will speed up the loading of the Shiny app because <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw()</a></code> applies clustering (which is normally the most time-consuming part) and the clustering results are saved the heatmap object. If your heatmap includes randomness, such as k-means clustring by setting <code>row_km</code> or <code>column_km</code> argument, then you must execute <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw()</a></code> before sending to <code><a href="../reference/ht_shiny.html">ht_shiny()</a></code>.</p>
 <p>Following screenshot demonstrates the Shiny app on rather complex heatmaps. The data is from <a href="http://jokergoo.github.io/supplementary/ComplexHeatmap-supplementary1-4/supplS2_scRNASeq/supplS2_scRNAseq.html">here</a> with slightly changing the original code for making heatmaps.</p>
 <p>In this Shiny app, users can click on the orignal heatmap or select an area from it. The information of the position or the area selected by users can be found in the text below the heatmaps. If an area is selected, a sub-heatmap is drawn on the right side of the app. Both heatmaps can be resized by dragging from the bottom right.</p>
 <p>
@@ -134,6 +133,22 @@ p {
 <li><a href="decoration.html">Decorations on the heatmaps</a></li>
 </ul>
 </div>
+<div id="use-last-generated-heatmaps" class="section level2">
+<h2 class="hasAnchor">
+<a href="#use-last-generated-heatmaps" class="anchor"></a>Use last generated heatmaps</h2>
+<p><strong>ComplexHeatmap</strong> is broadly used in many other scripts and packages where they do not directly return the <code>Heatmap</code>/<code>HeatmapList</code> object. This is of no problem to make these heatmaps interactive because the last generated heatmap object is automatically saved and calling <code><a href="../reference/ht_shiny.html">ht_shiny()</a></code> without the heatmap object will automatically use the last one. I demonstrate this functionality with <a href="https://bioconductor.org/packages/cola/">the <strong>cola</strong> pacakge</a>.</p>
+<p><strong>cola</strong> package heavily uses <strong>ComplexHeatmap</strong> to implement various customized heatmaps to visualize consensus clustering results as well as downstream analysis. As an example, the function <code><a href="https://rdrr.io/pkg/cola/man/get_signatures-dispatch.html">get_signatures()</a></code> extracts signatures that are significantly different between the predicted subgroups. <code><a href="https://rdrr.io/pkg/cola/man/get_signatures-dispatch.html">get_signatures()</a></code> makes one heatmap and returns a data frame of the signatures as well as various statistics for the test.</p>
+<p>When <code><a href="https://rdrr.io/pkg/cola/man/get_signatures-dispatch.html">get_signatures()</a></code> draws the heatmap, the heatmap object is saved internally, then directly calling <code><a href="../reference/ht_shiny.html">ht_shiny()</a></code> without the heatmap object will convert the static signature heatmap into an interactive one:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># the following code is runable</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/cola">cola</a></span><span class="op">)</span>  <span class="co"># cola is from Bioconductor</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">golub_cola</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/cola/man/get_signatures-dispatch.html">get_signatures</a></span><span class="op">(</span><span class="va">golub_cola</span><span class="op">[</span><span class="st">"ATC:skmeans"</span><span class="op">]</span>, k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="co"># this makes the heatmap</span>
+<span class="fu"><a href="../reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
+<p><img src="https://jokergoo.github.io/images/signature_heatmap.png" width="100%" style="display: block; margin: auto;"></p>
+<p>Note the functionality of autonatically saving the last heatmap is only truned on when <strong>InteractiveComplexHeatmap</strong> packags is loaded, which means, <code><a href="https://github.com/jokergoo/InteractiveComplexHeatmap">library(InteractiveComplexHeatmap)</a></code> should be called before making the heatmap.</p>
+<p>Nevertheless, if possible, I still suggest to explictly put the heatmap object in <code><a href="../reference/ht_shiny.html">ht_shiny()</a></code> which makes it clear which heatmap is becoming interactive.</p>
+</div>
 <div id="live-examples" class="section level2">
 <h2 class="hasAnchor">
 <a href="#live-examples" class="anchor"></a>Live examples</h2>
@@ -141,17 +156,17 @@ p {
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span>
 <span class="va">mat1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, <span class="fl">10</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">mat1</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">mat1</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/cola/man/rownames-dispatch.html">rownames</a></span><span class="op">(</span><span class="va">mat1</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/cola/man/colnames-dispatch.html">colnames</a></span><span class="op">(</span><span class="va">mat1</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"a"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
 <span class="va">mat2</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sample.html">sample</a></span><span class="op">(</span><span class="va">letters</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span>, <span class="fl">100</span>, replace <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="fl">10</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">rownames</a></span><span class="op">(</span><span class="va">mat2</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">mat2</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"b"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/cola/man/rownames-dispatch.html">rownames</a></span><span class="op">(</span><span class="va">mat2</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/cola/man/colnames-dispatch.html">colnames</a></span><span class="op">(</span><span class="va">mat2</span><span class="op">)</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"b"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
 
-<span class="va">ht_list</span> <span class="op">=</span> <span class="fu">Heatmap</span><span class="op">(</span><span class="va">mat1</span>, name <span class="op">=</span> <span class="st">"mat_a"</span>, row_km <span class="op">=</span> <span class="fl">2</span>, column_km <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">Heatmap</span><span class="op">(</span><span class="va">mat2</span>, name <span class="op">=</span> <span class="st">"mat_b"</span><span class="op">)</span>
+<span class="va">ht_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">mat1</span>, name <span class="op">=</span> <span class="st">"mat_a"</span>, row_km <span class="op">=</span> <span class="fl">2</span>, column_km <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">+</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">mat2</span>, name <span class="op">=</span> <span class="st">"mat_b"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span></code></pre></div>
 <p>The following code demostrates two vertically concatenated heatmaps. Check <a href="https://jokergoo.shinyapps.io/interactive_complexheatmap_vertical/" class="uri">https://jokergoo.shinyapps.io/interactive_complexheatmap_vertical/</a> for a live demo.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ht_list</span> <span class="op">=</span> <span class="fu">Heatmap</span><span class="op">(</span><span class="va">mat1</span>, name <span class="op">=</span> <span class="st">"mat_a"</span>, row_km <span class="op">=</span> <span class="fl">2</span>, column_km <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">%v%</span>
-    <span class="fu">Heatmap</span><span class="op">(</span><span class="va">mat2</span>, name <span class="op">=</span> <span class="st">"mat_b"</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">ht_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">mat1</span>, name <span class="op">=</span> <span class="st">"mat_a"</span>, row_km <span class="op">=</span> <span class="fl">2</span>, column_km <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op">%v%</span>
+    <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">mat2</span>, name <span class="op">=</span> <span class="st">"mat_b"</span><span class="op">)</span>
 <span class="fu"><a href="../reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="integrate-with-other-plots-and-packages" class="section level2">
@@ -163,7 +178,7 @@ p {
 <a href="#interactive-density-heatmap" class="anchor"></a>Interactive density heatmap</h3>
 <p><code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/densityHeatmap.html">ComplexHeatmap::densityHeatmap()</a></code> returns a <code>Heatmap</code> object, so it can be exported as a Shiny app. Check <a href="https://jokergoo.shinyapps.io/interactive_densityheatmap/" class="uri">https://jokergoo.shinyapps.io/interactive_densityheatmap/</a> for a live demo. The example can also be run locally by executing <code><a href="../reference/ht_shiny_example.html">ht_shiny_example(12)</a></code>. The usage of <code><a href="../reference/ht_shiny_example.html">ht_shiny_example()</a></code> will be introduced later and in the webpage opened by <code><a href="../reference/ht_shiny_example.html">ht_shiny_example()</a></code> there is also the source code for generating this Shiny app.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ht</span> <span class="op">=</span> <span class="fu">densityHeatmap</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">ht</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/densityHeatmap.html">densityHeatmap</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
 <span class="fu"><a href="../reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="va">ht</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="interactive-oncoprint" class="section level3">
@@ -171,10 +186,10 @@ p {
 <a href="#interactive-oncoprint" class="anchor"></a>Interactive oncoPrint</h3>
 <p><code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/oncoPrint.html">ComplexHeatmap::oncoPrint()</a></code> returns a <code>Heatmap</code> object, thus, the oncoPrint can be interactive. Example code is as follows. Check <a href="https://jokergoo.shinyapps.io/interactive_oncoprint/" class="uri">https://jokergoo.shinyapps.io/interactive_oncoprint/</a> for a live demo. The example can be run locally by executing <code><a href="../reference/ht_shiny_example.html">ht_shiny_example(7)</a></code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ht</span> <span class="op">=</span> <span class="fu">oncoPrint</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">ht</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/oncoPrint.html">oncoPrint</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
 <span class="fu"><a href="../reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="va">ht</span><span class="op">)</span>
 
-<span class="va">ht</span> <span class="op">=</span> <span class="fu">oncoPrint</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">+</span> <span class="fu">Heatmap</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">+</span> <span class="fu">rowAnnotation</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
+<span class="va">ht</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/oncoPrint.html">oncoPrint</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/rowAnnotation.html">rowAnnotation</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
 <span class="fu"><a href="../reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="va">ht</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="interactive-upset-plot" class="section level3">
@@ -182,8 +197,8 @@ p {
 <a href="#interactive-upset-plot" class="anchor"></a>Interactive UpSet plot</h3>
 <p><code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/UpSet.html">ComplexHeatmap::UpSet()</a></code> returns a <code>Heatmap</code> object, thus, the UpSet plot generated by <strong>ComplexHeatmap</strong> can be interactive. It might be useful when you visualize many sets as the same time. Example code is as follows. Check <a href="https://jokergooo.shinyapps.io/interactive_upset/" class="uri">https://jokergooo.shinyapps.io/interactive_upset/</a> for a live demo. The example can be run locally by executing <code><a href="../reference/ht_shiny_example.html">ht_shiny_example(8)</a></code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">cm</span> <span class="op">=</span> <span class="fu">make_comb_mat</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
-<span class="va">ht</span> <span class="op">=</span> <span class="fu">UpSet</span><span class="op">(</span><span class="va">cm</span>, <span class="va">...</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">cm</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/make_comb_mat.html">make_comb_mat</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
+<span class="va">ht</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/UpSet.html">UpSet</a></span><span class="op">(</span><span class="va">cm</span>, <span class="va">...</span><span class="op">)</span>
 <span class="fu"><a href="../reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="va">ht</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="interactive-enriched-heatmap" class="section level3">
@@ -199,18 +214,19 @@ p {
 <h3 class="hasAnchor">
 <a href="#interactive-pheatmap" class="anchor"></a>Interactive pheatmap</h3>
 <p>Since <strong>ComplexHeatmap</strong> can <a href="https://jokergoo.github.io/2020/05/06/translate-from-pheatmap-to-complexheatmap/">seamlessly integrate <strong>pheatmap</strong></a>, this means your pheatmap can be interactive! Check <a href="https://jokergooo.shinyapps.io/interactive_pheatmap/" class="uri">https://jokergooo.shinyapps.io/interactive_pheatmap/</a>. The example can be run locally by executing <code><a href="../reference/ht_shiny_example.html">ht_shiny_example(9)</a></code>.</p>
-<p><code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/pheatmap.html">ComplexHeatmap::pheatmap()</a></code> and <code><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html">pheatmap::pheatmap()</a></code> have the same set of arguments and generate almost the same heatmaps, but be careful when you directly use <code>pheatmap()</code> without the namespace (the package name) prefix, you need to make sure it is from <strong>ComplexHeatmap</strong> if you want to use the interactive functionality.</p>
+<p><code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/pheatmap.html">ComplexHeatmap::pheatmap()</a></code> and <code><a href="https://rdrr.io/pkg/pheatmap/man/pheatmap.html">pheatmap::pheatmap()</a></code> have the same set of arguments and generate almost the same heatmaps, but be careful when you directly use <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/pheatmap.html">pheatmap()</a></code> without the namespace (the package name) prefix, you need to make sure it is from <strong>ComplexHeatmap</strong> if you want to use the interactive functionality.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ht</span> <span class="op">=</span> <span class="fu">pheatmap</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="co"># ComplexHeatmap::pheatmap should overwrite pheatmap::pheatmap</span>
+<code class="sourceCode R"><span class="va">ht</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/pheatmap.html">pheatmap</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="co"># ComplexHeatmap::pheatmap should overwrite pheatmap::pheatmap</span>
 <span class="fu"><a href="../reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="va">ht</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="interactive-heatmap" class="section level3">
 <h3 class="hasAnchor">
 <a href="#interactive-heatmap" class="anchor"></a>Interactive heatmap</h3>
-<p>To facilitate the users who are still using <code><a href="https://rdrr.io/pkg/tidyHeatmap/man/heatmap-methods.html">heatmap()</a></code> and <code>heatmap.2()</code> functions, to make the output of these two functions can be exported as interactive Shiny apps as well, from <strong>ComplexHeatmap</strong> version 2.7.2, two similar translation functions <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/stats_heatmap.html">ComplexHeatmap::heatmap()</a></code> and <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/heatmap.2.html">ComplexHeatmap::heatmap.2()</a></code> which use the same set of arguments as the original functions and generate almost identical heatmaps. Then an interactive <code><a href="https://rdrr.io/pkg/tidyHeatmap/man/heatmap-methods.html">heatmap()</a></code> will look like:</p>
+<p>To facilitate the users who are still using <code><a href="https://rdrr.io/pkg/tidyHeatmap/man/heatmap-methods.html">heatmap()</a></code> and <code>heatmap.2()</code> functions, to make the output of these two functions can be exported as interactive Shiny apps as well, from <strong>ComplexHeatmap</strong> version 2.7.2, two similar translation functions <code>ComplexHeatmap:::heatmap()</code> and <code>ComplexHeatmap:::heatmap.2()</code> which use the same set of arguments as the original functions and generate almost identical heatmaps. Then an interactive <code><a href="https://rdrr.io/pkg/tidyHeatmap/man/heatmap-methods.html">heatmap()</a></code> will look like:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ht</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/stats/heatmap.html">heatmap</a></span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="co"># ComplexHeatmap::heatmap should overwrite stats::heatmap</span>
+<code class="sourceCode R"><span class="va">ht</span> <span class="op">=</span> <span class="fu">ComplexHeatmap</span><span class="fu">:::</span><span class="fu">heatmap</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
 <span class="fu"><a href="../reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="va">ht</span><span class="op">)</span></code></pre></div>
+<p>As you see, <code><a href="https://rdrr.io/pkg/tidyHeatmap/man/heatmap-methods.html">heatmap()</a></code> function is not exported from <strong>ComplexHeatmap</strong> (so it will not conflict with <strong>stats</strong> package) and it should be explicitly specifid with <code><a href="https://rdrr.io/r/base/ns-dblcolon.html">:::</a></code>.</p>
 <p>An live example is at <a href="https://jokergooo.shinyapps.io/interactive_heatmap/" class="uri">https://jokergooo.shinyapps.io/interactive_heatmap/</a>. The example can be run locally by executing <code><a href="../reference/ht_shiny_example.html">ht_shiny_example(10)</a></code>.</p>
 </div>
 <div id="interactive-heatmap-2" class="section level3">
@@ -218,8 +234,9 @@ p {
 <a href="#interactive-heatmap-2" class="anchor"></a>Interactive heatmap.2</h3>
 <p>Similarly, an interactive <code>heatmap.2()</code> looks like:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">ht</span> <span class="op">=</span> <span class="fu">heatmap.2</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="co"># ComplexHeatmap::heatmap.2 should overwrite gplots::heatmap.2</span>
+<code class="sourceCode R"><span class="va">ht</span> <span class="op">=</span> <span class="fu">ComplexHeatmap</span><span class="fu">:::</span><span class="fu">heatmap.2</span><span class="op">(</span><span class="va">...</span><span class="op">)</span>
 <span class="fu"><a href="../reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="va">ht</span><span class="op">)</span></code></pre></div>
+<p>Also <code>heatmap.2()</code> is not exported from <strong>ComplexHeatmap</strong> (so it will not conflict with <strong>glots</strong> package) and it should be specified with <code><a href="https://rdrr.io/r/base/ns-dblcolon.html">:::</a></code>.</p>
 <p>An live example is at <a href="https://jokergooo.shinyapps.io/interactive_heatmap_2/" class="uri">https://jokergooo.shinyapps.io/interactive_heatmap_2/</a>. The example can be run locally by executing <code><a href="../reference/ht_shiny_example.html">ht_shiny_example(11)</a></code>.</p>
 </div>
 <div id="interactive-tidyheatmap" class="section level3">
@@ -232,11 +249,7 @@ p {
 <span class="va">mtcars_tidy</span> <span class="op">&lt;-</span> 
     <span class="va">mtcars</span> <span class="op">%&gt;%</span> 
     <span class="fu">as_tibble</span><span class="op">(</span>rownames<span class="op">=</span><span class="st">"Car name"</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-    
-    <span class="co"># Scale</span>
     <span class="fu">mutate_at</span><span class="op">(</span><span class="fu">vars</span><span class="op">(</span><span class="op">-</span><span class="va">`Car name`</span>, <span class="op">-</span><span class="va">hp</span>, <span class="op">-</span><span class="va">vs</span><span class="op">)</span>, <span class="va">scale</span><span class="op">)</span> <span class="op">%&gt;%</span>
-    
-    <span class="co"># tidyfy</span>
     <span class="fu">pivot_longer</span><span class="op">(</span>cols <span class="op">=</span> <span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">`Car name`</span>, <span class="va">hp</span>, <span class="va">vs</span><span class="op">)</span>, names_to <span class="op">=</span> <span class="st">"Property"</span>, values_to <span class="op">=</span> <span class="st">"Value"</span><span class="op">)</span>
 
 <span class="va">mtcars_heatmap</span> <span class="op">&lt;-</span> 
@@ -253,15 +266,48 @@ p {
 <p>There are many other examples shipped with the <strong>InteractiveComplexHeatmap</strong> package. The list of examples can be obtained by executing <code><a href="../reference/ht_shiny_example.html">ht_shiny_example()</a></code> with no argument.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/ht_shiny_example.html">ht_shiny_example</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
-<p>And you can select one specific example by sending the corresponding index to <code><a href="../reference/ht_shiny_example.html">ht_shiny_example()</a></code>, e.g. to run the example “4. A single heatmap where rows and columns are split.”, simply run:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<pre><code>## There are following examples:
+## 
+##  1. A single heatmap with minimal arguments.
+##  2. A single heatmap from a character matrix.
+##  3. A single heatmap with annotations on both rows and columns.
+##  4. A single heatmap where rows and columns are split.
+##  5. A list of two heatmaps.
+##  6. A density heatmap.
+##  7. An oncoPrint.
+##  8. A UpSet plot.
+##  9. An interactive heatmap by `pheatmap()`.
+## 10. An interactive heatmap by `heatmap()`.
+## 11. An interactive heatmap by `heatmap.2()`.
+## 12. An enriched heatmap.
+## 13. A list of enriched heatmaps.
+## 14. An enriched heatmap with discrete signals.
+## 15. A heatmap produced from tidyHeatmap package.
+## 16. An example from Lewis et al 2019. GitHub repo:
+##     https://github.com/kevinblighe/E-MTAB-6141
+## 17. Visualize cell heterogeneity from single cell RNASeq. This is from
+##     Supplementary S2 of the ComplexHeatmap paper.
+##     https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
+## 18. Correlations between methylation, expression and other genomic features.
+##     This is from Supplementary S3 of the ComplexHeatmap paper.
+##     https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
+## 19. A single shiny app with two interactive heatmap widgets.
+## 20. Self-define the output. The selected sub-matrix is shown as a text table.
+## 21. Self-define the output. Additional annotations for the selected gene are
+##     shown.
+## 22. Integrate in an interactive R Markdown document.
+## 23. Visualize Gene Ontology similarities. A list of selected GO IDs as well as
+##     their descriptions are shown in the output.
+## 24. Genome-scale heatmaps.</code></pre>
+<p>You can select one specific example by sending the corresponding index to <code><a href="../reference/ht_shiny_example.html">ht_shiny_example()</a></code>, e.g. to run the example “4. A single heatmap where rows and columns are split.”, simply run:</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/ht_shiny_example.html">ht_shiny_example</a></span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></code></pre></div>
 <p>Then the interactive heatmaps as well as the source code for generating the app will be available in the webpage.</p>
 </div>
 <div id="sessioninfo" class="section level2">
 <h2 class="hasAnchor">
 <a href="#sessioninfo" class="anchor"></a>SessionInfo</h2>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <pre><code>## R version 4.0.2 (2020-06-22)
 ## Platform: x86_64-apple-darwin17.0 (64-bit)
@@ -278,15 +324,30 @@ p {
 ## [1] stats     graphics  grDevices utils     datasets  methods   base     
 ## 
 ## other attached packages:
-## [1] knitr_1.30
+## [1] InteractiveComplexHeatmap_0.99.3.1011 knitr_1.30                           
 ## 
 ## loaded via a namespace (and not attached):
-##  [1] digest_0.6.27     crayon_1.3.4      rprojroot_1.3-2   assertthat_0.2.1 
-##  [5] R6_2.5.0          backports_1.2.0   magrittr_2.0.1    evaluate_0.14    
-##  [9] stringi_1.5.3     rlang_0.4.8       fs_1.5.0          ragg_0.4.0       
-## [13] rmarkdown_2.5     pkgdown_1.6.1     textshaping_0.2.1 desc_1.2.0       
-## [17] tools_4.0.2       stringr_1.4.0     yaml_2.2.1        xfun_0.19        
-## [21] compiler_4.0.2    systemfonts_0.3.2 memoise_1.1.0     htmltools_0.5.0</code></pre>
+##  [1] circlize_0.4.12.1006 shape_1.4.5          GetoptLong_1.0.5    
+##  [4] xfun_0.19            colorspace_2.0-0     viridisLite_0.3.0   
+##  [7] htmltools_0.5.0      stats4_4.0.2         yaml_2.2.1          
+## [10] rlang_0.4.8          pkgdown_1.6.1        later_1.1.0.1       
+## [13] glue_1.4.2           BiocGenerics_0.34.0  RColorBrewer_1.1-2  
+## [16] matrixStats_0.57.0   lifecycle_0.2.0      stringr_1.4.0       
+## [19] munsell_0.5.0        ragg_0.4.0           rvest_0.3.6         
+## [22] GlobalOptions_0.1.2  kableExtra_1.3.1     memoise_1.1.0       
+## [25] evaluate_0.14        ComplexHeatmap_2.7.4 IRanges_2.22.2      
+## [28] fastmap_1.0.1        Cairo_1.5-12.2       httpuv_1.5.4        
+## [31] parallel_4.0.2       Rcpp_1.0.5           xtable_1.8-4        
+## [34] backports_1.2.0      promises_1.1.1       scales_1.1.1        
+## [37] S4Vectors_0.26.1     desc_1.2.0           webshot_0.5.2       
+## [40] mime_0.9             systemfonts_0.3.2    fs_1.5.0            
+## [43] textshaping_0.2.1    rjson_0.2.20         png_0.1-7           
+## [46] digest_0.6.27        stringi_1.5.3        shiny_1.5.0         
+## [49] grid_4.0.2           rprojroot_1.3-2      clue_0.3-57         
+## [52] tools_4.0.2          magrittr_2.0.1       cluster_2.1.0       
+## [55] crayon_1.3.4         xml2_1.3.2           assertthat_0.2.1    
+## [58] rmarkdown_2.5        httr_1.4.2           rstudioapi_0.13     
+## [61] R6_2.5.0             compiler_4.0.2</code></pre>
 </div>
   </div>
 

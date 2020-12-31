@@ -12,7 +12,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
 <script src="pkgdown.js"></script><meta property="og:title" content="Make Complex Heatmaps Interactive">
-<meta property="og:description" content="This package can easily make interactive heatmaps produced 
+<meta property="og:description" content="This package can easily make interactive heatmaps which are produced 
     by the ComplexHeatmap package. It provides two types of interactivities: 
     1. on the interactive graphics device, and 2. on a Shiny app. It also provides 
     functions for integrating the interactive heatmap widgets into other Shiny apps.">
@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1019</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3.1011</span>
       </span>
     </div>
 
@@ -108,14 +108,19 @@
 <p>With any <code>Heatmap</code>/<code>HeatmapList</code> object, directly send to <code><a href="reference/ht_shiny.html">ht_shiny()</a></code> to create a shiny app for your heatmap(s):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span></code></pre></div>
+<p>If the heatmaps are already drawn, <code>ht_list</code> can be omitted and the last heatmap object is retrieved automatically:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># this only works in the interactive environment</span>
+<span class="fu">Heatmap</span><span class="op">(</span><span class="va">...</span><span class="op">)</span> <span class="co"># or other functions that internally use Heatmap()</span>
+<span class="fu"><a href="reference/ht_shiny.html">ht_shiny</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p>There are also two functions for Shiny app development:</p>
 <ul>
 <li>
 <code><a href="reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code>: for the UI.</li>
 <li>
-<code><a href="reference/MakeInteractiveComplexHeatmap.html">MakeInteractiveComplexHeatmap()</a></code>: for processing on the sever side.</li>
+<code><a href="reference/renderInteractiveComplexHeatmap.html">renderInteractiveComplexHeatmap()</a></code>: for processing on the sever side.</li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ht</span> <span class="op">=</span> <span class="fu">Heatmap</span><span class="op">(</span><span class="va">m</span><span class="op">)</span>
 <span class="va">ht</span> <span class="op">=</span> <span class="fu">draw</span><span class="op">(</span><span class="va">ht</span><span class="op">)</span>
 
@@ -124,12 +129,12 @@
 <span class="op">)</span>
 
 <span class="va">server</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span>
-    <span class="fu"><a href="reference/MakeInteractiveComplexHeatmap.html">MakeInteractiveComplexHeatmap</a></span><span class="op">(</span><span class="va">ht</span>, <span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span>
+    <span class="fu"><a href="reference/renderInteractiveComplexHeatmap.html">renderInteractiveComplexHeatmap</a></span><span class="op">(</span><span class="va">ht</span>, <span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span>
 <span class="op">}</span>
 
 <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/shinyApp.html">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></code></pre></div>
 <p>You can also put multiple heatmaps in the same shiny app:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ht1</span> <span class="op">=</span> <span class="fu">Heatmap</span><span class="op">(</span><span class="va">m</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">ht1</span> <span class="op">=</span> <span class="fu">draw</span><span class="op">(</span><span class="va">ht1</span><span class="op">)</span>
 <span class="va">ht2</span> <span class="op">=</span> <span class="fu">Heatmap</span><span class="op">(</span><span class="va">m</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"red"</span><span class="op">)</span><span class="op">)</span>
@@ -144,8 +149,8 @@
 <span class="op">)</span>
 
 <span class="va">server</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span><span class="op">)</span> <span class="op">{</span>
-    <span class="fu"><a href="reference/MakeInteractiveComplexHeatmap.html">MakeInteractiveComplexHeatmap</a></span><span class="op">(</span><span class="va">ht1</span>, <span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span>, <span class="st">"ht1"</span><span class="op">)</span>
-    <span class="fu"><a href="reference/MakeInteractiveComplexHeatmap.html">MakeInteractiveComplexHeatmap</a></span><span class="op">(</span><span class="va">ht2</span>, <span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span>, <span class="st">"ht2"</span><span class="op">)</span>
+    <span class="fu"><a href="reference/renderInteractiveComplexHeatmap.html">renderInteractiveComplexHeatmap</a></span><span class="op">(</span><span class="va">ht1</span>, <span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span>, <span class="st">"ht1"</span><span class="op">)</span>
+    <span class="fu"><a href="reference/renderInteractiveComplexHeatmap.html">renderInteractiveComplexHeatmap</a></span><span class="op">(</span><span class="va">ht2</span>, <span class="va">input</span>, <span class="va">output</span>, <span class="va">session</span>, <span class="st">"ht2"</span><span class="op">)</span>
 <span class="op">}</span>
 
 <span class="fu">shiny</span><span class="fu">::</span><span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/shinyApp.html">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></code></pre></div>
@@ -172,7 +177,7 @@
 <div class="developers">
 <h2>Developers</h2>
 <ul class="list-unstyled">
-<li>Zuguang Gu <br><small class="roles"> Maintainer </small>  </li>
+<li>Zuguang Gu <br><small class="roles"> Author, maintainer </small>  </li>
 </ul>
 </div>
 

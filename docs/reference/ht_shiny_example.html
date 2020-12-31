@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.0.1019</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3.1011</span>
       </span>
     </div>
 
@@ -154,7 +154,7 @@
     <p>The source code of all examples are in <code>systm.file("examples", "examples.R")</code>.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>No value is returned.</p>
+    <p>A shiny app object.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'>ht_shiny_example</span><span class='op'>(</span><span class='op'>)</span>
@@ -173,8 +173,7 @@
 #&gt; 11. An interactive heatmap by `heatmap.2()`.
 #&gt; 12. An enriched heatmap.
 #&gt; 13. A list of enriched heatmaps.
-#&gt; 14. An enriched heatmap with discrete signals. Note, this example may take
-#&gt;     long time for preparing the data for heatmaps.
+#&gt; 14. An enriched heatmap with discrete signals.
 #&gt; 15. A heatmap produced from tidyHeatmap package.
 #&gt; 16. An example from Lewis et al 2019. GitHub repo:
 #&gt;     https://github.com/kevinblighe/E-MTAB-6141
@@ -185,10 +184,12 @@
 #&gt;     This is from Supplementary S3 of the ComplexHeatmap paper.
 #&gt;     https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
 #&gt; 19. A single shiny app with two interactive heatmap widgets.
-#&gt; 20. Self-define the output.
-#&gt; 21. Self-define the output. A more complicated example.
+#&gt; 20. Self-define the output. The selected sub-matrix is shown as a text table.
+#&gt; 21. Self-define the output. Additional annotations for the selected gene are
+#&gt;     shown.
 #&gt; 22. Integrate in an interactive R Markdown document.
-#&gt; 23. Visualize Gene Ontology similarities where the output is self-defined.
+#&gt; 23. Visualize Gene Ontology similarities. A list of selected GO IDs as well as
+#&gt;     their descriptions are shown in the output.
 #&gt; 24. Genome-scale heatmaps.
 #&gt; </div><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
     <span class='fu'>ht_shiny_example</span><span class='op'>(</span><span class='fl'>4</span><span class='op'>)</span>
