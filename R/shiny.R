@@ -67,7 +67,12 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 
 	fluidPage(
 
-		tags$script(HTML(paste(readLines(system.file("app", "jquery-ui.js", package = "InteractiveComplexHeatmap"), warn = FALSE), collapse = "\n"))),
+		tags$head(
+			tags$link(rel = "stylesheet", type = "text/css", href = "shared/fontawesome/css/all.min.css"),
+			tags$link(rel = "stylesheet", type = "text/css", href = "shared/fontawesome/css/v4-shims.min.css")
+		),
+
+		tags$script(HTML(paste(readLines(system.file("app", "jquery-ui.min.js", package = "InteractiveComplexHeatmap"), warn = FALSE), collapse = "\n"))),
 
 		tags$script(HTML(qq(
 '$( function() {
@@ -109,7 +114,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
    });
 });
 '))),
-		tags$style(paste(readLines(system.file("app", "jquery-ui.css", package = "InteractiveComplexHeatmap")), collapse = "\n")),
+		tags$style(paste(readLines(system.file("app", "jquery-ui.min.css", package = "InteractiveComplexHeatmap"), warn = FALSE), collapse = "\n")),
 		tags$style(qq("
 #@{heatmap_id}_heatmap_wrap_outer, #@{heatmap_id}_sub_heatmap_wrap_outer {
 	@{ifelse(nrow == 1, 'float:left;', '')}
@@ -119,15 +124,15 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	margin-right: 10px;
 }
 #@{heatmap_id}_heatmap_wrap {
-	width: @{width1}px;
-	height: @{height1}px;
+	width: @{width1+4}px;
+	height: @{height1+4}px;
 	position:relative;
 	border:1px solid grey;
 	text-align:center;
 }
 #@{heatmap_id}_sub_heatmap_wrap {
-	width: @{width2}px;
-	height: @{height2}px;
+	width: @{width2+4}px;
+	height: @{height2+4}px;
 	position: relative;
 	border: 1px solid grey;
 }
@@ -144,12 +149,28 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	padding: 0px;
 	margin: 0px;
 }
+.ui-icon, .ui-widget-content .ui-icon {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAADwCAQAAABFnnJAAAAABGdBTUEAALGPC/xhBQAAAAJiS0dEAETbPKa7AAAAB3RJTUUH3woTETUd+3ODogAAGm1JREFUeNrtnXtsZUd9xz9ns0vWyYZeQ0tkiyr7EE0fqvYmNiKpUuW6hbIJErG3olSVKtlJZBehBohUqYJKeVSof5GkoKjdCNZbJJACUbwbUdjQhx0laiHYWa/SplCUB1KxVdH2uukfBiVw+sd5zZwzr3POvb7X98x35b33nt+8f7/5zZz5zfwmeC8eTcaBQRfAY7DwAtBweAGQMUHIxKALsZfwAiBigi1gq0ki0GsBGHz/mSCsHHMLmEQnAknKg69jDyELgFkBhuk/E2z9Rx8/jHOf0Iax5Z0wsVoNIvZvxyJgSnmEdIQoAL1QgJM1UkjiJv2wPOrEhYCAbWCbgMCQcp06Dh2CdB0gqWLSD3QIodA8IqJ0gkrxk16my9+Wd1iz7K4p2+q4j5BpALMCdIWpD9qHjyh3EwvNqdTrm6YhSEy5np4ZMgSlVwLNvcjUB7NGrdp37CmY+6a57GYdmKVs0zP7CuXfAgIL+/RNE6T/qsKewraxZ5rzzrSfqg5iyiPD/ioaYLQxwdYosdeOg4MuwJBhezSmdu7wK4ENhxeAhsMLQMPhBaDh8ALQcHgBaDi8ADQcfj9APu6gy7/HKLMfwG1HgM0YM2HcD2DOwc6eOvsB7ObwqOwjJSTl9gO4WcDMTahn0KTmu2vaNvbbUt/KfepTH5ndAMX9ABH0q+FJKJO9TU+3xXbZD2AqnTl3e3wzwjjt5HMkIO8HUH2Xse2kBdRh7P3TZT+Aqf+5lU0vPqF1t0GZnPYFMgEIpH962EVA18Qu6nk73pZlxpY2dtWyRTT5U5/6CNkLe20ODgfeOBNsVVbPjTMG994cPPiRsY5Bt3HGYL8Q1Hh4AWg4vAA0HF4AGg4vAA2HF4CGwwtAw+G3hecRDnAtoP7ZqdLlP1gvel8aYZAlCK0lqG4KssccQM3lISAEo63fxT9AWIFSFlXzsJU/Yn1gTMUuHFVju9XAJVSJuAekALbqu5zr08cPHBrIpQqhwdzrUr7AQJM/y+WRUOwtYK6hWYBCS2ywdWKp/OIQ4Fp93W4deyMFPVDwodHabxtF65QgTGMHSqqYuyqXpHvpyxAa6Oa0s9qZu4FYygDKTgJDh95jC+UindX6uBtzA4fUTQxySbdqC5i6oEva9jYo0Mu8BmYqziWUmmZWgXYJNqdhU7FuKtrWg2y5u0wiq8Iu4na6VIIyGsBNddab5QaOWqZfZQyMCtYt3cAhTFWYh2nzAKiMe1ATaHAYdAn2c/4V4vqVwIbDC0DD4QWg4fAC0HB4AWg4vAA0HF4AGg75cGjiLHVwsPsD7ydcWsDFIlotnu1stGsupZAJQHJyz8Xde7UG6B2qpWUruVsLmFzNZta4idKx5cN5+jpMVG6BMFdKQH041HyGz8WiPaF41jsR0KXl5hpCX363FtDlMZE7XjtRKnZWA5sGqnc0vXBAVz4b6OJO3XYEW+dM2W0njb0EunTsLtztJXdzSK+2GBRZG+TotoPlGXNU5xNDKWWzwVhnsA6KYcpOAvVVkMevYh8K0vhVNUEWV5X/lqIU+jLUzb38qnsWS9cGrjpYh0nFNyvKCUCdBrA3f8I206UyWTrV8q8rAvrcJ2NqMoKrmWDKP0itiYGGako5O75uPwIvzDPK7QcwNYA8gTFV31w4UxVNaYhVs2/7UrHALoCmGmznHEhsl07BDSb2bqfX3riVknIC4N7z7VdGmApnuzHEsWql6+EigKYaZIfLA8u1NdWRpGwehE0DYO4IvL8vQMSE9cakkYM/GCLCO4jwaBq8ADQcXgAaDi8ADYcXgIbDC0CvMUhzdgXk9wPYYLJXuVR9oqa9u9+oX7rAstg9ZHUv7gcwwWQxdzmXl1jsJh0OmOpR93CV+Xh4YD3+amewLr4p9QEhWwkUi+WylFs0h2bHF6vd/u12btdkkbCnEMa3/waW2Dpzr+nwaOhEda/pnkA9B9BtOjDbq7Khocqmhajn2LdN6X0YhLja+oIST1X5qvK3n2weSmQCIBsKy1uko4uX9fsBbAjIbHnVDlBnYeq6oKiWr1uIOj4++oBMAERrWhUZtlnj7MbWuqNjIGgQtYaQP1UhetOLVTnI2mNo9IQ4BGSmEJUCjxR8tN1LjW3jfgAXY6vdPYQZ2V4A9ZYKc9Nng5Deu0gSMihJFUNU3VDTF6itgVuGCroYS1Vhtpl0NLbavGu4TfR08et4GDHv6rNfJuM+kOwZ1AJQfpLkEq4XxlaXFKq7qHARgbqlGzL4lUAZ+5CF9eAFoOHwAtBweAFoOLwANBxeABqO4ROA1rAskjYDeQFws2WbTDahE1UXokV3T17FBu0HYWhQzl28mylmvEZ5uiRC0jKGq+qyPsMI3QBeB7IAmFepzavdSa9u0VWKQJgulKrP7kWqfzwN0dXET75Vc6puPsHcQGQCILt7LyKzh+tcpgcEMft3lHmZVXuk+ncYN5ydTXJX5y/vKMin4uY+onFIbAFZk5k9XtssWQn7q4/jO07mGhX7xbLly59sZsvoI3QFfB0kApA0rWnLFIiXJqhR/0oUnf6Qc8+XQb4IoVjCrTRUUspGHQHVI7MGik2mdzBiv/XC9VoJHT0SgbAwj0gMwWqv/HJ5euVWvgEo8xaQNbFuT57tSiYTfTyldoGgoAcCIXfVQGTeTyS7j/BIUeYtwLypyubkzOa7YyelurxGBo7PEri7j2gY3C+MsA0RvYF5DlAHDTz774JhcxDhmbTHGD5bgMeewgtAw+EFoOHwAtBwjJIATKUrDVN9Sf8gh+N/wzZ1roFIAGbjhltltnJKD1os/TaEnJF2C5Rl4hTr6fd1ZeypWuJxkDe5nl12uZ43lSIwZS398Zh6XJOHnm6LCR/K/TPnkHIpOh4eci+XgBYrQuDslWw2fT7HeU3S2bm6Jc5oFpNF5EPM86LAQljgnNS467nw02yUoMslVJXuOC9Lv0/wivT7MNezyRiwS5vv8WNtC6jzsHkTl8MEzhQxRNbytjqmS+eJJF8CYE2zCreiEJA1ZtBhSVOAsfTbboG2zGPosU7kWCLCFiHrUg7rTEsiMJ2j2/GyULqohPn4m4xxBJiKBUFXTphWUNzPVfXr8Kwo4mlKiQBsxp/iNgyxyJeA77FrXKY9HH+e0YY4ZIi9wIssGuhzkguKOUlXAWwIIqDq/fnzuUWGHOL19PtblWU4wjUEXGUo5e0GmlkDms3xgSKVcgKesP+3+QfxcTaWdS0JfI/dQhi5CJEAjBtS0/UbsGkAeD4VgZA5nleESESgyP4IrdxnsXTXGkva5kfcBnyDtjL+BqQipC7BdKyppgsDVr+RsP/3GJNFwHU+q2J/sQHBrKiivvOqkmbTAIkIoGE/ce5oJ3kncp95HOYH8bfrFNSruUybTaDNZd5emAPkLalVPQDYFb0txB/w5cKziP1LXA18DSAZwN1fA4vsz1fwKq7iKsa4Sqskr+RKrgRUPWzZwn6Y4HnmmON5zXbOKbaZZZbtivP8MX45/jdWKN8E7yTkddq0OUDIO41bSqc1zD8q/OlwGBtsIb6keBYJ/RnewlcAmGEtIlR/oy1Wccwa57uGkDYNMME2xH1/W9H8UxJdJQK/mPvMN1HUS9pEMyJZT7yDTRDeCzZpG3YU1VHwuzVDqPd0vBLXL5qfpew3CYA4ky0qnSL7/5wXpV9FmFWieQ4wrXjNK0MHeEfuM99E0fziIOuFV8Bskiw+yU/TbJM8eEL4K2KBZeF7tRB6vJKKuMD+YbowYgr4deH3i5qJVH8RgoL9vUw9wmDM3sd5WWb/MAmAx0AwSrYAjwrwAtBweAFoOLwANBxeAEYLn+bT5SLIAtByOJith8vNm26YUlrUpwVbdvEtf5ZQ+jeboy/m6KpFJ9FafrwPdIC/sLRPh07ldruGT/JJrrGEmmee+eSH+BrYoss0sK7Ym7/KbfEK1AOscIwVhcX6MTY4AywxxaJEL3fnb2Lbl8NP8534aZTau3NLP5E9PMGZQnxXe3wbiBZ+ek9PwgTAvLTfAaDDKuN0gXG6+fd1WnSBJR5jkTOgPD/xLLcAz/GbhtadjxeTFljjNVEAIvZH1rSiCISxo1d989nWCqPzhB/lUT7Ko9zLQ5oGmmKDWVYKNj3x6KcqB5fr27/FTVziBv6J39D4OGhzmZCAk4WVvowOGOiv8AaHOK6kJ82/ACyXbMGEupSa20X6YsEIv6RcWZ1lhQXO00023Ijm4GQ5dZ3pSo5axL0CasvhzWzxff6NH/CixiY4xTpznNeadOvg73kPF2lzkZv5R22oaC29baTLa5Yy3lDsFUqQ9L5lJXVcajXdzgv1bovrHJ4AfAwYj4fHFjvZHOCMtJq+zrRhW4cOO+zQpcuO9nDXP/O7fJN5vsZSYUMHJOxfYaovy8Dv5QlO8XVO8WXlxo3rAdP5yIQeEHCFln6Iw5qNL/MS4/Nr+Z2Y/cnpyW6pucCn+Iz0+zN8qhDmKEfpAA+xzALnIi6Jc4AQ4jmASoHbh4CAbIQLlfSb2OIWvs17+DbvKVitE/are7+4jq6aU0QOZrrChpQ8/at8iMf5MI/zYZ7ktMaFRBtQjeEZ/Qp+aqSr42djb4Rnc3sQO6ymtYrqJ88CWjmtWpwDmC70EcVPouWtgfqe12WO8xyNVbd+P6AO04UxThYAM/vlitq2ROwon/4JV3MP13IPV/FnnJZok/ww/rYZf57oKT1j/zlNmdfiISCpWZ7BO9IQUWR/C4DngFuI1Xsu/2jsX5Oj5TWA2IvzjW5GFKIVN3/5/TBRxfXsT94CEqjeAsZTFzXFOpgnicnI/i/G0tWhB4QG9qtKqHKkFYmA6g3gfVzkIzwGLPJXnOLvJOo8y9xLl+V83EwDiFsSqzBwSarAkjKM7UoWU+9f592CCLy7YP8/wct0yaafJxR0+XceNqcxdegLVvbDTO41sIgdQcTzeIPf56sAPEaXNxQhHgIW8nFdzcEn49cfj36jA3k13RPMAxRF0O8HaDi8LaDh8ALQcHgBaDi8ADQczROAyGzcUVA6qSn3eod0dLa+feaRWBSAk2kDnKycXnX/AHXRIuRs/P2sdlfD/bENYrUgAr/FKqc5zbt4F9/lVwoxo9b5RPxLvOk4wg18gJCbuZmQD3BDIb7ZfUV+N0N+P0ORbgsxW8hDpicVSV8DT7LJGn8JLNNKzZ7FRFxcSfZn1/s8y7S5zEk2FYsqUc7L3MnZeL1dvx5+jFcprhRenX5/k58o1kKXeYoV2lyO05HX6u3m8MS+11Uaks1rr6HCOtjNhQjSjTLrCle+IeNCjNScnWmATdaY4TwfpMWO4iTM4LEMbDLPJiqDarLWnrBfZXI9Gn+qTdE/5ifssstPeFNJf4rzwHhq018rXYMTdNMrMYp6INkHpdOhOyzEtla1vTWMU5kCrRZ+J5NMMsmPkgeZBgiZ4zxnWYgl3byfRZe9iDJ6QHdDgYiTgliqNNRZwcS6zJ0Fet6elu8hWWc4xsuF3B/m4wCs0QGlBhJPPO4qNYA+/5CxeMfVmDKFSAN0ITbJvVa4XCfRAFPAGaUz75A2B4CfAenRNtkaGLH/TqWnoDD3rZqxR9f8Lricno1bUA5Qd0La+9XsF/c85NfaH+dnqX3gZR4pxP8EF0jmDupV/UPKFXhXXJ1+/hfw84oQHwdghTlWOKbQASHZsdRih5oC/hv4GQf4BV7ggeixqAF2aMVNt0qnwpYvjCHcNjyZcrBpgC/yh+n3/L44mf0qBp7kY8KvB3nNkLtKwKI++lMA3tBqAJ0XoZBj0vOQ1woaQNQfkW2v3BzgRuA/Afhh1rqZ2mvTYoenmGWVjmJLVDbjVfv8Fp+qQgS5f2aqKofNmHnZdxEJ+yMdcQvPStSE/TOMEyj772U+x0L8r8h+2GSZe4EHiGYaReyww//xFq5QnuCftjjYOMIRXuUI18T/m6E6G2ybA1zHAa7lWq4FbkxCZENA5P8ieklqD6XtbyF+C7jEpqIBIvY/x528i1uItkWIiNi/Zkj/Est8C/glBfsBvsgaD7HGI3RZAIUWgEjNqrAhbGM5Xjh/PBcfrs/+n8uFaKU6Ivmdh7hNRr1lRuEZoaw1cJCvgWa06KaK/1luyVnNo+1u9r1GaMsfTTF3OMZOPJ08kHMJA3fxEj9gW9tKIUF6XiA/zTzMr7Eeb8mb5l9zW0tnFXsoZZd9+RBFh35K/wXeHCzi7TwA3KfpxfOMsxyLVYv/5ecKIiZCJQCiN8N+7HuuAC8ADUfzbAEeErwANBxeABqOvADMav2F38651JJ0zugS1WMfQZ4ErjALnC+8g8If89nck3v43KAL71EfogY4Fff+WU7lQt2esj9bofusUgusExrcJL4aa5COtVz2EHuPdcGavte+fvsGUQCWgHHGKR7rOK2Mq3o6BQZHrUfjz1VLqTqKDRswHzf+vDaeLYSNHgpXTRRZPK35vq+RDQGn+AbZ0bDbuCg1jCZ24Yl9JbClOLgpIzkmKS/czkteMs8p4tlCzLPMKZ7hVi5qUnBz6G6r4b5CpgGiXt+K15iXNOFtN+8uGeJG6XdRn3zppJ8q9ssbPNTn66NtGuOx+wUV/RRP82Oe5pQmBWA41uf2DokAdOLxvxvbrGYrjsL/Hv/p0AU2FZPMROnr2O+K8+xoL7WBZ3KfGVz2Mk4BG2ywAX26lmoASIYA0QxSNInIqq+OIozO8O7knmZs17Pf7oo5BBY4zyzLqBX4KZ4G4P1c1KawkTI3H0K8impjVGYBkQbopL9bgpkxe/qoMq7qaccyxw8IFHtZkvuHTL1/QfNdfrpMN/XCU6Rf5P0c5v1cNPjannKijJgGsE3y3sc3FdTfyZ1Bz1LSawa9Odmu/O1OFmwhbPSQDZbiWcC6po9XvQlkSBEJgPqePVHN3cXnc9S7+YIiTodV4/ht2k9gizscGEkBcMGtzMbbEuERzismUs1AYwXAYyThrYENhxeAhsMLQMPhBaDh8ALQcHgByKNj8ea/zxxA2CAKQKi0wiOF6NWVEIPCGYsT7I5xr0LHupNh30HWAB1WrUKgRiY8LW0KHVZjS0OH1YIIyeK3qKAvSimpRLDg/6JQgkUWDfVzZ7/LrqZ9gbyv4AhrPKBcktV7Ew6leCH5Nf2o8QKgw31x45lSWORMgR5dgaCLL9fA7MMgMNBsKSfUEVkRVM8BOqxa7/LWxUsYLfbRUHhq1jBJCjpU1VBRKYrf6qa076EWgDVmjFc567DGDDMkGiDrIYHw1GzuSVLQwRZ/bzASfT9CUQDWKjZyEq/FKjMEuRTWCJhhlZYhfbecq5ZP9kGgps4Y44rUsMKNCUMJeQ6gG/uzEPobBYYf5lE+QjZXKU/dl/DWwDw6rBpYbKbuQ3gBaDj8SmDD4QWg4fAC0HB4AWg4vAA0HHkBMJ299RhBZALQil2lXsd1Gl/7kZ3tfg3VY18iEYAW3dQ5zDG6Sia3meER7qPrcKFE3lyymLuuYHGP6R4aJAtBZ1ngs3yMkPt5gFDpDjlCixU6VmeyRVfF+d+yo8R+0z00iASgRZdNbgDu4xnWuERbczv1Mg/yGqt0NBeYRuFUvqrHYnfqh3iDQwV/2iFv5XXeKjhcV9Nf1/rTj2i78Z/KY7+HApGz6BPABYDYi/wF2pwo9KA2N7DMAseYo8sCD5fK6W3pN/Xt30fiP/Xl83BN/Pc21Pb4I8B4TB/3zHdFXgNEUGuAJOQaM5xlQesOWa0BflX6/VJBhfeX7qFBpAF2WKPDfHxoep42a5obKQLmWOEoTxlO2KuwxEu53xt7SvfQIJkERvdhbHKBO2ijvjEg2w0wAwqzqNj7R2TH3OhDvDbu/vhF8Dz3D+WFER59gN8P0HB4W0DD4QWg4fAC0HB4AWg4MgGw3QdQl34rD6f0h7l1z+n9rt+g6RWRvAXY7gOoS7e5mes3vd/1GzS9MiIBuJ2/VdA+wNfjb3XpNkeT/ab3u36DptdANARknv/FY1OnFd9E5Ol3p1fL3p2j3yGkj+LpHarkNfSgQvzTyviq+tnqL5a/fPwN6WCaLr6JLpZCzZWSyLuKVTuDtrmSzRzE3gV8QXrSu/Rd4tvTV7nDdo0foD5gFpb4HQqpFOl/BMBfa9sveXoDL9CTQ2qiAMj29WIBbPRk3M3GY3UD6xrInn6gTM2VAfb0zQJQv32C9Hk1+o28ILC/JwJwsH4SAn4q/F8eoVUjmCEeR6+SQiB8VokfOsS1mck+YqDdyCWJ/T1Br4eAeeAc1YeA+ipeX75iCtVUuCl9Nw1i01C6/G/kksT+HmiAaBJouw/AjX4XsMxy/E2kiy9koeLpFwSqjY6RjpIulz8sPH1UotjoVdsnqV9Ymf6CxH51riURCcAFqQAJLii+icjTP5824Odz9CeF9FE8fVKVvIYeVoh/QRlfVT9b/cXyl42fd15Vlg5Iyl/NlZK44jjAK/wHH8xR7uaJ9Htd+vf5H27L0e/hS3tG73f9Bk2vgUgA4BJr7HBT/PQR/pQVKVxd+vN8hzdpx7/+hk8J7NkLer/rN2h6ZfgNIQ2HtwY2HF4AGg4vAA2HF4CGwwtAw+EFoOEQjUHul6cPJ92jAmRr4Fj6bVcZui7dY+hQHALqsW7XmkK9nhvUTsFDQl4AbAzcZddIT9wz6GBjoM6Xd4Kwoq3fQ4O8AIyBkYFjjBnpkYcOPULMGyZMF76AfUOFR0kUh4CxCqnIsc0p1Ou/NgHyKAl5Emgb/+vSPYYOogDYVOuw0z0qwC8ENRxeABoOLwANhxeAhsMLQMPhBaDh2L8CMOEXhHoBWQDqr7OFTBEy1fdyT7DFZN9zaQBkAZiM/wYNW++O2L896GKOAmQB2Ir/Bgtb7/bs7yFcNUDIROGvHMLCPzUi9urFMGG/nwP0BLIxaIuALc3d2sW/cph2CpWwf9JI3/ZzgF5BFgCTBphMWZP8lVPC64UnRSGaENJXiZjMfj8I9ADDpAE8+wcAVw1QH/YLHMqxf0ITzqMUXDXAXsCkXVTs93OAHqDXGqBfu3YTpZ//9KgJWQC247/hQ6D59KiJ/WsL8OgJ/h+/el55DnleagAAACV0RVh0ZGF0ZTpjcmVhdGUAMjAxNi0wOS0xNFQxMjozMDo0MC0wNDowMDycV9oAAAAldEVYdGRhdGU6bW9kaWZ5ADIwMTUtMTAtMTlUMTc6NTM6MjktMDQ6MDCLjSjjAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAABJRU5ErkJggg==');
+}
+.ui-tabs .ui-tabs-nav {
+	padding: 0px;
+}
+.ui-widget-header {
+	border: 0px;
+	background: white;
+}
+.ui-widget.ui-widget-content {
+	border: 0px;
+}
+.ui-tabs .ui-tabs-panel {
+    padding: 1em 0em;
+}
 @{css}
 ")),
 	div(
 		h5(title1),
 		div(
-			plotOutput(qq("@{heatmap_id}_heatmap"), height = height1 - 4, width = width1 - 4,
+			plotOutput(qq("@{heatmap_id}_heatmap"), height = height1, width = width1,
 				        brush = do.call(brushOpts, c(list(id = qq("@{heatmap_id}_heatmap_brush")), brush_opt)),
 				        click = click, dblclick = dblclick, hover = hover
 			),
@@ -158,13 +179,107 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 			"))),
 			id = qq("@{heatmap_id}_heatmap_wrap")
 		),
-		htmlOutput(qq("@{heatmap_id}_search")),
+		div(id = qq('@{heatmap_id}_tabs'),
+			HTML(qq("<ul>
+				<li><a href='#@{heatmap_id}_tabs-search'><i class='fa fa-search'></i></a></li>
+				<li><a href='#@{heatmap_id}_tabs-save-image'><i class='fa fa-images'></i></a></li>
+				<li><a href='#@{heatmap_id}_tabs-resize'><i class='fa fa-expand-arrows-alt'></i></a></li>
+				<li><a href='#@{heatmap_id}_tabs-brush'><i class='fa fa-brush'></i></a></li>
+			</ul>")),
+			div(id = qq('@{heatmap_id}_tabs-search'), 
+				htmlOutput(qq("@{heatmap_id}_search"))
+			),
+			div(id = qq('@{heatmap_id}_tabs-save-image'),
+				radioButtons(qq("@{heatmap_id}_heatmap_download"), label = "Which format?", choices = list("pdf" = 1, "png" = 2, "svg" = 3), selected = 1, inline = TRUE),
+				actionButton(qq("@{heatmap_id}_heatmap_download_button"), "Download plot")
+			),
+			div(id = qq('@{heatmap_id}_tabs-resize'),
+				numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", width1),
+				numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", height1),
+				actionButton(qq("@{heatmap_id}_heatmap_input_size_button"), "Change size"),
+				tags$script(HTML(qq("
+			$('#@{heatmap_id}_heatmap_input_size_button').click(function(){
+				var width = $('#@{heatmap_id}_heatmap_input_width').val();
+				var height = $('#@{heatmap_id}_heatmap_input_height').val();
+				$('#@{heatmap_id}_heatmap_wrap').width(width+4);
+				$('#@{heatmap_id}_heatmap').width(width);
+				$('#@{heatmap_id}_heatmap img').width(width);
+				$('#@{heatmap_id}_heatmap_wrap').height(height+4);
+				$('#@{heatmap_id}_heatmap').height(height);
+				$('#@{heatmap_id}_heatmap img').height(height);
+			});
+				")))
+			),
+			div(id = qq('@{heatmap_id}_tabs-brush'),
+				tags$style(HTML(paste(
+					readLines(system.file("app", "classic.min.css", package = "InteractiveComplexHeatmap"), warn = FALSE),
+					readLines(system.file("app", "monolith.min.css", package = "InteractiveComplexHeatmap"), warn = FALSE),
+					readLines(system.file("app", "nano.min.css", package = "InteractiveComplexHeatmap"), warn = FALSE),
+					collapse = "\n", sep = "\n"))
+				),
+				tags$script(HTML(paste(
+					readLines(system.file("app", "pickr.min.js", package = "InteractiveComplexHeatmap"), warn = FALSE),
+					readLines(system.file("app", "pickr.es5.min.js", package = "InteractiveComplexHeatmap"), warn = FALSE),
+					collapse = "\n", sep = "\n"))
+				),
+				HTML(qq('
+			<div>
+				<label>Brush border</label>
+				<div id="@{heatmap_id}_color_pickers_border"></div>
+				<label>Brush fill</label>
+				<div id="@{heatmap_id}_color_pickers_fill"></div>
+			</div>')),
+				tags$script(HTML(qq("
+			$('#@{heatmap_id}_heatmap_brush').change(function() {debugger;$(this).css('border-color', color.toHEXA().toString());});      
+			const @{heatmap_id}_pickr1 = Pickr.create({
+			    el: '#@{heatmap_id}_color_pickers_border',
+			    default: '#003366',
+			    theme: 'nano',
+			    comparison: false,
+			    components: {preview: true, hue: true}
+			});	
+			@{heatmap_id}_pickr1.on('change', (color, source, instance) => {
+				$('#@{heatmap_id}_heatmap_brush').css('border-color', color.toHEXA().toString());
+				$('#@{heatmap_id}_heatmap').data('brush-stroke', color.toHEXA().toString());
+				$('#@{heatmap_id}_heatmap').mousedown(function() {
+					if($('#@{heatmap_id}_heatmap_brush').length > 0) {
+						$('#@{heatmap_id}_heatmap_brush').css('border-color', color.toHEXA().toString());
+					}
+				});
+			});
+			const @{heatmap_id}_pickr2 = Pickr.create({
+			    el: '#@{heatmap_id}_color_pickers_fill',
+			    default: '#99ccff',
+			    theme: 'nano',
+			    comparison: false,
+			    components: {preview: true, opacity: true, hue: true}
+			});	
+			@{heatmap_id}_pickr2.on('change', (color, source, instance) => {
+				$('#@{heatmap_id}_heatmap_brush').css('background-color', color.toHEXA().toString());
+				$('#@{heatmap_id}_heatmap').data('brush-fill', color.toHEXA().toString());
+				$('#@{heatmap_id}_heatmap').mousedown(function() {
+					if($('#@{heatmap_id}_heatmap_brush').length > 0) {
+						$('#@{heatmap_id}_heatmap_brush').css('background-color', color.toHEXA().toString());
+					}
+				});
+			});
+				")))
+			)
+		),
+		tags$script(HTML(qq("
+$( function() {
+    $( '#@{heatmap_id}_tabs' ).tabs({
+      collapsible: true,
+      active: false
+    });
+  } );
+		"))),
 		id = qq("@{heatmap_id}_heatmap_wrap_outer")
 	),
 	div(
 		h5(title2),
 		div(
-			plotOutput(qq("@{heatmap_id}_sub_heatmap"), height = height2 - 4, width = width2 - 4),
+			plotOutput(qq("@{heatmap_id}_sub_heatmap"), height = height2, width = width2),
 			id = qq("@{heatmap_id}_sub_heatmap_wrap")
 		),
 		htmlOutput(qq("@{heatmap_id}_sub_heatmap_control")),
@@ -172,6 +287,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	),
 	div(style = "clear: both;"),
 	if(output_div) htmlOutput(qq("@{heatmap_id}_info")) else NULL
+	
 	)
 }
 
@@ -309,8 +425,11 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			})
 			has_column_labels = has_column_labels[all_ht_name]
 			if(!any(has_row_labels) && !any(has_column_labels)) {
-				return(p("Search functionality is disabled."))
+				return(p("Search is turned off because of no row/column label."))
 			}
+
+			message(qq("[@{Sys.time()}] create search panel."))
+
 			if(any(has_row_labels) && any(has_column_labels)) {
 				if(length(all_ht_name) == 1 && has_row_labels[1] && has_column_labels[1]) {
 					where_choices = list("on rows" = 1, "on columns" = 2, "both" = 3)
@@ -324,7 +443,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			}
 
 			heatmaps_to_search = all_ht_name[has_row_labels | has_column_labels]
-			html = div(
+			div(
 				div(textInput(qq("@{heatmap_id}_keyword"), placeholder = "Multiple keywords separated by ','", label = ""), style = "width:250px;float:left;"),
 				div(checkboxInput(qq("@{heatmap_id}_search_regexpr"), label = "Regular expression", value = FALSE), style = "width:150px;float:left;padding-top:15px;padding-left:4px;"),
 				div(style = "clear: both;"),
@@ -347,14 +466,39 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 					})
 				")))
 			)
-			HTML(qq("<details><summary style='font-weight: 500;padding:5px 0px;'>Search heatmaps</summary>@{as.character(html)}</details>"))
+
 		})
+
+		updateNumericInput(session, qq("@{heatmap_id}_heatmap_input_width"), value = session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]])
+		updateNumericInput(session, qq("@{heatmap_id}_heatmap_input_height"), value = session$clientData[[qq("output_@{heatmap_id}_heatmap_heigh")]])
 	})
+
+	observeEvent(input[[qq("@{heatmap_id}_heatmap_input_size_button")]], {
+
+		if(!is.null(shiny_env[[heatmap_id]]$ht_list)) {
+
+			output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
+				width = input[[qq("@{heatmap_id}_heatmap_input_width")]]
+		    	height = input[[qq("@{heatmap_id}_heatmap_input_height")]]
+		    	
+		    	showNotification("Resizing the original heatmap.", duration = 2, type = "message")
+
+		    	# draw(shiny_env[[heatmap_id]]$ht_list)
+		    	
+				# shiny_env[[heatmap_id]]$ht_pos = ht_pos_on_device(shiny_env[[heatmap_id]]$ht_list, include_annotation = TRUE, calibrate = FALSE)
+
+				# shiny_env[[heatmap_id]]$selected = NULL
+
+				# message(qq("[@{Sys.time()}] xx make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
+			})
+		}
+	})
+	
 
 	# default
 	output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 		grid.newpage()
-		grid.text("No area on the heatmap is selected.", 0.5, 0.5)
+		grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
 
 		message(qq("[@{Sys.time()}] no area on the heatmap is selected, Do not make the sub-heatmap."))
 	})
@@ -387,7 +531,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			
     		if(is.null(shiny_env[[heatmap_id]]$selected)) {
     			grid.newpage()
-				grid.text("No area on the heatmap is selected.", 0.5, 0.5)
+				grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
     		} else {
     			make_sub_heatmap(input, output, session, heatmap_id)
 			}
@@ -412,8 +556,17 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		if(input[[qq("@{heatmap_id}_keyword")]] == "") {
 			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 				grid.newpage()
-				grid.text("Query keyword is empty.", 0.5, 0.5)
+				grid.text("Query keyword is empty.", 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
 			})
+
+			if(default_brush_action) {
+				default_brush_action(input, output, session, heatmap_id, "Query keyword is empty.")
+			}
+
+			if(!is.null(brush_action)) {
+				brush_action(shiny_env[[heatmap_id]]$selected, output)
+			}
+
 			return(invisible(NULL))
 		}
 
@@ -427,8 +580,16 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		if(length(sht) == 0) {
 			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 				grid.newpage()
-				grid.text("No heatmap is selected for searching.", 0.5, 0.5)
+				grid.text("No heatmap is selected for searching.", 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
 			})
+
+			if(default_brush_action) {
+				default_brush_action(input, output, session, heatmap_id, "No heatmap is selected for searching.")
+			}
+
+			if(!is.null(brush_action)) {
+				brush_action(shiny_env[[heatmap_id]]$selected, output)
+			}
 			return(invisible(NULL))
 		}
 
@@ -459,7 +620,16 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			
     		if(is.null(shiny_env[[heatmap_id]]$selected)) {
     			grid.newpage()
-				grid.text(paste(strwrap(qq("Found nothing from heatmaps with keywords '@{keywords2}'."), width = 60), collapse = "\n"), 0.5, 0.5)
+				grid.text(paste(strwrap(qq("Found nothing from heatmaps with keywords '@{keywords2}'."), width = 60), collapse = "\n"), 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
+
+				if(default_brush_action) {
+					default_brush_action(input, output, session, heatmap_id, qq("Found nothing from heatmaps with keywords '@{keywords2}'."))
+				}
+
+				if(!is.null(brush_action)) {
+					brush_action(shiny_env[[heatmap_id]]$selected, output)
+				}
+				return(invisible(NULL))
     		} else {
     			make_sub_heatmap(input, output, session, heatmap_id)
 			}
@@ -480,6 +650,19 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		}
 	
 	})
+
+	observeEvent(input[[qq("@{heatmap_id}_sub_heatmap_input_size_button")]], {
+		
+		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+			if(is.null(shiny_env[[heatmap_id]]$selected)) {
+    			grid.newpage()
+				grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
+    		} else {
+    			make_sub_heatmap(input, output, session, heatmap_id, update_size = FALSE)
+			}
+		})
+	})
+	
 
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_click")]], {
 		
@@ -505,7 +688,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 
 		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 			grid.newpage()
-			grid.text("No area on the heatmap is selected.", 0.5, 0.5)
+			grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
 		})
 
 		output[[qq("@{heatmap_id}_sub_heatmap_control")]] = renderUI({
@@ -553,7 +736,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 	observeEvent(input[[qq("@{heatmap_id}_open_table")]], {
 		if(is.null(shiny_env[[heatmap_id]]$selected)) {
 			showModal(modalDialog(
-				title = "The selected matrices",
+				title = "The selected tables",
 				p("Rows or columns are not selected."),
 				tags$script(HTML("$('.modal-content').draggable();")),
 				easyClose = TRUE,
@@ -561,15 +744,20 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			))
 		} else {
 			showModal(modalDialog(
-				title = "The selected matrices",
+				title = "The selected tables",
 				htmlOutput(qq("@{heatmap_id}_selected_table")),
 				div(
-					numericInput(qq("@{heatmap_id}_digits"), "Digits of numeric values", value = 2, min = 0, width = "170px"),
+					numericInput(qq("@{heatmap_id}_digits"), "Digits of numeric values:", value = 2, min = 0),
 					style = "margin-top:5px"
 				),
-				tags$script(HTML("$('.modal-content').draggable();")),
+				tags$script(HTML("
+					$('.modal-content').draggable();
+					$('.modal-content label').css('display', 'table-cell').css('text-align', 'center').css('vertical-align', 'middle').css('padding-right', '10px');
+					$('.modal-content .form-group').css('display', 'table-row');
+					$('.modal-content input').css('width', '100px');
+				")),
 				easyClose = TRUE,
-				footer = div(span("This frame is draggable."), downloadButton(qq("@{heatmap_id}_download_table"), "Download"), modalButton("Close")),
+				footer = div(downloadButton(qq("@{heatmap_id}_download_table"), "Download"), modalButton("Close")),
 				size = "l"
 			))
 
@@ -624,7 +812,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		},
 		content = function(file) {
 			tb = get_sub_matrix(heatmap_id)
-			write.csv(tb, file)
+			write.csv(tb, file, row.names = FALSE, col.names = FALSE)
 		}
 	)
 }
@@ -648,7 +836,7 @@ get_pos_from_click = function(click) {
     pos1
 }
 
-make_sub_heatmap = function(input, output, session, heatmap_id) {
+make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TRUE) {
 	showNotification("Making the selected sub-heatmap.", duration = 2, type = "message")
 
 	width = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_width")]]
@@ -667,7 +855,7 @@ make_sub_heatmap = function(input, output, session, heatmap_id) {
 	selected = shiny_env[[heatmap_id]]$selected
     if(is.null(selected)) {
     	grid.newpage()
-		grid.text("Selected area should overlap to heatmap bodies", 0.5, 0.5)
+		grid.text("Selected area should overlap to heatmap bodies", 0.5, 0.5, gp = gpar(fontsize = 14))
     } else {
 
     	all_ht_name = unique(selected$heatmap)
@@ -933,6 +1121,11 @@ make_sub_heatmap = function(input, output, session, heatmap_id) {
 		}
 	    ht_select = draw(ht_select, save_last = FALSE)
 	    message(qq("[@{Sys.time()}] make the sub-heatmap (device size: @{width}x@{height} px)."))
+	}
+
+	if(update_size) {
+		updateNumericInput(session, qq("@{heatmap_id}_sub_heatmap_input_width"), value = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_width")]])
+		updateNumericInput(session, qq("@{heatmap_id}_sub_heatmap_input_height"), value = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_height")]])
 	}
 }
 
@@ -1202,11 +1395,12 @@ collect_data_frame_from_anno = function(ha, digits, direction) {
 	as.matrix(df)
 }
 
-default_brush_action = function(input, output, session, heatmap_id) {
+default_brush_action = function(input, output, session, heatmap_id,
+	default_text = "Selected area should overlap to heatmap bodies.") {
 	output[[qq("@{heatmap_id}_info")]] = renderUI({
 		selected = shiny_env[[heatmap_id]]$selected
 		if(is.null(selected)) {
-			HTML("<p>Selected area should overlap to heatmap bodies.</p>")
+			HTML(qq("<p>@{default_text}</p>"))
 		} else {
 
 			selected = selected[!is.na(selected$row_slice), ]
@@ -1295,7 +1489,7 @@ default_click_action = function(input, output, session, heatmap_id) {
 
 			    message(qq("[@{Sys.time()}] click on the heatmap @{slice_name}."))
 				
-				HTML(paste("<p>Information of the clicked position:</p>",
+				HTML(paste("<p>Information of the clicked cell:</p>",
 					  "<pre>",
 					  qq("heatmap: @{ht_name}"),
 					  qq("heatmap slice: @{slice_name}"),
@@ -1313,18 +1507,61 @@ default_click_action = function(input, output, session, heatmap_id) {
 
 sub_heatmap_control_ui = function(heatmap_id) {
 
-	html = div(
-		div(
-			div(checkboxInput(qq("@{heatmap_id}_show_row_names_checkbox"), label = "Show row names", value = TRUE), style = "float:left;width:170px"),
-			div(checkboxInput(qq("@{heatmap_id}_show_column_names_checkbox"), label = "Show column names", value = TRUE), style = "float:left;width:170px"),
-			div(style = "clear: both;")
+div(
+	div(id = qq('@{heatmap_id}_sub_tabs'),
+		HTML(qq("<ul>
+			<li><a href='#@{heatmap_id}_sub_tabs-setting'><i class='fa fa-tasks'></i></a></li>
+			<li><a href='#@{heatmap_id}_sub_tabs-save-image'><i class='fa fa-images'></i></a></li>
+			<li><a href='#@{heatmap_id}_sub_tabs-resize'><i class='fa fa-expand-arrows-alt'></i></a></li>
+			<li><a href='#@{heatmap_id}_sub_tabs-table'><i class='fa fa-table'></i></a></li>
+		</ul>")),
+		div(id = qq('@{heatmap_id}_sub_tabs-setting'), 
+			div(
+				div(checkboxInput(qq("@{heatmap_id}_show_row_names_checkbox"), label = "Show row names", value = TRUE), style = "float:left;width:170px"),
+				div(checkboxInput(qq("@{heatmap_id}_show_column_names_checkbox"), label = "Show column names", value = TRUE), style = "float:left;width:170px"),
+				div(style = "clear: both;")
+			),
+			div(
+				checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
+				checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = TRUE),
+				actionButton(qq("@{heatmap_id}_open_table"), label = "Open tables in text")
+			)
 		),
-		div(
-			checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
-			checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = TRUE),
+		div(id = qq('@{heatmap_id}_sub_tabs-save-image'),
+			radioButtons(qq("@{heatmap_id}_sub_heatmap_download"), label = "Which format?", choices = list("pdf" = 1, "png" = 2, "svg" = 3), selected = 1, inline = TRUE),
+			actionButton(qq("@{heatmap_id}_sub_heatmap_download_button"), "Download plot")
+		),
+		div(id = qq('@{heatmap_id}_sub_tabs-resize'),
+			numericInput(qq("@{heatmap_id}_sub_heatmap_input_width"), "Box width", 370),
+			numericInput(qq("@{heatmap_id}_sub_heatmap_input_height"), "Box height", 350),
+			actionButton(qq("@{heatmap_id}_sub_heatmap_input_size_button"), "Change size"),
+			tags$script(HTML(qq("
+			$('#@{heatmap_id}_sub_heatmap_input_size_button').click(function(){
+				var width = $('#@{heatmap_id}_sub_heatmap_input_width').val();
+				var height = $('#@{heatmap_id}_sub_heatmap_input_height').val();
+				$('#@{heatmap_id}_sub_heatmap_wrap').width(width+4);
+				$('#@{heatmap_id}_sub_heatmap').width(width);
+				$('#@{heatmap_id}_sub_heatmap img').width(width);
+				$('#@{heatmap_id}_sub_heatmap_wrap').height(height+4);
+				$('#@{heatmap_id}_sub_heatmap').height(height);
+				$('#@{heatmap_id}_sub_heatmap img').height(height);
+			});
+			")))
+		),
+		div(id = qq("@{heatmap_id}_sub_tabs-table"),
 			actionButton(qq("@{heatmap_id}_open_table"), label = "Open tables in text")
 		)
-	)
-	HTML(qq("<details><summary style='font-weight: 500;padding:5px 0px;'>Settings of sub-heatmaps</summary>@{as.character(html)}</details>"))
+		
+	),
+	tags$script(HTML(qq("
+$( function() {
+$( '#@{heatmap_id}_sub_tabs' ).tabs({
+	collapsible: true,
+	active: false
+});
+} );
+	")))
 
+	)
+	
 }
