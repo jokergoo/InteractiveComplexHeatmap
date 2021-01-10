@@ -781,6 +781,7 @@ selectByLabels = function(ht_list = get_last_ht(), row_keywords = NULL, column_k
 				}
 			}
 		}	
+		if(is.null(df)) return(df)
 	} else {
 
 		for(i in seq_along(ht_list@ht_list)) {
@@ -898,6 +899,9 @@ selectByLabels = function(ht_list = get_last_ht(), row_keywords = NULL, column_k
 }
 
 reformat_df = function(df, ht_list) {
+	
+	if(is.null(df)) return(df)
+
 	df_ht = df[!is.na(df$slice), , drop = FALSE]
 	df_anno = df[is.na(df$slice), , drop = FALSE]
 	

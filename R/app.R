@@ -5,8 +5,11 @@
 # == param
 # -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object. If it is not specified, a random heatmap is used.
 #     Better already updated by ``draw()`` function.
-# -... Pass to `InteractiveComplexHeatmapOutput`.
+# -title Title of the app.
+# -description Description of the app.
+# -hline Whether to add the horizontal line (by ``hr`` tag).
 # -html HTML fragment inserted below the heatmap.
+# -... Pass to `InteractiveComplexHeatmapOutput`.
 #
 # == seealso
 # https://jokergoo.shinyapps.io/interactive_complexHeatmap/
@@ -46,7 +49,7 @@
 # ht_list = ht1 \%v\% ht2
 # ht_shiny(ht_list)
 # }
-ht_shiny = function(ht_list = get_last_ht(), ..., html = NULL) {
+ht_shiny = function(ht_list = get_last_ht(), title = NULL, description = NULL, hline = TRUE, html = NULL, ...) {
 
 	if(is.null(ht_list)) {
 		stop_wrap("No heatmap is detected.")
@@ -57,13 +60,29 @@ ht_shiny = function(ht_list = get_last_ht(), ..., html = NULL) {
 			stop_wrap("Maybe you are looking for `ht_shiny_example()`?")
 		}
 	}
+
+	if(is.null(title)) {
+		title = "ComplexHeatmap Shiny App"
+	}
+	if(is.character(title)) {
+		title = titlePanel(title)
+	}
 	
+	if(is.null(description)) {
+		description = "You can click a position or select an area from the heatmap(s). The original heatmap and the selected sub-heatmap can be resized by dragging from the bottom right of the box. If the heatmap is too huge or you resize the heatmap too frequently, the heatmap might not be correctly updated. You can just slightly resize the heatmap again and wait for several seconds."
+	}
+	if(is.character(description)) {
+		description = p(description)
+	}
+
+	if(is.character(html)) {
+		html = HTML(html)
+	}
+
 	ui = fluidPage(
-		titlePanel("ComplexHeatmap Shiny App"),
-
-		p("You can click a position or select an area from the heatmap(s). The original heatmap and the selected sub-heatmap can be resized by dragging from the bottom right of the box. If the heatmap is too huge or you resize the heatmap too frequently, the heatmap might not be correctly updated. You can just need to slightly resize the heatmap again and wait for several seconds."),
-		hr(),
-
+		title,
+		description,
+		if(hline) hr() else NULL,
 		InteractiveComplexHeatmapOutput(...), 
 		html
 	)
@@ -201,6 +220,9 @@ get_examples = function() {
 	} else {
 		text = readLines(system.file("examples", "examples.R", package = "InteractiveComplexHeatmap"))
 	}
+
+	text = text[!grepl("^#{10,}$", text)]
+
 	ind = which(grepl("^#+\\s*title:", text))
 	ind2 = c(ind[-1] - 1, length(text))
 

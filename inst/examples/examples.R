@@ -1,3 +1,4 @@
+####################################################################
 # title: A single heatmap with minimal arguments.
 
 m = matrix(rnorm(100*100), 100)
@@ -6,6 +7,7 @@ ht = draw(ht)
 
 ht_shiny(ht)
 
+####################################################################
 # title: A single heatmap from a character matrix.
 
 m = matrix(sample(letters[1:10], 100*100, replace = TRUE), 100)
@@ -14,6 +16,7 @@ ht = draw(ht)
 
 ht_shiny(ht)
 
+####################################################################
 # title: A single heatmap with annotations on both rows and columns.
 
 m = matrix(rnorm(100*100), 100)
@@ -27,6 +30,7 @@ ht = draw(ht)
 
 ht_shiny(ht)
 
+####################################################################
 # title: A single heatmap where rows and columns are split.
 
 m = matrix(rnorm(100*100), 100)
@@ -41,6 +45,7 @@ ht = draw(ht)
 
 ht_shiny(ht)
 
+####################################################################
 # title: A list of two heatmaps.
 
 m = matrix(rnorm(100*100), 100)
@@ -63,6 +68,7 @@ ht_list = ht1 + ht2
 ht_list = draw(ht_list)
 ht_shiny(ht_list, width1 = 600)
 
+####################################################################
 # title: A density heatmap.
 
 m = matrix(rnorm(100*100), 100)
@@ -71,6 +77,7 @@ ht = draw(ht)
 
 ht_shiny(ht)
 
+####################################################################
 # title: An oncoPrint.
 
 mat = read.table(system.file("extdata", package = "ComplexHeatmap", 
@@ -123,6 +130,7 @@ ht = draw(ht)
 ht_shiny(ht, width1 = 800)
 
 
+####################################################################
 # title: A UpSet plot.
 
 movies = read.csv(system.file("extdata", "movies.csv", package = "UpSetR"), 
@@ -134,6 +142,7 @@ ht = draw(ht)
 
 ht_shiny(ht, width1 = 800)
 
+####################################################################
 # title: An interactive heatmap by `pheatmap()`.
 
 test = matrix(rnorm(200), 20, 10)
@@ -166,6 +175,7 @@ p = draw(p)
 
 ht_shiny(p)
 
+####################################################################
 # title: An interactive heatmap by `heatmap()`.
 
 x  = as.matrix(mtcars)
@@ -182,6 +192,7 @@ ht = draw(ht)
 ht_shiny(ht)
 
 
+####################################################################
 # title: An interactive heatmap by `heatmap.2()`.
 
 data(mtcars)
@@ -193,6 +204,7 @@ ht = draw(ht)
 
 ht_shiny(ht)
 
+####################################################################
 # title: An enriched heatmap.
 
 suppressPackageStartupMessages(library(EnrichedHeatmap))
@@ -211,6 +223,7 @@ ht = draw(ht)
 
 ht_shiny(ht, width1 = 300, height1 = 600)
 
+####################################################################
 # title: A list of enriched heatmaps.
 
 suppressPackageStartupMessages(library(EnrichedHeatmap))
@@ -236,6 +249,7 @@ ht_list = draw(ht_list)
 
 ht_shiny(ht_list, width1 = 600, height1 = 600)
 
+####################################################################
 # title: An enriched heatmap with discrete signals.
 
 suppressPackageStartupMessages(library(EnrichedHeatmap))
@@ -309,6 +323,7 @@ ht = draw(ht)
 
 ht_shiny(ht, width1 = 300, height1 = 600)
 
+####################################################################
 # title: A heatmap produced from tidyHeatmap package.
 
 suppressPackageStartupMessages(library(tidyverse))
@@ -330,6 +345,7 @@ mtcars_heatmap <-
 
 ht_shiny(mtcars_heatmap)
 
+####################################################################
 # title: An example from Lewis et al 2019. GitHub repo: https://github.com/kevinblighe/E-MTAB-6141
 
 suppressPackageStartupMessages(require(RColorBrewer))
@@ -583,6 +599,7 @@ ht = draw(hmap + genelabels,
 
 ht_shiny(ht, width1 = 900, height1 = 1200)
 
+####################################################################
 # title: Visualize cell heterogeneity from single cell RNASeq. This is from Supplementary S2 of the ComplexHeatmap paper. https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
 
 suppressPackageStartupMessages(library(circlize))
@@ -632,6 +649,7 @@ ht_list = draw(ht_list, main_heatmap = "cor")
 ht_shiny(ht_list, width1 = 900, height1 = 600, width2 = 500)
 
 
+####################################################################
 # title: Correlations between methylation, expression and other genomic features. This is from Supplementary S3 of the ComplexHeatmap paper. https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
 
 suppressPackageStartupMessages(library(ComplexHeatmap))
@@ -705,6 +723,7 @@ server = function(input, output, session) {
 
 shinyApp(ui, server)
 
+####################################################################
 # title: Self-define the output. The selected sub-matrix is shown as a text table.
 
 m = matrix(rnorm(100*100), 100)
@@ -745,6 +764,7 @@ server = function(input, output, session) {
 
 shinyApp(ui, server)
 
+####################################################################
 # title: Self-define the output. Additional annotations for the selected gene are shown.
 
 suppressPackageStartupMessages(library(EnrichedHeatmap))
@@ -795,10 +815,12 @@ server = function(input, output, session) {
 shinyApp(ui, server)
 
 
+####################################################################
 # title: Integrate in an interactive R Markdown document.
 
 rmarkdown::run(system.file("examples", "rmarkdown.Rmd", package = "InteractiveComplexHeatmap"))
 
+####################################################################
 # title: Visualize Gene Ontology similarities. A list of selected GO IDs as well as their descriptions are shown in the output.
 
 suppressPackageStartupMessages(library(simplifyEnrichment))
@@ -869,6 +891,7 @@ server = function(input, output, session) {
 shinyApp(ui, server)
 
 
+####################################################################
 # title: Genome-scale heatmaps.
 
 suppressPackageStartupMessages(library(ComplexHeatmap))
