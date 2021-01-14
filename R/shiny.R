@@ -1606,14 +1606,11 @@ heatmap_control_ui = function(heatmap_id, shiny_env) {
 			)
 		),
 		tags$script(HTML(qq("
-$( function() {
     $( '#@{heatmap_id}_tabs' ).tabs({
       collapsible: true,
       active: false
     });
     $('#@{heatmap_id}_tabs').tooltip({position: {my: 'center bottom-4', at: 'center top'}});
-			
-  } );
 		")))
 	)
 }
@@ -1761,13 +1758,11 @@ div(
 		
 	),
 	tags$script(HTML(qq("
-$( function() {
 $( '#@{heatmap_id}_sub_tabs' ).tabs({
 	collapsible: true,
 	active: false
 });
 $('#@{heatmap_id}_sub_tabs').tooltip({position: {my: 'center bottom-4', at: 'center top'}});
-} );
 	")))
 
 	)
