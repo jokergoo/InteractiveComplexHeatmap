@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3.1011</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3.1014</span>
       </span>
     </div>
 
@@ -92,7 +92,7 @@
       <h1 data-toc-skip>Functions for Shiny app development</h1>
                         <h4 class="author">Zuguang Gu ( <a href="mailto:z.gu@dkfz.de" class="email">z.gu@dkfz.de</a> )</h4>
             
-            <h4 class="date">2020-12-31</h4>
+            <h4 class="date">2021-01-13</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jokergoo/InteractiveComplexHeatmap/blob/master/vignettes/shiny_dev.Rmd"><code>vignettes/shiny_dev.Rmd</code></a></small>
       <div class="hidden name"><code>shiny_dev.Rmd</code></div>
@@ -109,7 +109,7 @@ p {
 <div id="usage" class="section level2">
 <h2 class="hasAnchor">
 <a href="#usage" class="anchor"></a>Usage</h2>
-<p><code><a href="../reference/ht_shiny.html">ht_shiny()</a></code> can export heatmaps as a stand-alone Shiny app. <strong>InteractiveComplexHeatmap</strong> also provides two functions for integrating the interactive heatmap widgets into other Shiny apps. The two functions are:</p>
+<p><code><a href="../reference/htShiny.html">htShiny()</a></code> can export heatmaps as a stand-alone Shiny app. <strong>InteractiveComplexHeatmap</strong> also provides two functions for integrating the interactive heatmap widgets into other Shiny apps. The two functions are:</p>
 <ul>
 <li>
 <code><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code>: for building UI.</li>
@@ -163,14 +163,14 @@ p {
 <div id="customize-the-widgets" class="section level2">
 <h2 class="hasAnchor">
 <a href="#customize-the-widgets" class="anchor"></a>Customize the widgets</h2>
-<p>The <code>div</code> block of the original heatmap and the sub-heatmap can be resized by dragging the two boxes, but still, <code><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code> has arguments <code>width1</code>, <code>width2</code>, <code>height1</code> and <code>height2</code> that control the initial sizes of the two boxes. You can check <code><a href="../reference/ht_shiny_example.html">ht_shiny_example(16)</a></code> where the size of the heatmap box is manually set to make sure the heatmap is well visible.</p>
+<p>The <code>div</code> block of the original heatmap and the sub-heatmap can be resized by dragging the two boxes, but still, <code><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code> has arguments <code>width1</code>, <code>width2</code>, <code>height1</code> and <code>height2</code> that control the initial sizes of the two boxes. You can check <code><a href="../reference/htShinyExample.html">htShinyExample(16)</a></code> where the size of the heatmap box is manually set to make sure the heatmap is well visible.</p>
 <p>By default, to get the information of a single cell in the heatmap, a “click” action is used. In <code><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code>, you can also set the action to <code>"hover"</code> or <code>"dblclick"</code> to change the action. Note no matter the action is a click or a hover, when applying the brush action, click or hover will always be first applied and you will see the output for a single cell appears and fastly disappears. Currently I don’t have a solution to get rid of that.</p>
 <p>The style of the brush can be specified by <code>brush_opt</code> argument. The value should be a list and the value will be sent to <code><a href="https://shiny.rstudio.com/reference/shiny/latest/brushOpts.html">shiny::brushOpts()</a></code>.</p>
 </div>
 <div id="work-with-r-markdown-documents" class="section level2">
 <h2 class="hasAnchor">
 <a href="#work-with-r-markdown-documents" class="anchor"></a>Work with R Markdown documents</h2>
-<p>It is very straightforward to integrate <strong>InteractiveComplexHeatmap</strong> in an interactive R Markdown document, just in a same way of integrating normal Shiny widgets. Following is an example and you can run a real interactive document with heatmaps by <code><a href="../reference/ht_shiny_example.html">ht_shiny_example(22)</a></code>.</p>
+<p>It is very straightforward to integrate <strong>InteractiveComplexHeatmap</strong> in an interactive R Markdown document, just in a same way of integrating normal Shiny widgets. Following is an example and you can run a real interactive document with heatmaps by <code><a href="../reference/htShinyExample.html">htShinyExample(22)</a></code>.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode markdown"><code class="sourceCode markdown"><span id="cb3-1"><a href="#cb3-1"></a><span class="co">---</span></span>
 <span id="cb3-2"><a href="#cb3-2"></a><span class="an">title:</span><span class="co"> "InteractiveComplexHeatmap in an Rmarkdown document"</span></span>
 <span id="cb3-3"><a href="#cb3-3"></a><span class="an">author:</span><span class="co"> "Zuguang Gu"</span></span>
@@ -241,7 +241,7 @@ p {
 ## 3     1,2,3,...
 ## 4     1,2,3,...</code></pre>
 <p>In the following example, in the UI, I add a new <code>htmlOutput</code> with id <code>info</code>. On the sever side, I define <code>click_action</code> to print a styled text and <code>brush_action</code> to print the table of the selected rows and columns from the heatmap. Note I also set <code>default_click_action = FALSE, default_brush_action = FALSE</code> in <code><a href="../reference/renderInteractiveComplexHeatmap.html">renderInteractiveComplexHeatmap()</a></code> to turn off the default responses.</p>
-<p>You can also run the following example simply by <code><a href="../reference/ht_shiny_example.html">ht_shiny_example(20)</a></code>.</p>
+<p>You can also run the following example simply by <code><a href="../reference/htShinyExample.html">htShinyExample(20)</a></code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/GetoptLong">GetoptLong</a></span><span class="op">)</span>  <span class="co"># for the qq() function which does variable intepolation</span>
 <span class="va">m</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">*</span><span class="fl">100</span><span class="op">)</span>, <span class="fl">100</span><span class="op">)</span>
@@ -282,9 +282,9 @@ p {
 
 <span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/shinyApp.html">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></code></pre></div>
 <p><img src="https://jokergoo.github.io/images/customize_output.png" width="100%" style="display: block; margin: auto;"></p>
-<p><code><a href="../reference/ht_shiny_example.html">ht_shiny_example(21)</a></code> gives another scenario where the output needs to be self-defined. In that example, an gene expression matrix is visualized and clicking on the heatmap will print the corresponding gene and some other annotations related to this gene. Run <code><a href="../reference/ht_shiny_example.html">ht_shiny_example(21)</a></code> to see how this is implemented.</p>
+<p><code><a href="../reference/htShinyExample.html">htShinyExample(21)</a></code> gives another scenario where the output needs to be self-defined. In that example, an gene expression matrix is visualized and clicking on the heatmap will print the corresponding gene and some other annotations related to this gene. Run <code><a href="../reference/htShinyExample.html">htShinyExample(21)</a></code> to see how this is implemented.</p>
 <p><img src="https://jokergoo.github.io/images/customize_output2.png" width="100%" style="display: block; margin: auto;"></p>
-<p>One last example is <code><a href="../reference/ht_shiny_example.html">ht_shiny_example(23)</a></code> where the heatmap visualizes correlations of a list of Gene Ontology terms. In this example, the click and brush actions are self-defined so that the selected GO ids as well as their detailed descriptions are printed.</p>
+<p>One last example is <code><a href="../reference/htShinyExample.html">htShinyExample(23)</a></code> where the heatmap visualizes correlations of a list of Gene Ontology terms. In this example, the click and brush actions are self-defined so that the selected GO ids as well as their detailed descriptions are printed.</p>
 </div>
   </div>
 

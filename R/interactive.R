@@ -11,7 +11,7 @@
 #       corresponds to the x and y position of the point.
 # -pos2 Another point as ``pos1``, together with ``pos1`` defines the selected region.
 # -verbose Whether to print messages.
-# -ht_pos A value returned by `ht_pos_on_device`.
+# -ht_pos A value returned by `htPositionsOnDevice`.
 # -include_annotation Internally used.
 # -calibrate Internally used.
 #
@@ -148,18 +148,18 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 
 	if(is.null(ht_pos)) {
 		if(is.null(.ENV$previous_ht_hash)) {
-			ht_pos = ht_pos_on_device(ht_list, include_annotation = include_annotation)
+			ht_pos = htPositionsOnDevice(ht_list, include_annotation = include_annotation)
 		} else {
 			if(!identical(.ENV$previous_device_size, dev.size())) {
 				if(verbose) {
 					cat("The device size has been changed. Calcualte the new heatmap positions.\n")
 				}
-				ht_pos = ht_pos_on_device(ht_list, include_annotation = include_annotation)
+				ht_pos = htPositionsOnDevice(ht_list, include_annotation = include_annotation)
 			} else if(!identical(.ENV$previous_ht_hash, digest(list(ht_list, include_annotation)))) {
 				if(verbose) {
 					cat("The heatmaps have been changed. Calcualte the new heatmap positions.\n")
 				}
-				ht_pos = ht_pos_on_device(ht_list, include_annotation = include_annotation)
+				ht_pos = htPositionsOnDevice(ht_list, include_annotation = include_annotation)
 			} else {
 				if(verbose) {
 					cat("Heatmap positions are already calculated, use the cached one.\n")
@@ -316,7 +316,7 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 #       the interactive graphic device). If it is set, it must be a `grid::unit` object with length two which
 #       corresponds to the x and y position of the point.
 # -verbose Whether to print messages.
-# -ht_pos A value returned by `ht_pos_on_device`.
+# -ht_pos A value returned by `htPositionsOnDevice`.
 # -calibrate Internally used.
 #
 # == value
@@ -397,19 +397,19 @@ selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verb
 
 	if(is.null(ht_pos)) {
 		if(is.null(.ENV$previous_ht_hash)) {
-			ht_pos = ht_pos_on_device(ht_list)
+			ht_pos = htPositionsOnDevice(ht_list)
 		} else {
 			if(!identical(.ENV$previous_device_size, dev.size())) {
 				if(verbose) {
 					cat("The device size has been changed. Calculate new heatmap positions.\n")
 				}
-				ht_pos = ht_pos_on_device(ht_list)
+				ht_pos = htPositionsOnDevice(ht_list)
 			} else if(!identical(.ENV$previous_ht_hash, digest(list(ht_list, TRUE))) || 
 				      !identical(.ENV$previous_ht_hash, digest(list(ht_list, FALSE)))) {
 				if(verbose) {
 					cat("The heatmaps have been changed. Calculate new heatmap positions.\n")
 				}
-				ht_pos = ht_pos_on_device(ht_list)
+				ht_pos = htPositionsOnDevice(ht_list)
 			} else {
 				if(verbose) {
 					cat("Heatmap positions are already calculated, use the cached one.\n")
@@ -522,11 +522,11 @@ selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verb
 # m = matrix(rnorm(100), 10)
 # ht = Heatmap(m, row_km = 2, column_km = 2)
 # ht = draw(ht)
-# pos = ht_pos_on_device(ht)
+# pos = htPositionsOnDevice(ht)
 #
 # InteractiveComplexHeatmap:::redraw_ht_vp(pos)
 # }
-ht_pos_on_device = function(ht_list = get_last_ht(), unit = "inch", valueOnly = FALSE, 
+htPositionsOnDevice = function(ht_list = get_last_ht(), unit = "inch", valueOnly = FALSE, 
 	include_annotation = FALSE, calibrate = TRUE) {
 	
 	if(calibrate) {

@@ -1,5 +1,5 @@
-\name{ht_shiny_example}
-\alias{ht_shiny_example}
+\name{htShinyExample}
+\alias{htShinyExample}
 \title{
 Examples of the interactive complex heatmaps
 }
@@ -7,11 +7,11 @@ Examples of the interactive complex heatmaps
 Examples of the interactive complex heatmaps
 }
 \usage{
-ht_shiny_example(which)
+htShinyExample(which)
 }
 \arguments{
 
-  \item{which}{An integer of which example to use. The list of all examples can be obtained by executing \code{\link{ht_shiny_example}} with no argument.}
+  \item{which}{An integer of which example to use. The list of all examples can be obtained by executing \code{\link{htShinyExample}} with no argument.}
 
 }
 \details{
@@ -21,8 +21,8 @@ The source code of all examples are in \code{systm.file("examples", "examples.R"
 A shiny app object.
 }
 \examples{
-ht_shiny_example()
+htShinyExample()
 if(interactive()) {
-    ht_shiny_example(4)
+    htShinyExample(4)
 }
 }

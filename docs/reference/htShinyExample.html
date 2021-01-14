@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>UI for the interactive ComplexHeatmap — InteractiveComplexHeatmapOutput • InteractiveComplexHeatmap</title>
+<title>Examples of the interactive complex heatmaps — htShinyExample • InteractiveComplexHeatmap</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="UI for the interactive ComplexHeatmap — InteractiveComplexHeatmapOutput" />
-<meta property="og:description" content="UI for the interactive ComplexHeatmap" />
+<meta property="og:title" content="Examples of the interactive complex heatmaps — htShinyExample" />
+<meta property="og:description" content="Examples of the interactive complex heatmaps" />
 
 
 
@@ -129,85 +129,71 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>UI for the interactive ComplexHeatmap</h1>
+    <h1>Examples of the interactive complex heatmaps</h1>
     
-    <div class="hidden name"><code>InteractiveComplexHeatmapOutput.Rd</code></div>
+    <div class="hidden name"><code>htShinyExample.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>UI for the interactive ComplexHeatmap</p>
+    <p>Examples of the interactive complex heatmaps</p>
     </div>
 
-    <pre class="usage"><span class='fu'>InteractiveComplexHeatmapOutput</span><span class='op'>(</span>heatmap_id <span class='op'>=</span> <span class='cn'>NULL</span>,
-    title1 <span class='op'>=</span> <span class='st'>"Original heatmap"</span>, title2 <span class='op'>=</span> <span class='st'>"Selected sub-heatmap"</span>,
-    width1 <span class='op'>=</span> <span class='fl'>400</span>, height1 <span class='op'>=</span> <span class='fl'>350</span>, width2 <span class='op'>=</span> <span class='fl'>370</span>, height2 <span class='op'>=</span> <span class='fl'>350</span>, nrow <span class='op'>=</span> <span class='fl'>1</span>,
-    action <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"click"</span>, <span class='st'>"hover"</span>, <span class='st'>"dblclick"</span><span class='op'>)</span>, brush_opt <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
-    output_div <span class='op'>=</span> <span class='cn'>TRUE</span>, css <span class='op'>=</span> <span class='st'>""</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>htShinyExample</span><span class='op'>(</span><span class='va'>which</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>heatmap_id</th>
-      <td><p>ID of the plot. If it is not specified, an internal ID is assigned.</p></td>
-    </tr>
-    <tr>
-      <th>title1</th>
-      <td><p>Title of the original heatmap.</p></td>
-    </tr>
-    <tr>
-      <th>title2</th>
-      <td><p>Title of the sub-heatmap.</p></td>
-    </tr>
-    <tr>
-      <th>width1</th>
-      <td><p>Width of the original heatmap.</p></td>
-    </tr>
-    <tr>
-      <th>height1</th>
-      <td><p>Height of the original heatmap.</p></td>
-    </tr>
-    <tr>
-      <th>width2</th>
-      <td><p>Width of the sub-heatmap.</p></td>
-    </tr>
-    <tr>
-      <th>height2</th>
-      <td><p>Height of the sub-heatmap.</p></td>
-    </tr>
-    <tr>
-      <th>nrow</th>
-      <td><p>Should the two heatmap <code>div</code> be put in one row or in two rows? Value should be either 1 or 2.</p></td>
-    </tr>
-    <tr>
-      <th>action</th>
-      <td><p>Which action for selecting the cell on the heatmap? Value should be <code>click</code>, <code>hover</code> or <code>dblclick</code>.</p></td>
-    </tr>
-    <tr>
-      <th>brush_opt</th>
-      <td><p>A list of parameters passed to <code><a href='https://shiny.rstudio.com/reference/shiny/latest/brushOpts.html'>brushOpts</a></code>.</p></td>
-    </tr>
-    <tr>
-      <th>output_div</th>
-      <td><p>Whether to add the output <code>div</code></p></td>
-    </tr>
-    <tr>
-      <th>css</th>
-      <td><p>Self-defined CSS code.</p></td>
+      <th>which</th>
+      <td><p>An integer of which example to use. The list of all examples can be obtained by executing <code>htShinyExample</code> with no argument.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
-    <p>This function generates HTML fragment for the interactive UI. See the example from <code><a href='renderInteractiveComplexHeatmap.html'>renderInteractiveComplexHeatmap</a></code> page.</p>
+    <p>The source code of all examples are in <code>systm.file("examples", "examples.R")</code>.</p>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A UI that can be used in shiny.</p>
+    <p>A shiny app object.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='co'># There is no example</span>
-<span class='cn'>NULL</span>
-</div><div class='output co'>#&gt; NULL</div><div class='input'>
+    <pre class="examples"><div class='input'><span class='fu'>htShinyExample</span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; There are following examples:
+#&gt; 
+#&gt;  1. A single heatmap with minimal arguments.
+#&gt;  2. A single heatmap from a character matrix.
+#&gt;  3. A single heatmap with annotations on both rows and columns.
+#&gt;  4. A single heatmap where rows and columns are split.
+#&gt;  5. A list of two heatmaps.
+#&gt;  6. A density heatmap.
+#&gt;  7. An oncoPrint.
+#&gt;  8. A UpSet plot.
+#&gt;  9. An interactive heatmap by `pheatmap()`.
+#&gt; 10. An interactive heatmap by `heatmap()`.
+#&gt; 11. An interactive heatmap by `heatmap.2()`.
+#&gt; 12. An enriched heatmap.
+#&gt; 13. A list of enriched heatmaps.
+#&gt; 14. An enriched heatmap with discrete signals.
+#&gt; 15. A heatmap produced from tidyHeatmap package.
+#&gt; 16. An example from Lewis et al 2019. GitHub repo:
+#&gt;     https://github.com/kevinblighe/E-MTAB-6141
+#&gt; 17. Visualize cell heterogeneity from single cell RNASeq. This is from
+#&gt;     Supplementary S2 of the ComplexHeatmap paper.
+#&gt;     https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
+#&gt; 18. Correlations between methylation, expression and other genomic features.
+#&gt;     This is from Supplementary S3 of the ComplexHeatmap paper.
+#&gt;     https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
+#&gt; 19. A single shiny app with two interactive heatmap widgets.
+#&gt; 20. Self-define the output. The selected sub-matrix is shown as a text table.
+#&gt; 21. Self-define the output. Additional annotations for the selected gene are
+#&gt;     shown.
+#&gt; 22. Integrate in an interactive R Markdown document.
+#&gt; 23. Visualize Gene Ontology similarities. A list of selected GO IDs as well as
+#&gt;     their descriptions are shown in the output.
+#&gt; 24. Genome-scale heatmaps.
+#&gt; </div><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <span class='fu'>htShinyExample</span><span class='op'>(</span><span class='fl'>4</span><span class='op'>)</span>
+<span class='op'>}</span>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

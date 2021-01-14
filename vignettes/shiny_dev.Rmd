@@ -31,10 +31,10 @@ knitr::opts_chunk$set(
 
 ## Usage
 
-`ht_shiny()` can export heatmaps as a stand-alone Shiny app. **InteractiveComplexHeatmap** also provides two
+`htShiny()` can export heatmaps as a stand-alone Shiny app. **InteractiveComplexHeatmap** also provides two
 functions for integrating the interactive heatmap widgets into other Shiny apps. The two functions are:
 
-- `InteractiveComplexHeatmapOutput()`: for building UI.
+- `InteractiveComplexHeatmapOutput()`: for building UI on the client side.
 - `renderInteractiveComplexHeatmap()`: for processing on the sever side.
 
 The usage is simple. Following is an example that you can directly copy and paste to your R session.
@@ -65,9 +65,9 @@ include_graphics("https://jokergoo.github.io/images/app_demo1.png")
 ```
 
 You can also put multiple interactive heatmaps widgets in a single Shiny app,
-but this time you must assign a "heatmap id" for each one, so that
+but this time you must assign a "**heatmap ID**" for each one, so that
 `renderInteractiveComplexHeatmap()` can find the correct heatmap to response.
-The heatmap id should start with letters.
+The heatmap ID should start with letters.
 
 ```{r, eval = FALSE}
 ht1 = Heatmap(m, col = c("white", "blue"))
@@ -98,28 +98,30 @@ include_graphics("https://jokergoo.github.io/images/app_demo2.png")
 
 ## Customize the widgets
 
-The `div` block of the original heatmap and the sub-heatmap can be resized by dragging the two boxes, but still,
-`InteractiveComplexHeatmapOutput()` has arguments `width1`, `width2`, `height1` and `height2` that control
-the initial sizes of the two boxes. You can check `ht_shiny_example(16)` where the size of the heatmap box is
+The original heatmap and the sub-heatmap can be resized by dragging the two
+boxes, but still, `InteractiveComplexHeatmapOutput()` has arguments `width1`,
+`width2`, `height1` and `height2` that control the initial sizes of the two
+boxes. You can check `htShinyExample(16)` where the size of the heatmap box is
 manually set to make sure the heatmap is well visible.
 
-By default, to get the information of a single cell in the heatmap, a
-"click" action is used. In `InteractiveComplexHeatmapOutput()`, you can also
-set the action to `"hover"` or `"dblclick"` to change the action. Note no
-matter the action is a click or a hover, when applying the brush action,
-click or hover will always be first applied and you will see the output for a
-single cell appears and fastly disappears. Currently I don't have a solution to
-get rid of that.
+By default, to get the information of a single cell in the heatmap, a "click"
+action is used. In `InteractiveComplexHeatmapOutput()`, you can also set the
+action to `"hover"` or `"dblclick"` to change the action. Note no matter the
+action is a click or a hover, when applying the brush action, click or hover
+will always be first applied and you will see the output for a single cell
+appears and fastly disappears. Currently I don't have a solution to get rid of
+that.
 
-The style of the brush can be specified by `brush_opt` argument. The value
-should be a list and the value will be sent to `shiny::brushOpts()`.
+The initial style of the brush can be specified by `brush_opt` argument. The
+value should be a list and the value will be sent to `shiny::brushOpts()`. Note,
+the style of the brush can also be manually adjusted in the web page of the Shiny app.
 
 ## Work with R Markdown documents
 
 It is very straightforward to integrate **InteractiveComplexHeatmap** in an
 interactive R Markdown document, just in a same way of integrating normal Shiny
 widgets. Following is an example and you can run a real interactive document
-with heatmaps by `ht_shiny_example(22)`.
+with heatmaps by `htShinyExample(22)`.
 
 ````markdown
 ---
@@ -131,14 +133,14 @@ runtime: shiny
 ---
 
 
-`r ''````{r, echo=FALSE}
+`r ''````{r, echo = FALSE}
 library(InteractiveComplexHeatmap)
 m = matrix(rnorm(100*100), 100)
 ht = Heatmap(m)
 ```
 
 
-`r ''````{r, echo=FALSE}
+`r ''````{r, echo = FALSE}
 ui = fluidPage(
     InteractiveComplexHeatmapOutput()
 )
@@ -158,8 +160,8 @@ include_graphics("https://jokergoo.github.io/images/rmarkdown.png")
 
 ## Self-define the output
 
-Both the click and brush action on the heatmap trigger an output below the
-heatmap. The output gives the information of which row(s) and columns(s) are
+Both the click and brush actions on the heatmap trigger an output below the
+heatmaps. The output gives the information of which row(s) and columns(s) are
 selected by users. The reponse for the two actions can be self-defined.
 
 In `renderInteractiveComplexHeatmap()`, there are two arguments `click_action`
@@ -175,12 +177,12 @@ To use `click_action` or `brush_action`, a `htmlOutput` (or other similar
 update the output.
 
 The `click_action` or `brush_action` is basically defined as follows (assume
-the id set in `htmlOutput()` is `"info"`):
+the ID set in `htmlOutput()` is `"info"`):
 
 ```{r, eval = FALSE}
 function(df, output) {
     output[["info"]] = renderUI({  # or output$info = ...
-        if(!is.null(df)) {
+        if(is.null(df)) { # have not clicked into the heatmap body
             ...
         } else {
             ...
@@ -229,13 +231,13 @@ heatmap slice of a specific heatmap.
 ## 4     1,2,3,...
 ```
 
-In the following example, in the UI, I add a new `htmlOutput` with id `info`.
-On the sever side, I define `click_action` to print a styled text and
+In the following example, in the UI, I add a new `htmlOutput` with ID `info`.
+On the sever side, I define `click_action` to print a styled text and define
 `brush_action` to print the table of the selected rows and columns from the
 heatmap. Note I also set `default_click_action = FALSE, default_brush_action =
 FALSE` in `renderInteractiveComplexHeatmap()` to turn off the default responses.
 
-You can also run the following example simply by `ht_shiny_example(20)`.
+You can also run the following example simply by `htShinyExample(20)`.
 
 ```{r, eval = FALSE}
 library(GetoptLong)  # for the qq() function which does variable intepolation
@@ -260,8 +262,8 @@ click_action = function(df, output) {
 
 library(kableExtra)
 brush_action = function(df, output) {
-    row_index = unlist(df$row_index)
-    column_index = unlist(df$column_index)
+    row_index = unique(unlist(df$row_index))
+    column_index = unique(unlist(df$column_index))
     output[["info"]] = renderUI({
         if(!is.null(df)) {
             HTML(kable_styling(kbl(m[row_index, column_index, drop = FALSE], digits = 2, format = "html")))
@@ -282,18 +284,25 @@ shinyApp(ui, server)
 include_graphics("https://jokergoo.github.io/images/customize_output.png")
 ```
 
-`ht_shiny_example(21)` gives another scenario where the output needs to be
+`htShinyExample(21)` gives another scenario where the output needs to be
 self-defined. In that example, an gene expression matrix is visualized and
 clicking on the heatmap will print the corresponding gene and some other
-annotations related to this gene. Run `ht_shiny_example(21)` to see how this is implemented.
+annotations related to this gene (e.g. the corresponding gene symbol, RefSeq
+IDs and UniProt IDs). Run `htShinyExample(21)` to see how this is implemented.
 
 ```{r, echo = FALSE, out.width = "100%"}
 include_graphics("https://jokergoo.github.io/images/customize_output2.png")
 ```
 
-One last example is `ht_shiny_example(23)` where the heatmap visualizes
-correlations of a list of Gene Ontology terms. In this example, the click
-and brush actions are self-defined so that the selected GO ids as well as
-their detailed descriptions are printed.
+One last example is `htShinyExample(23)` where the heatmap visualizes
+correlations of a list of Gene Ontology terms (The plot is generated by [the
+**simplifyEnrichment**
+package](https://bioconductor.org/packages/simplifyEnrichment/)). In this
+example, the click and brush actions are self-defined so that the selected GO
+IDs as well as their detailed descriptions are printed.
+
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/customize_output3.png")
+```
 
 

@@ -185,6 +185,10 @@ a.ui-button:active,
 .ui-state-focus a {
 	outline: #CCCCCC solid 0px;
 }
+.ui-tabs .ui-tabs-nav li {
+	float: right;
+	margin: 1px 0em 0 0.2em;
+}
 @{css}
 ")),
 	div(
@@ -199,130 +203,8 @@ a.ui-button:active,
 			"))),
 			id = qq("@{heatmap_id}_heatmap_wrap")
 		),
-		div(id = qq('@{heatmap_id}_tabs'),
-			HTML(qq("<ul>
-				<li><a href='#@{heatmap_id}_tabs-search'><i class='fa fa-search'></i></a></li>
-				<li><a href='#@{heatmap_id}_tabs-save-image'><i class='fa fa-images'></i></a></li>
-				<li><a href='#@{heatmap_id}_tabs-resize'><i class='fa fa-expand-arrows-alt'></i></a></li>
-				<li><a href='#@{heatmap_id}_tabs-brush'><i class='fa fa-brush'></i></a></li>
-			</ul>")),
-			div(id = qq('@{heatmap_id}_tabs-search'), 
-				htmlOutput(qq("@{heatmap_id}_search"))
-			),
-			div(id = qq('@{heatmap_id}_tabs-save-image'),
-				radioButtons(qq("@{heatmap_id}_heatmap_download"), label = "Which format?", choices = list("pdf" = 1, "png" = 2, "svg" = 3), selected = 1, inline = TRUE),
-				actionButton(qq("@{heatmap_id}_heatmap_download_button"), "Download plot")
-			),
-			div(id = qq('@{heatmap_id}_tabs-resize'),
-				numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", width1),
-				numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", height1),
-				actionButton(qq("@{heatmap_id}_heatmap_input_size_button"), "Change size"),
-				tags$script(HTML(qq("
-			$('#@{heatmap_id}_heatmap_input_size_button').click(function(){
-				var width = $('#@{heatmap_id}_heatmap_input_width').val();
-				var height = $('#@{heatmap_id}_heatmap_input_height').val();
-				$('#@{heatmap_id}_heatmap_wrap').width(width+4);
-				$('#@{heatmap_id}_heatmap').width(width);
-				$('#@{heatmap_id}_heatmap img').width(width);
-				$('#@{heatmap_id}_heatmap_wrap').height(height+4);
-				$('#@{heatmap_id}_heatmap').height(height);
-				$('#@{heatmap_id}_heatmap img').height(height);
-			});
-				")))
-			),
-			div(id = qq('@{heatmap_id}_tabs-brush'),
-				tags$style(HTML(paste(
-					readLines(system.file("app", "classic.min.css", package = "InteractiveComplexHeatmap"), warn = FALSE),
-					readLines(system.file("app", "monolith.min.css", package = "InteractiveComplexHeatmap"), warn = FALSE),
-					readLines(system.file("app", "nano.min.css", package = "InteractiveComplexHeatmap"), warn = FALSE),
-					collapse = "\n", sep = "\n"))
-				),
-				tags$script(HTML(paste(
-					readLines(system.file("app", "pickr.min.js", package = "InteractiveComplexHeatmap"), warn = FALSE),
-					readLines(system.file("app", "pickr.es5.min.js", package = "InteractiveComplexHeatmap"), warn = FALSE),
-					collapse = "\n", sep = "\n"))
-				),
-				div(
-					HTML(qq('
-					<div class="form-group shiny-input-container" style="float:left; width:120px;">
-					<label>Brush border</label>
-					<div id="@{heatmap_id}_color_pickers_border"></div>
-					</div>
-					<div class="form-group shiny-input-container" style="float:left; width:120px;">
-					<label>Brush fill</label>
-					<div id="@{heatmap_id}_color_pickers_fill"></div>
-					</div>
-					<div style="clear:both;"></div>')),
-					selectizeInput(qq("@{heatmap_id}_color_pickers_border_width"), label = "Border width", 
-						choices = list("1px" = 1, "2px" = 2, "3px" = 3), selected = 1,
-						options = list(
-							render = I("{
-      option: function(item, escape) {
-      	return '<div><hr style=\"border:' + item.value + 'px solid black;\"></div>'
-      }
-      }"))),
-					sliderInput(qq("@{heatmap_id}_color_pickers_opacity"), label = "Opacity", min = 0, max = 1, value = 0.25)
-				),
-				tags$script(HTML(qq("     
-			const @{heatmap_id}_pickr1 = Pickr.create({
-			    el: '#@{heatmap_id}_color_pickers_border',
-			    default: '#003366',
-			    theme: 'nano',
-			    comparison: false,
-			    components: {preview: true, hue: true}
-			});	
-			@{heatmap_id}_pickr1.on('change', (color, source, instance) => {
-				$('#@{heatmap_id}_heatmap_brush').css('border-color', color.toHEXA().toString());
-				$('#@{heatmap_id}_heatmap').mousedown(function() {
-					if($('#@{heatmap_id}_heatmap_brush').length > 0) {
-						$('#@{heatmap_id}_heatmap_brush').css('border-color', color.toHEXA().toString());
-					}
-				});
-			});
-			const @{heatmap_id}_pickr2 = Pickr.create({
-			    el: '#@{heatmap_id}_color_pickers_fill',
-			    default: '#99ccff',
-			    theme: 'nano',
-			    comparison: false,
-			    components: {preview: true, hue: true}
-			});	
-			@{heatmap_id}_pickr2.on('change', (color, source, instance) => {
-				$('#@{heatmap_id}_heatmap_brush').css('background-color', color.toHEXA().toString());
-				$('#@{heatmap_id}_heatmap').mousedown(function() {
-					if($('#@{heatmap_id}_heatmap_brush').length > 0) {
-						$('#@{heatmap_id}_heatmap_brush').css('background-color', color.toHEXA().toString());
-					}
-				});
-			});
-			$('#@{heatmap_id}_color_pickers_border_width').change(function() {
-				var val = $(this).val();
-				$('#@{heatmap_id}_heatmap_brush').css('border-width', val);
-				$('#@{heatmap_id}_heatmap').mousedown(function() {
-					if($('#@{heatmap_id}_heatmap_brush').length > 0) {
-						$('#@{heatmap_id}_heatmap_brush').css('border-width', val);
-					}
-				});
-			});
-			$('#@{heatmap_id}_color_pickers_opacity').change(function() {
-				var val = $(this).val();
-				$('#@{heatmap_id}_heatmap_brush').css('opacity', val);
-				$('#@{heatmap_id}_heatmap').mousedown(function() {
-					if($('#@{heatmap_id}_heatmap_brush').length > 0) {
-						$('#@{heatmap_id}_heatmap_brush').css('opacity', val);
-					}
-				});
-			});
-				")))
-			)
-		),
-		tags$script(HTML(qq("
-$( function() {
-    $( '#@{heatmap_id}_tabs' ).tabs({
-      collapsible: true,
-      active: false
-    });
-  } );
-		"))),
+		htmlOutput(qq("@{heatmap_id}_heatmap_control")),
+		HTML(qq("<div style='display: none;'><a id='@{heatmap_id}_heatmap_download_button'></a></div>")),
 		id = qq("@{heatmap_id}_heatmap_wrap_outer")
 	),
 	div(
@@ -413,7 +295,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		stop_wrap("There should be at least one normal heatmap (nrow > 0 and ncol > 0) in the heatmap list.")
 	}
 
-	shiny_env[[heatmap_id]] = list()
+	shiny_env[[heatmap_id]] = list(count = 0)
 
 	observeEvent(
 		session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]] || 
@@ -438,90 +320,70 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		    		}
 		    	}
 		    }
-			shiny_env[[heatmap_id]]$ht_pos = ht_pos_on_device(shiny_env[[heatmap_id]]$ht_list, include_annotation = TRUE, calibrate = FALSE)
-
+			shiny_env[[heatmap_id]]$ht_pos = htPositionsOnDevice(shiny_env[[heatmap_id]]$ht_list, include_annotation = TRUE, calibrate = FALSE)
+			shiny_env[[heatmap_id]]$count = shiny_env[[heatmap_id]]$count + 1
 			shiny_env[[heatmap_id]]$selected = NULL
 
 			if(default_click_action || default_brush_action) {
 				output[[qq("@{heatmap_id}_info")]] = renderUI({
-					HTML("<p>No position is selected.</p>")
+					HTML("<h5>Output</h5>\n<p>No position is selected.</p>")
 				})
 			}
-
 			message(qq("[@{Sys.time()}] make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
 		})
 
-		output[[qq("@{heatmap_id}_search")]] = renderUI({
-
-			all_ht_name = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
-				if(inherits(x, "Heatmap")) x@name else NA
-			})
-			all_ht_name = all_ht_name[!is.na(all_ht_name)]
-
-			has_row_labels = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
-				if(inherits(x, "Heatmap")) {
-					!is.null(x@row_names_param$labels)
-				} else {
-					FALSE
-				}
-			})
-			has_row_labels = has_row_labels[all_ht_name]
-			has_column_labels = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
-				if(inherits(x, "Heatmap")) {
-					!is.null(x@column_names_param$labels)
-				} else {
-					FALSE
-				}
-			})
-			has_column_labels = has_column_labels[all_ht_name]
-			if(!any(has_row_labels) && !any(has_column_labels)) {
-				p("Search is turned off because of no row/column label.")
-			} else {
-
-				message(qq("[@{Sys.time()}] create search panel."))
-
-				if(any(has_row_labels) && any(has_column_labels)) {
-					if(length(all_ht_name) == 1 && has_row_labels[1] && has_column_labels[1]) {
-						where_choices = list("on rows" = 1, "on columns" = 2, "both" = 3)
-					} else {
-						where_choices = list("on rows" = 1, "on columns" = 2)
-					}
-				} else if(!any(has_row_labels)) {
-					where_choices = list("on columns" = 2)
-				} else if(!any(has_column_labels)) {
-					where_choices = list("on rows" = 1)
-				}
-
-				heatmaps_to_search = all_ht_name[has_row_labels | has_column_labels]
-				div(
-					div(textInput(qq("@{heatmap_id}_keyword"), placeholder = "Multiple keywords separated by ','", label = ""), style = "width:250px;float:left;"),
-					div(checkboxInput(qq("@{heatmap_id}_search_regexpr"), label = "Regular expression", value = FALSE), style = "width:150px;float:left;padding-top:15px;padding-left:4px;"),
-					div(style = "clear: both;"),
-					radioButtons(qq("@{heatmap_id}_search_where"), label = "Which dimension to search?", choices = where_choices, selected = where_choices[[1]], inline = TRUE),
-					if(length(heatmaps_to_search) > 0) {
-						checkboxGroupInput(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = unname(heatmaps_to_search), choiceValues = unname(heatmaps_to_search), selected = unname(heatmaps_to_search))
-					} else {
-						NULL
-					},
-					checkboxGroupInput(qq("@{heatmap_id}_search_extend"), label = "Extend to all heatmaps and annotations?", choiceNames = "yes", choiceValues = 1, selected = NULL),
-					actionButton(qq("@{heatmap_id}_search_action"), label = "Search"),
-					tags$script(HTML(qq("
-						$('#@{heatmap_id}_keyword').click(function() {$('#@{heatmap_id}_heatmap_brush').remove();});
-						$('#@{heatmap_id}_search_regexpr').change(function() {
-							if(this.checked) {
-								$('#@{heatmap_id}_keyword').attr('placeholder', 'A single regular expression');
-							} else {
-								$('#@{heatmap_id}_keyword').attr('placeholder', \"Multiple keywords separated by ','\");
-							}
-						})
-					")))
-				)
+		output[[qq("@{heatmap_id}_heatmap_control")]] = renderUI({
+			if(!is.null(shiny_env[[heatmap_id]]$ht_list)) {
+				heatmap_control_ui(heatmap_id, shiny_env)
 			}
 		})
-
+		
 		updateNumericInput(session, qq("@{heatmap_id}_heatmap_input_width"), value = session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]])
 		updateNumericInput(session, qq("@{heatmap_id}_heatmap_input_height"), value = session$clientData[[qq("output_@{heatmap_id}_heatmap_heigh")]])
+		updateNumericInput(session, qq("@{heatmap_id}_heatmap_download_image_width"), value = session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]])
+		updateNumericInput(session, qq("@{heatmap_id}_heatmap_download_image_height"), value = session$clientData[[qq("output_@{heatmap_id}_heatmap_heigh")]])
 	})
+
+	observeEvent(input[[qq("@{heatmap_id}_heatmap_download_trigger")]], {
+		output[[qq("@{heatmap_id}_heatmap_download_button")]] = downloadHandler(
+
+			filename = function() {
+
+				format = as.numeric(input[[qq("@{heatmap_id}_heatmap_download_format")]])
+				fm = c("png", "pdf", "svg")[format]
+				qq("@{heatmap_id}_heatmap.@{fm}")
+			},
+			content = function(file) {
+				
+				format = as.numeric(input[[qq("@{heatmap_id}_heatmap_download_format")]])
+				fm = c("png", "pdf", "svg")[format]
+				dev = list(png, pdf, svglite::svglite)[[format]]
+
+				showNotification(qq("Download heatmap in @{fm}."), duration = 2, type = "message")
+				message(qq("[@{Sys.time()}] Download heatmap in @{fm}."))
+
+				temp = tempfile()
+				width = input[[qq("@{heatmap_id}_heatmap_download_image_width")]]
+				height = input[[qq("@{heatmap_id}_heatmap_download_image_height")]]
+				
+				if(fm == "png") {
+					dev(temp, width = width*2, height = height*2, res = 72*2)
+				} else {
+					dev(temp, width = width, height = height)
+				}
+				if(!is.null(shiny_env[[heatmap_id]]$ht_list)) {
+			    	draw(shiny_env[[heatmap_id]]$ht_list)
+			    } else {
+			    	grid.newpage()
+			    	grid.text("No heatmap is available.")
+			    }
+			    dev.off()
+
+				file.copy(temp, file)
+			}
+		)
+	})
+	
 
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_input_size_button")]], {
 
@@ -533,17 +395,9 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		    	
 		    	showNotification("Resizing the original heatmap.", duration = 2, type = "message")
 
-		    	# draw(shiny_env[[heatmap_id]]$ht_list)
-		    	
-				# shiny_env[[heatmap_id]]$ht_pos = ht_pos_on_device(shiny_env[[heatmap_id]]$ht_list, include_annotation = TRUE, calibrate = FALSE)
-
-				# shiny_env[[heatmap_id]]$selected = NULL
-
-				# message(qq("[@{Sys.time()}] xx make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
-			})
+		    })
 		}
 	})
-	
 
 	# default
 	output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
@@ -555,7 +409,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 
 	if(default_click_action || default_brush_action) {
 		output[[qq("@{heatmap_id}_info")]] = renderUI({
-			HTML("<p>No position is selected.</p>")
+			HTML("<h5>Output</h5>\n<p>No position is selected.</p>")
 		})
 	}
 
@@ -701,6 +555,46 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 	
 	})
 
+	observeEvent(input[[qq("@{heatmap_id}_sub_heatmap_download_trigger")]], {
+		output[[qq("@{heatmap_id}_sub_heatmap_download_button")]] = downloadHandler(
+
+			filename = function() {
+
+				format = as.numeric(input[[qq("@{heatmap_id}_sub_heatmap_download_format")]])
+				fm = c("png", "pdf", "svg")[format]
+				qq("@{heatmap_id}_sub_heatmap.@{fm}")
+			},
+			content = function(file) {
+				
+				format = as.numeric(input[[qq("@{heatmap_id}_heatmap_download_format")]])
+				fm = c("png", "pdf", "svg")[format]
+				dev = list(png, pdf, svglite::svglite)[[format]]
+
+				showNotification(qq("Download sub-heatmap in @{fm}."), duration = 2, type = "message")
+				message(qq("[@{Sys.time()}] Download sub-heatmap in @{fm}."))
+
+				temp = tempfile()
+				width = input[[qq("@{heatmap_id}_sub_heatmap_download_image_width")]]
+				height = input[[qq("@{heatmap_id}_sub_heatmap_download_image_height")]]
+				
+				if(fm == "png") {
+					dev(temp, width = width*2, height = height*2, res = 72*2)
+				} else {
+					dev(temp, width = width, height = height)
+				}
+				if(is.null(shiny_env[[heatmap_id]]$selected)) {
+	    			grid.newpage()
+					grid.text("No heatmap is available.")
+	    		} else {
+	    			make_sub_heatmap(input, output, session, heatmap_id)
+				}
+			    dev.off()
+
+				file.copy(temp, file)
+			}
+		)
+	})
+
 	observeEvent(input[[qq("@{heatmap_id}_sub_heatmap_input_size_button")]], {
 		
 		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
@@ -779,7 +673,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			where_choices = list("on rows" = 1)
 		}
 
-		updateRadioButtons(session, qq("@{heatmap_id}_search_where"), label = "Which dimension to search", choices = where_choices, selected = where_choices[[1]], inline = TRUE)
+		updateRadioButtons(session, qq("@{heatmap_id}_search_where"), label = "Which dimension to search?", choices = where_choices, selected = where_choices[[1]], inline = TRUE)
 
 	})
 
@@ -862,7 +756,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		},
 		content = function(file) {
 			tb = get_sub_matrix(heatmap_id)
-			write.csv(tb, file, row.names = FALSE, col.names = FALSE)
+			write.table(tb, file, row.names = FALSE, col.names = FALSE, sep = ",", quote = TRUE)
 		}
 	)
 }
@@ -1450,7 +1344,7 @@ default_brush_action = function(input, output, session, heatmap_id,
 	output[[qq("@{heatmap_id}_info")]] = renderUI({
 		selected = shiny_env[[heatmap_id]]$selected
 		if(is.null(selected)) {
-			HTML(qq("<p>@{default_text}</p>"))
+			HTML(qq("<h5>Output</h5>\n<p>@{default_text}</p>"))
 		} else {
 
 			selected = selected[!is.na(selected$row_slice), ]
@@ -1481,7 +1375,7 @@ default_brush_action = function(input, output, session, heatmap_id,
 			dump_txt = dump_txt[-1]
 			dump_txt = paste(dump_txt, collapse = "\n")
 			HTML(paste(
-				  qq("<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. Row and column indices can be obtained by copying following code:</p>"),
+				  qq("<h5>Output</h5>\n<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. Row and column indices can be obtained by copying following code:</p>"),
 				  qq("<p><input id='@{heatmap_id}_show_code' type='button' value='show/hide code' /></p>"),
 				  qq("<pre id='@{heatmap_id}_code'>"),
 				  dump_txt,
@@ -1500,13 +1394,13 @@ default_click_action = function(input, output, session, heatmap_id) {
 	output[[qq("@{heatmap_id}_info")]] = renderUI({
 
 	    if(is.null(shiny_env[[heatmap_id]]$selected)) {
-	    	HTML("<p>No position is selected.</p>")
+	    	HTML("<h5>Output</h5>\n<p>No cell is selected.</p>")
 	    } else {
 	    	showNotification(qq("Click on the heatmap."), duration = 2, type = "message")
 	    	pos = shiny_env[[heatmap_id]]$selected
 
 			if(is.null(pos)) {
-				HTML("<p>You did not select inside the heatmap.</p>")
+				HTML("<h5>Output</h5>\n<p>You did not click inside the heatmap.</p>")
 			} else {
 				ht_name = pos[1, "heatmap"]
 				slice_name = pos[1, "slice"]
@@ -1539,7 +1433,7 @@ default_click_action = function(input, output, session, heatmap_id) {
 
 			    message(qq("[@{Sys.time()}] click on the heatmap @{slice_name}."))
 				
-				HTML(paste("<p>Information of the clicked cell:</p>",
+				HTML(paste("<h5>Output</h5>\n<p>Information of the clicked cell:</p>",
 					  "<pre>",
 					  qq("heatmap: @{ht_name}"),
 					  qq("heatmap slice: @{slice_name}"),
@@ -1555,35 +1449,270 @@ default_click_action = function(input, output, session, heatmap_id) {
 	})
 }
 
+heatmap_control_ui = function(heatmap_id, shiny_env) {
+	width1 = 400
+	height1 = 350
+	message(qq("[@{Sys.time()}] build heatmap control ui."))
+
+	div(
+		div(id = qq('@{heatmap_id}_tabs'),
+			HTML(qq("<ul>
+				<li><a href='#@{heatmap_id}_tabs-resize' title='Resize image'><i class='fa fa-expand-arrows-alt'></i></a></li>
+				<li><a href='#@{heatmap_id}_tabs-save-image' title='Save image'><i class='fa fa-images'></i></a></li>
+				<li><a href='#@{heatmap_id}_tabs-brush' title='Configure brush'><i class='fa fa-brush'></i></a></li>
+				<li><a href='#@{heatmap_id}_tabs-search' title='Search in heatmaps'><i class='fa fa-search'></i></a></li>
+			</ul>")),
+			div(id = qq('@{heatmap_id}_tabs-search'), 
+				heatmap_search_ui(heatmap_id, shiny_env)
+			),
+			div(id = qq('@{heatmap_id}_tabs-save-image'),
+				radioButtons(qq("@{heatmap_id}_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
+				numericInput(qq("@{heatmap_id}_heatmap_download_image_width"), label = "Image width (in px)", value = width1),
+				numericInput(qq("@{heatmap_id}_heatmap_download_image_height"), label = "Image height (in px)", value = height1),
+				downloadButton(qq("@{heatmap_id}_heatmap_download_button"), "Save image")
+			),
+			div(id = qq('@{heatmap_id}_tabs-resize'),
+				numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", width1),
+				numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", height1),
+				actionButton(qq("@{heatmap_id}_heatmap_input_size_button"), "Change image size"),
+				tags$script(HTML(qq("
+			$('#@{heatmap_id}_heatmap_input_size_button').click(function(){
+				var width = $('#@{heatmap_id}_heatmap_input_width').val();
+				width = parseInt(width);
+				var height = $('#@{heatmap_id}_heatmap_input_height').val();
+				height = parseInt(height);
+				$('#@{heatmap_id}_heatmap_wrap').width(width+4);
+				$('#@{heatmap_id}_heatmap').width(width);
+				$('#@{heatmap_id}_heatmap img').width(width);
+				$('#@{heatmap_id}_heatmap_wrap').height(height+4);
+				$('#@{heatmap_id}_heatmap').height(height);
+				$('#@{heatmap_id}_heatmap img').height(height);
+				$('#@{heatmap_id}_heatmap_download_image_width').val(width);
+				$('#@{heatmap_id}_heatmap_download_image_height').val(height);
+			});
+			$('#@{heatmap_id}_heatmap_download_format').change(function() {
+				var width = $('#@{heatmap_id}_heatmap_input_width').val();
+				width = parseInt(width);
+				var height = $('#@{heatmap_id}_heatmap_input_height').val();
+				height = parseInt(height);
+				if(parseInt($(this).find('input').filter(':checked').val()) == 2) {
+					width_in_inch = Math.round(width*10/100*4/3)/10
+					height_in_inch = Math.round(height*10/100*4/3)/10
+					$('#@{heatmap_id}_heatmap_download_image_width').val(width_in_inch);
+					$('#@{heatmap_id}_heatmap_download_image_height').val(height_in_inch);
+					$('#@{heatmap_id}_heatmap_download_image_width').prev().text('Image width (in inch)');
+					$('#@{heatmap_id}_heatmap_download_image_height').prev().text('Image height (in inch)');
+					Shiny.setInputValue('@{heatmap_id}_heatmap_download_image_width', width_in_inch);
+					Shiny.setInputValue('@{heatmap_id}_heatmap_download_image_height', height_in_inch);
+				} else {
+					$('#@{heatmap_id}_heatmap_download_image_width').val(width);
+					$('#@{heatmap_id}_heatmap_download_image_height').val(height);
+					$('#@{heatmap_id}_heatmap_download_image_width').prev().text('Image width (in px)');
+					$('#@{heatmap_id}_heatmap_download_image_height').prev().text('Image height (in px)');
+				}
+			});
+			Shiny.setInputValue('@{heatmap_id}_heatmap_download_trigger', Math.random());
+				")))
+			),
+			div(id = qq('@{heatmap_id}_tabs-brush'),
+				tags$style(HTML(paste(
+					readLines(system.file("app", "classic.min.css", package = "InteractiveComplexHeatmap"), warn = FALSE),
+					readLines(system.file("app", "monolith.min.css", package = "InteractiveComplexHeatmap"), warn = FALSE),
+					readLines(system.file("app", "nano.min.css", package = "InteractiveComplexHeatmap"), warn = FALSE),
+					collapse = "\n", sep = "\n"))
+				),
+				tags$script(HTML(paste(
+					readLines(system.file("app", "pickr.min.js", package = "InteractiveComplexHeatmap"), warn = FALSE),
+					readLines(system.file("app", "pickr.es5.min.js", package = "InteractiveComplexHeatmap"), warn = FALSE),
+					collapse = "\n", sep = "\n"))
+				),
+				div(
+					HTML(qq('
+					<div class="form-group shiny-input-container" style="float:left; width:120px;">
+					<label>Brush border</label>
+					<div id="@{heatmap_id}_color_pickers_border"></div>
+					</div>
+					<div class="form-group shiny-input-container" style="float:left; width:120px;">
+					<label>Brush fill</label>
+					<div id="@{heatmap_id}_color_pickers_fill"></div>
+					</div>
+					<div style="clear:both;"></div>')),
+					selectizeInput(qq("@{heatmap_id}_color_pickers_border_width"), label = "Border width", 
+						choices = list("1px" = 1, "2px" = 2, "3px" = 3), selected = 1,
+						options = list(
+							render = I("{
+      option: function(item, escape) {
+      	return '<div><hr style=\"border-top:' + item.value + 'px solid black;\"></div>'
+      }
+      }"))),
+					sliderInput(qq("@{heatmap_id}_color_pickers_opacity"), label = "Opacity", min = 0, max = 1, value = 0.25)
+				),
+				tags$script(HTML(qq("     
+			const @{heatmap_id}_pickr1 = Pickr.create({
+			    el: '#@{heatmap_id}_color_pickers_border',
+			    default: '#003366',
+			    theme: 'nano',
+			    comparison: false,
+			    components: {preview: true, hue: true}
+			});	
+			@{heatmap_id}_pickr1.on('change', (color, source, instance) => {
+				$('#@{heatmap_id}_heatmap_brush').css('border-color', color.toHEXA().toString());
+				$('#@{heatmap_id}_heatmap').mousedown(function() {
+					if($('#@{heatmap_id}_heatmap_brush').length > 0) {
+						$('#@{heatmap_id}_heatmap_brush').css('border-color', color.toHEXA().toString());
+					}
+				});
+			});
+			const @{heatmap_id}_pickr2 = Pickr.create({
+			    el: '#@{heatmap_id}_color_pickers_fill',
+			    default: '#99ccff',
+			    theme: 'nano',
+			    comparison: false,
+			    components: {preview: true, hue: true}
+			});	
+			@{heatmap_id}_pickr2.on('change', (color, source, instance) => {
+				$('#@{heatmap_id}_heatmap_brush').css('background-color', color.toHEXA().toString());
+				$('#@{heatmap_id}_heatmap').mousedown(function() {
+					if($('#@{heatmap_id}_heatmap_brush').length > 0) {
+						$('#@{heatmap_id}_heatmap_brush').css('background-color', color.toHEXA().toString());
+					}
+				});
+			});
+			$('#@{heatmap_id}_color_pickers_border_width').change(function() {
+				var val = $(this).val();
+				$('#@{heatmap_id}_heatmap_brush').css('border-width', val);
+				$('#@{heatmap_id}_heatmap').mousedown(function() {
+					if($('#@{heatmap_id}_heatmap_brush').length > 0) {
+						$('#@{heatmap_id}_heatmap_brush').css('border-width', val);
+					}
+				});
+			});
+			$('#@{heatmap_id}_color_pickers_opacity').change(function() {
+				var val = $(this).val();
+				$('#@{heatmap_id}_heatmap_brush').css('opacity', val);
+				$('#@{heatmap_id}_heatmap').mousedown(function() {
+					if($('#@{heatmap_id}_heatmap_brush').length > 0) {
+						$('#@{heatmap_id}_heatmap_brush').css('opacity', val);
+					}
+				});
+			});
+				")))
+			)
+		),
+		tags$script(HTML(qq("
+$( function() {
+    $( '#@{heatmap_id}_tabs' ).tabs({
+      collapsible: true,
+      active: false
+    });
+    $('#@{heatmap_id}_tabs').tooltip({position: {my: 'center bottom-4', at: 'center top'}});
+			
+  } );
+		")))
+	)
+}
+
+heatmap_search_ui = function(heatmap_id, shiny_env) {
+	all_ht_name = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
+		if(inherits(x, "Heatmap")) x@name else NA
+	})
+	all_ht_name = all_ht_name[!is.na(all_ht_name)]
+
+	has_row_labels = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
+		if(inherits(x, "Heatmap")) {
+			!is.null(x@row_names_param$labels)
+		} else {
+			FALSE
+		}
+	})
+	has_row_labels = has_row_labels[all_ht_name]
+	has_column_labels = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
+		if(inherits(x, "Heatmap")) {
+			!is.null(x@column_names_param$labels)
+		} else {
+			FALSE
+		}
+	})
+	has_column_labels = has_column_labels[all_ht_name]
+	if(!any(has_row_labels) && !any(has_column_labels)) {
+		p("Search is turned off because of no row/column labels.")
+	} else {
+
+		if(any(has_row_labels) && any(has_column_labels)) {
+			if(length(all_ht_name) == 1 && has_row_labels[1] && has_column_labels[1]) {
+				where_choices = list("on rows" = 1, "on columns" = 2, "both" = 3)
+			} else {
+				where_choices = list("on rows" = 1, "on columns" = 2)
+			}
+		} else if(!any(has_row_labels)) {
+			where_choices = list("on columns" = 2)
+		} else if(!any(has_column_labels)) {
+			where_choices = list("on rows" = 1)
+		}
+
+		heatmaps_to_search = all_ht_name[has_row_labels | has_column_labels]
+		div(
+			div(textInput(qq("@{heatmap_id}_keyword"), placeholder = "Multiple keywords separated by ','", label = "Keywords"), style = "width:250px;float:left;"),
+			div(checkboxInput(qq("@{heatmap_id}_search_regexpr"), label = "Regular expression", value = FALSE), style = "width:150px;float:left;padding-top:20px;padding-left:4px;"),
+			div(style = "clear: both;"),
+			radioButtons(qq("@{heatmap_id}_search_where"), label = "Which dimension to search?", choices = where_choices, selected = where_choices[[1]], inline = TRUE),
+			if(length(heatmaps_to_search) > 0) {
+				checkboxGroupInput(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = unname(heatmaps_to_search), choiceValues = unname(heatmaps_to_search), selected = unname(heatmaps_to_search))
+			} else {
+				NULL
+			},
+			checkboxGroupInput(qq("@{heatmap_id}_search_extend"), label = "Extend to all heatmaps and annotations?", choiceNames = "yes", choiceValues = 1, selected = NULL),
+			actionButton(qq("@{heatmap_id}_search_action"), label = "Search"),
+			tags$script(HTML(qq("
+				$('#@{heatmap_id}_keyword').click(function() {$('#@{heatmap_id}_heatmap_brush').remove();});
+				$('#@{heatmap_id}_search_regexpr').change(function() {
+					if(this.checked) {
+						$('#@{heatmap_id}_keyword').attr('placeholder', 'A single regular expression');
+					} else {
+						$('#@{heatmap_id}_keyword').attr('placeholder', \"Multiple keywords separated by ','\");
+					}
+				})
+			")))
+		)
+	}
+}
+
 sub_heatmap_control_ui = function(heatmap_id) {
 
 div(
 	div(id = qq('@{heatmap_id}_sub_tabs'),
 		HTML(qq("<ul>
-			<li><a href='#@{heatmap_id}_sub_tabs-setting'><i class='fa fa-tasks'></i></a></li>
-			<li><a href='#@{heatmap_id}_sub_tabs-save-image'><i class='fa fa-images'></i></a></li>
-			<li><a href='#@{heatmap_id}_sub_tabs-resize'><i class='fa fa-expand-arrows-alt'></i></a></li>
-			<li><a href='#@{heatmap_id}_sub_tabs-table'><i class='fa fa-table'></i></a></li>
+			<li><a href='#@{heatmap_id}_sub_tabs-resize' title='Resize sub-heatmaps'><i class='fa fa-expand-arrows-alt'></i></a></li>
+			<li><a href='#@{heatmap_id}_sub_tabs-save-image' title='Export sub-heatmaps as an image'><i class='fa fa-images'></i></a></li>
+			<li><a href='#@{heatmap_id}_sub_tabs-table' title='Export table'><i class='fa fa-table'></i></a></li>
+			<li><a href='#@{heatmap_id}_sub_tabs-setting' title='Configure sub-heatmaps'><i class='fa fa-tasks'></i></a></li>
 		</ul>")),
+		tags$style(qq("
+#@{heatmap_id}_sub_tabs-setting .form-group {
+	margin-bottom: 0px;
+}
+		")),
 		div(id = qq('@{heatmap_id}_sub_tabs-setting'), 
 			div(
-				div(checkboxInput(qq("@{heatmap_id}_show_row_names_checkbox"), label = "Show row names", value = TRUE), style = "float:left;width:170px"),
-				div(checkboxInput(qq("@{heatmap_id}_show_column_names_checkbox"), label = "Show column names", value = TRUE), style = "float:left;width:170px"),
+				div(checkboxInput(qq("@{heatmap_id}_show_row_names_checkbox"), label = "Show row names", value = TRUE), style = "float:left;width:150px"),
+				div(checkboxInput(qq("@{heatmap_id}_show_column_names_checkbox"), label = "Show column names", value = TRUE), style = "float:left;width:150px"),
 				div(style = "clear: both;")
 			),
 			div(
 				checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
 				checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = TRUE)
-			)
+			),
 		),
 		div(id = qq('@{heatmap_id}_sub_tabs-save-image'),
-			radioButtons(qq("@{heatmap_id}_sub_heatmap_download"), label = "Which format?", choices = list("pdf" = 1, "png" = 2, "svg" = 3), selected = 1, inline = TRUE),
-			actionButton(qq("@{heatmap_id}_sub_heatmap_download_button"), "Download plot")
+			radioButtons(qq("@{heatmap_id}_sub_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
+			numericInput(qq("@{heatmap_id}_sub_heatmap_download_image_width"), label = "Image width (in px)", value = 370),
+			numericInput(qq("@{heatmap_id}_sub_heatmap_download_image_height"), label = "Image height (in px)", value = 350),
+			downloadButton(qq("@{heatmap_id}_sub_heatmap_download_button"), "Save image")
 		),
 		div(id = qq('@{heatmap_id}_sub_tabs-resize'),
 			numericInput(qq("@{heatmap_id}_sub_heatmap_input_width"), "Box width", 370),
 			numericInput(qq("@{heatmap_id}_sub_heatmap_input_height"), "Box height", 350),
-			actionButton(qq("@{heatmap_id}_sub_heatmap_input_size_button"), "Change size"),
+			actionButton(qq("@{heatmap_id}_sub_heatmap_input_size_button"), "Change image size"),
 			tags$script(HTML(qq("
 			$('#@{heatmap_id}_sub_heatmap_input_size_button').click(function(){
 				var width = $('#@{heatmap_id}_sub_heatmap_input_width').val();
@@ -1595,10 +1724,33 @@ div(
 				$('#@{heatmap_id}_sub_heatmap').height(height);
 				$('#@{heatmap_id}_sub_heatmap img').height(height);
 			});
+			$('#@{heatmap_id}_sub_heatmap_download_format').change(function() {
+				var width = $('#@{heatmap_id}_sub_heatmap_input_width').val();
+				width = parseInt(width);
+				var height = $('#@{heatmap_id}_sub_heatmap_input_height').val();
+				height = parseInt(height);
+				if(parseInt($(this).find('input').filter(':checked').val()) == 2) {
+					width_in_inch = Math.round(width*10/100*4/3)/10;
+					height_in_inch = Math.round(height*10/100*4/3)/10;
+					$('#@{heatmap_id}_sub_heatmap_download_image_width').val(width_in_inch);
+					$('#@{heatmap_id}_sub_heatmap_download_image_height').val(height_in_inch);
+					$('#@{heatmap_id}_sub_heatmap_download_image_width').prev().text('Image width (in inch)');
+					$('#@{heatmap_id}_sub_heatmap_download_image_height').prev().text('Image height (in inch)');
+					Shiny.setInputValue('@{heatmap_id}_sub_heatmap_download_image_width', width_in_inch);
+					Shiny.setInputValue('@{heatmap_id}_sub_heatmap_download_image_height', height_in_inch);
+				} else {
+					$('#@{heatmap_id}_sub_heatmap_download_image_width').val(width);
+					$('#@{heatmap_id}_sub_heatmap_download_image_height').val(height);
+					$('#@{heatmap_id}_sub_heatmap_download_image_width').prev().text('Image width (in px)');
+					$('#@{heatmap_id}_sub_heatmap_download_image_height').prev().text('Image height (in px)');
+				}
+			});
+			Shiny.setInputValue('@{heatmap_id}_sub_heatmap_download_trigger', Math.random());
 			")))
 		),
 		div(id = qq("@{heatmap_id}_sub_tabs-table"),
-			actionButton(qq("@{heatmap_id}_open_table"), label = "Open tables in text")
+			p("Export values in sub-heatmaps as a text table."),
+			actionButton(qq("@{heatmap_id}_open_table"), label = "Open table")
 		)
 		
 	),
@@ -1608,6 +1760,7 @@ $( '#@{heatmap_id}_sub_tabs' ).tabs({
 	collapsible: true,
 	active: false
 });
+$('#@{heatmap_id}_sub_tabs').tooltip({position: {my: 'center bottom-4', at: 'center top'}});
 } );
 	")))
 
