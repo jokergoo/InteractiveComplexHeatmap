@@ -996,10 +996,16 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 				}
 				if(is_abs_unit(ht_current_full@matrix_param$width)) {
 					body_width = ht_current_full@matrix_param$width
+					# if(ComplexHeatmap:::is_abs_unit(body_width)) {
+					# 	body_width = body_width * (length(ci)/ncol(m))
+					# } 
 					heatmap_width = unit(1, "npc")
 				}
 				if(is_abs_unit(ht_current_full@matrix_param$height)) {
 					body_height = ht_current_full@matrix_param$height
+					# if(ComplexHeatmap:::is_abs_unit(body_height)) {
+					# 	body_height = body_height * (length(ri)/nrow(m))
+					# }
 					heatmap_height = unit(1, "npc")
 				}
 				
@@ -1548,7 +1554,7 @@ heatmap_control_ui = function(heatmap_id, shiny_env) {
 					sliderInput(qq("@{heatmap_id}_color_pickers_opacity"), label = "Opacity", min = 0, max = 1, value = 0.25)
 				),
 				tags$script(HTML(qq("     
-			const @{heatmap_id}_pickr1 = Pickr.create({
+			var @{heatmap_id}_pickr1 = Pickr.create({
 			    el: '#@{heatmap_id}_color_pickers_border',
 			    default: '#003366',
 			    theme: 'nano',
@@ -1563,7 +1569,7 @@ heatmap_control_ui = function(heatmap_id, shiny_env) {
 					}
 				});
 			});
-			const @{heatmap_id}_pickr2 = Pickr.create({
+			var @{heatmap_id}_pickr2 = Pickr.create({
 			    el: '#@{heatmap_id}_color_pickers_fill',
 			    default: '#99ccff',
 			    theme: 'nano',
