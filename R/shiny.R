@@ -185,10 +185,6 @@ a.ui-button:active,
 .ui-state-focus a {
 	outline: #CCCCCC solid 0px;
 }
-.ui-tabs .ui-tabs-nav li {
-	float: right;
-	margin: 1px 0em 0 0.2em;
-}
 @{css}
 ")),
 	div(
@@ -1463,62 +1459,13 @@ heatmap_control_ui = function(heatmap_id, shiny_env) {
 	div(
 		div(id = qq('@{heatmap_id}_tabs'),
 			HTML(qq("<ul>
-				<li><a href='#@{heatmap_id}_tabs-resize' title='Resize image'><i class='fa fa-expand-arrows-alt'></i></a></li>
-				<li><a href='#@{heatmap_id}_tabs-save-image' title='Save image'><i class='fa fa-images'></i></a></li>
-				<li><a href='#@{heatmap_id}_tabs-brush' title='Configure brush'><i class='fa fa-brush'></i></a></li>
 				<li><a href='#@{heatmap_id}_tabs-search' title='Search in heatmaps'><i class='fa fa-search'></i></a></li>
+				<li><a href='#@{heatmap_id}_tabs-brush' title='Configure brush'><i class='fa fa-brush'></i></a></li>
+				<li><a href='#@{heatmap_id}_tabs-save-image' title='Save image'><i class='fa fa-images'></i></a></li>
+				<li><a href='#@{heatmap_id}_tabs-resize' title='Resize image'><i class='fa fa-expand-arrows-alt'></i></a></li>
 			</ul>")),
 			div(id = qq('@{heatmap_id}_tabs-search'), 
 				heatmap_search_ui(heatmap_id, shiny_env)
-			),
-			div(id = qq('@{heatmap_id}_tabs-save-image'),
-				radioButtons(qq("@{heatmap_id}_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
-				numericInput(qq("@{heatmap_id}_heatmap_download_image_width"), label = "Image width (in px)", value = width1),
-				numericInput(qq("@{heatmap_id}_heatmap_download_image_height"), label = "Image height (in px)", value = height1),
-				downloadButton(qq("@{heatmap_id}_heatmap_download_button"), "Save image")
-			),
-			div(id = qq('@{heatmap_id}_tabs-resize'),
-				numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", width1),
-				numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", height1),
-				actionButton(qq("@{heatmap_id}_heatmap_input_size_button"), "Change image size"),
-				tags$script(HTML(qq("
-			$('#@{heatmap_id}_heatmap_input_size_button').click(function(){
-				var width = $('#@{heatmap_id}_heatmap_input_width').val();
-				width = parseInt(width);
-				var height = $('#@{heatmap_id}_heatmap_input_height').val();
-				height = parseInt(height);
-				$('#@{heatmap_id}_heatmap_wrap').width(width+4);
-				$('#@{heatmap_id}_heatmap').width(width);
-				$('#@{heatmap_id}_heatmap img').width(width);
-				$('#@{heatmap_id}_heatmap_wrap').height(height+4);
-				$('#@{heatmap_id}_heatmap').height(height);
-				$('#@{heatmap_id}_heatmap img').height(height);
-				$('#@{heatmap_id}_heatmap_download_image_width').val(width);
-				$('#@{heatmap_id}_heatmap_download_image_height').val(height);
-			});
-			$('#@{heatmap_id}_heatmap_download_format').change(function() {
-				var width = $('#@{heatmap_id}_heatmap_input_width').val();
-				width = parseInt(width);
-				var height = $('#@{heatmap_id}_heatmap_input_height').val();
-				height = parseInt(height);
-				if(parseInt($(this).find('input').filter(':checked').val()) == 2) {
-					width_in_inch = Math.round(width*10/100*4/3)/10
-					height_in_inch = Math.round(height*10/100*4/3)/10
-					$('#@{heatmap_id}_heatmap_download_image_width').val(width_in_inch);
-					$('#@{heatmap_id}_heatmap_download_image_height').val(height_in_inch);
-					$('#@{heatmap_id}_heatmap_download_image_width').prev().text('Image width (in inch)');
-					$('#@{heatmap_id}_heatmap_download_image_height').prev().text('Image height (in inch)');
-					Shiny.setInputValue('@{heatmap_id}_heatmap_download_image_width', width_in_inch);
-					Shiny.setInputValue('@{heatmap_id}_heatmap_download_image_height', height_in_inch);
-				} else {
-					$('#@{heatmap_id}_heatmap_download_image_width').val(width);
-					$('#@{heatmap_id}_heatmap_download_image_height').val(height);
-					$('#@{heatmap_id}_heatmap_download_image_width').prev().text('Image width (in px)');
-					$('#@{heatmap_id}_heatmap_download_image_height').prev().text('Image height (in px)');
-				}
-			});
-			Shiny.setInputValue('@{heatmap_id}_heatmap_download_trigger', Math.random());
-				")))
 			),
 			div(id = qq('@{heatmap_id}_tabs-brush'),
 				tags$style(HTML(paste(
@@ -1602,6 +1549,55 @@ heatmap_control_ui = function(heatmap_id, shiny_env) {
 					}
 				});
 			});
+				")))
+			),
+			div(id = qq('@{heatmap_id}_tabs-save-image'),
+				radioButtons(qq("@{heatmap_id}_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
+				numericInput(qq("@{heatmap_id}_heatmap_download_image_width"), label = "Image width (in px)", value = width1),
+				numericInput(qq("@{heatmap_id}_heatmap_download_image_height"), label = "Image height (in px)", value = height1),
+				downloadButton(qq("@{heatmap_id}_heatmap_download_button"), "Save image")
+			),
+			div(id = qq('@{heatmap_id}_tabs-resize'),
+				numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", width1),
+				numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", height1),
+				actionButton(qq("@{heatmap_id}_heatmap_input_size_button"), "Change image size"),
+				tags$script(HTML(qq("
+			$('#@{heatmap_id}_heatmap_input_size_button').click(function(){
+				var width = $('#@{heatmap_id}_heatmap_input_width').val();
+				width = parseInt(width);
+				var height = $('#@{heatmap_id}_heatmap_input_height').val();
+				height = parseInt(height);
+				$('#@{heatmap_id}_heatmap_wrap').width(width+4);
+				$('#@{heatmap_id}_heatmap').width(width);
+				$('#@{heatmap_id}_heatmap img').width(width);
+				$('#@{heatmap_id}_heatmap_wrap').height(height+4);
+				$('#@{heatmap_id}_heatmap').height(height);
+				$('#@{heatmap_id}_heatmap img').height(height);
+				$('#@{heatmap_id}_heatmap_download_image_width').val(width);
+				$('#@{heatmap_id}_heatmap_download_image_height').val(height);
+			});
+			$('#@{heatmap_id}_heatmap_download_format').change(function() {
+				var width = $('#@{heatmap_id}_heatmap_input_width').val();
+				width = parseInt(width);
+				var height = $('#@{heatmap_id}_heatmap_input_height').val();
+				height = parseInt(height);
+				if(parseInt($(this).find('input').filter(':checked').val()) == 2) {
+					width_in_inch = Math.round(width*10/100*4/3)/10
+					height_in_inch = Math.round(height*10/100*4/3)/10
+					$('#@{heatmap_id}_heatmap_download_image_width').val(width_in_inch);
+					$('#@{heatmap_id}_heatmap_download_image_height').val(height_in_inch);
+					$('#@{heatmap_id}_heatmap_download_image_width').prev().text('Image width (in inch)');
+					$('#@{heatmap_id}_heatmap_download_image_height').prev().text('Image height (in inch)');
+					Shiny.setInputValue('@{heatmap_id}_heatmap_download_image_width', width_in_inch);
+					Shiny.setInputValue('@{heatmap_id}_heatmap_download_image_height', height_in_inch);
+				} else {
+					$('#@{heatmap_id}_heatmap_download_image_width').val(width);
+					$('#@{heatmap_id}_heatmap_download_image_height').val(height);
+					$('#@{heatmap_id}_heatmap_download_image_width').prev().text('Image width (in px)');
+					$('#@{heatmap_id}_heatmap_download_image_height').prev().text('Image height (in px)');
+				}
+			});
+			Shiny.setInputValue('@{heatmap_id}_heatmap_download_trigger', Math.random());
 				")))
 			)
 		),
