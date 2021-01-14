@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3.1014</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.4</span>
       </span>
     </div>
 
@@ -92,7 +92,7 @@
       <h1 data-toc-skip>How interactive ComplexHeatmap is implemented</h1>
                         <h4 class="author">Zuguang Gu ( <a href="mailto:z.gu@dkfz.de" class="email">z.gu@dkfz.de</a> )</h4>
             
-            <h4 class="date">2021-01-13</h4>
+            <h4 class="date">2021-01-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jokergoo/InteractiveComplexHeatmap/blob/master/vignettes/implementation.Rmd"><code>vignettes/implementation.Rmd</code></a></small>
       <div class="hidden name"><code>implementation.Rmd</code></div>
@@ -107,7 +107,7 @@ p {
 }
 </style>
 <p>Heatmaps are mainly for visualizing common patterns that are shared by groups of rows and columns. After the patterns are observed, the next step is to extract the corresponding groups of rows and columns from the heatmap, which requires interactivity on the heatmaps. The <strong>ComplexHeatmap</strong> package is well known for generating <strong>static heatmaps</strong> (a single heatmap or a list of heatmaps, possible with complex annotations). Here the package <strong>InteractiveComplexHeatmap</strong> brings interactivity to <strong>ComplexHeatmap</strong>. The new functionalities allow users to capture sub-heatmaps by clicking or selecting areas from heatmaps.</p>
-<p>Unlike other packages which support interactive heatmaps based on JavaScript, <em>e.g.</em>, <strong>iheatmapr</strong>, <strong>heatmaply</strong> and <strong>d3heatmap</strong>, <strong>InteractiveComplexHeatmap</strong> has a special way to capture the positions that users selected and to extract the corresponding values from the matrices. In this vignette, I will explain in details how I implement the interactivity based on <strong>ComplexHeatmap</strong>.</p>
+<p>Unlike other packages which support interactive heatmaps based on JavaScript, <em>e.g.</em>, <strong>iheatmapr</strong>, <strong>heatmaply</strong> and <strong>d3heatmap</strong>, <strong>InteractiveComplexHeatmap</strong> has a special way to capture the positions that users selected and to extract the corresponding values from the matrices. In this vignette, I will explain in details how the interactivity is implemented based on <strong>ComplexHeatmap</strong>.</p>
 <p>To demonstrate it, I first generate a list of two heatmaps and apply <em>k</em>-means clustering on the numeric heatmap.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/ComplexHeatmap">ComplexHeatmap</a></span><span class="op">)</span>
@@ -125,7 +125,7 @@ p {
 <li>on the interactive graphics device,</li>
 <li>on a Shiny app.</li>
 </ol>
-<p>The interactivity on the interactive graphics device is the basis of the interactivity of the Shiny app, so in the following, I will first introduce how the interactivity is implemneted with the interactive graphic device.</p>
+<p>The interactivity on the interactive graphics device is the basis of the interactivity of the Shiny app, so in the following, I will first introduce how the interactivity is implemneted with the interactive graphics device.</p>
 <div id="on-the-interactive-graphics-device" class="section level2">
 <h2 class="hasAnchor">
 <a href="#on-the-interactive-graphics-device" class="anchor"></a>On the interactive graphics device</h2>
@@ -133,7 +133,7 @@ p {
 <p>I will first explain how <strong>InteractiveComplexHeatmap</strong> captures the positions that user clicked on the device and how it is associated to the values in the matrix.</p>
 <p>When user clicks on the device, the physical locations relative in the device are captured by <code><a href="https://rdrr.io/r/grid/grid.locator.html">grid::grid.locator()</a></code>. The physical locations of the heatmaps (more precisely, the heatmap slices) can also be captured by <code><a href="https://rdrr.io/r/grid/deviceLoc.html">grid::deviceLoc()</a></code>. With knowing the exact positions of the selected points and the heatmaps, it is possible to tell which heatmap the selected points are in. Furthermore, by calculating the relative distance of the selected points in that heatmap, it is also possible to know which rows and columns the selected points correspond to.</p>
 <p>For associating user’s clicked points and the heatmaps, we first need to calculate the positions of all heatmaps. There is a helper function <code><a href="../reference/htPositionsOnDevice.html">htPositionsOnDevice()</a></code> that does this job.</p>
-<p>Before executing <code><a href="../reference/htPositionsOnDevice.html">htPositionsOnDevice()</a></code>, the heatmap should be drawn on the device and the layout of heatmaps should have been done. Thus, the heatmap object <code>ht_list</code> should be updated explictly by the <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw()</a></code> function.</p>
+<p>Before executing <code><a href="../reference/htPositionsOnDevice.html">htPositionsOnDevice()</a></code>, the heatmap should be drawn on the device and the layout of heatmaps should have been generated. Thus, the heatmap object <code>ht_list</code> should be updated explictly by the <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw()</a></code> function.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ht_list</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span>
 <span class="va">pos</span> <span class="op">=</span> <span class="fu"><a href="../reference/htPositionsOnDevice.html">htPositionsOnDevice</a></span><span class="op">(</span><span class="va">ht_list</span><span class="op">)</span></code></pre></div>
@@ -195,8 +195,8 @@ p {
 <p>where the symbol <span class="math inline">\(\lceil x \rceil\)</span> means the ceiling of the numeric value <span class="math inline">\(x\)</span>. In <strong>ComplexHeatmap</strong>, the row with index 1 is always put on the top of the heatmap, then <span class="math inline">\(i_r\)</span> should be adjusted as:</p>
 <p><span class="math display">\[ i_r = n_r - \lceil \frac{b - y_1}{y_2 - y_1} \cdot n_r \rceil + 1 \]</span></p>
 <p>The subset of row and column indices of the original matrix that belongs to the selected heatmap slice is already stored in <code>ht_list</code> object (they can be retrieved by <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/row_order-dispatch.html">row_order()</a></code> and <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/column_order-dispatch.html">column_order()</a></code> function), thus, we can obtain the row and column index of the original matrix that corresponds to user’s point easily with <span class="math inline">\(i_r\)</span> and <span class="math inline">\(i_c\)</span>.</p>
-<p>Denote the matrix for the complete heatmap (without slicing) as <span class="math inline">\(M\)</span>, and denote the subset of row and column indices in that heatmap as <span class="math inline">\(o_r\)</span>, <span class="math inline">\(o_c\)</span>. Note, <span class="math inline">\(o_r\)</span> and <span class="math inline">\(o_c\)</span> can be reordered due to clustering. Then the row and column indices (<span class="math inline">\(j_r\)</span> and <span class="math inline">\(j_c\)</span>) for the selected point in <span class="math inline">\(M\)</span> are</p>
-<p><span class="math display">\[j_r = o_{r, i_r}\]</span> <span class="math display">\[j_c = o_{c, i_c}\]</span></p>
+<p>Denote the matrix for the complete heatmap (without slicing) as <span class="math inline">\(M\)</span>, and denote the subset of row and column indices in that heatmap as <span class="math inline">\(p\)</span> and <span class="math inline">\(q\)</span>. Note, <span class="math inline">\(p\)</span> and <span class="math inline">\(q\)</span> can be reordered due to clustering. Then the row and column indices (<span class="math inline">\(j_r\)</span> and <span class="math inline">\(j_c\)</span>) for the selected point in <span class="math inline">\(M\)</span> are</p>
+<p><span class="math display">\[j_r = p_{i_r}\]</span> <span class="math display">\[j_c = q_{i_c}\]</span></p>
 <p>And the corresponding value in <span class="math inline">\(M\)</span> is <span class="math inline">\(M_{j_r, j_c}\)</span>.</p>
 <p><strong>InteractiveComplexHeatmap</strong> has two functions <code><a href="../reference/selectPosition.html">selectPosition()</a></code> and <code><a href="../reference/selectArea.html">selectArea()</a></code> which allows users to pick single positions or select areas from the heatmaps. Under the interactive graphics device, users do not need to run <code><a href="../reference/htPositionsOnDevice.html">htPositionsOnDevice()</a></code> explicitly. The positions of heatmaps are automatically calculated, cached and reused if the heatmaps are the same and the device has not changed its size. If users changed the device size, <code><a href="../reference/htPositionsOnDevice.html">htPositionsOnDevice()</a></code> will be automatically re-executed.</p>
 <p>The next image shows an example of using <code><a href="../reference/selectPosition.html">selectPosition()</a></code>.</p>
@@ -301,7 +301,7 @@ p {
 <div id="shiny-app" class="section level2">
 <h2 class="hasAnchor">
 <a href="#shiny-app" class="anchor"></a>Shiny app</h2>
-<p>With the three functions <code><a href="../reference/htPositionsOnDevice.html">htPositionsOnDevice()</a></code>, <code><a href="../reference/selectPosition.html">selectPosition()</a></code> and <code><a href="../reference/selectArea.html">selectArea()</a></code>, it is possible to implement Shiny apps for interactively working with heatmaps. Now the problem is how does the server side capture the positions that user clicked on the web page. Luckily, there is a solution for this. The output heatmap is normally put with a <code><a href="https://shiny.rstudio.com/reference/shiny/latest/plotOutput.html">shiny::plotOutput()</a></code> and <code>plotOutput()</code> provides two actions <code>click</code> and <code>brush</code>. Then on the server side, it is possible to get the information of the positions that user clicked. The positions can be set to <code><a href="../reference/selectPosition.html">selectPosition()</a></code> and <code><a href="../reference/selectArea.html">selectArea()</a></code> via <code>pos</code> or <code>pos1</code>/<code>pos2</code> arguments to correctly correspond to the original matrices.</p>
+<p>With the three functions <code><a href="../reference/htPositionsOnDevice.html">htPositionsOnDevice()</a></code>, <code><a href="../reference/selectPosition.html">selectPosition()</a></code> and <code><a href="../reference/selectArea.html">selectArea()</a></code>, it is possible to implement Shiny apps for interactively working with heatmaps. Now the problem is how does the server side capture the positions that user clicked on the web page. Luckily, there is a solution for this. The output heatmap is normally put with a <code><a href="https://shiny.rstudio.com/reference/shiny/latest/plotOutput.html">shiny::plotOutput()</a></code> and <code>plotOutput()</code> provides two actions <code>click</code> and <code>brush</code>. Then on the server side, it is possible to get the information of the positions that user clicked. The positions can be set to <code><a href="../reference/selectPosition.html">selectPosition()</a></code> and <code><a href="../reference/selectArea.html">selectArea()</a></code> via <code>pos</code> or <code>pos1</code>/<code>pos2</code> arguments and then they can be correctly correspond to the values in original matrices.</p>
 <p><br><br><br><br><br><br><br><br></p>
 </div>
   </div>
