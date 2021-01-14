@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3.1014</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.4</span>
       </span>
     </div>
 
@@ -92,7 +92,7 @@
       <h1 data-toc-skip>Decorations on the heatmaps</h1>
                         <h4 class="author">Zuguang Gu ( <a href="mailto:z.gu@dkfz.de" class="email">z.gu@dkfz.de</a> )</h4>
             
-            <h4 class="date">2021-01-13</h4>
+            <h4 class="date">2021-01-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jokergoo/InteractiveComplexHeatmap/blob/master/vignettes/decoration.Rmd"><code>vignettes/decoration.Rmd</code></a></small>
       <div class="hidden name"><code>decoration.Rmd</code></div>
@@ -101,7 +101,7 @@
 
     
     
-<p>In <strong>ComplexHeatmap</strong>, we use <code>decorate_*()</code> function to add graphics after the heatmap are drawn. To also put the decoration graphics in the heatmaps in the Shiny app, you need to wrap all the decoration code into a function and send it to <code>post_fun</code> argument in <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw()</a></code> function. For example, the following code to generate a decorated heatmap:</p>
+<p>In <strong>ComplexHeatmap</strong>, functions <code>decorate_*()</code> are used to add graphics after the heatmaps are drawn. To also put the decoration graphics in the heatmaps in the Shiny app, user needs to wrap all the decoration code into a function and send it to <code>post_fun</code> argument in <code><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw()</a></code> function. For example, the following code to generate a decorated heatmap:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/ComplexHeatmap">ComplexHeatmap</a></span><span class="op">)</span>
 <span class="va">m</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">100</span><span class="op">)</span>, <span class="fl">10</span><span class="op">)</span>
@@ -121,8 +121,9 @@
 <span class="va">ht</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span><span class="op">(</span><span class="va">ht</span>, post_fun <span class="op">=</span> <span class="va">post_fun</span><span class="op">)</span>
 <span class="fu"><a href="../reference/htShiny.html">htShiny</a></span><span class="op">(</span><span class="va">ht</span><span class="op">)</span></code></pre></div>
 <p><img src="https://jokergoo.github.io/images/decoration.png" width="100%" style="display: block; margin: auto;"></p>
-<p><code>post_fun</code> is a self-defined function and always needs on argument <code>ht_list</code>.</p>
+<p><code>post_fun</code> is a self-defined function and always needs one argument <code>ht_list</code>.</p>
 <p>Note the decorations will not be applied on the sub-heatmap.</p>
+<p><br><br><br><br><br><br><br><br></p>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

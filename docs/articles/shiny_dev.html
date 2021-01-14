@@ -31,7 +31,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3.1014</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.4</span>
       </span>
     </div>
 
@@ -92,7 +92,7 @@
       <h1 data-toc-skip>Functions for Shiny app development</h1>
                         <h4 class="author">Zuguang Gu ( <a href="mailto:z.gu@dkfz.de" class="email">z.gu@dkfz.de</a> )</h4>
             
-            <h4 class="date">2021-01-13</h4>
+            <h4 class="date">2021-01-14</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/jokergoo/InteractiveComplexHeatmap/blob/master/vignettes/shiny_dev.Rmd"><code>vignettes/shiny_dev.Rmd</code></a></small>
       <div class="hidden name"><code>shiny_dev.Rmd</code></div>
@@ -112,7 +112,7 @@ p {
 <p><code><a href="../reference/htShiny.html">htShiny()</a></code> can export heatmaps as a stand-alone Shiny app. <strong>InteractiveComplexHeatmap</strong> also provides two functions for integrating the interactive heatmap widgets into other Shiny apps. The two functions are:</p>
 <ul>
 <li>
-<code><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code>: for building UI.</li>
+<code><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code>: for building UI on the client side.</li>
 <li>
 <code><a href="../reference/renderInteractiveComplexHeatmap.html">renderInteractiveComplexHeatmap()</a></code>: for processing on the sever side.</li>
 </ul>
@@ -137,7 +137,7 @@ p {
 
 <span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/shinyApp.html">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></code></pre></div>
 <p><img src="https://jokergoo.github.io/images/app_demo1.png" width="100%" style="display: block; margin: auto;"></p>
-<p>You can also put multiple interactive heatmaps widgets in a single Shiny app, but this time you must assign a “heatmap id” for each one, so that <code><a href="../reference/renderInteractiveComplexHeatmap.html">renderInteractiveComplexHeatmap()</a></code> can find the correct heatmap to response. The heatmap id should start with letters.</p>
+<p>You can also put multiple interactive heatmaps widgets in a single Shiny app, but this time you must assign a “<strong>heatmap ID</strong>” for each one, so that <code><a href="../reference/renderInteractiveComplexHeatmap.html">renderInteractiveComplexHeatmap()</a></code> can find the correct heatmap to response. The heatmap ID should start with letters.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">ht1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap.html">Heatmap</a></span><span class="op">(</span><span class="va">m</span>, col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"white"</span>, <span class="st">"blue"</span><span class="op">)</span><span class="op">)</span>
 <span class="va">ht1</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html">draw</a></span><span class="op">(</span><span class="va">ht1</span><span class="op">)</span>
@@ -163,9 +163,9 @@ p {
 <div id="customize-the-widgets" class="section level2">
 <h2 class="hasAnchor">
 <a href="#customize-the-widgets" class="anchor"></a>Customize the widgets</h2>
-<p>The <code>div</code> block of the original heatmap and the sub-heatmap can be resized by dragging the two boxes, but still, <code><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code> has arguments <code>width1</code>, <code>width2</code>, <code>height1</code> and <code>height2</code> that control the initial sizes of the two boxes. You can check <code><a href="../reference/htShinyExample.html">htShinyExample(16)</a></code> where the size of the heatmap box is manually set to make sure the heatmap is well visible.</p>
+<p>The original heatmap and the sub-heatmap can be resized by dragging the two boxes, but still, <code><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code> has arguments <code>width1</code>, <code>width2</code>, <code>height1</code> and <code>height2</code> that control the initial sizes of the two boxes. You can check <code><a href="../reference/htShinyExample.html">htShinyExample(16)</a></code> where the size of the heatmap box is manually set to make sure the heatmap is well visible.</p>
 <p>By default, to get the information of a single cell in the heatmap, a “click” action is used. In <code><a href="../reference/InteractiveComplexHeatmapOutput.html">InteractiveComplexHeatmapOutput()</a></code>, you can also set the action to <code>"hover"</code> or <code>"dblclick"</code> to change the action. Note no matter the action is a click or a hover, when applying the brush action, click or hover will always be first applied and you will see the output for a single cell appears and fastly disappears. Currently I don’t have a solution to get rid of that.</p>
-<p>The style of the brush can be specified by <code>brush_opt</code> argument. The value should be a list and the value will be sent to <code><a href="https://shiny.rstudio.com/reference/shiny/latest/brushOpts.html">shiny::brushOpts()</a></code>.</p>
+<p>The initial style of the brush can be specified by <code>brush_opt</code> argument. The value should be a list and the value will be sent to <code><a href="https://shiny.rstudio.com/reference/shiny/latest/brushOpts.html">shiny::brushOpts()</a></code>. Note, the style of the brush can also be manually adjusted in the web page of the Shiny app.</p>
 </div>
 <div id="work-with-r-markdown-documents" class="section level2">
 <h2 class="hasAnchor">
@@ -180,14 +180,14 @@ p {
 <span id="cb3-7"><a href="#cb3-7"></a><span class="co">---</span></span>
 <span id="cb3-8"><a href="#cb3-8"></a></span>
 <span id="cb3-9"><a href="#cb3-9"></a></span>
-<span id="cb3-10"><a href="#cb3-10"></a><span class="in">```{r, echo=FALSE}</span></span>
+<span id="cb3-10"><a href="#cb3-10"></a><span class="in">```{r, echo = FALSE}</span></span>
 <span id="cb3-11"><a href="#cb3-11"></a><span class="in">library(InteractiveComplexHeatmap)</span></span>
 <span id="cb3-12"><a href="#cb3-12"></a><span class="in">m = matrix(rnorm(100*100), 100)</span></span>
 <span id="cb3-13"><a href="#cb3-13"></a><span class="in">ht = Heatmap(m)</span></span>
 <span id="cb3-14"><a href="#cb3-14"></a><span class="in">```</span></span>
 <span id="cb3-15"><a href="#cb3-15"></a></span>
 <span id="cb3-16"><a href="#cb3-16"></a></span>
-<span id="cb3-17"><a href="#cb3-17"></a><span class="in">```{r, echo=FALSE}</span></span>
+<span id="cb3-17"><a href="#cb3-17"></a><span class="in">```{r, echo = FALSE}</span></span>
 <span id="cb3-18"><a href="#cb3-18"></a><span class="in">ui = fluidPage(</span></span>
 <span id="cb3-19"><a href="#cb3-19"></a><span class="in">    InteractiveComplexHeatmapOutput()</span></span>
 <span id="cb3-20"><a href="#cb3-20"></a><span class="in">)</span></span>
@@ -203,14 +203,14 @@ p {
 <div id="self-define-the-output" class="section level2">
 <h2 class="hasAnchor">
 <a href="#self-define-the-output" class="anchor"></a>Self-define the output</h2>
-<p>Both the click and brush action on the heatmap trigger an output below the heatmap. The output gives the information of which row(s) and columns(s) are selected by users. The reponse for the two actions can be self-defined.</p>
+<p>Both the click and brush actions on the heatmap trigger an output below the heatmaps. The output gives the information of which row(s) and columns(s) are selected by users. The reponse for the two actions can be self-defined.</p>
 <p>In <code><a href="../reference/renderInteractiveComplexHeatmap.html">renderInteractiveComplexHeatmap()</a></code>, there are two arguments <code>click_action</code> and <code>brush_action</code> which accept self-defined functions and define how to response after the heatmap is clicked or brushed. The input for the two functions should accept two argumnts, one is a <code>DataFrame</code> object which contains the information of which row(s) and columns(s) are selected by users, and the second argument should always be <code>output</code> which is used in the Shiny app.</p>
 <p>To use <code>click_action</code> or <code>brush_action</code>, a <code>htmlOutput</code> (or other similar <code>*Output</code>) should be first setup in the UI, then the Shiny app knows where to update the output.</p>
-<p>The <code>click_action</code> or <code>brush_action</code> is basically defined as follows (assume the id set in <code><a href="https://shiny.rstudio.com/reference/shiny/latest/htmlOutput.html">htmlOutput()</a></code> is <code>"info"</code>):</p>
+<p>The <code>click_action</code> or <code>brush_action</code> is basically defined as follows (assume the ID set in <code><a href="https://shiny.rstudio.com/reference/shiny/latest/htmlOutput.html">htmlOutput()</a></code> is <code>"info"</code>):</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">function</span><span class="op">(</span><span class="va">df</span>, <span class="va">output</span><span class="op">)</span> <span class="op">{</span>
     <span class="va">output</span><span class="op">[[</span><span class="st">"info"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/renderUI.html">renderUI</a></span><span class="op">(</span><span class="op">{</span>  <span class="co"># or output$info = ...</span>
-        <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
+        <span class="kw">if</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span> <span class="co"># have not clicked into the heatmap body</span>
             <span class="va">...</span>
         <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span>
             <span class="va">...</span>
@@ -240,7 +240,7 @@ p {
 ## 2     2,4,1,...
 ## 3     1,2,3,...
 ## 4     1,2,3,...</code></pre>
-<p>In the following example, in the UI, I add a new <code>htmlOutput</code> with id <code>info</code>. On the sever side, I define <code>click_action</code> to print a styled text and <code>brush_action</code> to print the table of the selected rows and columns from the heatmap. Note I also set <code>default_click_action = FALSE, default_brush_action = FALSE</code> in <code><a href="../reference/renderInteractiveComplexHeatmap.html">renderInteractiveComplexHeatmap()</a></code> to turn off the default responses.</p>
+<p>In the following example, in the UI, I add a new <code>htmlOutput</code> with ID <code>info</code>. On the sever side, I define <code>click_action</code> to print a styled text and define <code>brush_action</code> to print the table of the selected rows and columns from the heatmap. Note I also set <code>default_click_action = FALSE, default_brush_action = FALSE</code> in <code><a href="../reference/renderInteractiveComplexHeatmap.html">renderInteractiveComplexHeatmap()</a></code> to turn off the default responses.</p>
 <p>You can also run the following example simply by <code><a href="../reference/htShinyExample.html">htShinyExample(20)</a></code>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/GetoptLong">GetoptLong</a></span><span class="op">)</span>  <span class="co"># for the qq() function which does variable intepolation</span>
@@ -265,8 +265,8 @@ p {
 
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/">kableExtra</a></span><span class="op">)</span>
 <span class="va">brush_action</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">df</span>, <span class="va">output</span><span class="op">)</span> <span class="op">{</span>
-    <span class="va">row_index</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">row_index</span><span class="op">)</span>
-    <span class="va">column_index</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">column_index</span><span class="op">)</span>
+    <span class="va">row_index</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">row_index</span><span class="op">)</span><span class="op">)</span>
+    <span class="va">column_index</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html">unique</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/unlist.html">unlist</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">column_index</span><span class="op">)</span><span class="op">)</span>
     <span class="va">output</span><span class="op">[[</span><span class="st">"info"</span><span class="op">]</span><span class="op">]</span> <span class="op">=</span> <span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/renderUI.html">renderUI</a></span><span class="op">(</span><span class="op">{</span>
         <span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html">is.null</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span>
             <span class="fu"><a href="https://rdrr.io/pkg/htmltools/man/HTML.html">HTML</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html">kable_styling</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html">kbl</a></span><span class="op">(</span><span class="va">m</span><span class="op">[</span><span class="va">row_index</span>, <span class="va">column_index</span>, drop <span class="op">=</span> <span class="cn">FALSE</span><span class="op">]</span>, digits <span class="op">=</span> <span class="fl">2</span>, format <span class="op">=</span> <span class="st">"html"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
@@ -282,9 +282,10 @@ p {
 
 <span class="fu"><a href="https://shiny.rstudio.com/reference/shiny/latest/shinyApp.html">shinyApp</a></span><span class="op">(</span><span class="va">ui</span>, <span class="va">server</span><span class="op">)</span></code></pre></div>
 <p><img src="https://jokergoo.github.io/images/customize_output.png" width="100%" style="display: block; margin: auto;"></p>
-<p><code><a href="../reference/htShinyExample.html">htShinyExample(21)</a></code> gives another scenario where the output needs to be self-defined. In that example, an gene expression matrix is visualized and clicking on the heatmap will print the corresponding gene and some other annotations related to this gene. Run <code><a href="../reference/htShinyExample.html">htShinyExample(21)</a></code> to see how this is implemented.</p>
+<p><code><a href="../reference/htShinyExample.html">htShinyExample(21)</a></code> gives another scenario where the output needs to be self-defined. In that example, an gene expression matrix is visualized and clicking on the heatmap will print the corresponding gene and some other annotations related to this gene (e.g. the corresponding gene symbol, RefSeq IDs and UniProt IDs). Run <code><a href="../reference/htShinyExample.html">htShinyExample(21)</a></code> to see how this is implemented.</p>
 <p><img src="https://jokergoo.github.io/images/customize_output2.png" width="100%" style="display: block; margin: auto;"></p>
-<p>One last example is <code><a href="../reference/htShinyExample.html">htShinyExample(23)</a></code> where the heatmap visualizes correlations of a list of Gene Ontology terms. In this example, the click and brush actions are self-defined so that the selected GO ids as well as their detailed descriptions are printed.</p>
+<p>One last example is <code><a href="../reference/htShinyExample.html">htShinyExample(23)</a></code> where the heatmap visualizes correlations of a list of Gene Ontology terms (The plot is generated by <a href="https://bioconductor.org/packages/simplifyEnrichment/">the <strong>simplifyEnrichment</strong> package</a>). In this example, the click and brush actions are self-defined so that the selected GO IDs as well as their detailed descriptions are printed.</p>
+<p><img src="https://jokergoo.github.io/images/customize_output3.png" width="100%" style="display: block; margin: auto;"></p>
 </div>
   </div>
 
