@@ -1,37 +1,47 @@
-# Make ComplexHeatmap Interactive
+# Make Interactive Complex Heatmaps
 
 [![Build Status](https://travis-ci.org/jokergoo/InteractiveComplexHeatmap.svg)](https://travis-ci.org/jokergoo/InteractiveComplexHeatmap) 
 
 
-<img src="https://user-images.githubusercontent.com/449218/82199376-e5eec600-98fd-11ea-9fca-ad95d405dc20.gif"  width='700'/>
+<img src="https://user-images.githubusercontent.com/449218/104457409-542d7a80-55aa-11eb-8cf6-34775e49535c.gif"  width='700' border="black" />
 
 ## Install
 
-Currently, it is only available on GitHub:
+**InteractiveComplexHeatmap** is available on
+[Bioconductor](https://bioconductor.org/packages/InteractiveComplexHeatmap/),
+you can install it by:
 
 ```r
-devtools::install_github("jokergoo/InteractiveComplexHeatmap")
+if (!requireNamespace("BiocManager", quietly=TRUE))
+    install.packages("BiocManager")
+BiocManager::install("InteractiveComplexHeatmap")
+```
+
+If you want the latest version, install it directly from GitHub:
+
+```r
+library(devtools)
+install_github("jokergoo/InteractiveComplexHeatmap")
 ```
 
 ## Usage
 
-With any `Heatmap`/`HeatmapList` object, directly send to `ht_shiny()` to create a shiny app for your heatmap(s):
+With any `Heatmap`/`HeatmapList` object, directly send to `htShiny()` to create a Shiny app for your heatmap(s):
 
 ```r
-ht_shiny(ht_list)
+htShiny(ht_list)
 ```
 
 If the heatmaps are already drawn, `ht_list` can be omitted and the last heatmap object is retrieved automatically:
 
 ```r
-# this only works in the interactive environment
-Heatmap(...) # or other functions that internally use Heatmap()
-ht_shiny()
+Heatmap(...) + other_heatmaps_or_annotations # or other functions that internally use Heatmap()
+htShiny()
 ```
 
 There are also two functions for Shiny app development:
 
-- `InteractiveComplexHeatmapOutput()`: for the UI.
+- `InteractiveComplexHeatmapOutput()`: for the UI on the client side.
 - `renderInteractiveComplexHeatmap()`: for processing on the sever side.
 
 ```r
@@ -49,7 +59,7 @@ server = function(input, output, session) {
 shiny::shinyApp(ui, server)
 ```
 
-You can also put multiple heatmaps in the same shiny app:
+You can also put multiple interactive heatmaps widgets in the same Shiny app:
 
 ```r
 ht1 = Heatmap(m, col = c("white", "blue"))
@@ -72,3 +82,9 @@ server = function(input, output, session) {
 
 shiny::shinyApp(ui, server)
 ```
+
+
+## License
+
+MIT @ Zuguang Gu
+

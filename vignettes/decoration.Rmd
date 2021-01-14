@@ -25,9 +25,9 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages(library(InteractiveComplexHeatmap))
 ```
 
-In **ComplexHeatmap**, we use `decorate_*()` function to add graphics after
-the heatmap are drawn. To also put the decoration graphics in the heatmaps in
-the Shiny app, you need to wrap all the decoration code into a function and
+In **ComplexHeatmap**, functions `decorate_*()` are used to add graphics after
+the heatmaps are drawn. To also put the decoration graphics in the heatmaps in
+the Shiny app, user needs to wrap all the decoration code into a function and
 send it to `post_fun` argument in `draw()` function. For example, the following
 code to generate a decorated heatmap:
 
@@ -52,7 +52,7 @@ post_fun = function(ht_list) {
     })
 }
 ht = draw(ht, post_fun = post_fun)
-ht_shiny(ht)
+htShiny(ht)
 ```
 
 ```{r, echo = FALSE, out.width = "100%"}
@@ -60,7 +60,16 @@ include_graphics("https://jokergoo.github.io/images/decoration.png")
 ```
 
 
-`post_fun` is a self-defined function and always needs on argument `ht_list`.
+`post_fun` is a self-defined function and always needs one argument `ht_list`.
 
 Note the decorations will not be applied on the sub-heatmap.
+
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
 

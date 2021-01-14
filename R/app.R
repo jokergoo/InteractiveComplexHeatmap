@@ -20,7 +20,7 @@
 # == example
 # # use a random heatmap
 # if(interactive()) {
-# ht_shiny()
+# htShiny()
 # }
 #
 # # by providing a heatmap/heatmap list
@@ -31,7 +31,7 @@
 # 
 # ht = Heatmap(m)
 # ht = draw(ht)
-# ht_shiny(ht)
+# htShiny(ht)
 # }
 #
 # if(interactive()) {
@@ -44,15 +44,20 @@
 # ht2 = Heatmap(m2)
 #  
 # ht_list = draw(ht1 + ht2)
-# ht_shiny(ht_list)
+# htShiny(ht_list)
 # 
 # ht_list = ht1 \%v\% ht2
-# ht_shiny(ht_list)
+# htShiny(ht_list)
 # }
-ht_shiny = function(ht_list = get_last_ht(), title = NULL, description = NULL, hline = TRUE, html = NULL, ...) {
+htShiny = function(ht_list = get_last_ht(), title = NULL, description = NULL, 
+	hline = TRUE, html = NULL, ...) {
 
 	if(is.null(ht_list)) {
-		stop_wrap("No heatmap is detected.")
+		if(length(dev.list())) {
+			stop_wrap("No heatmap is detected. Detected there is opened graphics device. If the heatmap was already made in that device, enter `ComplexHeatmap::ht_opt$save_last = TRUE` and run `htShiny()` again.")
+		} else {
+			stop_wrap("No heatmap is detected.")
+		}
 	} else if(inherits(ht_list, "InputHeatmap")) {
 		ht_list = show(ht_list)
 	} else {
@@ -69,7 +74,7 @@ ht_shiny = function(ht_list = get_last_ht(), title = NULL, description = NULL, h
 	}
 	
 	if(is.null(description)) {
-		description = "You can click a position or select an area from the heatmap(s). The original heatmap and the selected sub-heatmap can be resized by dragging from the bottom right of the box. If the heatmap is too huge or you resize the heatmap too frequently, the heatmap might not be correctly updated. You can just slightly resize the heatmap again and wait for several seconds."
+		description = "You can click a position or select an area from the heatmap. The original heatmap and the selected sub-heatmap can be resized by dragging from the bottom right of the box. If the heatmap is too huge or you resize the heatmap too frequently, the heatmap might not be correctly updated. You can just slightly resize the heatmap again and wait for several seconds."
 	}
 	if(is.character(description)) {
 		description = p(description)
@@ -95,10 +100,23 @@ ht_shiny = function(ht_list = get_last_ht(), title = NULL, description = NULL, h
 }
 
 # == title
+# Interactive heatmaps with a shiny app
+#
+# == param
+# -... All goes to `htShiny`.
+#
+# == value
+# A shiny app object.
+#
+ht_shiny = function(...) {
+	htShiny(...)
+}
+
+# == title
 # Examples of the interactive complex heatmaps
 #
 # == param
-# -which An integer of which example to use. The list of all examples can be obtained by executing `ht_shiny_example` with no argument.
+# -which An integer of which example to use. The list of all examples can be obtained by executing `htShinyExample` with no argument.
 #
 # == details
 # The source code of all examples are in ``systm.file("examples", "examples.R")``.
@@ -107,11 +125,11 @@ ht_shiny = function(ht_list = get_last_ht(), title = NULL, description = NULL, h
 # A shiny app object.
 #
 # == example
-# ht_shiny_example()
+# htShinyExample()
 # if(interactive()) {
-#     ht_shiny_example(4)
+#     htShinyExample(4)
 # }
-ht_shiny_example = function(which) {
+htShinyExample = function(which) {
 	examples = get_examples()
 	if(missing(which)) {
 		cat("There are following examples:\n\n")
@@ -156,14 +174,14 @@ ht_shiny_example = function(which) {
 		}
 		message("Processing the heatmaps. It takes different time depending on examples...\n")
 
-		if(any(grepl("ht_shiny\\(", code))) {
+		if(any(grepl("htShiny\\(", code))) {
 
 			code2 = paste(code, collapse = "\n")
 			code2 = gsub("^\\s+||\\s+$", "", code2)
 
-			original_ht_shiny = ht_shiny
+			original_htShiny = htShiny
 
-			ht_shiny = function(ht, ...) {
+			htShiny = function(ht, ...) {
 			html = qq("
 <hr />
 <div>
@@ -175,7 +193,7 @@ ht_shiny_example = function(which) {
 @{code2}
 </pre>
 </div>")
-				original_ht_shiny(ht, ..., html = HTML(html))
+				original_htShiny(ht, ..., html = HTML(html))
 			}
 		} else {
 			i = which(grepl("shinyApp\\(", code))

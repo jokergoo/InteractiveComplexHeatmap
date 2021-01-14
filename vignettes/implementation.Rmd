@@ -45,7 +45,7 @@ Unlike other packages which support interactive heatmaps based on JavaScript,
 _e.g._, **iheatmapr**, **heatmaply** and **d3heatmap**,
 **InteractiveComplexHeatmap** has a special way to capture the positions that
 users selected and to extract the corresponding values from the matrices. In
-this vignette, I will explain in details how I implement the interactivity based on
+this vignette, I will explain in details how the interactivity is implemented based on
 **ComplexHeatmap**.
 
 To demonstrate it, I first generate a list of two heatmaps and apply _k_-means
@@ -72,7 +72,7 @@ ht_list = Heatmap(mat1, name = "mat_a", row_km = 2, column_km = 2) +
 
 The interactivity on the interactive graphics device is the basis of the
 interactivity of the Shiny app, so in the following, I will first introduce
-how the interactivity is implemneted with the interactive graphic device.
+how the interactivity is implemneted with the interactive graphics device.
 
 ## On the interactive graphics device
 
@@ -93,16 +93,16 @@ the relative distance of the selected points in that heatmap, it is also possibl
 know which rows and columns the selected points correspond to.
 
 For associating user's clicked points and the heatmaps, we first need to calculate the
-positions of all heatmaps. There is a helper function `ht_pos_on_device()`
+positions of all heatmaps. There is a helper function `htPositionsOnDevice()`
 that does this job.
 
-Before executing `ht_pos_on_device()`, the heatmap should be drawn on the
-device and the layout of heatmaps should have been done. Thus, the heatmap object
+Before executing `htPositionsOnDevice()`, the heatmap should be drawn on the
+device and the layout of heatmaps should have been generated. Thus, the heatmap object
 `ht_list` should be updated explictly by the `draw()` function.
 
 ```{r, fig.width = 6, fig.height = 4}
 ht_list = draw(ht_list)
-pos = ht_pos_on_device(ht_list)
+pos = htPositionsOnDevice(ht_list)
 ```
 
 The returned object `pos` is a `DataFrame` object that contains the positions
@@ -178,20 +178,20 @@ the row and column index of the original matrix that corresponds to user's
 point easily with $i_r$ and $i_c$.
 
 Denote the matrix for the complete heatmap (without slicing) as $M$, and denote the subset
-of row and column indices in that heatmap as $o_r$, $o_c$. Note, $o_r$ and $o_c$ can be 
+of row and column indices in that heatmap as $p$ and $q$. Note, $p$ and $q$ can be 
 reordered due to clustering. Then the row and column indices ($j_r$ and $j_c$) for the selected point in $M$ are
 
-$$j_r = o_{r, i_r}$$
-$$j_c = o_{c, i_c}$$
+$$j_r = p_{i_r}$$
+$$j_c = q_{i_c}$$
 
 And the corresponding value in $M$ is $M_{j_r, j_c}$.
 
 **InteractiveComplexHeatmap** has two functions `selectPosition()` and
 `selectArea()` which allows users to pick single positions or select areas
 from the heatmaps. Under the interactive graphics device, users do not need to
-run `ht_pos_on_device()` explicitly. The positions of heatmaps are
+run `htPositionsOnDevice()` explicitly. The positions of heatmaps are
 automatically calculated, cached and reused if the heatmaps are the same and
-the device has not changed its size. If users changed the device size, `ht_pos_on_device()`
+the device has not changed its size. If users changed the device size, `htPositionsOnDevice()`
 will be automatically re-executed.
 
 The next image shows an example of using `selectPosition()`. 
@@ -294,7 +294,7 @@ the next section.
 
 ## Shiny app
 
-With the three functions `ht_pos_on_device()`, `selectPosition()` and
+With the three functions `htPositionsOnDevice()`, `selectPosition()` and
 `selectArea()`, it is possible to implement Shiny apps for interactively
 working with heatmaps. Now the problem is how does the server side capture the
 positions that user clicked on the web page. Luckily, there is a solution for
@@ -302,8 +302,8 @@ this. The output heatmap is normally put with a `shiny::plotOutput()` and
 `plotOutput()` provides two actions `click` and `brush`. Then on the server
 side, it is possible to get the information of the positions that user
 clicked. The positions can be set to `selectPosition()` and `selectArea()` via
-`pos` or `pos1`/`pos2` arguments to correctly correspond to the original
-matrices.
+`pos` or `pos1`/`pos2` arguments and then they can be correctly correspond to
+the values in original matrices.
 
 
 <br />

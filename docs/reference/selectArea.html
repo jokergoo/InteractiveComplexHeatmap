@@ -72,7 +72,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">InteractiveComplexHeatmap</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3.1011</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.99.3.1014</span>
       </span>
     </div>
 
@@ -138,7 +138,7 @@
     <p>Select an area in the heatmap</p>
     </div>
 
-    <pre class="usage"><span class='fu'>selectArea</span><span class='op'>(</span><span class='va'>ht_list</span>, pos1 <span class='op'>=</span> <span class='cn'>NULL</span>, pos2 <span class='op'>=</span> <span class='cn'>NULL</span>, mark <span class='op'>=</span> <span class='cn'>TRUE</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
+    <pre class="usage"><span class='fu'>selectArea</span><span class='op'>(</span>ht_list <span class='op'>=</span> <span class='fu'>get_last_ht</span><span class='op'>(</span><span class='op'>)</span>, pos1 <span class='op'>=</span> <span class='cn'>NULL</span>, pos2 <span class='op'>=</span> <span class='cn'>NULL</span>, mark <span class='op'>=</span> <span class='cn'>TRUE</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
     ht_pos <span class='op'>=</span> <span class='cn'>NULL</span>, include_annotation <span class='op'>=</span> <span class='cn'>FALSE</span>, calibrate <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -166,7 +166,7 @@
     </tr>
     <tr>
       <th>ht_pos</th>
-      <td><p>A value returned by <code><a href='ht_pos_on_device.html'>ht_pos_on_device</a></code>.</p></td>
+      <td><p>A value returned by <code><a href='htPositionsOnDevice.html'>htPositionsOnDevice</a></code>.</p></td>
     </tr>
     <tr>
       <th>include_annotation</th>
@@ -184,9 +184,6 @@
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>A <code><a href='https://rdrr.io/pkg/S4Vectors/man/DataFrame-class.html'>DataFrame</a></code> object with row indices and column indices corresponding to the selected region.</p>
-    <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
-
-    <p>Zuguang Gu &lt;z.gu@dkfz.de&gt;</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/grDevices/dev.interactive.html'>dev.interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>

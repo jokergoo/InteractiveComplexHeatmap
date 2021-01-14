@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Select a position in the heatmap — selectPosition • InteractiveComplexHeatmap</title>
+<title>Interactive heatmaps with a shiny app — htShiny • InteractiveComplexHeatmap</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Select a position in the heatmap — selectPosition" />
-<meta property="og:description" content="Select a position in the heatmap" />
+<meta property="og:title" content="Interactive heatmaps with a shiny app — htShiny" />
+<meta property="og:description" content="Interactive heatmaps with a shiny app" />
 
 
 
@@ -129,60 +129,84 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Select a position in the heatmap</h1>
+    <h1>Interactive heatmaps with a shiny app</h1>
     
-    <div class="hidden name"><code>selectPosition.Rd</code></div>
+    <div class="hidden name"><code>htShiny.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Select a position in the heatmap</p>
+    <p>Interactive heatmaps with a shiny app</p>
     </div>
 
-    <pre class="usage"><span class='fu'>selectPosition</span><span class='op'>(</span>ht_list <span class='op'>=</span> <span class='fu'>get_last_ht</span><span class='op'>(</span><span class='op'>)</span>, pos <span class='op'>=</span> <span class='cn'>NULL</span>, mark <span class='op'>=</span> <span class='cn'>TRUE</span>, verbose <span class='op'>=</span> <span class='cn'>TRUE</span>,
-    ht_pos <span class='op'>=</span> <span class='cn'>NULL</span>, calibrate <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>htShiny</span><span class='op'>(</span>ht_list <span class='op'>=</span> <span class='fu'>get_last_ht</span><span class='op'>(</span><span class='op'>)</span>, title <span class='op'>=</span> <span class='cn'>NULL</span>, description <span class='op'>=</span> <span class='cn'>NULL</span>, hline <span class='op'>=</span> <span class='cn'>TRUE</span>, html <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>ht_list</th>
-      <td><p>A <code><a href='https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapList-class.html'>HeatmapList-class</a></code> object returned by <code>draw,Heatmap-method</code> or <code>draw,HeatmapList-method</code>.</p></td>
+      <td><p>A <code><a href='https://rdrr.io/pkg/ComplexHeatmap/man/Heatmap-class.html'>Heatmap-class</a></code> or a <code><a href='https://rdrr.io/pkg/ComplexHeatmap/man/HeatmapList-class.html'>HeatmapList-class</a></code> object. If it is not specified, a random heatmap is used. Better already updated by <code>draw()</code> function.</p></td>
     </tr>
     <tr>
-      <th>mark</th>
-      <td><p>Whether to mark the selected position as a point.</p></td>
+      <th>title</th>
+      <td><p>Title of the app.</p></td>
     </tr>
     <tr>
-      <th>pos</th>
-      <td><p>If the value is <code>NULL</code>, it can be selected by click on the heatmap (of cource, the heatmap should be on the interactive graphic device). If it is set, it must be a <code><a href='https://rdrr.io/r/grid/unit.html'>unit</a></code> object with length two which corresponds to the x and y position of the point.</p></td>
+      <th>description</th>
+      <td><p>Description of the app.</p></td>
     </tr>
     <tr>
-      <th>verbose</th>
-      <td><p>Whether to print messages.</p></td>
+      <th>hline</th>
+      <td><p>Whether to add the horizontal line (by <code>hr</code> tag).</p></td>
     </tr>
     <tr>
-      <th>ht_pos</th>
-      <td><p>A value returned by <code><a href='htPositionsOnDevice.html'>htPositionsOnDevice</a></code>.</p></td>
+      <th>html</th>
+      <td><p>HTML fragment inserted below the heatmap.</p></td>
     </tr>
     <tr>
-      <th>calibrate</th>
-      <td><p>Internally used.</p></td>
+      <th>...</th>
+      <td><p>Pass to <code><a href='InteractiveComplexHeatmapOutput.html'>InteractiveComplexHeatmapOutput</a></code>.</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><a href='https://jokergoo.shinyapps.io/interactive_complexHeatmap/'>https://jokergoo.shinyapps.io/interactive_complexHeatmap/</a></p></div>
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code><a href='https://rdrr.io/pkg/S4Vectors/man/DataFrame-class.html'>DataFrame</a></code> object with row indices and column indices corresponding to the selected position.</p>
+    <p>A shiny app object.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/grDevices/dev.interactive.html'>dev.interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+    <pre class="examples"><div class='input'><span class='co'># use a random heatmap</span>
+<span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='fu'>htShiny</span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>}</span>
+
+<span class='co'># by providing a heatmap/heatmap list</span>
+<span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
 <span class='va'>m</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span>
 <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
 <span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
 
 <span class='va'>ht</span> <span class='op'>=</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>m</span><span class='op'>)</span>
 <span class='va'>ht</span> <span class='op'>=</span> <span class='fu'>draw</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
-<span class='fu'>selectPosition</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
+<span class='fu'>htShiny</span><span class='op'>(</span><span class='va'>ht</span><span class='op'>)</span>
+<span class='op'>}</span>
+
+<span class='kw'>if</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/interactive.html'>interactive</a></span><span class='op'>(</span><span class='op'>)</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='va'>m1</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fl'>100</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
+<span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>colnames</a></span><span class='op'>(</span><span class='va'>m1</span><span class='op'>)</span> <span class='op'>=</span> <span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span>
+<span class='va'>ht1</span> <span class='op'>=</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>m1</span>, row_km <span class='op'>=</span> <span class='fl'>2</span>, column_km <span class='op'>=</span> <span class='fl'>2</span><span class='op'>)</span>
+
+<span class='va'>m2</span> <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/sample.html'>sample</a></span><span class='op'>(</span><span class='va'>letters</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>10</span><span class='op'>]</span>, <span class='fl'>100</span>, replace <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>, <span class='fl'>10</span><span class='op'>)</span>
+<span class='va'>ht2</span> <span class='op'>=</span> <span class='fu'>Heatmap</span><span class='op'>(</span><span class='va'>m2</span><span class='op'>)</span>
+
+<span class='va'>ht_list</span> <span class='op'>=</span> <span class='fu'>draw</span><span class='op'>(</span><span class='va'>ht1</span> <span class='op'>+</span> <span class='va'>ht2</span><span class='op'>)</span>
+<span class='fu'>htShiny</span><span class='op'>(</span><span class='va'>ht_list</span><span class='op'>)</span>
+
+<span class='va'>ht_list</span> <span class='op'>=</span> <span class='va'>ht1</span> <span class='op'>%v%</span> <span class='va'>ht2</span>
+<span class='fu'>htShiny</span><span class='op'>(</span><span class='va'>ht_list</span><span class='op'>)</span>
 <span class='op'>}</span>
 </div></pre>
   </div>

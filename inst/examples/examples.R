@@ -5,7 +5,7 @@ m = matrix(rnorm(100*100), 100)
 ht = Heatmap(m)
 ht = draw(ht)
 
-ht_shiny(ht)
+htShiny(ht)
 
 ####################################################################
 # title: A single heatmap from a character matrix.
@@ -14,7 +14,7 @@ m = matrix(sample(letters[1:10], 100*100, replace = TRUE), 100)
 ht = Heatmap(m)
 ht = draw(ht)
 
-ht_shiny(ht)
+htShiny(ht)
 
 ####################################################################
 # title: A single heatmap with annotations on both rows and columns.
@@ -28,7 +28,7 @@ ht = Heatmap(m,
 	show_row_names = FALSE, show_column_names = FALSE)
 ht = draw(ht)
 
-ht_shiny(ht)
+htShiny(ht)
 
 ####################################################################
 # title: A single heatmap where rows and columns are split.
@@ -43,7 +43,7 @@ ht = Heatmap(m,
 	row_km = 2, column_km = 3)
 ht = draw(ht)
 
-ht_shiny(ht)
+htShiny(ht)
 
 ####################################################################
 # title: A list of two heatmaps.
@@ -66,7 +66,7 @@ ht2 = Heatmap(m,
 
 ht_list = ht1 + ht2
 ht_list = draw(ht_list)
-ht_shiny(ht_list, width1 = 600)
+htShiny(ht_list, width1 = 600)
 
 ####################################################################
 # title: A density heatmap.
@@ -75,7 +75,7 @@ m = matrix(rnorm(100*100), 100)
 ht = densityHeatmap(m)
 ht = draw(ht)
 
-ht_shiny(ht)
+htShiny(ht)
 
 ####################################################################
 # title: An oncoPrint.
@@ -127,7 +127,7 @@ ht = oncoPrint(mat,
 	column_title = column_title, heatmap_legend_param = heatmap_legend_param)
 ht = draw(ht)
 
-ht_shiny(ht, width1 = 800)
+htShiny(ht, width1 = 800)
 
 
 ####################################################################
@@ -140,7 +140,7 @@ m = m[comb_degree(m) > 0]
 ht = UpSet(m)
 ht = draw(ht)
 
-ht_shiny(ht, width1 = 800)
+htShiny(ht, width1 = 800)
 
 ####################################################################
 # title: An interactive heatmap by `pheatmap()`.
@@ -173,7 +173,7 @@ p = pheatmap(test, annotation_col = annotation_col, annotation_row = annotation_
     annotation_colors = ann_colors)
 p = draw(p)
 
-ht_shiny(p)
+htShiny(p)
 
 ####################################################################
 # title: An interactive heatmap by `heatmap()`.
@@ -189,7 +189,7 @@ ht = ComplexHeatmap:::heatmap(x, col = cm.colors(256), scale = "column",
               main = "heatmap(<Mtcars data>, ..., scale = \"column\")")
 ht = draw(ht)
 
-ht_shiny(ht)
+htShiny(ht)
 
 
 ####################################################################
@@ -202,7 +202,7 @@ x = as.matrix(mtcars)
 ht = ComplexHeatmap:::heatmap.2(x, col = gplots::bluered, scale = "column", tracecol = "#303030")
 ht = draw(ht)
 
-ht_shiny(ht)
+htShiny(ht)
 
 ####################################################################
 # title: An enriched heatmap.
@@ -221,7 +221,7 @@ ht = EnrichedHeatmap(mat1, col = col_fun, name = "H3K4me3", row_km = 3,
     column_title = "Enrichment of H3K4me3", row_title_rot = 0)
 ht = draw(ht)
 
-ht_shiny(ht, width1 = 300, height1 = 600)
+htShiny(ht, width1 = 300, height1 = 600)
 
 ####################################################################
 # title: A list of enriched heatmaps.
@@ -247,7 +247,7 @@ ht_list = EnrichedHeatmap(mat1, col = col_fun, name = "H3K4me3",
 	    show_row_names = FALSE, width = unit(5, "mm"))
 ht_list = draw(ht_list)
 
-ht_shiny(ht_list, width1 = 600, height1 = 600)
+htShiny(ht_list, width1 = 600, height1 = 600)
 
 ####################################################################
 # title: An enriched heatmap with discrete signals.
@@ -321,7 +321,7 @@ states_col = readRDS(url("https://jokergoo.github.io/files/interactive_complexhe
 ht = EnrichedHeatmap(mat_states, name = "states", col = states_col, cluster_rows = TRUE)
 ht = draw(ht)
 
-ht_shiny(ht, width1 = 300, height1 = 600)
+htShiny(ht, width1 = 300, height1 = 600)
 
 ####################################################################
 # title: A heatmap produced from tidyHeatmap package.
@@ -343,7 +343,7 @@ mtcars_heatmap <-
         heatmap(`Car name`, Property, Value ) %>%
         add_tile(hp)
 
-ht_shiny(mtcars_heatmap)
+htShiny(mtcars_heatmap)
 
 ####################################################################
 # title: An example from Lewis et al 2019. GitHub repo: https://github.com/kevinblighe/E-MTAB-6141
@@ -597,7 +597,7 @@ ht = draw(hmap + genelabels,
 	annotation_legend_side = 'right',
 	row_sub_title_side = 'left')
 
-ht_shiny(ht, width1 = 900, height1 = 1200)
+htShiny(ht, width1 = 900, height1 = 1200)
 
 ####################################################################
 # title: Visualize cell heterogeneity from single cell RNASeq. This is from Supplementary S2 of the ComplexHeatmap paper. https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
@@ -646,7 +646,7 @@ ht_list = Heatmap(mat2, col = colorRamp2(c(-1.5, 0, 1.5), c("blue", "white", "re
         heatmap_legend_param = list(title = "Correlation"))
 ht_list = draw(ht_list, main_heatmap = "cor")
 
-ht_shiny(ht_list, width1 = 900, height1 = 600, width2 = 500)
+htShiny(ht_list, width1 = 900, height1 = 600, width2 = 500)
 
 
 ####################################################################
@@ -698,7 +698,7 @@ ht_list = Heatmap(mat_meth, name = "methylation", col = colorRamp2(c(0, 0.5, 1),
 ht_list = draw(ht_list, newpage = FALSE, column_title = "Comprehensive correspondence between methylation, expression and other genomic features", 
     column_title_gp = gpar(fontsize = 12, fontface = "bold"), heatmap_legend_side = "bottom")
 
-ht_shiny(ht_list, width1 = 700, height1 = 800)
+htShiny(ht_list, width1 = 700, height1 = 800)
 
 # title: A single shiny app with two interactive heatmap widgets.
 
@@ -747,8 +747,8 @@ click_action = function(df, output) {
 
 suppressPackageStartupMessages(library(kableExtra))
 brush_action = function(df, output) {
-	row_index = unlist(df$row_index)
-	column_index = unlist(df$column_index)
+	row_index = unique(unlist(df$row_index))
+	column_index = unique(unlist(df$column_index))
 	output[["info"]] = renderUI({
 		if(!is.null(df)) {
 			HTML(kable_styling(kbl(m[row_index, column_index, drop = FALSE], digits = 2, format = "html")))
@@ -850,10 +850,10 @@ click_action = function(df, output) {
 			HTML(qq(
 "<pre>
 ## Row GO ID
-@{go_id1}: @{get_go_term(go_id1)}
+<a href='http://amigo.geneontology.org/amigo/term/@{go_id1}' target='_blank'>@{go_id1}</a>: @{get_go_term(go_id1)}
 
 ## Column GO ID:
-@{go_id2}: @{get_go_term(go_id2)}
+<a href='http://amigo.geneontology.org/amigo/term/@{go_id2}' target='_blank'>@{go_id2}</a>: @{get_go_term(go_id2)}
 </pre>"
 ))
 		}
@@ -863,20 +863,17 @@ click_action = function(df, output) {
 brush_action = function(df, output) {
 	output[["go_info"]] = renderUI({
 		if(!is.null(df)) {
-			row_index = unlist(df$row_index)
-			column_index = unlist(df$column_index)
+			row_index = unique(unlist(df$row_index))
+			column_index = unique(unlist(df$column_index))
 			go_id1 = rownames(mat)[row_index]
 			go_id2 = colnames(mat)[column_index]
 
-			go_text1 = qq("@{go_id1}: @{get_go_term(go_id1)}\n")
-			go_text2 = qq("@{go_id2}: @{get_go_term(go_id2)}\n")
+			go_id = union(go_id1, go_id2)
+
+			go_text = qq("<a href='http://amigo.geneontology.org/amigo/term/@{go_id}' target='_blank'>@{go_id}</a>: @{get_go_term(go_id)}\n")
 			HTML(qq(
 "<pre>
-## Row GO ID
-@{go_text1}
-
-## Column GO ID:
-@{go_text2}
+@{go_text}
 </pre>"
 ))
 		}
@@ -960,4 +957,4 @@ ht_list = Heatmap(num_mat, name = "mat", col = colorRamp2(c(-1, 0, 1), c("green"
         width = unit(2, "cm"))
 ht_list = draw(ht_list, merge_legend = TRUE)
 
-ht_shiny(ht_list, width1 = 600, height1 = 700)
+htShiny(ht_list, width1 = 600, height1 = 700)
