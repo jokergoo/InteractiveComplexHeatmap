@@ -147,17 +147,6 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 							actionButton(qq("@{heatmap_id}_search_action"), label = "Search")
 						)
 					),
-					div(id = qq('@{heatmap_id}_tabs-save-image'),
-						radioButtons(qq("@{heatmap_id}_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
-						numericInput(qq("@{heatmap_id}_heatmap_download_image_width"), label = "Image width (in px)", value = width1),
-						numericInput(qq("@{heatmap_id}_heatmap_download_image_height"), label = "Image height (in px)", value = height1),
-						downloadButton(qq("@{heatmap_id}_heatmap_download_button"), "Save image")
-					),
-					div(id = qq('@{heatmap_id}_tabs-resize'),
-						numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", width1),
-						numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", height1),
-						actionButton(qq("@{heatmap_id}_heatmap_input_size_button"), "Change image size")
-					),
 					div(id = qq('@{heatmap_id}_tabs-brush'),
 						div(
 							HTML(qq('
@@ -180,6 +169,17 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 									}"))),
 							sliderInput(qq("@{heatmap_id}_color_pickers_opacity"), label = "Opacity", min = 0, max = 1, value = 0.25)
 						)
+					),
+					div(id = qq('@{heatmap_id}_tabs-save-image'),
+						radioButtons(qq("@{heatmap_id}_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
+						numericInput(qq("@{heatmap_id}_heatmap_download_image_width"), label = "Image width (in px)", value = width1),
+						numericInput(qq("@{heatmap_id}_heatmap_download_image_height"), label = "Image height (in px)", value = height1),
+						downloadButton(qq("@{heatmap_id}_heatmap_download_button"), "Save image")
+					),
+					div(id = qq('@{heatmap_id}_tabs-resize'),
+						numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", width1),
+						numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", height1),
+						actionButton(qq("@{heatmap_id}_heatmap_input_size_button"), "Change image size")
 					)
 				)
 			),
@@ -211,6 +211,10 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 							checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = TRUE)
 						),
 					),
+					div(id = qq("@{heatmap_id}_sub_tabs-table"),
+						p("Export values in sub-heatmaps as a text table."),
+						actionButton(qq("@{heatmap_id}_open_table"), label = "Open table")
+					),
 					div(id = qq('@{heatmap_id}_sub_tabs-save-image'),
 						radioButtons(qq("@{heatmap_id}_sub_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
 						numericInput(qq("@{heatmap_id}_sub_heatmap_download_image_width"), label = "Image width (in px)", value = width2),
@@ -221,12 +225,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 						numericInput(qq("@{heatmap_id}_sub_heatmap_input_width"), "Box width", width2),
 						numericInput(qq("@{heatmap_id}_sub_heatmap_input_height"), "Box height", height2),
 						actionButton(qq("@{heatmap_id}_sub_heatmap_input_size_button"), "Change image size")
-					),
-					div(id = qq("@{heatmap_id}_sub_tabs-table"),
-						p("Export values in sub-heatmaps as a text table."),
-						actionButton(qq("@{heatmap_id}_open_table"), label = "Open table")
 					)
-					
 				)
 			)
 		),
