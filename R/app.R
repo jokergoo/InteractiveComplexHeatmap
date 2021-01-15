@@ -74,7 +74,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL, description = NULL,
 	}
 	
 	if(is.null(description)) {
-		description = "You can click a position or select an area from the heatmap. The original heatmap and the selected sub-heatmap can be resized by dragging from the bottom right of the box. If the heatmap is too huge or you resize the heatmap too frequently, the heatmap might not be correctly updated. You can just slightly resize the heatmap again and wait for several seconds."
+		description = "You can click a position or select an area from the heatmap. The original heatmap and the selected sub-heatmap can be resized by dragging from the bottom right of the box. "
 	}
 	if(is.character(description)) {
 		description = p(description)
