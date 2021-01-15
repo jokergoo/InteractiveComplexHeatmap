@@ -22,4 +22,5 @@ importFrom("kableExtra", "scroll_box", "kable_styling", "kbl", "column_spec", "r
 importFrom("stats", "rnorm")
 importFrom("utils", "write.csv")
 importFrom("utils", "write.table")
+importFrom("htmltools", "htmlDependency")
 
