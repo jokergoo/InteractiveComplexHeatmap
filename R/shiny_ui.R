@@ -96,7 +96,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
     )
 
 	td = tempdir()
-    ht_js = paste(readLines(system.file("template", "ht.js", package = "InteractiveComplexHeatmap"), collapse = "\n")
+    ht_js = paste(readLines(system.file("template", "ht.js", package = "InteractiveComplexHeatmap")), collapse = "\n")
     temp_js = tempfile(fileext = ".js", tmpdir = td)
     writeLines(qq(ht_js), con = temp_js)
 
