@@ -54,6 +54,18 @@ $(function() {
 		}
 	});
 
+	$( '#@{heatmap_id}_tabs' ).tabs({
+		collapsible: true,
+		active: false
+	});
+
+	$('#@{heatmap_id}_tabs a').tooltip({
+		position: {
+			my: 'center bottom-4', 
+			at: 'center top'
+		}
+	});
+
 	$('#@{heatmap_id}_keyword').click(function() {
 		$('#@{heatmap_id}_heatmap_brush').remove();
 	});
@@ -163,19 +175,19 @@ $(function() {
 		});
 	});
 
-	$( '#@{heatmap_id}_tabs' ).tabs({
+
+	// sub heamtaps
+	$( '#@{heatmap_id}_sub_tabs' ).tabs({
 		collapsible: true,
 		active: false
 	});
 
-	$('#@{heatmap_id}_tabs a').tooltip({
+	$('#@{heatmap_id}_sub_tabs a').tooltip({
 		position: {
 			my: 'center bottom-4', 
 			at: 'center top'
 		}
 	});
-
-	// sub heamtaps
 
 	$('#@{heatmap_id}_sub_heatmap_input_size_button').click(function(){
 		var width = $('#@{heatmap_id}_sub_heatmap_input_width').val();
@@ -212,18 +224,6 @@ $(function() {
 		}
 	});
 
-	$( '#@{heatmap_id}_sub_tabs' ).tabs({
-		collapsible: true,
-		active: false
-	});
-
-	$('#@{heatmap_id}_sub_tabs a').tooltip({
-		position: {
-			my: 'center bottom-4', 
-			at: 'center top'
-		}
-	});
-
 	Shiny.addCustomMessageHandler('@{heatmap_id}_initialized', function(message) {
 		$('#@{heatmap_id}_heatmap_control').css("display", "block");
 		Shiny.setInputValue('@{heatmap_id}_heatmap_download_trigger', Math.random());
@@ -241,4 +241,38 @@ $(function() {
 		}
 		Shiny.setInputValue('@{heatmap_id}_sub_heatmap_download_trigger', Math.random());
 	});
+
+	// on shinyapp.io, jqueryui tabs are not properly processed
+	var divs = $("#@{heatmap_id}_tabs ul").nextAll();
+	if(divs.length == 8) {
+		for(var iv = 0; iv < 4; iv ++) {
+			var all_attrs = divs[iv].attributes;
+			for(var i = 0; i < all_attrs.length; i ++) {
+				if(all_attrs[i].name != "id") {
+					$(divs[iv + 4]).attr(all_attrs[i].name, all_attrs[i].value);
+				}
+			}
+		}
+		divs[0].remove();
+		divs[1].remove();
+		divs[2].remove();
+		divs[3].remove();
+	}
+
+	var divs = $("#@{heatmap_id}_sub_tabs ul").nextAll();
+	if(divs.length == 8) {
+		for(var iv = 0; iv < 4; iv ++) {
+			var all_attrs = divs[iv].attributes;
+			for(var i = 0; i < all_attrs.length; i ++) {
+				if(all_attrs[i].name != "id") {
+					$(divs[iv + 4]).attr(all_attrs[i].name, all_attrs[i].value);
+				}
+			}
+		}
+		divs[0].remove();
+		divs[1].remove();
+		divs[2].remove();
+		divs[3].remove();
+	}
+
 });
