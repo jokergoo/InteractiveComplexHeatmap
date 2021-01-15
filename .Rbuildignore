@@ -13,3 +13,4 @@ revdep/
 ^pkgdown$
 build_pkg_site.R
 .DS_Store
+^\.github$
