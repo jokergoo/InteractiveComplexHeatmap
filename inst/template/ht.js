@@ -54,9 +54,9 @@ $(function() {
 		}
 	});
 
-	$( '#@{heatmap_id}_tabs' ).tabs({
+	$('#@{heatmap_id}_tabs').tabs({
 		collapsible: true,
-		active: false
+		active: true
 	});
 
 	$('#@{heatmap_id}_tabs a').tooltip({
@@ -175,9 +175,8 @@ $(function() {
 		});
 	});
 
-
 	// sub heamtaps
-	$( '#@{heatmap_id}_sub_tabs' ).tabs({
+	$('#@{heatmap_id}_sub_tabs').tabs({
 		collapsible: true,
 		active: false
 	});
