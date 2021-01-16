@@ -54,17 +54,17 @@ $(function() {
 		}
 	});
 
-	// $('#@{heatmap_id}_tabs').tabs({
-	// 	collapsible: true,
-	// 	active: false
-	// });
+	$('#@{heatmap_id}_tabs').tabs({
+		collapsible: true,
+		active: false
+	});
 
-	// $('#@{heatmap_id}_tabs a').tooltip({
-	// 	position: {
-	// 		my: 'center bottom-4', 
-	// 		at: 'center top'
-	// 	}
-	// });
+	$('#@{heatmap_id}_tabs a').tooltip({
+		position: {
+			my: 'center bottom-4', 
+			at: 'center top'
+		}
+	});
 
 	$('#@{heatmap_id}_keyword').click(function() {
 		$('#@{heatmap_id}_heatmap_brush').remove();
