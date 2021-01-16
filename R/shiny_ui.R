@@ -96,7 +96,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
     )
 
 	td = tempdir()
-	if(identical(topenv, .GlobalEnv())) {
+	if(identical(topenv, .GlobalEnv)) {
     	ht_js = paste(readLines("~/project/InteractiveComplexHeatmap/inst/template/ht.js"), collapse = "\n")
     } else {
     	ht_js = paste(readLines(system.file("template", "ht.js", package = "InteractiveComplexHeatmap")), collapse = "\n")
@@ -104,7 +104,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
     temp_js = tempfile(fileext = ".js", tmpdir = td)
     writeLines(qq(ht_js), con = temp_js)
 
-    if(identical(topenv, .GlobalEnv())) {
+    if(identical(topenv, .GlobalEnv)) {
     	ht_css = paste(readLines("~/project/InteractiveComplexHeatmap/inst/template/ht.css"), collapse = "\n")
     } else {
 		ht_css = paste(readLines(system.file("template", "ht.css", package = "InteractiveComplexHeatmap")), collapse = "\n")
