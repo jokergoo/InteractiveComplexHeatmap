@@ -244,12 +244,14 @@ $(function() {
 
 	// on shinyapp.io, jqueryui tabs are not properly processed
 	var divs = $("#@{heatmap_id}_tabs ul").nextAll();
+	var lis = $("#@{heatmap_id}_tabs ul li");
 	if(divs.length == 8) {
 		for(var iv = 0; iv < 4; iv ++) {
 			var all_attrs = divs[iv].attributes;
 			for(var i = 0; i < all_attrs.length; i ++) {
 				if(all_attrs[i].name != "id") {
-					$(divs[iv + 4]).attr(all_attrs[i].name, all_attrs[i].value);
+					$(divs[8 - iv - 1]).attr(all_attrs[i].name, all_attrs[i].value);
+					$(lis[iv]).attr("aria-controls", $(divs[8 - iv - 1]).attr("id"));
 				}
 			}
 		}
@@ -265,7 +267,8 @@ $(function() {
 			var all_attrs = divs[iv].attributes;
 			for(var i = 0; i < all_attrs.length; i ++) {
 				if(all_attrs[i].name != "id") {
-					$(divs[iv + 4]).attr(all_attrs[i].name, all_attrs[i].value);
+					$(divs[8 - iv - 1]).attr(all_attrs[i].name, all_attrs[i].value);
+					$(lis[iv]).attr("aria-controls", $(divs[8 - iv - 1]).attr("id"));
 				}
 			}
 		}
