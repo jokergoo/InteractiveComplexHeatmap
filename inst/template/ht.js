@@ -224,17 +224,17 @@ $(function() {
 	// 	active: false
 	// });
 
-	$('#@{heatmap_id}_tabs a').tooltip({
-		position: {
-			my: 'center bottom-4', 
-			at: 'center top'
-		}
-	});
-
-	// $('#@{heatmap_id}_sub_tabs').tabs({
-	// 	collapsible: true,
-	// 	active: false
+	// $('#@{heatmap_id}_tabs a').tooltip({
+	// 	position: {
+	// 		my: 'center bottom-4', 
+	// 		at: 'center top'
+	// 	}
 	// });
+
+	$('#@{heatmap_id}_sub_tabs').tabs({
+		collapsible: true,
+		active: false
+	});
 
 	$('#@{heatmap_id}_sub_tabs a').tooltip({
 		position: {

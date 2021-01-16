@@ -183,7 +183,20 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 					)
 				)
 			),
-			HTML(qq("<div style='display: none;'></div>"))
+			HTML(qq("<div style='display: none;'></div>")),
+			tags$script(HTML(qq("
+				$('#@{heatmap_id}_tabs').tabs({
+					collapsible: true,
+					active: false
+				});
+
+				$('#@{heatmap_id}_tabs a').tooltip({
+					position: {
+						my: 'center bottom-4', 
+						at: 'center top'
+					}
+				});
+			")))
 		), 
 
 		div(id = qq("@{heatmap_id}_sub_heatmap_group"),
