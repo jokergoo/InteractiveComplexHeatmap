@@ -219,18 +219,113 @@ $(function() {
 		Shiny.setInputValue('@{heatmap_id}_sub_heatmap_download_trigger', Math.random());
 	});
 
-	$('#@{heatmap_id}_tabs a').tooltip({
-		position: {
-			my: 'center bottom-4', 
-			at: 'center top'
-		}
-	});
+	var objs = $('#@{heatmap_id}_heatmap_control li a');
+	$(objs[0]).attr("title", "Search heatmap");
+	$(objs[1]).attr("title", "Configure brush");
+	$(objs[2]).attr("title", "Save image");
+	$(objs[3]).attr("title", "Resize heatmap");
 
-	$('#@{heatmap_id}_sub_tabs a').tooltip({
-		position: {
-			my: 'center bottom-4', 
-			at: 'center top'
-		}
-	});
+	var href = $(objs[0]).attr("href");
+	$(href).attr("visible", "0")
+	$(objs[0]).css("background-color", "white");
+	$(href).parent().css("display", "none");
 
+	for(var i = 0; i < objs.length; i ++) {
+		$(objs[i]).hover(function() {
+			var tooltip = $("<span class='ui-widget-shadow'>" + $(this).attr("title") + "</span>");
+			tooltip.css("position", "absolute").
+			        css("z-index", "100").
+			        css("bottom", "120%").
+			        css("background-color", "white").
+			        css("border", "1px solid #dddddd").
+			        css("border-radius", "4px").
+			        css("padding", "4px 12px").
+			        css("color", "black").
+			        css("white-space", "nowrap");
+			tooltip.css("left", "-50%");
+			$(this).append(tooltip);
+		}, function() {
+			$(this).find("span").last().remove();
+		});
+
+		$(objs[i]).click(function() {
+			var href = $(this).attr("href");
+			if($(href).attr("visible") == undefined) {
+				if($(href).hasClass("active")) {
+					$(href).attr("visible", "1")
+				}
+			}
+			if($(href).attr("visible") == "1") {
+				$(href).attr("visible", "0");
+				$(href).parent().css("display", "none");
+				$(this).css("background-color", "white");
+				
+			} else {
+				$(objs[0]).css("background-color", "white");
+				$(objs[1]).css("background-color", "white");
+				$(objs[2]).css("background-color", "white");
+				$(objs[3]).css("background-color", "white");
+
+				$(href).attr("visible", "1");
+				$(href).parent().css("display", "block");
+				$(this).css("background-color", "#ddd");
+			}
+			false;
+		})
+	}
+
+	var objs2 = $('#@{heatmap_id}_sub_heatmap_control li a');
+	$(objs2[0]).attr("title", "Configure sub-heatmap");
+	$(objs2[1]).attr("title", "Export to table");
+	$(objs2[2]).attr("title", "Save sub-heatmap as an image");
+	$(objs2[3]).attr("title", "Resize sub-heatmap");
+
+	var href = $(objs2[0]).attr("href");
+	$(href).attr("visible", "0")
+	$(objs2[0]).css("background-color", "white");
+	$(href).parent().css("display", "none");
+
+	for(var i = 0; i < objs2.length; i ++) {
+		$(objs2[i]).hover(function() {
+			var tooltip = $("<span class='ui-widget-shadow'>" + $(this).attr("title") + "</span>");
+			tooltip.css("position", "absolute").
+			        css("z-index", "100").
+			        css("bottom", "120%").
+			        css("background-color", "white").
+			        css("border", "1px solid #dddddd").
+			        css("border-radius", "4px").
+			        css("padding", "4px 12px").
+			        css("color", "black").
+			        css("white-space", "nowrap");
+			tooltip.css("left", "-50%");
+			$(this).append(tooltip);
+		}, function() {
+			$(this).find("span").last().remove();
+		});
+
+		$(objs2[i]).click(function() {
+			var href = $(this).attr("href");
+			if($(href).attr("visible") == undefined) {
+				if($(href).hasClass("active")) {
+					$(href).attr("visible", "1")
+				}
+			}
+			if($(href).attr("visible") == "1") {
+				$(href).attr("visible", "0");
+				$(href).parent().css("display", "none");
+				$(this).css("background-color", "white");
+				
+			} else {
+				$(objs2[0]).css("background-color", "white");
+				$(objs2[1]).css("background-color", "white");
+				$(objs2[2]).css("background-color", "white");
+				$(objs2[3]).css("background-color", "white");
+
+				$(href).attr("visible", "1");
+				$(href).parent().css("display", "block");
+				$(this).css("background-color", "#ddd");
+			}
+			false;
+		})
+	}
 });
