@@ -219,21 +219,11 @@ $(function() {
 		Shiny.setInputValue('@{heatmap_id}_sub_heatmap_download_trigger', Math.random());
 	});
 
-	// $('#@{heatmap_id}_tabs').tabs({
-	// 	collapsible: true,
-	// 	active: false
-	// });
-
-	// $('#@{heatmap_id}_tabs a').tooltip({
-	// 	position: {
-	// 		my: 'center bottom-4', 
-	// 		at: 'center top'
-	// 	}
-	// });
-
-	$('#@{heatmap_id}_sub_tabs').tabs({
-		collapsible: true,
-		active: false
+	$('#@{heatmap_id}_tabs a').tooltip({
+		position: {
+			my: 'center bottom-4', 
+			at: 'center top'
+		}
 	});
 
 	$('#@{heatmap_id}_sub_tabs a').tooltip({
@@ -242,41 +232,5 @@ $(function() {
 			at: 'center top'
 		}
 	});
-
-	// on shinyapp.io, jqueryui tabs are not properly processed
-	// var divs = $("#@{heatmap_id}_tabs ul").nextAll();
-	// var lis = $("#@{heatmap_id}_tabs ul li");
-	// if(divs.length == 8) {
-	// 	for(var iv = 0; iv < 4; iv ++) {
-	// 		var all_attrs = divs[iv].attributes;
-	// 		for(var i = 0; i < all_attrs.length; i ++) {
-	// 			if(all_attrs[i].name != "id") {
-	// 				$(divs[8 - iv - 1]).attr(all_attrs[i].name, all_attrs[i].value);
-	// 				$(lis[iv]).attr("aria-controls", $(divs[8 - iv - 1]).attr("id"));
-	// 			}
-	// 		}
-	// 	}
-	// 	divs[0].remove();
-	// 	divs[1].remove();
-	// 	divs[2].remove();
-	// 	divs[3].remove();
-	// }
-
-	// var divs = $("#@{heatmap_id}_sub_tabs ul").nextAll();
-	// if(divs.length == 8) {
-	// 	for(var iv = 0; iv < 4; iv ++) {
-	// 		var all_attrs = divs[iv].attributes;
-	// 		for(var i = 0; i < all_attrs.length; i ++) {
-	// 			if(all_attrs[i].name != "id") {
-	// 				$(divs[8 - iv - 1]).attr(all_attrs[i].name, all_attrs[i].value);
-	// 				$(lis[iv]).attr("aria-controls", $(divs[8 - iv - 1]).attr("id"));
-	// 			}
-	// 		}
-	// 	}
-	// 	divs[0].remove();
-	// 	divs[1].remove();
-	// 	divs[2].remove();
-	// 	divs[3].remove();
-	// }
 
 });
