@@ -39,9 +39,7 @@
 
 .@{heatmap_id}_widget .tab-content {
 	padding: 1em 1.4em;
-	border-left: 1px solid #ddd;
-	border-right: 1px solid #ddd;
-	border-bottom: 1px solid #ddd;
+	border: 1px solid #ddd;
 }
 
 .@{heatmap_id}_widget #@{heatmap_id}_sub_tabs-setting .form-group {
@@ -51,3 +49,34 @@
 .@{heatmap_id}_widget .tabbable {
 	margin-top: 4px;
 }
+
+.@{heatmap_id}_widget #@{heatmap_id}_heatmap_control ul,
+.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_control ul {
+	border-bottom: 0px;
+}
+
+.@{heatmap_id}_widget #@{heatmap_id}_heatmap_control ul li,
+.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_control ul li {
+	margin-bottom: 0px;
+}
+
+.@{heatmap_id}_widget #@{heatmap_id}_heatmap_control ul li a,
+.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_control ul li a {
+	color: #999;
+	margin-right: 0px;
+	border: 0px;
+
+}
+
+.@{heatmap_id}_widget #@{heatmap_id}_heatmap_control ul li.active a,
+.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_control ul li.active a {
+	color: #555;
+	border: 0px;
+	background-color: #ddd;
+}
+
+.@{heatmap_id}_widget #@{heatmap_id}_heatmap_control ul li.active a:hover,
+.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_control ul li.active a:hover {
+	cursor: pointer;
+}
+

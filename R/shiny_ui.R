@@ -96,7 +96,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
     )
 
 	td = tempdir()
-	if(identical(topenv, .GlobalEnv)) {
+	if(identical(topenv(), .GlobalEnv)) {
     	ht_js = paste(readLines("~/project/InteractiveComplexHeatmap/inst/template/ht.js"), collapse = "\n")
     } else {
     	ht_js = paste(readLines(system.file("template", "ht.js", package = "InteractiveComplexHeatmap")), collapse = "\n")
@@ -104,7 +104,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
     temp_js = tempfile(fileext = ".js", tmpdir = td)
     writeLines(qq(ht_js), con = temp_js)
 
-    if(identical(topenv, .GlobalEnv)) {
+    if(identical(topenv(), .GlobalEnv)) {
     	ht_css = paste(readLines("~/project/InteractiveComplexHeatmap/inst/template/ht.css"), collapse = "\n")
     } else {
 		ht_css = paste(readLines(system.file("template", "ht.css", package = "InteractiveComplexHeatmap")), collapse = "\n")
@@ -147,7 +147,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 							checkboxGroupInput(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = "loading", choiceValues = "", selected = ""),
 							checkboxGroupInput(qq("@{heatmap_id}_search_extend"), label = "Extend to all heatmaps and annotations?", choiceNames = "yes", choiceValues = 1, selected = NULL),
 							actionButton(qq("@{heatmap_id}_search_action"), label = "Search")
-						)
+						),
+						p("Search Heatmap", style = "display:none;")
 					),
 					tabPanel(HTML("<i class='fa fa-brush'></i>"),
 						div(
