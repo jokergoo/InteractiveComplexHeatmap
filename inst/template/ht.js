@@ -261,10 +261,15 @@ $(function() {
 				$(this).css("background-color", "white");
 				
 			} else {
-				$(objs[0]).css("background-color", "white").attr("visible", 0);
-				$(objs[1]).css("background-color", "white").attr("visible", 0);
-				$(objs[2]).css("background-color", "white").attr("visible", 0);
-				$(objs[3]).css("background-color", "white").attr("visible", 0);
+				$(objs[0]).css("background-color", "white");
+				$(objs[1]).css("background-color", "white");
+				$(objs[2]).css("background-color", "white");
+				$(objs[3]).css("background-color", "white");
+
+				$($(objs[0]).attr("href")).attr("visible", 0);
+				$($(objs[1]).attr("href")).attr("visible", 0);
+				$($(objs[2]).attr("href")).attr("visible", 0);
+				$($(objs[3]).attr("href")).attr("visible", 0);
 
 				$(href).attr("visible", "1");
 				$(href).parent().css("display", "block");
@@ -316,10 +321,15 @@ $(function() {
 				$(this).css("background-color", "white");
 				
 			} else {
-				$(objs[0]).css("background-color", "white").attr("visible", 0);
-				$(objs[1]).css("background-color", "white").attr("visible", 0);
-				$(objs[2]).css("background-color", "white").attr("visible", 0);
-				$(objs[3]).css("background-color", "white").attr("visible", 0);
+				$(objs2[0]).css("background-color", "white");
+				$(objs2[1]).css("background-color", "white");
+				$(objs2[2]).css("background-color", "white");
+				$(objs2[3]).css("background-color", "white");
+
+				$($(objs2[0]).attr("href")).attr("visible", 0);
+				$($(objs2[1]).attr("href")).attr("visible", 0);
+				$($(objs2[2]).attr("href")).attr("visible", 0);
+				$($(objs2[3]).attr("href")).attr("visible", 0);
 
 				$(href).attr("visible", "1");
 				$(href).parent().css("display", "block");
