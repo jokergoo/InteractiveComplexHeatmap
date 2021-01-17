@@ -26,6 +26,8 @@ install_github("jokergoo/InteractiveComplexHeatmap")
 
 ## Usage
 
+### Directly turn heatmaps interactive
+
 With any `Heatmap`/`HeatmapList` object, directly send to `htShiny()` to create a Shiny app for your heatmap(s):
 
 ```r
@@ -38,6 +40,8 @@ If the heatmaps are already drawn, `ht_list` can be omitted and the last heatmap
 Heatmap(...) + other_heatmaps_or_annotations # or other functions that internally use Heatmap()
 htShiny()
 ```
+
+### Shiny app development
 
 There are also two functions for Shiny app development:
 
