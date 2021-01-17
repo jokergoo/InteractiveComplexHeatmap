@@ -83,6 +83,21 @@ server = function(input, output, session) {
 shiny::shinyApp(ui, server)
 ```
 
+## Live examples
+
+Following lists several live examples of interactive heatmaps. Details
+can be found in the package vignette.
+
+- https://jokergoo.shinyapps.io/interactive_complexheatmap/
+- https://jokergoo.shinyapps.io/interactive_complexheatmap_vertical/
+- https://jokergoo.shinyapps.io/interactive_densityheatmap/
+- https://jokergoo.shinyapps.io/interactive_oncoprint/
+- https://jokergoo.shinyapps.io/interactive_enrichedheatmap/
+- https://jokergooo.shinyapps.io/interactive_upsetp/
+- https://jokergooo.shinyapps.io/interactive_pheatmap/
+- https://jokergooo.shinyapps.io/interactive_heatmap/
+- https://jokergooo.shinyapps.io/interactive_heatmap_2/
+- https://jokergooo.shinyapps.io/interactive_tidyheatmap/
 
 ## License
 
