@@ -220,7 +220,7 @@ $(function() {
 	});
 
 	var objs = $('#@{heatmap_id}_heatmap_control li a');
-	$(objs[0]).attr("title", "Search heatmap");
+	$(objs[0]).attr("title", "Search in heatmaps");
 	$(objs[1]).attr("title", "Configure brush");
 	$(objs[2]).attr("title", "Save image");
 	$(objs[3]).attr("title", "Resize heatmap");
