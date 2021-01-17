@@ -99,6 +99,46 @@ can be found in the package vignette.
 - https://jokergooo.shinyapps.io/interactive_heatmap_2/
 - https://jokergooo.shinyapps.io/interactive_tidyheatmap/
 
+There are also many other examples provided in the package.
+
+```r
+htShinyExample()
+
+## There are following examples:
+## 
+##  1. A single heatmap with minimal arguments.
+##  2. A single heatmap from a character matrix.
+##  3. A single heatmap with annotations on both rows and columns.
+##  4. A single heatmap where rows and columns are split.
+##  5. A list of two heatmaps.
+##  6. A density heatmap.
+##  7. An oncoPrint.
+##  8. A UpSet plot.
+##  9. An interactive heatmap by `pheatmap()`.
+## 10. An interactive heatmap by `heatmap()`.
+## 11. An interactive heatmap by `heatmap.2()`.
+## 12. An enriched heatmap.
+## 13. A list of enriched heatmaps.
+## 14. An enriched heatmap with discrete signals.
+## 15. A heatmap produced from tidyHeatmap package.
+## 16. An example from Lewis et al 2019. GitHub repo:
+##     https://github.com/kevinblighe/E-MTAB-6141
+## 17. Visualize cell heterogeneity from single cell RNASeq. This is from
+##     Supplementary S2 of the ComplexHeatmap paper.
+##     https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
+## 18. Correlations between methylation, expression and other genomic features.
+##     This is from Supplementary S3 of the ComplexHeatmap paper.
+##     https://github.com/jokergoo/supplementary/tree/master/ComplexHeatmap-supplementary1-4
+## 19. A single shiny app with two interactive heatmap widgets.
+## 20. Self-define the output. The selected sub-matrix is shown as a text table.
+## 21. Self-define the output. Additional annotations for the selected gene are
+##     shown.
+## 22. Integrate in an interactive R Markdown document.
+## 23. Visualize Gene Ontology similarities. A list of selected GO IDs as well as
+##     their descriptions are shown in the output.
+## 24. Genome-scale heatmaps.
+```
+
 ## License
 
 MIT @ Zuguang Gu
