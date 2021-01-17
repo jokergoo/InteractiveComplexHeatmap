@@ -172,7 +172,7 @@ htShinyExample = function(which) {
 				}
 			}
 		}
-		message("Processing the heatmaps. It takes different time depending on examples...\n")
+		message("Processing the heatmaps. It takes different time depending on examples...")
 
 		if(any(grepl("htShiny\\(", code))) {
 
