@@ -21,18 +21,18 @@
 #
 # == examples
 # if(interactive()) {
-# ht = Heatmap(m)
-# ht = draw(ht)
-#
-# ui = fluidPage(
-#     InteractiveComplexHeatmapOutput()
-# )
-#
-# server = function(input, output, session) {
-#     renderInteractiveComplexHeatmap(ht, input, output, session)
-# }
-#
-# shiny::shinyApp(ui, server)
+#     ht = Heatmap(m)
+#     ht = draw(ht)
+#     
+#     ui = fluidPage(
+#         InteractiveComplexHeatmapOutput()
+#     )
+#     
+#     server = function(input, output, session) {
+#         renderInteractiveComplexHeatmap(ht, input, output, session)
+#     }
+#     
+#     shiny::shinyApp(ui, server)
 # }
 renderInteractiveComplexHeatmap = function(ht_list, input, output, session, 
 	heatmap_id = shiny_env$current_heatmap_id,
@@ -46,7 +46,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			message("The heatmap list is suggested to be udpated by e.g. `ht_list = draw(ht_list)` before sending to the Shiny app.")
 		}
 	} else {
-		stop_wrap("`ht_list` can only be a Heatmap/heatmapList object.")
+		stop_wrap("`ht_list` can only be a Heatmap/HeatmapList object.")
 	}
 
 	has_normal_matrix = FALSE
@@ -72,27 +72,36 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		stop_wrap("There should be at least one normal heatmap (nrow > 0 and ncol > 0) in the heatmap list.")
 	}
 
-	shiny_env[[heatmap_id]] = list()
+	# initialize heatmaps
+	ht_list = reactiveVal({
+		if(inherits(ht_list, "Heatmap")) {
+    		ht_list = make_layout(ht_list + NULL)
+    	} else {
+    		if(!ht_list@layout$initialized) {
+    			ht_list = make_layout(ht_list)
+    		}
+    	}
+    	ht_list
+	})
 
+	##### variables shared between actions
+	ht_pos = reactiveVal(NULL)
+	selected = reactiveVal(NULL)
+	ht_pos = reactiveVal(NULL)
+	heatmap_first_check = reactiveVal(1)
+	heatmap_initialized = reactiveVal(1)
+
+	###############################################################
+	##                 The default actions
+	###############################################################
 	output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
 		
     	showNotification("Initialize the original heatmap.", duration = 2, type = "message")
 
-    	if(!is.null(shiny_env[[heatmap_id]]$ht_list)) {
-    		draw(shiny_env[[heatmap_id]]$ht_list)
-    	} else {
-	    	if(inherits(ht_list, "Heatmap")) {
-	    		shiny_env[[heatmap_id]]$ht_list = draw(ht_list)
-	    	} else {
-	    		if(ht_list@layout$initialized) {
-	    			shiny_env[[heatmap_id]]$ht_list = do.call(draw, c(list(object = ht_list), ht_list@ht_list_param$called_arguments))
-	    		} else {
-	    			shiny_env[[heatmap_id]]$ht_list = draw(ht_list)
-	    		}
-	    	}
-	    }
-		shiny_env[[heatmap_id]]$ht_pos = htPositionsOnDevice(shiny_env[[heatmap_id]]$ht_list, include_annotation = TRUE, calibrate = FALSE)
-		shiny_env[[heatmap_id]]$selected = NULL
+    	draw(ht_list())
+
+		ht_pos( htPositionsOnDevice(ht_list(), include_annotation = TRUE, calibrate = FALSE) )
+		selected( NULL )
 
 		if(default_click_action || default_brush_action) {
 			output[[qq("@{heatmap_id}_info")]] = renderUI({
@@ -101,7 +110,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		}
 		message(qq("[@{Sys.time()}] initialize the original heatmap and calculate positions."))
 
-		lt = check_heatmap_in_search(heatmap_id, shiny_env)
+		lt = check_heatmap_in_search(heatmap_id, ht_list())
 
 		if(is.null(lt)) {
 			session$sendCustomMessage(qq("@{heatmap_id}_empty_search"), "")
@@ -110,7 +119,6 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			updateCheckboxGroupInput(session, qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = lt[[2]], choiceValues = lt[[2]], selected = lt[[2]])
 		}
 		session$sendCustomMessage(qq("@{heatmap_id}_initialized"), "")
-		shiny_env[[heatmap_id]]$state = 1
 	})
 
 	output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
@@ -126,129 +134,131 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		})
 	}
 
-	
+	###############################################################
+	##                 resizing
+	###############################################################
 	observeEvent(
 		session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]] || 
 		session$clientData[[qq("output_@{heatmap_id}_heatmap_height")]], {
 
-		if(!shiny_env[[heatmap_id]]$state) {
-			output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
-				width = session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]]
-		    	height = session$clientData[[qq("output_@{heatmap_id}_heatmap_height")]]
-		    	
-		    	showNotification("Making the original heatmap.", duration = 2, type = "message")
+		req(!heatmap_first_check())
 
-		    	draw(shiny_env[[heatmap_id]]$ht_list)
+		output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
+			width = session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]]
+	    	height = session$clientData[[qq("output_@{heatmap_id}_heatmap_height")]]
+	    	
+	    	showNotification("Making the original heatmap.", duration = 2, type = "message")
 
-				shiny_env[[heatmap_id]]$ht_pos = htPositionsOnDevice(shiny_env[[heatmap_id]]$ht_list, include_annotation = TRUE, calibrate = FALSE)
-				shiny_env[[heatmap_id]]$selected = NULL
+	    	draw(ht_list())
 
-				message(qq("[@{Sys.time()}] make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
-				
-			})
-		}
+			ht_pos( htPositionsOnDevice(ht_list(), include_annotation = TRUE, calibrate = FALSE) )
+			selected( NULL )
 
-		shiny_env[[heatmap_id]]$state = 0
+			message(qq("[@{Sys.time()}] make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
+			
+		})
+		
 	})
 
-	observeEvent(input[[qq("@{heatmap_id}_heatmap_download_trigger")]], {
-		output[[qq("@{heatmap_id}_heatmap_download_button")]] = downloadHandler(
+	###############################################################
+	##                 The original heatmap
+	###############################################################
+	output[[qq("@{heatmap_id}_heatmap_download_button")]] = downloadHandler(
 
-			filename = function() {
+		filename = function() {
+			format = as.numeric(input[[qq("@{heatmap_id}_heatmap_download_format")]])
+			fm = c("png", "pdf", "svg")[format]
+			qq("@{heatmap_id}_heatmap.@{fm}")
+		},
+		content = function(file) {
+			
+			format = as.numeric(input[[qq("@{heatmap_id}_heatmap_download_format")]])
+			fm = c("png", "pdf", "svg")[format]
+			dev = list(png, pdf, svglite::svglite)[[format]]
 
-				format = as.numeric(input[[qq("@{heatmap_id}_heatmap_download_format")]])
-				fm = c("png", "pdf", "svg")[format]
-				qq("@{heatmap_id}_heatmap.@{fm}")
-			},
-			content = function(file) {
-				
-				format = as.numeric(input[[qq("@{heatmap_id}_heatmap_download_format")]])
-				fm = c("png", "pdf", "svg")[format]
-				dev = list(png, pdf, svglite::svglite)[[format]]
+			showNotification(qq("Download heatmap in @{fm}."), duration = 2, type = "message")
+			message(qq("[@{Sys.time()}] Download heatmap in @{fm}."))
 
-				showNotification(qq("Download heatmap in @{fm}."), duration = 2, type = "message")
-				message(qq("[@{Sys.time()}] Download heatmap in @{fm}."))
-
-				temp = tempfile()
-				width = input[[qq("@{heatmap_id}_heatmap_download_image_width")]]
-				height = input[[qq("@{heatmap_id}_heatmap_download_image_height")]]
-				
-				if(fm == "png") {
-					dev(temp, width = width*2, height = height*2, res = 72*2)
-				} else if(fm == "pdf") {
-					dev(temp, width = width/100*4/3, height = height/100*4/3)
-				} else {
-					dev(temp, width = width, height = height)
-				}
-				if(!is.null(shiny_env[[heatmap_id]]$ht_list)) {
-			    	draw(shiny_env[[heatmap_id]]$ht_list)
-			    } else {
-			    	grid.newpage()
-			    	grid.text("No heatmap is available.")
-			    }
-			    dev.off()
-
-				file.copy(temp, file)
+			temp = tempfile()
+			width = input[[qq("@{heatmap_id}_heatmap_download_image_width")]]
+			height = input[[qq("@{heatmap_id}_heatmap_download_image_height")]]
+			
+			if(fm == "png") {
+				dev(temp, width = width*2, height = height*2, res = 72*2)
+			} else if(fm == "pdf") {
+				dev(temp, width = width/100*4/3, height = height/100*4/3)
+			} else {
+				dev(temp, width = width, height = height)
 			}
-		)
-	})
+			if(heatmap_initialized()) {
+		    	draw(ht_list())
+		    } else {
+		    	grid.newpage()
+		    	grid.text("No heatmap is available.")
+		    }
+		    dev.off()
+
+			file.copy(temp, file)
+		}
+	)
 	
 
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_input_size_button")]], {
 
-		if(!is.null(shiny_env[[heatmap_id]]$ht_list)) {
+		req(heatmap_initialized())
 
-			output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
-				width = input[[qq("@{heatmap_id}_heatmap_input_width")]]
-		    	height = input[[qq("@{heatmap_id}_heatmap_input_height")]]
-		    	
-		    	draw(shiny_env[[heatmap_id]]$ht_list)
+		output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
+			width = input[[qq("@{heatmap_id}_heatmap_input_width")]]
+	    	height = input[[qq("@{heatmap_id}_heatmap_input_height")]]
+	    	
+	    	draw( ht_list() )
 
-		    	showNotification(qq("Resizing the original heatmap (device size: @{width}x@{height} px)."), duration = 2, type = "message")
-
-		    })
-		}
+	    	showNotification(qq("Resizing the original heatmap (device size: @{width}x@{height} px)."), duration = 2, type = "message")
+	    })
+		
 	})
 
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
 
 		if(is.null(input[[qq("@{heatmap_id}_heatmap_brush")]])) {
-			shiny_env[[heatmap_id]]$selected = NULL
+			selected( NULL )
 		} else {
 			lt = get_pos_from_brush(input[[qq("@{heatmap_id}_heatmap_brush")]])
 		  	pos1 = lt[[1]]
 		  	pos2 = lt[[2]]
 		    
-		    ht_list = shiny_env[[heatmap_id]]$ht_list
 		    dev.null()
-		    selected = selectArea(ht_list, mark = FALSE, pos1 = pos1, pos2 = pos2, verbose = FALSE, ht_pos = shiny_env[[heatmap_id]]$ht_pos, include_annotation = TRUE, calibrate = FALSE)
+		    selected( selectArea(ht_list(), mark = FALSE, pos1 = pos1, pos2 = pos2, verbose = FALSE, ht_pos = ht_pos(), include_annotation = TRUE, calibrate = FALSE) )
 		    dev.off2()
-		    shiny_env[[heatmap_id]]$selected = selected
 		}
 
 		updateTextInput(session, qq("@{heatmap_id}_keyword"), value = "")
 
 		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 			
-    		if(is.null(shiny_env[[heatmap_id]]$selected)) {
+    		if(is.null( selected() )) {
     			grid.newpage()
 				grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
     		} else {
-    			make_sub_heatmap(input, output, session, heatmap_id)
+    			make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 			}
 		})
 	
 		if(default_brush_action) {
-			default_brush_action(input, output, session, heatmap_id)
+			default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 		}
 
 		if(!is.null(brush_action)) {
-			brush_action(shiny_env[[heatmap_id]]$selected, output)
+			brush_action(selected(), output)
 		}
 
 		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 	})
 
+
+	###############################################################
+	##      sub-heatmap by selecting or searching
+	###############################################################
 	observeEvent(input[[qq("@{heatmap_id}_search_action")]], {
 		if(input[[qq("@{heatmap_id}_keyword")]] == "") {
 			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
@@ -257,11 +267,11 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			})
 
 			if(default_brush_action) {
-				default_brush_action(input, output, session, heatmap_id, "Query keyword is empty.")
+				default_brush_action(input, output, session, heatmap_id, "Query keyword is empty.", selected = selected(), ht_list = ht_list())
 			}
 
 			if(!is.null(brush_action)) {
-				brush_action(shiny_env[[heatmap_id]]$selected, output)
+				brush_action(selected(), output)
 			}
 
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "off")
@@ -283,18 +293,18 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			})
 
 			if(default_brush_action) {
-				default_brush_action(input, output, session, heatmap_id, "No heatmap is selected for searching.")
+				default_brush_action(input, output, session, heatmap_id, "No heatmap is selected for searching.", selected = selected(), ht_list = ht_list())
 			}
 
 			if(!is.null(brush_action)) {
-				brush_action(shiny_env[[heatmap_id]]$selected, output)
+				brush_action(selected(), output)
 			}
 			return(invisible(NULL))
 		}
 
-		ht_list = shiny_env[[heatmap_id]]$ht_list
+		hl = ht_list()
 
-		all_ht_name = sapply(ht_list@ht_list, function(x) {
+		all_ht_name = sapply(hl@ht_list, function(x) {
 			if(inherits(x, "Heatmap")) x@name else NA
 		})
 		all_ht_name = all_ht_name[!is.na(all_ht_name)]
@@ -307,137 +317,97 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 		}
 
 		if(where == 1) {
-			selected = selectByLabels(ht_list, row_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend))
+			selected( selectByLabels(hl, row_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend)) )
 		} else if(where == 2) {
-			selected = selectByLabels(ht_list, column_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend))
+			selected( selectByLabels(hl, column_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend)) )
 		} else {
-			selected = selectByLabels(ht_list, row_keywords = keywords, column_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend))
+			selected( selectByLabels(hl, row_keywords = keywords, column_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend)) )
 		}
-		shiny_env[[heatmap_id]]$selected = selected
 
 		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 			
-    		if(is.null(shiny_env[[heatmap_id]]$selected)) {
+    		if(is.null(selected())) {
     			grid.newpage()
 				grid.text(paste(strwrap(qq("Found nothing from heatmaps with keywords '@{keywords2}'."), width = 60), collapse = "\n"), 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
 
 				if(default_brush_action) {
-					default_brush_action(input, output, session, heatmap_id, qq("Found nothing from heatmaps with keywords '@{keywords2}'."))
+					default_brush_action(input, output, session, heatmap_id, qq("Found nothing from heatmaps with keywords '@{keywords2}'."), selected = selected(), ht_list = ht_list())
 				}
 
 				if(!is.null(brush_action)) {
-					brush_action(shiny_env[[heatmap_id]]$selected, output)
+					brush_action(selected(), output)
 				}
 				return(invisible(NULL))
     		} else {
-    			make_sub_heatmap(input, output, session, heatmap_id)
+    			make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 			}
 		})
 
 		if(default_brush_action) {
-			default_brush_action(input, output, session, heatmap_id)
+			default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 		}
 
 		if(!is.null(brush_action)) {
-			brush_action(shiny_env[[heatmap_id]]$selected, output)
+			brush_action(selected(), output)
 		}
 
 		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 
 	})
 
-	observeEvent(input[[qq("@{heatmap_id}_sub_heatmap_download_trigger")]], {
-		output[[qq("@{heatmap_id}_sub_heatmap_download_button")]] = downloadHandler(
+	output[[qq("@{heatmap_id}_sub_heatmap_download_button")]] = downloadHandler(
 
-			filename = function() {
+		filename = function() {
+			format = as.numeric(input[[qq("@{heatmap_id}_sub_heatmap_download_format")]])
+			fm = c("png", "pdf", "svg")[format]
+			qq("@{heatmap_id}_sub_heatmap.@{fm}")
+		},
+		content = function(file) {
+			
+			format = as.numeric(input[[qq("@{heatmap_id}_sub_heatmap_download_format")]])
+			fm = c("png", "pdf", "svg")[format]
+			dev = list(png, pdf, svglite::svglite)[[format]]
 
-				format = as.numeric(input[[qq("@{heatmap_id}_sub_heatmap_download_format")]])
-				fm = c("png", "pdf", "svg")[format]
-				qq("@{heatmap_id}_sub_heatmap.@{fm}")
-			},
-			content = function(file) {
-				
-				format = as.numeric(input[[qq("@{heatmap_id}_sub_heatmap_download_format")]])
-				fm = c("png", "pdf", "svg")[format]
-				dev = list(png, pdf, svglite::svglite)[[format]]
+			showNotification(qq("Download sub-heatmap in @{fm}."), duration = 2, type = "message")
+			message(qq("[@{Sys.time()}] Download sub-heatmap in @{fm}."))
 
-				showNotification(qq("Download sub-heatmap in @{fm}."), duration = 2, type = "message")
-				message(qq("[@{Sys.time()}] Download sub-heatmap in @{fm}."))
-
-				temp = tempfile()
-				width = input[[qq("@{heatmap_id}_sub_heatmap_download_image_width")]]
-				height = input[[qq("@{heatmap_id}_sub_heatmap_download_image_height")]]
-				
-				if(fm == "png") {
-					dev(temp, width = width*2, height = height*2, res = 72*2)
-				} else if(fm == "pdf") {
-					dev(temp, width = width/100*4/3, height = height/100*4/3)
-				} else {
-					dev(temp, width = width, height = height)
-				}
-				if(is.null(shiny_env[[heatmap_id]]$selected)) {
-	    			grid.newpage()
-					grid.text("No heatmap is available.")
-	    		} else {
-	    			make_sub_heatmap(input, output, session, heatmap_id, newpage = FALSE)
-				}
-			    dev.off()
-
-				file.copy(temp, file)
+			temp = tempfile()
+			width = input[[qq("@{heatmap_id}_sub_heatmap_download_image_width")]]
+			height = input[[qq("@{heatmap_id}_sub_heatmap_download_image_height")]]
+			
+			if(fm == "png") {
+				dev(temp, width = width*2, height = height*2, res = 72*2)
+			} else if(fm == "pdf") {
+				dev(temp, width = width/100*4/3, height = height/100*4/3)
+			} else {
+				dev(temp, width = width, height = height)
 			}
-		)
-	})
+			if(is.null(selected())) {
+    			grid.newpage()
+				grid.text("No heatmap is available.")
+    		} else {
+    			make_sub_heatmap(input, output, session, heatmap_id, newpage = FALSE, selected = selected(), ht_list = ht_list())
+			}
+		    dev.off()
 
+			file.copy(temp, file)
+		}
+	)
+	
 	observeEvent(input[[qq("@{heatmap_id}_sub_heatmap_input_size_button")]], {
 		
 		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
-			if(is.null(shiny_env[[heatmap_id]]$selected)) {
+			if(is.null(selected())) {
     			grid.newpage()
 				grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
     		} else {
-    			make_sub_heatmap(input, output, session, heatmap_id, update_size = FALSE)
+    			make_sub_heatmap(input, output, session, heatmap_id, update_size = FALSE, selected = selected(), ht_list = ht_list())
 			}
 		})
 	})
-	
-
-	observeEvent(input[[qq("@{heatmap_id}_heatmap_click")]], {
-		
-		pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]])
-		  
-		if(is.null(pos1)) {
-			shiny_env[[heatmap_id]]$selected = NULL
-		} else {
-			ht_list = shiny_env[[heatmap_id]]$ht_list
-			dev.null()
-			pos = selectPosition(ht_list, mark = FALSE, pos = pos1, verbose = FALSE, ht_pos = shiny_env[[heatmap_id]]$ht_pos, calibrate = FALSE)
-			dev.off2()
-			shiny_env[[heatmap_id]]$selected = pos
-		}
-
-		if(default_click_action) {
-			default_click_action(input, output, session, heatmap_id)
-		}
-
-		if(!is.null(click_action)) {
-			click_action(shiny_env[[heatmap_id]]$selected, output)
-		}
-
-		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
-			grid.newpage()
-			grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
-		})
-
-		output[[qq("@{heatmap_id}_sub_heatmap_control")]] = renderUI({
-			NULL
-		})
-
-		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "off")
-
-	})
 
 	observeEvent(input[[qq("@{heatmap_id}_open_table")]], {
-		if(is.null(shiny_env[[heatmap_id]]$selected)) {
+		if(is.null(selected())) {
 			showModal(modalDialog(
 				title = "The selected tables",
 				p("Rows or columns are not selected."),
@@ -465,47 +435,17 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			))
 
 			output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
-				HTML(format_html_table(heatmap_id))
+				HTML(format_html_table(heatmap_id, selected = selected(), ht_list = ht_list()))
 			})
 
 		}
 	})
 
-	format_html_table = function(heatmap_id, digits = 2) {
-		tb = get_sub_matrix(heatmap_id, digits = round(digits))
-		is_cn = attr(tb, "is_cn")
-		is_rn = attr(tb, "is_rn")
-		hline = attr(tb, "hline")
-		vline = attr(tb, "vline")
-
-		kb = kbl(tb, format = "html")
-		for(i in which(is_rn)) {
-			kb = column_spec(kb, i, bold = TRUE, background = "#EFEFEF")
-		}
-		for(i in which(is_cn)) {
-			kb = row_spec(kb, i, bold = TRUE, background = "#EFEFEF")
-		}
-		kb = column_spec(kb, 1, border_left = TRUE)
-		for(i in which(vline)) {
-			kb = column_spec(kb, i, border_right = TRUE)
-		}
-		for(i in which(hline)) {
-			kb = row_spec(kb, i, extra_css = "border-bottom: 1px solid")
-		}
-		kb = row_spec(kb, 1, extra_css = "border-top: 1px solid")
-		
-		kb = scroll_box(
-			kable_styling(kb, full_width = FALSE, position = "left"), 
-			width = "100%",
-			box_css = "border: 1px solid #ddd; padding: 5px; max-height:500px;"
-		)
-		kb
-	}
-
+	
 	observeEvent(input[[qq("@{heatmap_id}_digits")]], {
 
 		output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
-			HTML(format_html_table(heatmap_id, input[[qq("@{heatmap_id}_digits")]]))
+			HTML(format_html_table(heatmap_id, input[[qq("@{heatmap_id}_digits")]], selected = selected(), ht_list = ht_list()))
 		})
 	})
 
@@ -514,10 +454,46 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			qq("@{heatmap_id}_download_table.csv")
 		},
 		content = function(file) {
-			tb = get_sub_matrix(heatmap_id)
+			tb = get_sub_matrix(heatmap_id, selected = selected(), ht_list = ht_list())
 			write.table(tb, file, row.names = FALSE, col.names = FALSE, sep = ",", quote = TRUE)
 		}
 	)
+
+	###############################################################
+	##      A click on the heatmap
+	###############################################################
+	observeEvent(input[[qq("@{heatmap_id}_heatmap_click")]], {
+		
+		pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]])
+		  
+		if(is.null(pos1)) {
+			selected( NULL )
+		} else {
+			dev.null()
+			selected( selectPosition(ht_list(), mark = FALSE, pos = pos1, verbose = FALSE, ht_pos = ht_pos(), calibrate = FALSE) )
+			dev.off2()
+		}
+
+		if(default_click_action) {
+			default_click_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+		}
+
+		if(!is.null(click_action)) {
+			click_action(selected(), output)
+		}
+
+		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+			grid.newpage()
+			grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
+		})
+
+		output[[qq("@{heatmap_id}_sub_heatmap_control")]] = renderUI({
+			NULL
+		})
+
+		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "off")
+
+	})
 }
 
 
@@ -539,7 +515,8 @@ get_pos_from_click = function(click) {
     pos1
 }
 
-make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TRUE, ...) {
+make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TRUE, 
+	selected = NULL, ht_list = NULL, ...) {
 	showNotification("Making the selected sub-heatmap.", duration = 2, type = "message")
 
 	width = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_width")]]
@@ -555,15 +532,12 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 	if(is.null(show_annotation)) show_annotation = TRUE
 	if(is.null(show_cell_fun)) show_cell_fun = TRUE
 
-	selected = shiny_env[[heatmap_id]]$selected
     if(is.null(selected)) {
     	grid.newpage()
 		grid.text("Selected area should overlap to heatmap bodies", 0.5, 0.5, gp = gpar(fontsize = 14))
     } else {
 
     	all_ht_name = unique(selected$heatmap)
-
-    	ht_list = shiny_env[[heatmap_id]]$ht_list
 
     	ignored_anno = c("anno_oncoprint_barplot", "anno_zoom", "anno_empty")
 
@@ -839,16 +813,13 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 }
 
 # if annotation is included, top/bottom annotation are all put at the bottom of the matrix
-get_sub_matrix = function(heatmap_id, digits = 2, include_annotation = TRUE) {
+get_sub_matrix = function(heatmap_id, digits = 2, include_annotation = TRUE, selected = NULL, ht_list = NULL) {
 	message(qq("[@{Sys.time()}] fetch selected tables."))
 
 	dev.null()
 	on.exit(dev.off2())
 
-	selected = shiny_env[[heatmap_id]]$selected
 	all_ht_name = unique(selected$heatmap)
-
-	ht_list = shiny_env[[heatmap_id]]$ht_list
 
 	data_anno = c("anno_points", "anno_lines", "anno_barplot", "anno_text", "anno_simple")
 
@@ -1105,9 +1076,11 @@ collect_data_frame_from_anno = function(ha, digits, direction) {
 }
 
 default_brush_action = function(input, output, session, heatmap_id,
-	default_text = "Selected area should overlap to heatmap bodies.") {
+	default_text = "Selected area should overlap to heatmap bodies.",
+	selected = NULL, ht_list = NULL) {
+
 	output[[qq("@{heatmap_id}_info")]] = renderUI({
-		selected = shiny_env[[heatmap_id]]$selected
+
 		if(is.null(selected)) {
 			HTML(qq("<h5>Output</h5>\n<p>@{default_text}</p>"))
 		} else {
@@ -1116,7 +1089,6 @@ default_brush_action = function(input, output, session, heatmap_id,
 
 			n_ht = length(unique(selected$heatmap))
 
-			ht_list = shiny_env[[heatmap_id]]$ht_list
 			if(ht_list@direction == "horizontal") {
 				l1 = !duplicated(selected$row_slice)
 				nr = length(unlist(selected$row_index[l1]))
@@ -1132,7 +1104,6 @@ default_brush_action = function(input, output, session, heatmap_id,
 			}
 
 			selected_df = as.data.frame(selected)
-			shiny_env$history[[ digest(selected_df) ]] = selected_df
 
 			con = textConnection("dump_txt", "w")
 			dump("selected_df", file = con)
@@ -1155,22 +1126,20 @@ default_brush_action = function(input, output, session, heatmap_id,
 	})
 }
 
-default_click_action = function(input, output, session, heatmap_id) {
+default_click_action = function(input, output, session, heatmap_id, selected = NULL, ht_list = NULL) {
 	output[[qq("@{heatmap_id}_info")]] = renderUI({
 
-	    if(is.null(shiny_env[[heatmap_id]]$selected)) {
+	    if(is.null(selected)) {
 	    	HTML("<h5>Output</h5>\n<p>No cell is selected.</p>")
 	    } else {
 	    	showNotification(qq("Click on the heatmap."), duration = 2, type = "message")
-	    	pos = shiny_env[[heatmap_id]]$selected
+	    	pos = selected
 
 			if(is.null(pos)) {
 				HTML("<h5>Output</h5>\n<p>You did not click inside the heatmap.</p>")
 			} else {
 				ht_name = pos[1, "heatmap"]
 				slice_name = pos[1, "slice"]
-
-				ht_list = shiny_env[[heatmap_id]]$ht_list
 		
 				row_index = pos[1, "row_index"][[1]]
 			    column_index = pos[1, "column_index"][[1]]
@@ -1215,13 +1184,13 @@ default_click_action = function(input, output, session, heatmap_id) {
 }
 
 
-check_heatmap_in_search = function(heatmap_id, shiny_env) {
-	all_ht_name = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
+check_heatmap_in_search = function(heatmap_id, ht_list) {
+	all_ht_name = sapply(ht_list@ht_list, function(x) {
 		if(inherits(x, "Heatmap")) x@name else NA
 	})
 	all_ht_name = all_ht_name[!is.na(all_ht_name)]
 
-	has_row_labels = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
+	has_row_labels = sapply(ht_list@ht_list, function(x) {
 		if(inherits(x, "Heatmap")) {
 			!is.null(x@row_names_param$labels)
 		} else {
@@ -1229,7 +1198,7 @@ check_heatmap_in_search = function(heatmap_id, shiny_env) {
 		}
 	})
 	has_row_labels = has_row_labels[all_ht_name]
-	has_column_labels = sapply(shiny_env[[heatmap_id]]$ht_list@ht_list, function(x) {
+	has_column_labels = sapply(ht_list@ht_list, function(x) {
 		if(inherits(x, "Heatmap")) {
 			!is.null(x@column_names_param$labels)
 		} else {
@@ -1258,5 +1227,37 @@ check_heatmap_in_search = function(heatmap_id, shiny_env) {
 
 		return(list(where_choices, heatmaps_to_search))
 	}
+}
+
+
+format_html_table = function(heatmap_id, digits = 2, selected = NULL, ht_list = NULL) {
+	tb = get_sub_matrix(heatmap_id, digits = round(digits), selected = selected, ht_list = ht_list)
+	is_cn = attr(tb, "is_cn")
+	is_rn = attr(tb, "is_rn")
+	hline = attr(tb, "hline")
+	vline = attr(tb, "vline")
+
+	kb = kbl(tb, format = "html")
+	for(i in which(is_rn)) {
+		kb = column_spec(kb, i, bold = TRUE, background = "#EFEFEF")
+	}
+	for(i in which(is_cn)) {
+		kb = row_spec(kb, i, bold = TRUE, background = "#EFEFEF")
+	}
+	kb = column_spec(kb, 1, border_left = TRUE)
+	for(i in which(vline)) {
+		kb = column_spec(kb, i, border_right = TRUE)
+	}
+	for(i in which(hline)) {
+		kb = row_spec(kb, i, extra_css = "border-bottom: 1px solid")
+	}
+	kb = row_spec(kb, 1, extra_css = "border-top: 1px solid")
+	
+	kb = scroll_box(
+		kable_styling(kb, full_width = FALSE, position = "left"), 
+		width = "100%",
+		box_css = "border: 1px solid #ddd; padding: 5px; max-height:500px;"
+	)
+	kb
 }
 

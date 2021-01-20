@@ -25,12 +25,12 @@ A \code{\link[S4Vectors:DataFrame-class]{DataFrame}} object with row indices and
 }
 \examples{
 if(dev.interactive()) {
-m = matrix(rnorm(100), 10)
-rownames(m) = 1:10
-colnames(m) = 1:10
+    m = matrix(rnorm(100), 10)
+    rownames(m) = 1:10
+    colnames(m) = 1:10
 
-ht = Heatmap(m)
-ht = draw(ht)
-selectPosition(ht)
+    ht = Heatmap(m)
+    ht = draw(ht)
+    selectPosition(ht)
 }
 }

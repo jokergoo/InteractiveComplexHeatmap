@@ -30,17 +30,17 @@ No value is returned.
 }
 \examples{
 if(interactive()) {
-ht = Heatmap(m)
-ht = draw(ht)
+    ht = Heatmap(m)
+    ht = draw(ht)
 
-ui = fluidPage(
-    InteractiveComplexHeatmapOutput()
-)
+    ui = fluidPage(
+        InteractiveComplexHeatmapOutput()
+    )
 
-server = function(input, output, session) {
-    renderInteractiveComplexHeatmap(ht, input, output, session)
-}
+    server = function(input, output, session) {
+        renderInteractiveComplexHeatmap(ht, input, output, session)
+    }
 
-shiny::shinyApp(ui, server)
+    shiny::shinyApp(ui, server)
 }
 }

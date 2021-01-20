@@ -1,0 +1,134 @@
+---
+title: "InteractiveComplexHeatmap in an R Markdown document - dynamically generate the widget"
+author: "Zuguang Gu"
+date: "01/01/2021"
+output: html_document
+runtime: shiny
+---
+
+
+```{r}
+library(ComplexHeatmap)
+library(InteractiveComplexHeatmap)
+```
+
+## Use InteractiveComplexHeatmapModal()
+
+```{r}
+m = matrix(rnorm(100), 10)
+ht = draw(Heatmap(m))
+```
+
+```{r, echo = FALSE}
+ui = fluidPage(
+    actionButton("show_heatmap", "Make me interactive"),
+)
+
+server = function(input, output, session) {
+	observeEvent(input$show_heatmap, {
+		showModal(modalDialog(
+			title = "foo"
+			))
+		InteractiveComplexHeatmapModal(input, output, session, ht)
+	})
+}
+shiny::shinyApp(ui, server)
+```
+
+## Use InteractiveComplexHeatmapWidget()
+
+```{r, echo = FALSE}
+ui = fluidPage(
+	radioButtons("select", "Select", c("Numeric" = 1, "Character" = 2)),
+    actionButton("show_heatmap", "Generate_heatmap"),
+    htmlOutput("heatmap_output")
+)
+
+get_heatmap_fun = function(i) {
+	mat_list = list(
+		matrix(rnorm(100), 10),
+		matrix(sample(letters[1:10], 100, replace = TRUE), 10)
+	)
+
+	Heatmap(mat_list[[i]])
+}
+
+server = function(input, output, session) {
+	observeEvent(input$show_heatmap, {
+		i = as.numeric(input$select)
+		InteractiveComplexHeatmapWidget(input, output, session, 
+			get_heatmap = get_heatmap_fun(i), output_id = "heatmap_output")
+	})
+}
+shiny::shinyApp(ui, server)
+```
+
+The source code of this R Markdown document is:
+
+````markdown
+---
+title: "InteractiveComplexHeatmap in an Rmarkdown document"
+author: "Zuguang Gu"
+date: "16/12/2020"
+output: html_document
+runtime: shiny
+---
+
+
+`r ''````{r, echo=FALSE}
+library(ComplexHeatmap)
+library(InteractiveComplexHeatmap)
+```
+
+## Use InteractiveComplexHeatmapModal()
+
+`r ''````{r, echo=FALSE}
+m = matrix(rnorm(100), 10)
+ht = draw(Heatmap(m))
+```
+
+`r ''````{r, echo=FALSE}
+ui = fluidPage(
+    actionButton("show_heatmap", "Make me interactive"),
+)
+
+server = function(input, output, session) {
+	m = matrix(rnorm(100), 10)
+	ht = Heatmap(m)
+
+	observeEvent(input$show_heatmap, {
+		InteractiveComplexHeatmapModal(input, output, session, ht)
+	})
+}
+shiny::shinyApp(ui, server)
+```
+
+## Use InteractiveComplexHeatmapWidget()
+
+
+`r ''````{r, echo=FALSE}
+ui = fluidPage(
+	radioButtons("select", "Select", c("Numeric" = 1, "Character" = 2)),
+    actionButton("show_heatmap", "Generate_heatmap"),
+)
+
+get_heatmap_fun = function(i) {
+	mat_list = list(
+		matrix(rnorm(100), 10),
+		matrix(sample(letters[1:10], 100, replace = TRUE), 10)
+	)
+
+	Heatmap(mat_list[[i]])
+}
+
+server = function(input, output, session) {
+	observeEvent(input$show_heatmap, {
+		i = as.numeric(input$select)
+		InteractiveComplexHeatmapWidget(input, output, session, 
+			get_heatmap = get_heatmap_fun(i), output_id = "heatmap_output")
+	})
+}
+shiny::shinyApp(ui, server)
+```
+
+````

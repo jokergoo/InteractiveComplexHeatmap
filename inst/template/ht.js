@@ -203,7 +203,6 @@ $(function() {
 
 	Shiny.addCustomMessageHandler('@{heatmap_id}_initialized', function(message) {
 		$('#@{heatmap_id}_heatmap_control').css("display", "block");
-		Shiny.setInputValue('@{heatmap_id}_heatmap_download_trigger', Math.random());
 	});
 
 	Shiny.addCustomMessageHandler('@{heatmap_id}_empty_search', function(message) {
@@ -216,9 +215,9 @@ $(function() {
 		} else {
 			$('#@{heatmap_id}_sub_heatmap_control').css("display", "none");
 		}
-		Shiny.setInputValue('@{heatmap_id}_sub_heatmap_download_trigger', Math.random());
 	});
 
+	// similar function as "jquery ui tabs"
 	var objs = $('#@{heatmap_id}_heatmap_control li a');
 	$(objs[0]).attr("title", "Search in heatmaps");
 	$(objs[1]).attr("title", "Configure brush");
