@@ -23,18 +23,18 @@
 #
 # == example
 # if(dev.interactive()) {
-# m = matrix(rnorm(100), 10)
-# rownames(m) = 1:10
-# colnames(m) = 1:10
-#
-# ht = Heatmap(m)
-# ht = draw(ht)
-# selectArea(ht)
-#
-# set.seed(123)
-# ht = Heatmap(m, row_km = 2, column_km = 2)
-# ht = draw(ht)
-# selectArea(ht)
+#     m = matrix(rnorm(100), 10)
+#     rownames(m) = 1:10
+#     colnames(m) = 1:10
+#     
+#     ht = Heatmap(m)
+#     ht = draw(ht)
+#     selectArea(ht)
+#     
+#     set.seed(123)
+#     ht = Heatmap(m, row_km = 2, column_km = 2)
+#     ht = draw(ht)
+#     selectArea(ht)
 # }
 selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = TRUE,
 	ht_pos = NULL, include_annotation = FALSE, calibrate = TRUE) {
@@ -324,13 +324,13 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 #
 # == example
 # if(dev.interactive()) {
-# m = matrix(rnorm(100), 10)
-# rownames(m) = 1:10
-# colnames(m) = 1:10
-#
-# ht = Heatmap(m)
-# ht = draw(ht)
-# selectPosition(ht)
+#     m = matrix(rnorm(100), 10)
+#     rownames(m) = 1:10
+#     colnames(m) = 1:10
+#     
+#     ht = Heatmap(m)
+#     ht = draw(ht)
+#     selectPosition(ht)
 # }
 selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verbose = TRUE,
 	ht_pos = NULL, calibrate = TRUE) {
@@ -519,12 +519,12 @@ selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verb
 #
 # == example
 # if(dev.interactive()) {
-# m = matrix(rnorm(100), 10)
-# ht = Heatmap(m, row_km = 2, column_km = 2)
-# ht = draw(ht)
-# pos = htPositionsOnDevice(ht)
-#
-# InteractiveComplexHeatmap:::redraw_ht_vp(pos)
+#     m = matrix(rnorm(100), 10)
+#     ht = Heatmap(m, row_km = 2, column_km = 2)
+#     ht = draw(ht)
+#     pos = htPositionsOnDevice(ht)
+#     
+#     InteractiveComplexHeatmap:::redraw_ht_vp(pos)
 # }
 htPositionsOnDevice = function(ht_list = get_last_ht(), unit = "inch", valueOnly = FALSE, 
 	include_annotation = FALSE, calibrate = TRUE) {

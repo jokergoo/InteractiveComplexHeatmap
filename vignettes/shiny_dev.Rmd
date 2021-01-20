@@ -101,7 +101,7 @@ include_graphics("https://jokergoo.github.io/images/app_demo2.png")
 The original heatmap and the sub-heatmap can be resized by dragging the two
 boxes, but still, `InteractiveComplexHeatmapOutput()` has arguments `width1`,
 `width2`, `height1` and `height2` that control the initial sizes of the two
-boxes. You can check `htShinyExample(16)` where the size of the heatmap box is
+boxes. You can check `htShinyExample(17)` where the size of the heatmap box is
 manually set to make sure the heatmap is well visible.
 
 By default, to get the information of a single cell in the heatmap, a "click"
@@ -121,7 +121,7 @@ the style of the brush can also be manually adjusted in the web page of the Shin
 It is very straightforward to integrate **InteractiveComplexHeatmap** in an
 interactive R Markdown document, just in a same way of integrating normal Shiny
 widgets. Following is an example and you can run a real interactive document
-with heatmaps by `htShinyExample(22)`.
+with heatmaps by `htShinyExample(30)`.
 
 ````markdown
 ---
@@ -237,7 +237,7 @@ On the sever side, I define `click_action` to print a styled text and define
 heatmap. Note I also set `default_click_action = FALSE, default_brush_action =
 FALSE` in `renderInteractiveComplexHeatmap()` to turn off the default responses.
 
-You can also run the following example simply by `htShinyExample(20)`.
+You can also run the following example simply by `htShinyExample(21)`.
 
 ```{r, eval = FALSE}
 library(GetoptLong)  # for the qq() function which does variable intepolation
@@ -284,11 +284,11 @@ shinyApp(ui, server)
 include_graphics("https://jokergoo.github.io/images/customize_output.png")
 ```
 
-`htShinyExample(21)` gives another scenario where the output needs to be
+`htShinyExample(22)` gives another scenario where the output needs to be
 self-defined. In that example, an gene expression matrix is visualized and
 clicking on the heatmap will print the corresponding gene and some other
 annotations related to this gene (e.g. the corresponding gene symbol, RefSeq
-IDs and UniProt IDs). Run `htShinyExample(21)` to see how this is implemented.
+IDs and UniProt IDs). Run `htShinyExample(22)` to see how this is implemented.
 
 ```{r, echo = FALSE, out.width = "100%"}
 include_graphics("https://jokergoo.github.io/images/customize_output2.png")
@@ -306,3 +306,146 @@ include_graphics("https://jokergoo.github.io/images/customize_output3.png")
 ```
 
 
+## Dynamicly generate interactive heatmap widget
+
+In previous examples, the heatmaps are already generated before making the
+interactive app. There are also scenarios where the heatmaps are generated on
+the fly, e.g. when the matrix is dynamically generated in the middle of an
+analysis or there are multiple matrices and the heatmap is generated according
+to user's selection.
+
+There are two other functions `InteractiveComplexHeatmapModal()` and
+`InteractiveComplexHeatmapWidget()` which have very similar behaviors. These
+two functions are normally put inside e.g. `shiny::observeEvent()` and they
+generate UI as well as rendering the interactive heatmaps.
+
+First I will introduce the usage of `InteractiveComplexHeatmapModal()`. In the
+following example, there is only an action button in the UI, and in the server
+function, `InteractiveComplexHeatmapModal()` is called when receiving an `input$show_heatmap`
+signal. This example can also be run by `htShinyExample(25)`.
+
+```{r, eval = FALSE}
+ui = fluidPage(
+    actionButton("show_heatmap", "Generate_heatmap"),
+)
+
+server = function(input, output, session) {
+    m = matrix(rnorm(100), 10)
+    ht = Heatmap(m)
+
+    observeEvent(input$show_heatmap, {
+        InteractiveComplexHeatmapModal(input, output, session, ht)
+    })
+}
+shiny::shinyApp(ui, server)
+```
+
+As shown in the following figure, `InteractiveComplexHeatmapModal()` will open
+an "modal" which includes the interactive heatmaps. Clicking outside closes
+the widget.
+
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/dynamic_widget.gif")
+```
+
+In the next example (`htShinyExample(26)`), a different heatmap is generated
+according to user's selection.
+
+```{r, eval = FALSE}
+ui = fluidPage(
+    radioButtons("select", "Select", c("Numeric" = 1, "Character" = 2)),
+    actionButton("show_heatmap", "Generate_heatmap"),
+)
+
+get_heatmap_fun = function(i) {
+    mat_list = list(
+        matrix(rnorm(100), 10),
+        matrix(sample(letters[1:10], 100, replace = TRUE), 10)
+    )
+    Heatmap(mat_list[[i]])
+}
+
+server = function(input, output, session) {
+    observeEvent(input$show_heatmap, {
+        i = as.numeric(input$select)
+        InteractiveComplexHeatmapModal(input, output, session, 
+            get_heatmap = get_heatmap_fun(i))
+    })
+}
+shiny::shinyApp(ui, server)
+```
+
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/dynamic_widget_radio_selection.gif")
+```
+
+The usage of `InteractiveComplexHeatmapWidget()` is very similar as
+`InteractiveComplexHeatmapModal()`, except that now for
+`InteractiveComplexHeatmapWidget()`, user needs to allocate a place
+defined by `shiny::htmlOutput()` in UI, and later the interactive heatmap widget is
+put there.
+
+I modify the previous example with `InteractiveComplexHeatmapWidget()`. Now in the UI, 
+I add one line with `htmlOutput()` with ID `heatmap_output`, and this ID is set
+in `InteractiveComplexHeatmapWidget()` correspondingly.
+
+```{r, eval = FALSE}
+ui = fluidPage(
+    actionButton("show_heatmap", "Generate_heatmap"),
+    htmlOutput("heatmap_output")
+)
+
+server = function(input, output, session) {
+    m = matrix(rnorm(100), 10)
+    ht = Heatmap(m)
+    
+    observeEvent(input$show_heatmap, {
+        InteractiveComplexHeatmapWidget(input, output, session, ht, output_id = "heatmap_output")
+    })
+}
+shiny::shinyApp(ui, server)
+```
+
+The app looks like follows:
+
+
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/dynamic_widget2.gif")
+```
+
+`InteractiveComplexHeatmapWidget()` and `InteractiveComplexHeatmapWidget()`
+all accept an argument `js_code` where customized JavaScript code can be
+inserted after the interactive UI. This is sometimes useful. In previous
+example where the heatmap widget is triggered by clicking on the action
+button, every time when clicking on the button, the widget is regenerated
+although the heatmaps are actually the same. Actually we can change the
+behavior of the button that from the second click it just switches the
+visibility of the heatmap widget.
+
+```{r, eval = FALSE}
+ui = fluidPage(
+    actionButton("show_heatmap", "Generate_heatmap"),
+    htmlOutput("heatmap_output")
+)
+
+server = function(input, output, session) {
+    m = matrix(rnorm(100), 10)
+    ht = Heatmap(m)
+    
+    observeEvent(input$show_heatmap, {
+        InteractiveComplexHeatmapWidget(input, output, session, ht, output_id = "heatmap_output",
+            js_code = function(heatmap_id) {
+                "$('#show_heatmap').click(function() {
+                    $('#heatmap_output').toggle('slow');
+                }).text('Show/hide heatmap').
+                   attr('id', 'show_heatmap_toggle');
+            "}
+        )
+    })
+}
+shiny::shinyApp(ui, server)
+```
+
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/dynamic_widget3.gif")
+```

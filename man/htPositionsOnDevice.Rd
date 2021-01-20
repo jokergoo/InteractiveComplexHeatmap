@@ -24,11 +24,11 @@ It returns a \code{\link[S4Vectors:DataFrame-class]{DataFrame}} object of the po
 }
 \examples{
 if(dev.interactive()) {
-m = matrix(rnorm(100), 10)
-ht = Heatmap(m, row_km = 2, column_km = 2)
-ht = draw(ht)
-pos = htPositionsOnDevice(ht)
+    m = matrix(rnorm(100), 10)
+    ht = Heatmap(m, row_km = 2, column_km = 2)
+    ht = draw(ht)
+    pos = htPositionsOnDevice(ht)
 
-InteractiveComplexHeatmap:::redraw_ht_vp(pos)
+    InteractiveComplexHeatmap:::redraw_ht_vp(pos)
 }
 }

@@ -20,34 +20,34 @@
 # == example
 # # use a random heatmap
 # if(interactive()) {
-# htShiny()
+#     htShiny()
 # }
 #
 # # by providing a heatmap/heatmap list
 # if(interactive()) {
-# m = matrix(rnorm(100), 10)
-# rownames(m) = 1:10
-# colnames(m) = 1:10
-# 
-# ht = Heatmap(m)
-# ht = draw(ht)
-# htShiny(ht)
+#     m = matrix(rnorm(100), 10)
+#     rownames(m) = 1:10
+#     colnames(m) = 1:10
+#     
+#     ht = Heatmap(m)
+#     ht = draw(ht)
+#     htShiny(ht)
 # }
 #
 # if(interactive()) {
-# m1 = matrix(rnorm(100), 10)
-# rownames(m1) = 1:10
-# colnames(m1) = 1:10
-# ht1 = Heatmap(m1, row_km = 2, column_km = 2)
-# 
-# m2 = matrix(sample(letters[1:10], 100, replace = TRUE), 10)
-# ht2 = Heatmap(m2)
-#  
-# ht_list = draw(ht1 + ht2)
-# htShiny(ht_list)
-# 
-# ht_list = ht1 \%v\% ht2
-# htShiny(ht_list)
+#     m1 = matrix(rnorm(100), 10)
+#     rownames(m1) = 1:10
+#     colnames(m1) = 1:10
+#     ht1 = Heatmap(m1, row_km = 2, column_km = 2)
+#     
+#     m2 = matrix(sample(letters[1:10], 100, replace = TRUE), 10)
+#     ht2 = Heatmap(m2)
+#     
+#     ht_list = draw(ht1 + ht2)
+#     htShiny(ht_list)
+#     
+#     ht_list = ht1 \%v\% ht2
+#     htShiny(ht_list)
 # }
 htShiny = function(ht_list = get_last_ht(), title = NULL, description = NULL, 
 	hline = TRUE, html = NULL, ...) {
@@ -130,27 +130,42 @@ ht_shiny = function(...) {
 #     htShinyExample(4)
 # }
 htShinyExample = function(which) {
-	examples = get_examples()
 	if(missing(which)) {
-		cat("There are following examples:\n\n")
-		title = vapply(examples, function(x) x$title, "")
-		for(i in seq_along(title)) {
-			lines = strwrap(title[i], width = getOption("width") - 5)
-			lines[1] = paste0(ifelse(nchar(i) == 1, " ", ""), i, ". ", lines[1])
-			lines[-1] = paste0(strrep(" ", nchar(i)+2), lines[-1])
-			cat(paste(lines, collapse = "\n"))
+		cat("There are following examples. Individual example can be run by e.g. htShinyExample(1).\n\n")
+		for(i_cate in seq_along(examples)) {
+			category = examples[[i_cate]]$category
+			cat(strrep(clisymbols::symbol$line, 8), category, strrep(clisymbols::symbol$line, getOption("width") - 8 - nchar(category)), "\n")
+
+			e = examples[[i_cate]]$example
+			title = vapply(e, function(x) x$title, "")
+			for(i in seq_along(title)) {
+				lines = strwrap(title[i], width = getOption("width") - 5)
+				ind = e[[i]]$index
+				lines[1] = paste0(ifelse(nchar(ind) == 1, "  ", " "), ind, ". ", lines[1])
+				lines[-1] = paste0(strrep(" ", nchar(ind)+3), lines[-1])
+				cat(paste(lines, collapse = "\n"))
+				cat("\n")
+			}
 			cat("\n")
 		}
-		cat("\n")
 	} else {
 		which = which[1]
 
-		if(which > length(examples) || which < 1) {
-			stop(qq("The value of `which` should be between 1 and @{length(examples)}."))
+		code = NULL
+		title = NULL
+		for(i_cate in seq_along(examples)) {
+			for(i in seq_along(examples[[i_cate]]$example)) {
+				if(examples[[i_cate]]$example[[i]]$index == which) {
+					code = examples[[i_cate]]$example[[i]]$code
+					title = examples[[i_cate]]$example[[i]]$title
+					break
+				}
+			}
 		}
-		code = examples[[which]]$code
-		title = examples[[which]]$title
-
+		if(is.null(code)) {
+			stop_wrap(qq("Cannot find the example with index @{which}."))
+		}
+		
 		k = which(grepl("rmarkdown::run\\(", code))
 		if(length(k)) {
 			eval(parse(text = code[k]))
@@ -168,7 +183,7 @@ htShinyExample = function(which) {
 					stop(paste0("Package '", pkg, "' should be installed for running this example."))
 				}
 				if(!pkg %in% loaded_pkgs) {
-					message(paste0("Note: Namespace 'package:", pkg, "' is inserted into the search list. It might bring conflicts to some functions."))
+					message_wrap(paste0("Note: Namespace 'package:", pkg, "' is inserted into the search list. It might bring conflicts to some functions."))
 				}
 			}
 		}
@@ -233,41 +248,67 @@ HTML('<hr /><div>
 }
 
 get_examples = function() {
+
 	if(identical(topenv(), .GlobalEnv)) {
-		text = readLines("~/project/InteractiveComplexHeatmap/inst/examples/examples.R")
+		example_dir = "~/project/InteractiveComplexHeatmap/inst/examples"
 	} else {
-		text = readLines(system.file("examples", "examples.R", package = "InteractiveComplexHeatmap"))
+		example_dir = system.file("examples", package = "InteractiveComplexHeatmap")
 	}
 
-	text = text[!grepl("^#{10,}$", text)]
-
-	ind = which(grepl("^#+\\s*title:", text))
-	ind2 = c(ind[-1] - 1, length(text))
+	example_files = list.files(path = example_dir, pattern = "example", full.names = TRUE)
 
 	examples = list()
-	for(i in seq_along(ind)) {
-		code = text[seq(ind[i]+1, ind2[i])]
-		if(!any(grepl("(library|require)\\(ComplexHeatmap\\)", code))) {
-			code = c("suppressPackageStartupMessages(library(ComplexHeatmap))", code)
-		}
-		if(!any(grepl("(library|require)\\(InteractiveComplexHeatmap\\)", code))) {
-			code = c("suppressPackageStartupMessages(library(InteractiveComplexHeatmap))", code)
-		}
+	ie = 0
 
-		for(k in rev(seq_along(code))) {
-			if(grepl("^\\s*$", code[k])) {
-				code = code[-k]
-			} else {
-				break
+	for(i_file in seq_along(example_files)) {
+
+		examples[[i_file]] = list()
+
+		text = readLines(example_files[i_file])
+
+		category = text[1]
+		category = gsub("^\\s*#\\s*", "", category)
+		text = text[-1]
+		examples[[i_file]]$category = category
+
+		text = text[!grepl("^#{10,}$", text)]
+
+		ind = which(grepl("^#+\\s*title:", text))
+		ind2 = c(ind[-1] - 1, length(text))
+
+		examples[[i_file]]$example = list()
+		
+		for(i in seq_along(ind)) {
+
+			code = text[seq(ind[i]+1, ind2[i])]
+			if(!any(grepl("(library|require)\\(ComplexHeatmap\\)", code))) {
+				code = c("suppressPackageStartupMessages(library(ComplexHeatmap))", code)
 			}
+			if(!any(grepl("(library|require)\\(InteractiveComplexHeatmap\\)", code))) {
+				code = c("suppressPackageStartupMessages(library(InteractiveComplexHeatmap))", code)
+			}
+
+			for(k in rev(seq_along(code))) {
+				if(grepl("^\\s*$", code[k])) {
+					code = code[-k]
+				} else {
+					break
+				}
+			}
+			title = gsub("^#+\\s*title:\\s+", "", text[ind[i]])
+			code = gsub("\\t", "    ", code)
+
+			ie = ie + 1
+			examples[[i_file]]$example[[i]] = list(
+				title = title, 
+				index = ie,
+				code = code
+			)
 		}
-		title = gsub("^#+\\s*title:\\s+", "", text[ind[i]])
-		code = gsub("\\t", "    ", code)
-		examples[[i]] = list(
-			title = title, 
-			code = code
-		)
 	}
 
 	examples
 }
+
+
+examples = get_examples()

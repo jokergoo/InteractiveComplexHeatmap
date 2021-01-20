@@ -1,8 +1,4 @@
 
-shiny_env = new.env()
-shiny_env$history = list()
-
-
 # == title
 # UI for the interactive ComplexHeatmap
 #
@@ -32,8 +28,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	output_div = TRUE, css = "") {
 
 	if(is.null(heatmap_id)) {
-		heatmap_id = paste0("ht_", digest(Sys.time()))
-		shiny_env$current_heatmap_id = heatmap_id
+		increase_widget_index()
+		heatmap_id = paste0("ht", get_widget_index())
 	}
 
 	if(grepl("^\\d", heatmap_id)) {
@@ -44,6 +40,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	}
 
 	shiny_env[[heatmap_id]] = list()
+	shiny_env$current_heatmap_id = heatmap_id
 
 	action = match.arg(action)[1]
 	if(action == "dblclick") {
@@ -244,3 +241,6 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		if(output_div) htmlOutput(qq("@{heatmap_id}_info")) else NULL
 	)
 }
+
+
+

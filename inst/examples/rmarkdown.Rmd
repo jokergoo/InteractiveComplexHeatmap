@@ -1,21 +1,19 @@
 ---
 title: "InteractiveComplexHeatmap in an R Markdown document"
 author: "Zuguang Gu"
-date: "16/12/2020"
+date: "01/01/2021"
 output: html_document
 runtime: shiny
 ---
 
+This document demostrates an interactive heatmap.
 
-```{r}
+```{r, echo = FALSE}
 library(ComplexHeatmap)
 library(InteractiveComplexHeatmap)
 m = matrix(rnorm(100*100), 100)
 ht = Heatmap(m)
-```
 
-
-```{r, echo = FALSE}
 ui = fluidPage(
     InteractiveComplexHeatmapOutput()
 )
@@ -39,23 +37,23 @@ output: html_document
 runtime: shiny
 ---
 
+This document demostrates an interactive heatmap.
 
 `r ''````{r, echo=FALSE}
+library(ComplexHeatmap)
 library(InteractiveComplexHeatmap)
 m = matrix(rnorm(100*100), 100)
 ht = Heatmap(m)
-```
 
-
-`r ''````{r, echo=FALSE}
 ui = fluidPage(
     InteractiveComplexHeatmapOutput()
 )
+
 
 server = function(input, output, session) {
     renderInteractiveComplexHeatmap(ht, input, output, session)
 }
 
-shiny::shinyApp(ui, server)
+shiny::shinyApp(ui, server, options = list(height = 700))
 ```
 ````
