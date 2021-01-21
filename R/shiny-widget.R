@@ -111,7 +111,7 @@ InteractiveComplexHeatmapModal = function(
 					overflow-y: auto;
 				}
 				#@{heatmap_id}_heatmap_modal {
-					position: fixed;
+					position: relative;
 					margin: 50px;
 					padding: 20px;
 				    background-color: #fff;
@@ -185,7 +185,7 @@ InteractiveComplexHeatmapModal = function(
 		} else {
 			ht = get_heatmap
 		}
-		renderInteractiveComplexHeatmap(ht, input, output, session, heatmap_id = heatmap_id,
+		renderInteractiveComplexHeatmap(input, output, session, ht, heatmap_id = heatmap_id,
 			click_action = click_action, brush_action = brush_action,
 			default_click_action = default_click_action, default_brush_action = default_brush_action)
 	})
@@ -311,7 +311,7 @@ InteractiveComplexHeatmapWidget = function(
 		} else {
 			ht = get_heatmap
 		}
-		renderInteractiveComplexHeatmap(ht, input, output, session, heatmap_id = heatmap_id,
+		renderInteractiveComplexHeatmap(input, output, session, ht, heatmap_id = heatmap_id,
 			click_action = click_action, brush_action = brush_action,
 			default_click_action = default_click_action, default_brush_action = default_brush_action)
 	})

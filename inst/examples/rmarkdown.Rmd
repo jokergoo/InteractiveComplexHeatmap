@@ -19,7 +19,7 @@ ui = fluidPage(
 )
 
 server = function(input, output, session) {
-    renderInteractiveComplexHeatmap(ht, input, output, session)
+    renderInteractiveComplexHeatmap(input, output, session, ht)
 }
 
 shiny::shinyApp(ui, server, options = list(height = 700))

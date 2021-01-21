@@ -93,7 +93,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL, description = NULL,
 	)
 
 	server = function(input, output, session) {
-		renderInteractiveComplexHeatmap(ht_list, input, output, session)
+		renderInteractiveComplexHeatmap(input, output, session, ht_list)
 	}
 
 	shiny::shinyApp(ui, server)
@@ -183,7 +183,10 @@ htShinyExample = function(which) {
 					stop(paste0("Package '", pkg, "' should be installed for running this example."))
 				}
 				if(!pkg %in% loaded_pkgs) {
-					message_wrap(paste0("Note: Namespace 'package:", pkg, "' is inserted into the search list. It might bring conflicts to some functions."))
+					msg = paste0("Note: Namespace 'package:", pkg, "' is inserted into the search list. It might bring conflicts to some functions.")
+					msg = strwrap(msg)
+					msg[-1] = paste0("  ", msg[-1])
+					message(paste(msg, collapse = "\n"))
 				}
 			}
 		}
