@@ -139,17 +139,21 @@ server = function(input, output, session) {
 		m = matrix(rnorm(100), 10)
 		Heatmap(m)
 	}
+	observeEvent(input$show_heatmap, {
+		InteractiveComplexHeatmapModal(input, output, session, 
+			get_heatmap = generate_heatmap, cancel_action = "hide",
 
-	InteractiveComplexHeatmapModal(input, output, session, get_heatmap = generate_heatmap,
-		# From the second click of the action button, it just switches the visibility of the
-		# heatmap modal while not regenerate it repeatedly.
-		# Here I simply change the id of the action button to disconnect the binding.
-		js_code = function(heatmap_id) {
-			"$('#show_heatmap').click(function() {
-				$('#@{heatmap_id}_heatmap_modal-background').toggle();
-			});
-			$('#show_heatmap').attr('id', 'show_heatmap_toggle');
-		")
+			# From the second click of the action button, it just switches the visibility of the
+			# heatmap modal while not regenerate it repeatedly.
+			# Here I simply change the id of the action button to disconnect the binding.
+			js_code = function(heatmap_id) {
+				"$('#show_heatmap').click(function() {
+					$('#@{heatmap_id}_heatmap_modal-background').toggle();
+				});
+				$('#show_heatmap').attr('id', 'show_heatmap_toggle');
+			"}
+		)
+	})
 }
 shiny::shinyApp(ui, server)
 
@@ -188,7 +192,9 @@ server = function(input, output, session) {
 	ht = Heatmap(m)
 	
 	observeEvent(input$show_heatmap, {
-		InteractiveComplexHeatmapWidget(input, output, session, ht, output_id = "heatmap_output",
+		InteractiveComplexHeatmapWidget(input, output, session, ht, 
+			output_id = "heatmap_output", cancel_action = "hide",
+			
 			js_code = function(heatmap_id) {
 				"$('#show_heatmap').click(function() {
 					$('#heatmap_output').toggle('slow');

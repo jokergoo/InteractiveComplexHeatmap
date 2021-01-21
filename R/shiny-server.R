@@ -1112,7 +1112,7 @@ default_brush_action = function(input, output, session, heatmap_id,
 			dump_txt = paste(dump_txt, collapse = "\n")
 			HTML(paste(
 				  qq("<h5>Output</h5>\n<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. Row and column indices can be obtained by copying following code:</p>"),
-				  qq("<p><input id='@{heatmap_id}_show_code' type='button' value='show/hide code' /></p>"),
+				  qq("<p><button id='@{heatmap_id}_show_code'>show/hide code'</button></p>"),
 				  qq("<pre id='@{heatmap_id}_code'>"),
 				  dump_txt,
 				  "</pre>",

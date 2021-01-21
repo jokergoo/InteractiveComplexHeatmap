@@ -20,7 +20,7 @@ InteractiveComplexHeatmapWidget(
     default_click_action = TRUE, default_brush_action = TRUE,
     
     # other configurations
-    js_code = "")
+    js_code = "", close_button = FALSE, cancel_action = c("remove", "hide"))
 }
 \arguments{
 
@@ -45,6 +45,7 @@ InteractiveComplexHeatmapWidget(
   \item{default_click_action}{Pass to \code{\link{renderInteractiveComplexHeatmap}}.}
   \item{default_brush_action}{Pass to \code{\link{renderInteractiveComplexHeatmap}}.}
   \item{js_code}{Additional javascript code that is put after the interactive heatmap UI. The value can be a text or a function that takes "heatmap id" as the argument and returns the formatted javascript code.}
+  \item{close_button}{Whether to add a close button at the end of the widget.}
 
 }
 \details{
