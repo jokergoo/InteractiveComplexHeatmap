@@ -27,6 +27,7 @@
 #       that takes "heatmap id" as the argument and returns the formatted javascript code.
 # -close_button Whether to add a close button at the end of the widget. If it is ``FALSE``, the widget
 #      can be closed by click outside of the widget.
+# -cancel_action Whether to remove the UI or just hide it when the UI is closed.
 #
 # == details
 # It create an interactive heatmap "modal" according to a certain action.
@@ -223,6 +224,7 @@ InteractiveComplexHeatmapModal = function(
 # -js_code Additional javascript code that is put after the interactive heatmap UI. The value can be a text or a function
 #       that takes "heatmap id" as the argument and returns the formatted javascript code.
 # -close_button Whether to add a close button at the end of the widget.
+# -cancel_action Whether to remove the UI or just hide it when the UI is closed.
 #
 # == details
 # It create an interactive heatmap widget according to a certain action. The UI is fit to the output ID user defined.

@@ -45,6 +45,7 @@ InteractiveComplexHeatmapModal(
   \item{default_brush_action}{Pass to \code{\link{renderInteractiveComplexHeatmap}}.}
   \item{js_code}{Additional javascript code that is put after the interactive heatmap UI. The value can be a text or a function that takes "heatmap id" as the argument and returns the formatted javascript code.}
   \item{close_button}{Whether to add a close button at the end of the widget. If it is \code{FALSE}, the widget can be closed by click outside of the widget.}
+  \item{cancel_action}{Whether to remove the UI or just hide it when the UI is closed.}
 
 }
 \details{
