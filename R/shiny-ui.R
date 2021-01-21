@@ -210,6 +210,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 								checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
 								checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = TRUE)
 							),
+							actionButton(qq("@{heatmap_id}_open_modal"), label = "Interactivate sub-heatmap")
 						)
 					),
 					tabPanel(HTML("<i class='fa fa-table'></i>"),

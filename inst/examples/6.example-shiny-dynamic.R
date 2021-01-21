@@ -69,7 +69,7 @@ server = function(input, output, session) {
 	observeEvent(input$fire, {
 		m = matrix(rnorm(100), 10)
 		ht = draw(Heatmap(m))
-		renderInteractiveComplexHeatmap(ht, input, output, session)
+		renderInteractiveComplexHeatmap(input, output, session, ht)
 	})
 }
 

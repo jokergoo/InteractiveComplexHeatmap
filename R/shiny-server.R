@@ -3,10 +3,10 @@
 # Process the heatmaps on the sever side
 #
 # == param
-# -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object.
 # -input Passed from the shiny server function.
 # -output Passed from the shiny server function.
 # -session Passed from the shiny server function.
+# -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object.
 # -heatmap_id The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app, 
 #     this argument does not need to be specified and it will use the current one specified in `InteractiveComplexHeatmapOutput`.
 # -click_action Additional action at the sever side when receiving a click event on the UI. If ``action`` is selected as ``hover``
@@ -29,12 +29,12 @@
 #     )
 #     
 #     server = function(input, output, session) {
-#         renderInteractiveComplexHeatmap(ht, input, output, session)
+#         renderInteractiveComplexHeatmap(input, output, session, ht)
 #     }
 #     
 #     shiny::shinyApp(ui, server)
 # }
-renderInteractiveComplexHeatmap = function(ht_list, input, output, session, 
+renderInteractiveComplexHeatmap = function(input, output, session, ht_list, 
 	heatmap_id = shiny_env$current_heatmap_id,
 	click_action = NULL, brush_action = NULL, 
 	default_click_action = TRUE, default_brush_action = TRUE) {
@@ -87,9 +87,10 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 	##### variables shared between actions
 	ht_pos = reactiveVal(NULL)
 	selected = reactiveVal(NULL)
-	ht_pos = reactiveVal(NULL)
 	heatmap_first_check = reactiveVal(1)
 	heatmap_initialized = reactiveVal(1)
+
+	sub_ht_list = reactiveVal()
 
 	###############################################################
 	##                 The default actions
@@ -119,6 +120,9 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			updateCheckboxGroupInput(session, qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = lt[[2]], choiceValues = lt[[2]], selected = lt[[2]])
 		}
 		session$sendCustomMessage(qq("@{heatmap_id}_initialized"), "")
+
+		heatmap_first_check(0)
+
 	})
 
 	output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
@@ -240,7 +244,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
     			grid.newpage()
 				grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
     		} else {
-    			make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
 			}
 		})
 	
@@ -339,7 +343,7 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 				}
 				return(invisible(NULL))
     		} else {
-    			make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
 			}
 		})
 
@@ -458,6 +462,10 @@ renderInteractiveComplexHeatmap = function(ht_list, input, output, session,
 			write.table(tb, file, row.names = FALSE, col.names = FALSE, sep = ",", quote = TRUE)
 		}
 	)
+
+	observeEvent(input[[qq("@{heatmap_id}_open_modal")]], {
+		InteractiveComplexHeatmapModal(input, output, session, sub_ht_list(), close_button = TRUE)
+	})
 
 	###############################################################
 	##      A click on the heatmap
@@ -810,6 +818,8 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 		updateNumericInput(session, qq("@{heatmap_id}_sub_heatmap_input_width"), value = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_width")]])
 		updateNumericInput(session, qq("@{heatmap_id}_sub_heatmap_input_height"), value = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_height")]])
 	}
+
+	return(ht_select)
 }
 
 # if annotation is included, top/bottom annotation are all put at the bottom of the matrix
@@ -1112,7 +1122,7 @@ default_brush_action = function(input, output, session, heatmap_id,
 			dump_txt = paste(dump_txt, collapse = "\n")
 			HTML(paste(
 				  qq("<h5>Output</h5>\n<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. Row and column indices can be obtained by copying following code:</p>"),
-				  qq("<p><button id='@{heatmap_id}_show_code'>show/hide code'</button></p>"),
+				  qq("<p><button id='@{heatmap_id}_show_code' class='btn btn-default'>show/hide code</button></p>"),
 				  qq("<pre id='@{heatmap_id}_code'>"),
 				  dump_txt,
 				  "</pre>",
