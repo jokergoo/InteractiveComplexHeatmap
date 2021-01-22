@@ -99,7 +99,7 @@ renderInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		
     	showNotification("Initialize the original heatmap.", duration = 2, type = "message")
 
-    	draw(ht_list())
+    	ht_list( draw(ht_list()) )
 
 		ht_pos( htPositionsOnDevice(ht_list(), include_annotation = TRUE, calibrate = FALSE) )
 		selected( NULL )
@@ -120,6 +120,44 @@ renderInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			updateCheckboxGroupInput(session, qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = lt[[2]], choiceValues = lt[[2]], selected = lt[[2]])
 		}
 		session$sendCustomMessage(qq("@{heatmap_id}_initialized"), "")
+
+		width_div = session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]]
+	    height_div = session$clientData[[qq("output_@{heatmap_id}_heatmap_height")]]
+	    
+	    width_ht = ComplexHeatmap:::width(ht_list())	
+	    height_ht = ComplexHeatmap:::height(ht_list())
+
+	    df = ht_pos()
+	    x_min = df$x_min; x_min = convertX(x_min, "bigpts", valueOnly = TRUE)
+	    x_max = df$x_max; x_max = convertX(x_max, "bigpts", valueOnly = TRUE)
+	    y_min = df$y_min; y_min = convertY(y_min, "bigpts", valueOnly = TRUE)
+	    y_max = df$y_max; y_max = convertY(y_max, "bigpts", valueOnly = TRUE)
+
+	    warning_msg = ""
+	    if(any(x_min < 0) || any(x_max > width_div) || any(y_min < 0) || any(y_max > height_div)) {
+	    	warning_msg = qq("Heatmaps exceed the figure region")
+	    	if(is_abs_unit(width_ht) && is_abs_unit(height_ht)) {
+	    		width_ht = ceiling(convertWidth(width_ht, "bigpts", valueOnly = TRUE))
+	    		height_ht = ceiling(convertHeight(height_ht, "bigpts", valueOnly = TRUE))
+	    		warning_msg = qq("@{warning_msg} because the heatmaps have widths and heights in absolute units and the figure size is too small to fully contain them. You can set the width and height as <code>htShiny(..., width1 = @{width_ht}, height1 = @{height_ht})</code>, or similarly in <code>InteractiveComplexHeatmapOutput()</code> or other related functions.")
+	    	} else if(is_abs_unit(width_ht)) {
+	    		width_ht = ceiling(convertWidth(width_ht, "bigpts", valueOnly = TRUE))
+	    		warning_msg = qq("@{warning_msg} because the heatmaps have widths in absolute units and the figure size is too small to fully contain them. You can set the width as <code>htShiny(..., width1 = @{width_ht})</code>, or similarly in <code>InteractiveComplexHeatmapOutput()</code> or other related functions.")
+	    	} else if(is_abs_unit(height_ht)) {
+	    		height_ht = ceiling(convertHeight(height_ht, "bigpts", valueOnly = TRUE))
+	    		warning_msg = qq("@{warning_msg} because the heatmaps have heights in absolute units and the figure size is too small to fully contain them. You can set the height as <code>htShiny(..., height1 = @{height_ht})</code>, or similarly in <code>InteractiveComplexHeatmapOutput()</code> or other related functions.")
+	    	}
+
+	    	output[[qq("@{heatmap_id}_warning")]] = renderUI({
+	    		div(id = qq("@{heatmap_id}_warning_content"),
+	    			h5("Warning"),
+	    			p(HTML(warning_msg)),
+	    			p(HTML(qq("<a href='#' onclick='$(\"#@{heatmap_id}_warning_content\").remove();false;'>Close</a>")),
+	    				style = "position:relative; right:0; top:0"),
+	    			style = "border: 1px solid red; border-radius: 4px; background-color:#FFDDDD; padding:5px 5px 2px 20px; max-width:850px",
+	    		)
+	    	})
+	    }
 
 		heatmap_first_check(0)
 
@@ -534,11 +572,13 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 	show_column_names = input[[qq("@{heatmap_id}_show_column_names_checkbox")]]
 	show_annotation = input[[qq("@{heatmap_id}_show_annotation_checkbox")]]
 	show_cell_fun = input[[qq("@{heatmap_id}_show_cell_fun_checkbox")]]
+	fill_figure = input[[qq("@{heatmap_id}_fill_figure_checkbox")]]
 
 	if(is.null(show_row_names)) show_row_names = TRUE
 	if(is.null(show_column_names)) show_column_names = TRUE
 	if(is.null(show_annotation)) show_annotation = TRUE
 	if(is.null(show_cell_fun)) show_cell_fun = TRUE
+	if(is.null(fill_figure)) fill_figure = FALSE
 
     if(is.null(selected)) {
     	grid.newpage()
@@ -737,17 +777,28 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 				}
 				if(is_abs_unit(ht_current_full@matrix_param$width)) {
 					body_width = ht_current_full@matrix_param$width
-					# if(ComplexHeatmap:::is_abs_unit(body_width)) {
-					# 	body_width = body_width * (length(ci)/ncol(m))
-					# } 
+					if(!fill_figure) {
+						if(is_abs_unit(body_width)) {
+							body_width = body_width * (length(ci)/ncol(m))
+						} 
+					}
 					heatmap_width = unit(1, "npc")
 				}
 				if(is_abs_unit(ht_current_full@matrix_param$height)) {
 					body_height = ht_current_full@matrix_param$height
-					# if(ComplexHeatmap:::is_abs_unit(body_height)) {
-					# 	body_height = body_height * (length(ri)/nrow(m))
-					# }
+					if(!fill_figure) {
+						if(is_abs_unit(body_height)) {
+							body_height = body_height * (length(ri)/nrow(m))
+						}
+					}
 					heatmap_height = unit(1, "npc")
+				}
+
+				if(fill_figure) {
+					heatmap_width = unit(1, "npc")
+					body_width = NULL
+					heatmap_height = unit(1, "npc")
+					body_height = NULL
 				}
 				
 				ht_current = Heatmap(subm, rect_gp = ht_current_full@matrix_param$gp,
