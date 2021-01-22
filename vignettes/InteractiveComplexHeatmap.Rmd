@@ -162,11 +162,12 @@ Similar as in the main heatmap.
 Similar as in the main heatmap.
 
 
-There are three other vignettes focusing on more specific topics:
+There are other vignettes focusing on more specific topics:
 
 - [How interactive ComplexHeatmap is implemented](implementation.html)
 - [Functions for Shiny app development](shiny_dev.html)
 - [Decorations on the heatmaps](decoration.html)
+- [Interactivate indirect use of pheatmap(), heatmap.2() and heatmap()](interactivate_indirect.html)
 
 
 ## Use last generated heatmaps

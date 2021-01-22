@@ -54,7 +54,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL, description = NULL,
 
 	if(is.null(ht_list)) {
 		if(length(dev.list())) {
-			stop_wrap("No heatmap is detected. Detected there is opened graphics device. If the heatmap was already made in that device, enter `ComplexHeatmap::ht_opt$save_last = TRUE` and run `htShiny()` again.")
+			stop_wrap("No heatmap is detected. Detected there is opened graphics device. If the heatmap was already made in that device, enter `ComplexHeatmap::ht_opt(save_last = TRUE)` and run `htShiny()` again.")
 		} else {
 			stop_wrap("No heatmap is detected.")
 		}
