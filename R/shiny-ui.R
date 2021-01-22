@@ -121,6 +121,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 
 		list(jqueryui_dep, pickr_dep, fontawesome_dep, ht_js_dep),
 
+		htmlOutput(qq("@{heatmap_id}_warning")),
+
 		div(id = qq("@{heatmap_id}_heatmap_group"),
 			h5(title1),
 			div(id = qq("@{heatmap_id}_heatmap_resize"),
@@ -208,7 +210,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 							),
 							div(
 								checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
-								checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = TRUE)
+								checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = TRUE),
+								checkboxInput(qq("@{heatmap_id}_fill_figure_checkbox"), label = "Fill figure region", value = FALSE)
 							),
 							actionButton(qq("@{heatmap_id}_open_modal"), label = "Interactivate sub-heatmap")
 						)
