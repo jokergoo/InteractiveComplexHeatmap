@@ -1,0 +1,181 @@
+---
+title: "Interactivate indirect use of pheatmap(), heatmap.2() and heatmap()"
+author: "Zuguang Gu ( z.gu@dkfz.de )"
+date: "`r Sys.Date()`"
+output: 
+    rmarkdown::html_vignette:
+        width: 8
+        fig_width: 5
+vignette: >
+  %\VignetteIndexEntry{5. Interactivate indirect use of pheatmap(), heatmap.2() and heatmap()}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+```{r, echo = FALSE}
+library(knitr)
+knitr::opts_chunk$set(
+    error = FALSE,
+    tidy  = FALSE,
+    message = FALSE,
+    warning = FALSE,
+    fig.width = 6,
+    fig.height = 6,
+    fig.align = "center"
+)
+library(GetoptLong)
+options(digits = 4)
+```
+
+```{r, echo = FALSE}
+library(SC3)
+library(GOexpress)
+```
+
+
+With **InteractiveComplexHeatmap**, the following heatmaps can be exported as an interactive Shiny app:
+
+1. heatmaps directly produced from **ComplexHeatmap**,
+2. heatmaps from other functions or packages which are implement with **ComplexHeatmap**,
+3. heatmaps originally produced by `stats::heatmap()`, `gplots::heatmap.2()`
+   and `pheatmap::pheatmap()`, but can be reproduced by the "translation
+   functions": `ComplexHeatmap:::heatmap()`, `ComplexHeatmap:::heatmap.2()`
+   and `ComplexHeatmap::pheatmap()`.
+
+All these types of heatmaps can be turned into interactive just by calling
+`htShiny()` after the heatmaps are drawn. E.g.:
+
+```{r eval = FALSE}
+ComplexHeatmap::pheatmap(...)
+htShiny()
+```
+
+which means you don't need to touch your heatmap code. After you see the heatmap in your R terminal,
+directly calling `htShiny()` with no argument will produce an interactive heatmap, like magic. :P
+
+Now there is a fourth scenario where the heatmap is produced by third-party
+functions which uses `stats::heatmap()`, `gplots::heatmap.2()` or
+`pheatmap::pheatmap()`. Since now we cannot directly interact with
+`heatmap()`, `heatmap.2()` or `pheatmap()`, how can we turn these heatmaps into
+interactive? The solution is fairly simple. We just need to go to _e.g._ **pheatmap**
+namespace and replace `pheatmap` with `ComplexHeatmap::pheatmap`.
+
+The following example is from the **SC3** package where
+function `sc3_plot_expression()` internally uses `pheatmap()`.
+
+```{r, eval = FALSE}
+library(SingleCellExperiment)
+library(SC3)
+library(scater)
+
+sce <- SingleCellExperiment(
+    assays = list(
+        counts = as.matrix(yan),
+        logcounts = log2(as.matrix(yan) + 1)
+    ), 
+    colData = ann
+)
+
+rowData(sce)$feature_symbol <- rownames(sce)
+sce <- sce[!duplicated(rowData(sce)$feature_symbol), ]
+sce <- runPCA(sce)
+sce <- sc3(sce, ks = 2:4, biology = TRUE)
+
+sc3_plot_expression(sce, k = 3)
+```
+
+<img width="100%" src="https://user-images.githubusercontent.com/449218/105498918-0a871300-5cc1-11eb-92a6-ffed7460e4e1.png" />
+
+To replace the internally use of `pheatmap::pheatmap` with
+`ComplexHeatmap::pheatmap`, we can use `assignInNamespace()` to directly
+change the value of `pheatmap` in **pheatmap** namespace. After that,
+recalling `sc3_plot_expression()` will directly use
+`ComplexHeatmap::pheatmap()` and now you can use `htShiny()` to export it as
+an interactive app. Of course, you need to regenerate the heatmap with the
+same code.
+
+```{r, eval = FALSE}
+assignInNamespace("pheatmap", ComplexHeatmap::pheatmap, ns = "pheatmap")
+library(InteractiveComplexHeatmap)
+sc3_plot_expression(sce, k = 3)
+htShiny()
+```
+
+<img width="100%" alt="pheatmap" src="https://user-images.githubusercontent.com/449218/105490976-e40faa80-5cb5-11eb-85f5-df2c80939aef.png">
+
+
+If you check the source code of `sc3_plot_expression()`, `pheatmap()` is used
+by explicitely adding its namespace (check the last few lines of the function definition):
+
+```{r}
+selectMethod("sc3_plot_expression", signature = "SingleCellExperiment")
+```
+
+In this case, changing `pheatmap` in **pheatmap** namespace directly affects `sc3_plot_expression()`.
+
+However, if the heatmap function is called without adding the namespace, you
+need to first unload the package, modify the heatmap function in the heatmap
+namespace and later load the package back.
+
+Let's look at the next example from **GOexpress** package where the function `heatmap_GO()` internally use `heatmap.2()`.
+
+```{r, eval = FALSE}
+library(GOexpress)
+data(AlvMac)
+set.seed(4543)
+AlvMac_results <- GO_analyse(
+	eSet = AlvMac, f = "Treatment",
+	GO_genes=AlvMac_GOgenes, all_GO=AlvMac_allGO, all_genes=AlvMac_allgenes)
+BP.5 <- subset_scores(
+	result = AlvMac_results.pVal,
+	namespace = "biological_process",
+	total = 5,
+	p.val=0.05)
+heatmap_GO(
+	go_id = "GO:0034142", result = BP.5, eSet=AlvMac, cexRow=0.4,
+	cexCol=1, cex.main=1, main.Lsplit=30)
+```
+
+
+<img width="100%" src="https://user-images.githubusercontent.com/449218/105498979-212d6a00-5cc1-11eb-9911-6409b699257b.png" />
+
+
+Now note in `heatmap_GO()` function, `heatmap.2()` is used without **gplots** namespace (go to
+the end of the function definition listed below).
+
+```{r}
+heatmap_GO
+```
+
+In this case, the **GOexpress** namespace should firstly be removed by
+`detach()`, or else `heatmap_GO()` will still use `gplots::heatmap.2()`.
+
+
+```{r, eval = FALSE}
+detach("package:GOexpress", unload = TRUE)
+assignInNamespace("heatmap.2", ComplexHeatmap:::heatmap.2, ns = "gplots")
+library(GOexpress)
+
+library(InteractiveComplexHeatmap)
+heatmap_GO(
+	go_id = "GO:0034142", result = BP.5, eSet=AlvMac, cexRow=0.4,
+	cexCol=1, cex.main=1, main.Lsplit=30)
+htShiny()
+```
+
+<img width="100%" alt="heatmap 2" src="https://user-images.githubusercontent.com/449218/105490966-e114ba00-5cb5-11eb-8839-3ba1f25b5fa5.png">
+
+
+In the end, to safely change all `stats::heatmap()`, `gplots::heatmap.2()` and
+`pheatmap::pheatmap()` to `ComplexHeatmap:::heatmap()`,
+`ComplexHeatmap:::heatmap.2()` and `ComplexHeatmap::pheatmap()`, you can add following lines
+to the start of your R script:
+
+```{r, eval = FALSE}
+library(pheatmap)
+library(gplots)
+assignInNamespace("heatmap", ComplexHeatmap:::heatmap, ns = "stats")
+assignInNamespace("heatmap.2", ComplexHeatmap:::heatmap.2, ns = "gplots")
+assignInNamespace("pheatmap", ComplexHeatmap::pheatmap, ns = "pheatmap")
+```
