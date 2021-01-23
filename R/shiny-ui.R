@@ -160,7 +160,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 							div(style = "clear: both;"),
 							radioButtons(qq("@{heatmap_id}_search_where"), label = "Which dimension to search?", choices = list("on rows" = 1, "on columns" = 2), selected = 1, inline = TRUE),
 							checkboxGroupInput(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = "loading", choiceValues = "", selected = ""),
-							checkboxGroupInput(qq("@{heatmap_id}_search_extend"), label = "Extend to all heatmaps and annotations?", choiceNames = "yes", choiceValues = 1, selected = NULL),
+							checkboxGroupInput(qq("@{heatmap_id}_search_extend"), label = "Extend sub-heatmap to all heatmaps and annotations?", choiceNames = "yes", choiceValues = 1, selected = NULL),
 							actionButton(qq("@{heatmap_id}_search_action"), label = "Search")
 						),
 						p("Search Heatmap", style = "display:none;")
@@ -229,6 +229,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 								checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = TRUE),
 								checkboxInput(qq("@{heatmap_id}_fill_figure_checkbox"), label = "Fill figure region", value = FALSE)
 							),
+							hr(),
+							p("Click the button below to turn the sub-heatmap into an interactive app.", style = "max-width:300px;"),
 							actionButton(qq("@{heatmap_id}_open_modal"), label = "Interactivate sub-heatmap")
 						)
 					),

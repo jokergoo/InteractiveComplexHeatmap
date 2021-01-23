@@ -177,8 +177,6 @@ InteractiveComplexHeatmapModal = function(
 			        }
 				})
 
-				$('#@{heatmap_id}_heatmap_modal').draggable();
-
 				// code for pickr
 				// when parent element has 'position:fixed', the color picker is not correctly positioned
 				// following code manually adjust the positions of the color picker
