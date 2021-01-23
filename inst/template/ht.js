@@ -54,6 +54,8 @@ $(function() {
 		}
 	});
 
+	$('.@{heatmap_id}_widget .ui-resizable-handle').css("z-index", "auto");
+
 	$('#@{heatmap_id}_keyword').click(function() {
 		$('#@{heatmap_id}_heatmap_brush').remove();
 	});
@@ -301,7 +303,7 @@ function @{heatmap_id}_create_color_picker() {
 	
 	var @{heatmap_id}_pickr1 = Pickr.create({
 	    el: '#@{heatmap_id}_color_pickers_border',
-	    default: '#003366',
+	    default: '@{pickr_fill}',
 	    theme: 'nano',
 	    comparison: false,
 	    position: 'bottom-start',
@@ -324,7 +326,7 @@ function @{heatmap_id}_create_color_picker() {
 
 	var @{heatmap_id}_pickr2 = Pickr.create({
 	    el: '#@{heatmap_id}_color_pickers_fill',
-	    default: '#99ccff',
+	    default: '@{pickr_border}',
 	    theme: 'nano',
 	    comparison: false,
 	    position: 'bottom-start',

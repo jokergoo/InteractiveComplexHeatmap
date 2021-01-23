@@ -24,7 +24,7 @@
 InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
 	width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
-	action = c("click", "hover", "dblclick"), brush_opt = list(), 
+	action = c("click", "hover", "dblclick"), brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_div = TRUE, css = "") {
 
 	if(is.null(heatmap_id)) {
@@ -91,6 +91,22 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		src        = "www/shared/fontawesome/css",
 		stylesheet = c("all.min.css", "v4-shims.min.css")
     )
+
+    if(is.null(brush_opt$fill)) {
+    	pickr_fill = "#003366"
+    } else {
+    	pickr_fill = brush_opt$fill
+    }
+    if(is.null(brush_opt$stroke)) {
+    	pickr_border = "#99ccff"
+    } else {
+    	pickr_border = brush_opt$stroke
+    }
+    if(is.null(brush_opt$opacity)) {
+    	pickr_opacity = 0.25
+    } else {
+    	pickr_opacity = brush_opt$opacity
+    }
 
 	td = tempdir()
 	if(identical(topenv(), .GlobalEnv)) {
@@ -170,7 +186,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 											return '<div><hr style=\"border-top:' + item.value + 'px solid black;\"></div>'
 										}
 									}"))),
-							sliderInput(qq("@{heatmap_id}_color_pickers_opacity"), label = "Opacity", min = 0, max = 1, value = 0.25)
+							sliderInput(qq("@{heatmap_id}_color_pickers_opacity"), label = "Opacity", min = 0, max = 1, value = pickr_opacity)
 						)
 					),
 					tabPanel(HTML("<i class='fa fa-images'></i>"),

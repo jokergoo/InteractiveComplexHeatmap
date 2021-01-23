@@ -141,7 +141,7 @@ server = function(input, output, session) {
 	}
 	observeEvent(input$show_heatmap, {
 		InteractiveComplexHeatmapModal(input, output, session, 
-			get_heatmap = generate_heatmap, cancel_action = "hide",
+			get_heatmap = generate_heatmap, close_button = FALSE, cancel_action = "hide",
 
 			# From the second click of the action button, it just switches the visibility of the
 			# heatmap modal while not regenerate it repeatedly.
