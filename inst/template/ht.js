@@ -297,6 +297,40 @@ $(function() {
 			false;
 		})
 	}
+
+	$('#@{heatmap_id}_show_cell_fun_checkbox').next().hover(function() {
+		var tooltip = $("<span class='ui-widget-shadow'>" + "Graphics defined by <code>cell_fun</code> or <code>layer_fun</code>." + "</span>");
+		tooltip.css("position", "absolute").
+		        css("z-index", "100").
+		        css("bottom", "110%").
+		        css("background-color", "white").
+		        css("border", "1px solid #dddddd").
+		        css("border-radius", "4px").
+		        css("padding", "4px 12px").
+		        css("color", "black").
+		        css("max-width", "600px");
+		tooltip.css("left", "0");
+		$(this).append(tooltip);
+	}, function() {
+		$(this).find("span").last().remove();
+	});
+
+	$('#@{heatmap_id}_fill_figure_checkbox').next().hover(function() {
+		var tooltip = $("<span class='ui-widget-shadow'>" + "When the sub-heatmap has width or height in absolute units, it controls whether to ignore them and fill the sub-heatmap 100% to the figure region." + "</span>");
+		tooltip.css("position", "absolute").
+		        css("z-index", "100").
+		        css("bottom", "110%").
+		        css("background-color", "white").
+		        css("border", "1px solid #dddddd").
+		        css("border-radius", "4px").
+		        css("padding", "4px 12px").
+		        css("color", "black").
+		        css("max-width", "600px");
+		tooltip.css("left", "0");
+		$(this).append(tooltip);
+	}, function() {
+		$(this).find("span").last().remove();
+	});
 });
 
 function @{heatmap_id}_create_color_picker() {
