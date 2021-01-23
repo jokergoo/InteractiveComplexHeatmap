@@ -1,25 +1,37 @@
 
 # == title
-# Interactive heatmaps with a shiny app
+# Interactive heatmaps with a Shiny app
 #
 # == param
-# -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object. If it is not specified, a random heatmap is used.
+# -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object. If it is not specified, the last generated heatmap is used.
 #     Better already updated by ``draw()`` function.
 # -title Title of the app.
 # -description Description of the app.
 # -hline Whether to add the horizontal line (by ``hr`` tag).
 # -html HTML fragment inserted below the heatmap.
-# -... Pass to `InteractiveComplexHeatmapOutput`.
+# -heatmap_id Pass to `InteractiveComplexHeatmapOutput`.
+# -title1 Pass to `InteractiveComplexHeatmapOutput`.
+# -title2 Pass to `InteractiveComplexHeatmapOutput`.
+# -width1 Pass to `InteractiveComplexHeatmapOutput`.
+# -height1 Pass to `InteractiveComplexHeatmapOutput`.
+# -width2 Pass to `InteractiveComplexHeatmapOutput`.
+# -height2 Pass to `InteractiveComplexHeatmapOutput`.
+# -nrow Pass to `InteractiveComplexHeatmapOutput`.
+# -action Pass to `InteractiveComplexHeatmapOutput`.
+# -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
+# -output_div Pass to `InteractiveComplexHeatmapOutput`.
 #
 # == seealso
 # https://jokergoo.shinyapps.io/interactive_complexHeatmap/
 #
 # == value
-# A shiny app object.
+# A Shiny app object.
 #
 # == example
-# # use a random heatmap
-# if(interactive()) {
+# # use last generated heatmap
+# if(interactive() && dev.interactive()) {
+#     m = matrix(rnorm(100), 10)
+#     Heatmap(m)
 #     htShiny()
 # }
 #
@@ -49,8 +61,16 @@
 #     ht_list = ht1 \%v\% ht2
 #     htShiny(ht_list)
 # }
-htShiny = function(ht_list = get_last_ht(), title = NULL, description = NULL, 
-	hline = TRUE, html = NULL, ...) {
+htShiny = function(ht_list = get_last_ht(), title = NULL, 
+	description = NULL, hline = TRUE, html = NULL, 
+
+	# parameters passed to InteractiveComplexHeatmapOutput()
+	heatmap_id = NULL, title1 = "Original heatmap", title2 = "Selected sub-heatmap",
+	width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
+	action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6), 
+	output_div = TRUE
+
+	) {
 
 	if(is.null(ht_list)) {
 		if(length(dev.list())) {
@@ -88,7 +108,9 @@ htShiny = function(ht_list = get_last_ht(), title = NULL, description = NULL,
 		title,
 		description,
 		if(hline) hr() else NULL,
-		InteractiveComplexHeatmapOutput(...), 
+		InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,
+			width1 = width1, height1 = height1, width2 = width2, height2 = height2, nrow = nrow,
+			action = action, brush_opt = brush_opt, output_div = output_div), 
 		html
 	)
 
@@ -100,7 +122,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL, description = NULL,
 }
 
 # == title
-# Interactive heatmaps with a shiny app
+# Interactive heatmaps with a Shiny app
 #
 # == param
 # -... All goes to `htShiny`.
@@ -118,11 +140,8 @@ ht_shiny = function(...) {
 # == param
 # -which An integer of which example to use. The list of all examples can be obtained by executing `htShinyExample` with no argument.
 #
-# == details
-# The source code of all examples are in ``systm.file("examples", "examples.R")``.
-#
 # == value
-# A shiny app object.
+# A Shiny app object.
 #
 # == example
 # htShinyExample()

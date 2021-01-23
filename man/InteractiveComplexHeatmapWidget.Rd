@@ -13,7 +13,8 @@ InteractiveComplexHeatmapWidget(
     # parameters passed to InteractiveComplexHeatmapOutput()
     title1 = "Original heatmap", title2 = "Selected sub-heatmap",
     width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
-    action = "click", brush_opt = list(), output_div = TRUE,
+    action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6),
+    output_div = TRUE,
     
     # parameters passed to renderInteractiveComplexHeatmap()
     click_action = NULL, brush_action = NULL,
@@ -24,9 +25,9 @@ InteractiveComplexHeatmapWidget(
 }
 \arguments{
 
-  \item{input}{Passed from the shiny server function.}
-  \item{output}{Passed from the shiny server function.}
-  \item{session}{Passed from the shiny server function.}
+  \item{input}{Passed from the Shiny server function.}
+  \item{output}{Passed from the Shiny server function.}
+  \item{session}{Passed from the Shiny server function.}
   \item{get_heatmap}{A \code{\link[ComplexHeatmap]{Heatmap-class}} or a \code{\link[ComplexHeatmap]{HeatmapList-class}} object. The value can also be a function with no argument that generates such object.}
   \item{heatmap_id}{ID of the plot. If it is not specified, an internal ID is assigned.}
   \item{output_id}{Where the heatmap is put.}
@@ -44,13 +45,13 @@ InteractiveComplexHeatmapWidget(
   \item{brush_action}{Pass to \code{\link{renderInteractiveComplexHeatmap}}.}
   \item{default_click_action}{Pass to \code{\link{renderInteractiveComplexHeatmap}}.}
   \item{default_brush_action}{Pass to \code{\link{renderInteractiveComplexHeatmap}}.}
-  \item{js_code}{Additional javascript code that is put after the interactive heatmap UI. The value can be a text or a function that takes "heatmap id" as the argument and returns the formatted javascript code.}
+  \item{js_code}{Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function that takes "heatmap ID" as the argument and returns the formatted JavaScript code.}
   \item{close_button}{Whether to add a close button at the end of the widget.}
-  \item{cancel_action}{Whether to remove the UI or just hide it when the UI is closed.}
+  \item{cancel_action}{Whether to remove the UI from HTML or just hide it when the UI is closed.}
 
 }
 \details{
-It create an interactive heatmap widget according to a certain action. The UI is fit to the output ID user defined.
+It create an interactive heatmap widget according to a certain action. The UI is placed to the output ID that user defined.
 }
 \value{
 No value is returned.

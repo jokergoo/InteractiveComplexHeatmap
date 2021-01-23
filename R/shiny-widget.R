@@ -3,9 +3,9 @@
 # Interactive complex heatmap modal
 #
 # == param
-# -input Passed from the shiny server function.
-# -output Passed from the shiny server function.
-# -session Passed from the shiny server function.
+# -input Passed from the Shiny server function.
+# -output Passed from the Shiny server function.
+# -session Passed from the Shiny server function.
 # -get_heatmap A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object. The value can also
 #           be a function with no argument that generates such object.
 # -heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
@@ -23,11 +23,11 @@
 # -brush_action Pass to `renderInteractiveComplexHeatmap`.
 # -default_click_action Pass to `renderInteractiveComplexHeatmap`.
 # -default_brush_action Pass to `renderInteractiveComplexHeatmap`.
-# -js_code Additional javascript code that is put after the interactive heatmap UI. The value can be a text or a function
-#       that takes "heatmap id" as the argument and returns the formatted javascript code.
+# -js_code Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function
+#       that takes "heatmap ID" as the argument and returns the formatted JavaScript code.
 # -close_button Whether to add a close button at the end of the widget. If it is ``FALSE``, the widget
-#      can be closed by click outside of the widget.
-# -cancel_action Whether to remove the UI or just hide it when the UI is closed.
+#      can be closed by clicking outside of the widget.
+# -cancel_action Whether to remove the UI from HTML or just hide it when the UI is closed.
 #
 # == details
 # It create an interactive heatmap "modal" according to a certain action.
@@ -59,7 +59,8 @@ InteractiveComplexHeatmapModal = function(
 	# parameters passed to InteractiveComplexHeatmapOutput()
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
 	width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
-	action = "click", brush_opt = list(), output_div = TRUE,
+	action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6), 
+	output_div = TRUE,
 
 	# parameters passed to renderInteractiveComplexHeatmap()
 	click_action = NULL, brush_action = NULL, 
@@ -223,9 +224,9 @@ InteractiveComplexHeatmapModal = function(
 # Interactive complex heatmap widget
 #
 # == param
-# -input Passed from the shiny server function.
-# -output Passed from the shiny server function.
-# -session Passed from the shiny server function.
+# -input Passed from the Shiny server function.
+# -output Passed from the Shiny server function.
+# -session Passed from the Shiny server function.
 # -get_heatmap A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object. The value can also
 #           be a function with no argument that generates such object.
 # -heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
@@ -244,13 +245,13 @@ InteractiveComplexHeatmapModal = function(
 # -brush_action Pass to `renderInteractiveComplexHeatmap`.
 # -default_click_action Pass to `renderInteractiveComplexHeatmap`.
 # -default_brush_action Pass to `renderInteractiveComplexHeatmap`.
-# -js_code Additional javascript code that is put after the interactive heatmap UI. The value can be a text or a function
-#       that takes "heatmap id" as the argument and returns the formatted javascript code.
+# -js_code Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function
+#       that takes "heatmap ID" as the argument and returns the formatted JavaScript code.
 # -close_button Whether to add a close button at the end of the widget.
-# -cancel_action Whether to remove the UI or just hide it when the UI is closed.
+# -cancel_action Whether to remove the UI from HTML or just hide it when the UI is closed.
 #
 # == details
-# It create an interactive heatmap widget according to a certain action. The UI is fit to the output ID user defined.
+# It create an interactive heatmap widget according to a certain action. The UI is placed to the output ID that user defined.
 #
 # == value
 # No value is returned.
@@ -281,7 +282,8 @@ InteractiveComplexHeatmapWidget = function(
 	# parameters passed to InteractiveComplexHeatmapOutput()
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
 	width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
-	action = "click", brush_opt = list(), output_div = TRUE,
+	action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6), 
+	output_div = TRUE,
 
 	# parameters passed to renderInteractiveComplexHeatmap()
 	click_action = NULL, brush_action = NULL, 

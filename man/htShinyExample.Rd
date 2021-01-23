@@ -16,9 +16,10 @@ htShinyExample(which)
 }
 \details{
 The source code of all examples are in \code{systm.file("examples", "examples.R")}.
+
 }
 \value{
-A shiny app object.
+A Shiny app object.
 }
 \examples{
 htShinyExample()

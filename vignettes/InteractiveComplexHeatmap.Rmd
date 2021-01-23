@@ -208,6 +208,22 @@ heatmap, or you need to explicitly set `ComplexHeatmap::ht_opt(save_last = TRUE)
 Nevertheless, if possible, I still suggest to explictly put the heatmap object
 in `htShiny()` which makes it clear which heatmap is becoming interactive.
 
+## Recursive interactive heatmap widgets
+
+In the right panel there is the sub-heatmap that is selected from the left
+panel. When the original heatmap is very huge, even a tiny selection rectangle
+still generates a dense sub-heatmap where single cells are very hard to
+identify and read. In this case, the sub-heatmap can be continually exported
+as another independent interactive heatmap widget which is in a new layer
+above current one, just by clicking the button  "Interactivate sub-heatmap" under the sub-heatmap.
+This process can be recursively applied untill you are satisfied with the details
+you can see in the sub-heatmap. An example is as follows:
+
+
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/recursive.gif?1")
+```
+
 ## Live examples
 
 The following code demostrates two horizontally concatenated heatmaps. Please

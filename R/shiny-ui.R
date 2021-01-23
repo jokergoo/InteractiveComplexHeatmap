@@ -11,9 +11,9 @@
 # -width2 Width of the sub-heatmap.
 # -height2 Height of the sub-heatmap.
 # -nrow Should the two heatmap ``div`` be put in one row or in two rows? Value should be either 1 or 2. 
-# -action Which action for selecting the cell on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
+# -action Which action for selecting single cell on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`.
-# -output_div Whether to add the output ``div``
+# -output_div Whether to add the output ``div``.
 # -css Self-defined CSS code.
 #
 # == details
@@ -24,7 +24,8 @@
 InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
 	width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
-	action = c("click", "hover", "dblclick"), brush_opt = list(stroke = "#f00", opacity = 0.6), 
+	action = c("click", "hover", "dblclick"), 
+	brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_div = TRUE, css = "") {
 
 	if(is.null(heatmap_id)) {

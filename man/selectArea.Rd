@@ -19,7 +19,7 @@ selectArea(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = TRUE, verbo
   \item{verbose}{Whether to print messages.}
   \item{ht_pos}{A value returned by \code{\link{htPositionsOnDevice}}.}
   \item{include_annotation}{Internally used.}
-  \item{calibrate}{Internally used.}
+  \item{calibrate}{Internally used. Mainly works for Rstudio desktop IDE.}
 
 }
 \details{
