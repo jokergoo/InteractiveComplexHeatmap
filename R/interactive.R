@@ -13,7 +13,7 @@
 # -verbose Whether to print messages.
 # -ht_pos A value returned by `htPositionsOnDevice`.
 # -include_annotation Internally used.
-# -calibrate Internally used.
+# -calibrate Internally used. Mainly works for Rstudio desktop IDE.
 #
 # == details
 # The regions can be selected interactively or manually by setting ``pos1`` and ``pos2``.

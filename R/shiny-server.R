@@ -3,9 +3,9 @@
 # Process the heatmaps on the sever side
 #
 # == param
-# -input Passed from the shiny server function.
-# -output Passed from the shiny server function.
-# -session Passed from the shiny server function.
+# -input Passed from the Shiny server function.
+# -output Passed from the Shiny server function.
+# -session Passed from the Shiny server function.
 # -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object.
 # -heatmap_id The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app, 
 #     this argument does not need to be specified and it will use the current one specified in `InteractiveComplexHeatmapOutput`.

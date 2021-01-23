@@ -14,9 +14,9 @@ renderInteractiveComplexHeatmap(input, output, session, ht_list,
 }
 \arguments{
 
-  \item{input}{Passed from the shiny server function.}
-  \item{output}{Passed from the shiny server function.}
-  \item{session}{Passed from the shiny server function.}
+  \item{input}{Passed from the Shiny server function.}
+  \item{output}{Passed from the Shiny server function.}
+  \item{session}{Passed from the Shiny server function.}
   \item{ht_list}{A \code{\link[ComplexHeatmap]{Heatmap-class}} or a \code{\link[ComplexHeatmap]{HeatmapList-class}} object.}
   \item{heatmap_id}{The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app,  this argument does not need to be specified and it will use the current one specified in \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{click_action}{Additional action at the sever side when receiving a click event on the UI. If \code{action} is selected as \code{hover} or \code{dblclick} in \code{\link{InteractiveComplexHeatmapOutput}}, then this argument controls the action for the hover or dblclick event.}

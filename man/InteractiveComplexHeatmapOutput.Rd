@@ -10,7 +10,8 @@ UI for the interactive ComplexHeatmap
 InteractiveComplexHeatmapOutput(heatmap_id = NULL,
     title1 = "Original heatmap", title2 = "Selected sub-heatmap",
     width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
-    action = c("click", "hover", "dblclick"), brush_opt = list(stroke = "#f00", opacity = 0.6),
+    action = c("click", "hover", "dblclick"),
+    brush_opt = list(stroke = "#f00", opacity = 0.6),
     output_div = TRUE, css = "")
 }
 \arguments{
@@ -23,9 +24,9 @@ InteractiveComplexHeatmapOutput(heatmap_id = NULL,
   \item{width2}{Width of the sub-heatmap.}
   \item{height2}{Height of the sub-heatmap.}
   \item{nrow}{Should the two heatmap \code{div} be put in one row or in two rows? Value should be either 1 or 2. }
-  \item{action}{Which action for selecting the cell on the heatmap? Value should be \code{click}, \code{hover} or \code{dblclick}.}
+  \item{action}{Which action for selecting single cell on the heatmap? Value should be \code{click}, \code{hover} or \code{dblclick}.}
   \item{brush_opt}{A list of parameters passed to \code{\link[shiny]{brushOpts}}.}
-  \item{output_div}{Whether to add the output \code{div}}
+  \item{output_div}{Whether to add the output \code{div}.}
   \item{css}{Self-defined CSS code.}
 
 }

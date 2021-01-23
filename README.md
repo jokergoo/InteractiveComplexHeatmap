@@ -6,7 +6,7 @@
 
 **InteractiveComplexHeatmap** is an R package that converts static heatmaps produced from
 [**ComplexHeatmap**](https://github.com/jokergoo/ComplexHeatmap) package into an interactive
-Shiny app with zero effect.
+Shiny app with zero effort.
 
 <img src="https://user-images.githubusercontent.com/449218/104457409-542d7a80-55aa-11eb-8cf6-34775e49535c.gif"  width='700' border="black" />
 
@@ -92,7 +92,7 @@ server = function(input, output, session) {
 shiny::shinyApp(ui, server)
 ```
 
-Two additional functions to let you dynamically load interactive widgets:
+Two additional functions to let you dynamically load interactive heatmap widgets:
 
 - `InteractiveComplexHeatmapModal()`: The interactive heatmap widget is inserted as a "modal".
 - `InteractiveComplexHeatmapWidget()`: The interactive heatmap widget is inserted into a place defined by users.
@@ -120,7 +120,7 @@ If you directly use these three funtions, simply replace them with
 `ComplexHeatmap:::heatmap()`. If the three functions are used indirectly, e.g.
 a function `foo()` (maybe from another packages or other people's functions)
 which internally uses these three heatmap functions, check the vignette
-["Interactivate indirect use of pheatmap(), heatmap.2() and heatmap()"](https://jokergoo.github.io/InteractiveComplexHeatmap/articles/interactivate_indirect.html) to find out how to do.
+["Interactivate indirect use of pheatmap(), heatmap.2() and heatmap()"](https://jokergoo.github.io/InteractiveComplexHeatmap/articles/interactivate_indirect.html) to find out how.
 
 ## Live examples
 

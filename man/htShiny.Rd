@@ -1,34 +1,53 @@
 \name{htShiny}
 \alias{htShiny}
 \title{
-Interactive heatmaps with a shiny app
+Interactive heatmaps with a Shiny app
 }
 \description{
-Interactive heatmaps with a shiny app
+Interactive heatmaps with a Shiny app
 }
 \usage{
-htShiny(ht_list = get_last_ht(), title = NULL, description = NULL,
-    hline = TRUE, html = NULL, ...)
+htShiny(ht_list = get_last_ht(), title = NULL,
+    description = NULL, hline = TRUE, html = NULL,
+    
+    # parameters passed to InteractiveComplexHeatmapOutput()
+    heatmap_id = NULL, title1 = "Original heatmap", title2 = "Selected sub-heatmap",
+    width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
+    action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6),
+    output_div = TRUE
+    )
 }
 \arguments{
 
-  \item{ht_list}{A \code{\link[ComplexHeatmap]{Heatmap-class}} or a \code{\link[ComplexHeatmap]{HeatmapList-class}} object. If it is not specified, a random heatmap is used. Better already updated by \code{draw()} function.}
+  \item{ht_list}{A \code{\link[ComplexHeatmap]{Heatmap-class}} or a \code{\link[ComplexHeatmap]{HeatmapList-class}} object. If it is not specified, the last generated heatmap is used. Better already updated by \code{draw()} function.}
   \item{title}{Title of the app.}
   \item{description}{Description of the app.}
   \item{hline}{Whether to add the horizontal line (by \code{hr} tag).}
   \item{html}{HTML fragment inserted below the heatmap.}
-  \item{...}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{heatmap_id}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{title1}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{title2}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{width1}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{height1}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{width2}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{height2}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{nrow}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{action}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{brush_opt}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{output_div}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
 
 }
 \seealso{
 \url{https://jokergoo.shinyapps.io/interactive_complexHeatmap/}
 }
 \value{
-A shiny app object.
+A Shiny app object.
 }
 \examples{
-# use a random heatmap
-if(interactive()) {
+# use last generated heatmap
+if(interactive() && dev.interactive()) {
+    m = matrix(rnorm(100), 10)
+    Heatmap(m)
     htShiny()
 }
 
