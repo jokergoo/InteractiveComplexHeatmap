@@ -85,7 +85,7 @@ sce <- sc3(sce, ks = 2:4, biology = TRUE)
 sc3_plot_expression(sce, k = 3)
 ```
 
-<img width="100%" src="https://user-images.githubusercontent.com/449218/105498918-0a871300-5cc1-11eb-92a6-ffed7460e4e1.png" />
+<img width="500px" src="https://user-images.githubusercontent.com/449218/105498918-0a871300-5cc1-11eb-92a6-ffed7460e4e1.png" />
 
 To replace the internally use of `pheatmap::pheatmap` with
 `ComplexHeatmap::pheatmap`, we can use `assignInNamespace()` to directly
@@ -138,7 +138,7 @@ heatmap_GO(
 ```
 
 
-<img width="100%" src="https://user-images.githubusercontent.com/449218/105498979-212d6a00-5cc1-11eb-9911-6409b699257b.png" />
+<img width="500px" src="https://user-images.githubusercontent.com/449218/105498979-212d6a00-5cc1-11eb-9911-6409b699257b.png" />
 
 
 Now note in `heatmap_GO()` function, `heatmap.2()` is used without **gplots** namespace (go to

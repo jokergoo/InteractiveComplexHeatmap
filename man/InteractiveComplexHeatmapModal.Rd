@@ -20,7 +20,7 @@ InteractiveComplexHeatmapModal(
     default_click_action = TRUE, default_brush_action = TRUE,
     
     # other configurations
-    js_code = "", close_button = FALSE, cancel_action = c("remove", "hide"))
+    js_code = "", close_button = TRUE, cancel_action = c("remove", "hide"))
 }
 \arguments{
 

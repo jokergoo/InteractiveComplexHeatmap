@@ -10,7 +10,7 @@ UI for the interactive ComplexHeatmap
 InteractiveComplexHeatmapOutput(heatmap_id = NULL,
     title1 = "Original heatmap", title2 = "Selected sub-heatmap",
     width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
-    action = c("click", "hover", "dblclick"), brush_opt = list(),
+    action = c("click", "hover", "dblclick"), brush_opt = list(stroke = "#f00", opacity = 0.6),
     output_div = TRUE, css = "")
 }
 \arguments{
