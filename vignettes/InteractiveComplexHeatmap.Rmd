@@ -200,7 +200,7 @@ htShiny()
 include_graphics("https://jokergoo.github.io/images/signature_heatmap.png")
 ```
 
-Note the functionality of autonatically saving the last heatmap is only turned
+Note the functionality of automatically saving the last heatmap is only turned
 on when **InteractiveComplexHeatmap** packags is loaded, which means,
 `library(InteractiveComplexHeatmap)` should be called before making the
 heatmap, or you need to explicitly set `ComplexHeatmap::ht_opt(save_last = TRUE)`.
