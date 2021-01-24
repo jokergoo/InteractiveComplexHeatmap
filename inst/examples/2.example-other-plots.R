@@ -3,11 +3,11 @@
 ####################################################################
 # title: A density heatmap.
 
-m = matrix(rnorm(100*100), 100)
-ht = densityHeatmap(m)
+load(url("https://jokergoo.github.io/images/density_heatmap_dataset.RData"))
+ht = densityHeatmap(mat2, ylim = c(0, 1), ylab = "Methylation")
 ht = draw(ht)
 
-htShiny(ht)
+htShiny(ht, width1 = 500)
 
 ####################################################################
 # title: An oncoPrint.
