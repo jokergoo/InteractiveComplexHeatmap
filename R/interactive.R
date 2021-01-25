@@ -918,5 +918,18 @@ reformat_df = function(df, ht_list) {
 		df_ht$row_index[[i]] = intersect(ht_list@ht_list[[ df_ht$heatmap[i] ]]@row_order_list[[ df_ht$row_slice[i] ]], df_ht$row_index[[i]])
 		df_ht$column_index[[i]] = intersect(ht_list@ht_list[[ df_ht$heatmap[i] ]]@column_order_list[[ df_ht$column_slice[i] ]], df_ht$column_index[[i]])
 	}
-	rbind(df_ht, df_anno)
+	df = rbind(df_ht, df_anno)
+
+	all_ht_name = unlist(sapply(ht_list@ht_list, function(x) {
+		if(inherits(x, "Heatmap")) {
+			x@name
+		} else {
+			names(x)
+		}
+	}))
+	all_ht_name = intersect(all_ht_name, df$heatmap)
+
+	df = df[order(factor(df$heatmap, levels = all_ht_name)),  , drop = FALSE]
+
+	return(df)
 }

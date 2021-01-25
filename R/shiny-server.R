@@ -128,6 +128,7 @@ renderInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	    height_ht = ComplexHeatmap:::height(ht_list())
 
 	    df = ht_pos()
+	    df = df[!is.na(df$row_slice), , drop = FALSE]
 	    x_min = df$x_min; x_min = convertX(x_min, "bigpts", valueOnly = TRUE)
 	    x_max = df$x_max; x_max = convertX(x_max, "bigpts", valueOnly = TRUE)
 	    y_min = df$y_min; y_min = convertY(y_min, "bigpts", valueOnly = TRUE)
@@ -805,12 +806,17 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 					row_split = rs, column_split = cs,
 			    	col = ht_current_full@matrix_color_mapping,
 			    	show_heatmap_legend = FALSE,
-			    	cluster_rows = FALSE, cluster_columns = FALSE,
-					row_title = NULL, column_title = NULL,
+			    	cluster_rows = FALSE, 
+			    	cluster_columns = FALSE,
+					row_title = NULL, 
+					column_title = NULL,
 					border = ht_current_full@matrix_param$border,
-					row_labels = row_labels, column_labels = column_labels,
-					show_row_names = show_row_names, row_names_side = ht_current_full@row_names_param$side,
-					show_column_names = show_column_names, column_names_side = ht_current_full@column_names_param$side,
+					row_labels = row_labels, 
+					column_labels = column_labels,
+					show_row_names = show_row_names, 
+					row_names_side = ht_current_full@row_names_param$side,
+					show_column_names = show_column_names, 
+					column_names_side = ht_current_full@column_names_param$side,
 					top_annotation = top_annotation,
 					bottom_annotation = bottom_annotation,
 					left_annotation = left_annotation,
