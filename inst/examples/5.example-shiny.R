@@ -28,6 +28,7 @@ shinyApp(ui, server)
 ####################################################################
 # title: Self-define the output. The selected sub-matrix is shown as a text table.
 
+library(GetoptLong)
 m = matrix(rnorm(100*100), 100)
 rownames(m) = paste0("R", 1:100)
 colnames(m) = paste0("C", 1:100)
@@ -53,7 +54,7 @@ brush_action = function(df, output) {
     column_index = unique(unlist(df$column_index))
     output[["info"]] = renderUI({
         if(!is.null(df)) {
-            HTML(kable_styling(kbl(m[row_index, column_index, drop = FALSE], digits = 2, format = "html")))
+            HTML(kable_styling(kbl(m[row_index, column_index, drop = FALSE], digits = 2, format = "html"), full_width = FALSE, position = "left"))
         }
     })
 }
@@ -69,6 +70,7 @@ shinyApp(ui, server)
 ####################################################################
 # title: Self-define the output. Additional annotations for the selected gene are shown.
 
+library(GetoptLong)
 suppressPackageStartupMessages(library(EnrichedHeatmap))
 load(system.file("extdata", "chr21_test_data.RData", package = "EnrichedHeatmap"))
 
@@ -120,6 +122,7 @@ shinyApp(ui, server)
 ####################################################################
 # title: Visualize Gene Ontology similarities. A list of selected GO IDs as well as their descriptions are shown in the output.
 
+library(GetoptLong)
 suppressPackageStartupMessages(library(simplifyEnrichment))
 
 mat = readRDS(system.file("extdata", "random_GO_BP_sim_mat.rds",
