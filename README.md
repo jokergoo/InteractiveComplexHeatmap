@@ -54,6 +54,9 @@ There are also two functions for Shiny app development:
 - `renderInteractiveComplexHeatmap()`: for processing on the sever side.
 
 ```r
+library(InteractiveComplexHeatmap)
+library(ComplexHeatmap)
+
 ht = Heatmap(m)
 ht = draw(ht)
 
@@ -98,16 +101,30 @@ Two additional functions to let you dynamically load interactive heatmap widgets
 - `InteractiveComplexHeatmapWidget()`: The interactive heatmap widget is inserted into a place defined by users.
 
 ```r
+m = matrix(rnorm(100), 10)
+ht = Heatmap(m)
+    
 ui = fluidPage(
     actionButton("show_heatmap", "Generate_heatmap"),
 )
 
 server = function(input, output, session) {
-    m = matrix(rnorm(100), 10)
-    ht = Heatmap(m)
-
     observeEvent(input$show_heatmap, {
         InteractiveComplexHeatmapModal(input, output, session, ht)
+    })
+}
+shiny::shinyApp(ui, server)
+
+# or use InteractiveComplexHeatmapWidget()
+ui = fluidPage(
+    actionButton("show_heatmap", "Generate_heatmap"),
+    htmlOutput("heatmap_output")
+)
+
+server = function(input, output, session) {
+    observeEvent(input$show_heatmap, {
+        InteractiveComplexHeatmapWidget(input, output, session, ht,
+            output_id = "heatmap_output")
     })
 }
 shiny::shinyApp(ui, server)
