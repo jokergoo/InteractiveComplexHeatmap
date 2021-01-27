@@ -146,44 +146,37 @@ ht_shiny = function(...) {
 # == example
 # htShinyExample()
 # if(interactive()) {
-#     htShinyExample(4)
+#     htShinyExample(4.2)
 # }
 htShinyExample = function(which) {
 	if(missing(which)) {
-		cat("There are following examples. Individual example can be run by e.g. htShinyExample(1).\n\n")
+		cat("There are following examples. Individual example can be run by e.g. htShinyExample(1.1).\n\n")
 		for(i_cate in seq_along(examples)) {
 			category = examples[[i_cate]]$category
-			cat(strrep(clisymbols::symbol$line, 8), category, strrep(clisymbols::symbol$line, getOption("width") - 8 - nchar(category)), "\n")
+			cat(strrep(clisymbols::symbol$line, 8), paste0(i_cate, "."), category, strrep(clisymbols::symbol$line, getOption("width") - 8 - nchar(category)), "\n")
 
 			e = examples[[i_cate]]$example
 			title = vapply(e, function(x) x$title, "")
 			for(i in seq_along(title)) {
 				lines = strwrap(title[i], width = getOption("width") - 5)
-				ind = e[[i]]$index
-				lines[1] = paste0(ifelse(nchar(ind) == 1, "  ", " "), ind, ". ", lines[1])
-				lines[-1] = paste0(strrep(" ", nchar(ind)+3), lines[-1])
+				lines[1] = paste0(" ", i_cate, ".", i, " ", lines[1])
+				lines[-1] = paste0(strrep(" ", 5), lines[-1])
 				cat(paste(lines, collapse = "\n"))
 				cat("\n")
 			}
 			cat("\n")
 		}
 	} else {
-		which = which[1]
+		which = as.character(which[1])
+		ind = as.numeric(strsplit(which, "\\.")[[1]])
+		if(length(ind) == 1) {
+			ind = c(ind, 1)
+		}
 
-		code = NULL
-		title = NULL
-		for(i_cate in seq_along(examples)) {
-			for(i in seq_along(examples[[i_cate]]$example)) {
-				if(examples[[i_cate]]$example[[i]]$index == which) {
-					code = examples[[i_cate]]$example[[i]]$code
-					title = examples[[i_cate]]$example[[i]]$title
-					break
-				}
-			}
-		}
-		if(is.null(code)) {
-			stop_wrap(qq("Cannot find the example with index @{which}."))
-		}
+		i_cate = ind[1]
+		i = ind[2]
+		code = examples[[i_cate]]$example[[i]]$code
+		title = examples[[i_cate]]$example[[i]]$title
 		
 		k = which(grepl("rmarkdown::run\\(", code))
 		if(length(k)) {
