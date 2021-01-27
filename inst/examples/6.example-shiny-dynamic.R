@@ -205,3 +205,25 @@ server = function(input, output, session) {
 	})
 }
 shiny::shinyApp(ui, server)
+
+#######################################################
+# title: The matrix is dynamicly generated.
+
+library(ComplexHeatmap)
+
+ui = fluidPage(
+    sliderInput("n", "Number of rows and columns", value = 10, min = 5, max = 50),
+    actionButton("submit", "Submit"),
+    htmlOutput("heatmap_output")
+)
+
+server = function(input, output, session) {
+	observeEvent(input$submit, {
+		n = input$n
+		m = matrix(rnorm(n*n), n)
+		ht=  Heatmap(m, column_title = paste0("A ", n, "x", n, " matrix"))
+		InteractiveComplexHeatmapWidget(input, output, session, ht, output_id = "heatmap_output")
+	})
+}
+shiny::shinyApp(ui, server)
+

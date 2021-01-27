@@ -162,65 +162,66 @@ htShinyExample()
 ```
 
 ```
-## There are following examples. Individual example can be run by e.g. htShinyExample(1).
+## There are following examples. Individual example can be run by e.g. htShinyExample(1.1).
 ## 
-## ──────── Simple examples ───────────────────────────────────────────────────────── 
-##   1. A single heatmap with minimal arguments.
-##   2. A single heatmap from a character matrix.
-##   3. A single heatmap with annotations on both rows and columns.
-##   4. A single heatmap where rows and columns are split.
-##   5. A list of two heatmaps.
+## ──────── 1. Simple examples ───────────────────────────────────────────────────────── 
+##  1.1 A single heatmap with minimal arguments.
+##  1.2 A single heatmap from a character matrix.
+##  1.3 A single heatmap with annotations on both rows and columns.
+##  1.4 A single heatmap where rows and columns are split.
+##  1.5 A list of two heatmaps.
 ## 
-## ──────── On other plots and packages ───────────────────────────────────────────── 
-##   6. A density heatmap.
-##   7. An oncoPrint.
-##   8. A UpSet plot.
-##   9. An interactive heatmap from pheatmap().
-##  10. An interactive heatmap from heatmap().
-##  11. An interactive heatmap from heatmap.2().
-##  12. A heatmap produced from tidyHeatmap package.
-##  13. Genome-scale heatmap.
+## ──────── 2. On other plots and packages ───────────────────────────────────────────── 
+##  2.1 A density heatmap.
+##  2.2 An oncoPrint.
+##  2.3 A UpSet plot.
+##  2.4 An interactive heatmap from pheatmap().
+##  2.5 An interactive heatmap from heatmap().
+##  2.6 An interactive heatmap from heatmap.2().
+##  2.7 A heatmap produced from tidyHeatmap package.
+##  2.8 Genome-scale heatmap.
 ## 
-## ──────── Enriched heatmaps ─────────────────────────────────────────────────────── 
-##  14. An enriched heatmap.
-##  15. A list of enriched heatmaps.
-##  16. An enriched heatmap with discrete signals.
+## ──────── 3. Enriched heatmaps ─────────────────────────────────────────────────────── 
+##  3.1 An enriched heatmap.
+##  3.2 A list of enriched heatmaps.
+##  3.3 An enriched heatmap with discrete signals.
 ## 
-## ──────── On public datasets ────────────────────────────────────────────────────── 
-##  17. An example from Lewis et al 2019. GitHub repo:
+## ──────── 4. On public datasets ────────────────────────────────────────────────────── 
+##  4.1 An example from Lewis et al 2019. GitHub repo:
 ##      https://github.com/kevinblighe/E-MTAB-6141
-##  18. Visualize cell heterogeneity from single cell RNASeq. It is from
+##  4.2 Visualize cell heterogeneity from single cell RNASeq. It is from
 ##      Supplementary S2 of the ComplexHeatmap paper.
 ##      https://github.com/jokergoo/supplementary
-##  19. Correlations between methylation, expression and other genomic features.
+##  4.3 Correlations between methylation, expression and other genomic features.
 ##      It is from Supplementary S3 of the ComplexHeatmap paper.
 ##      https://github.com/jokergoo/supplementary
 ## 
-## ──────── Shiny app development ─────────────────────────────────────────────────── 
-##  20. A single Shiny app with two interactive heatmap widgets.
-##  21. Self-define the output. The selected sub-matrix is shown as a text table.
-##  22. Self-define the output. Additional annotations for the selected gene are
+## ──────── 5. Shiny app development ─────────────────────────────────────────────────── 
+##  5.1 A single Shiny app with two interactive heatmap widgets.
+##  5.2 Self-define the output. The selected sub-matrix is shown as a text table.
+##  5.3 Self-define the output. Additional annotations for the selected gene are
 ##      shown.
-##  23. Visualize Gene Ontology similarities. A list of selected GO IDs as well as
+##  5.4 Visualize Gene Ontology similarities. A list of selected GO IDs as well as
 ##      their descriptions are shown in the output.
 ## 
-## ──────── Dynamicly generate heatmap widget in Shiny app ────────────────────────── 
-##  24. Dynamically generate the widget with InteractiveComplexHeatmapOutput() and
+## ──────── 6. Dynamicly generate heatmap widget in Shiny app ────────────────────────── 
+##  6.1 Dynamically generate the widget with InteractiveComplexHeatmapOutput() and
 ##      renderInteractiveComplexHeatmap().
-##  25. Dynamically generate the widget with InteractiveComplexHeatmapModal(). The
+##  6.2 Dynamically generate the widget with InteractiveComplexHeatmapModal(). The
 ##      modal is triggered by an action button.
-##  26. Dynamically select interactive heatmaps. The modal is triggered by radio
+##  6.3 Dynamically select interactive heatmaps. The modal is triggered by radio
 ##      buttons.
-##  27. Dynamically generate the widget. A customized Javascript code is inserted
+##  6.4 Dynamically generate the widget. A customized Javascript code is inserted
 ##      after the UI to change the default behavior of the action button.
-##  28. The widget is generated by InteractiveComplexHeatmapWidget() where the UI
+##  6.5 The widget is generated by InteractiveComplexHeatmapWidget() where the UI
 ##      is directly put in the place defined by htmlOutput().
-##  29. The widget is generated by InteractiveComplexHeatmapWidget() and a
+##  6.6 The widget is generated by InteractiveComplexHeatmapWidget() and a
 ##      customized Javascript code is inserted after the UI.
+##  6.7 The matrix is dynamicly generated.
 ## 
-## ──────── Interactive R markdown document ───────────────────────────────────────── 
-##  30. Integrate in interactive R Markdown document.
-##  31. Integrate in interactive R Markdown document where the heatmap widgets are
+## ──────── 7. Interactive R markdown document ───────────────────────────────────────── 
+##  7.1 Integrate in interactive R Markdown document.
+##  7.2 Integrate in interactive R Markdown document where the heatmap widgets are
 ##      dynamically generated.
 ```
 
