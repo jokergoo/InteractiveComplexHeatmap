@@ -35,7 +35,7 @@ knitr::opts_chunk$set(
 functions for integrating the interactive heatmap widgets into other Shiny apps. The two functions are:
 
 - `InteractiveComplexHeatmapOutput()`: for building UI on the client side.
-- `renderInteractiveComplexHeatmap()`: for processing on the sever side.
+- `makeInteractiveComplexHeatmap()`: for processing on the sever side.
 
 The usage is simple. Following is an example that you can directly copy and paste to your R session.
 
@@ -54,7 +54,7 @@ ui = fluidPage(
 )
 
 server = function(input, output, session) {
-    renderInteractiveComplexHeatmap(input, output, session, ht)
+    makeInteractiveComplexHeatmap(input, output, session, ht)
 }
 
 shinyApp(ui, server)
@@ -66,7 +66,7 @@ include_graphics("https://jokergoo.github.io/images/app_demo1.png")
 
 You can also put multiple interactive heatmaps widgets in a single Shiny app,
 but this time you must assign a "**heatmap ID**" for each one, so that
-`renderInteractiveComplexHeatmap()` can find the correct heatmap to response.
+`makeInteractiveComplexHeatmap()` can find the correct heatmap to response.
 The heatmap ID should start with letters.
 
 ```{r, eval = FALSE}
@@ -84,8 +84,8 @@ ui = fluidPage(
 )
 
 server = function(input, output, session) {
-    renderInteractiveComplexHeatmap(input, output, session, ht1, "heatmap_1")
-    renderInteractiveComplexHeatmap(input, output, session, ht2, "heatmap_2")
+    makeInteractiveComplexHeatmap(input, output, session, ht1, "heatmap_1")
+    makeInteractiveComplexHeatmap(input, output, session, ht2, "heatmap_2")
 }
 
 shinyApp(ui, server)
@@ -146,7 +146,7 @@ ui = fluidPage(
 )
 
 server = function(input, output, session) {
-    renderInteractiveComplexHeatmap(input, output, session, ht)
+    makeInteractiveComplexHeatmap(input, output, session, ht)
 }
 
 shiny::shinyApp(ui, server)
@@ -164,7 +164,7 @@ Both the click and brush actions on the heatmap trigger an output below the
 heatmaps. The output gives the information of which row(s) and columns(s) are
 selected by users. The reponse for the two actions can be self-defined.
 
-In `renderInteractiveComplexHeatmap()`, there are two arguments `click_action`
+In `makeInteractiveComplexHeatmap()`, there are two arguments `click_action`
 and `brush_action` which accept self-defined functions and define how to
 response after the heatmap is clicked or brushed. The input for the two
 functions should accept two argumnts, one is a `DataFrame` object which
@@ -235,7 +235,7 @@ In the following example, in the UI, I add a new `htmlOutput` with ID `info`.
 On the sever side, I define `click_action` to print a styled text and define
 `brush_action` to print the table of the selected rows and columns from the
 heatmap. Note I also set `default_click_action = FALSE, default_brush_action =
-FALSE` in `renderInteractiveComplexHeatmap()` to turn off the default responses.
+FALSE` in `makeInteractiveComplexHeatmap()` to turn off the default responses.
 
 You can also run the following example simply by `htShinyExample(5.2)`.
 
@@ -272,7 +272,7 @@ brush_action = function(df, output) {
 }
 
 server = function(input, output, session) {
-    renderInteractiveComplexHeatmap(input, output, session, ht,
+    makeInteractiveComplexHeatmap(input, output, session, ht,
         click_action = click_action, brush_action = brush_action,
         default_click_action = FALSE, default_brush_action = FALSE)
 }

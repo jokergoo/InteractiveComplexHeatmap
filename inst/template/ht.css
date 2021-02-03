@@ -1,8 +1,22 @@
-.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group, #@{heatmap_id}_sub_heatmap_group {
-	@{ifelse(nrow == 1, 'float:left;', '')}
+.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group, 
+.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group {
 	margin-bottom: 10px;
 }
+
 .@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
+	@{ifelse(layout == '12|3', 'float:left;', '')}
+}
+
+.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group {
+	@{ifelse(layout %in% c('12|3', '1|23'), 'float:left;', '')}
+}
+
+.@{heatmap_id}_widget #@{heatmap_id}_info {
+	@{ifelse(layout %in% c('1|23'), 'float:left;', '')}
+}
+
+.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group,
+.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group {
 	margin-right: 10px;
 }
 .@{heatmap_id}_widget #@{heatmap_id}_heatmap_resize {
@@ -80,3 +94,6 @@
 	cursor: pointer;
 }
 
+.@{heatmap_id}_widget #@{heatmap_id}_info {
+	max-width: @{width3}px;
+}

@@ -15,14 +15,15 @@
 # -height1 Pass to `InteractiveComplexHeatmapOutput`.
 # -width2 Pass to `InteractiveComplexHeatmapOutput`.
 # -height2 Pass to `InteractiveComplexHeatmapOutput`.
-# -nrow Pass to `InteractiveComplexHeatmapOutput`.
+# -width3 Pass to `InteractiveComplexHeatmapOutput`.
+# -layout Pass to `InteractiveComplexHeatmapOutput`.
 # -action Pass to `InteractiveComplexHeatmapOutput`.
 # -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
 # -output_div Pass to `InteractiveComplexHeatmapOutput`.
-# -click_action Pass to `renderInteractiveComplexHeatmap`.
-# -brush_action Pass to `renderInteractiveComplexHeatmap`.
-# -default_click_action Pass to `renderInteractiveComplexHeatmap`.
-# -default_brush_action Pass to `renderInteractiveComplexHeatmap`.
+# -click_action Pass to `makeInteractiveComplexHeatmap`.
+# -brush_action Pass to `makeInteractiveComplexHeatmap`.
+# -default_click_action Pass to `makeInteractiveComplexHeatmap`.
+# -default_brush_action Pass to `makeInteractiveComplexHeatmap`.
 # -js_code Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function
 #       that takes "heatmap ID" as the argument and returns the formatted JavaScript code.
 # -close_button Whether to add a close button at the end of the widget. If it is ``FALSE``, the widget
@@ -58,11 +59,12 @@ InteractiveComplexHeatmapModal = function(
 
 	# parameters passed to InteractiveComplexHeatmapOutput()
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
-	width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
+	width1 = 450, height1 = 350, width2 = 370, height2 = 350, 
+	width3 = ifelse(layout == "12|3", 800, 500), layout = "12|3",
 	action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_div = TRUE,
 
-	# parameters passed to renderInteractiveComplexHeatmap()
+	# parameters passed to makeInteractiveComplexHeatmap()
 	click_action = NULL, brush_action = NULL, 
 	default_click_action = TRUE, default_brush_action = TRUE,
 
@@ -92,7 +94,7 @@ InteractiveComplexHeatmapModal = function(
 					HTML("<i class='fa fa-times'></i>")
 				),
 				InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,
-					width1 = width1, height1 = height1, width2 = width2, height2 = height2, nrow = nrow,
+					width1 = width1, height1 = height1, width2 = width2, height2 = height2, width3 = width3, layout = layout,
 					action = action, brush_opt = brush_opt, output_div = output_div),
 				if(close_button) {
 					tagList(
@@ -210,7 +212,7 @@ InteractiveComplexHeatmapModal = function(
 		} else {
 			ht = get_heatmap
 		}
-		renderInteractiveComplexHeatmap(input, output, session, ht, heatmap_id = heatmap_id,
+		makeInteractiveComplexHeatmap(input, output, session, ht, heatmap_id = heatmap_id,
 			click_action = click_action, brush_action = brush_action,
 			default_click_action = default_click_action, default_brush_action = default_brush_action)
 	})
@@ -237,14 +239,15 @@ InteractiveComplexHeatmapModal = function(
 # -height1 Pass to `InteractiveComplexHeatmapOutput`.
 # -width2 Pass to `InteractiveComplexHeatmapOutput`.
 # -height2 Pass to `InteractiveComplexHeatmapOutput`.
-# -nrow Pass to `InteractiveComplexHeatmapOutput`.
+# -width3 Pass to `InteractiveComplexHeatmapOutput`.
+# -layout Pass to `InteractiveComplexHeatmapOutput`.
 # -action Pass to `InteractiveComplexHeatmapOutput`.
 # -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
 # -output_div Pass to `InteractiveComplexHeatmapOutput`.
-# -click_action Pass to `renderInteractiveComplexHeatmap`.
-# -brush_action Pass to `renderInteractiveComplexHeatmap`.
-# -default_click_action Pass to `renderInteractiveComplexHeatmap`.
-# -default_brush_action Pass to `renderInteractiveComplexHeatmap`.
+# -click_action Pass to `makeInteractiveComplexHeatmap`.
+# -brush_action Pass to `makeInteractiveComplexHeatmap`.
+# -default_click_action Pass to `makeInteractiveComplexHeatmap`.
+# -default_brush_action Pass to `makeInteractiveComplexHeatmap`.
 # -js_code Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function
 #       that takes "heatmap ID" as the argument and returns the formatted JavaScript code.
 # -close_button Whether to add a close button at the end of the widget.
@@ -281,11 +284,12 @@ InteractiveComplexHeatmapWidget = function(
 
 	# parameters passed to InteractiveComplexHeatmapOutput()
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
-	width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
+	width1 = 450, height1 = 350, width2 = 370, height2 = 350, 
+	width3 = ifelse(layout == "12|3", 800, 500), layout = "12|3",
 	action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_div = TRUE,
 
-	# parameters passed to renderInteractiveComplexHeatmap()
+	# parameters passed to makeInteractiveComplexHeatmap()
 	click_action = NULL, brush_action = NULL, 
 	default_click_action = TRUE, default_brush_action = TRUE,
 
@@ -306,7 +310,7 @@ InteractiveComplexHeatmapWidget = function(
 	output[[output_id]] = renderUI({
 		div(id = qq("@{heatmap_id}_heatmap_widget"),
 			InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,
-				width1 = width1, height1 = height1, width2 = width2, height2 = height2, nrow = nrow,
+				width1 = width1, height1 = height1, width2 = width2, height2 = height2, width3 = width3, layout = layout,
 				action = action, brush_opt = brush_opt, output_div = output_div),
 			if(close_button) {
 				tagList(
@@ -338,7 +342,7 @@ InteractiveComplexHeatmapWidget = function(
 		} else {
 			ht = get_heatmap
 		}
-		renderInteractiveComplexHeatmap(input, output, session, ht, heatmap_id = heatmap_id,
+		makeInteractiveComplexHeatmap(input, output, session, ht, heatmap_id = heatmap_id,
 			click_action = click_action, brush_action = brush_action,
 			default_click_action = default_click_action, default_brush_action = default_brush_action)
 	})

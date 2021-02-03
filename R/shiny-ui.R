@@ -10,20 +10,24 @@
 # -height1 Height of the original heatmap.
 # -width2 Width of the sub-heatmap.
 # -height2 Height of the sub-heatmap.
-# -nrow Should the two heatmap ``div`` be put in one row or in two rows? Value should be either 1 or 2. 
+# -width3 Width of the output div.
+# -layout One of ``12|3`` or ``1|23``. ``12|3`` means the div of original heatmap and sub-heatmap are in a same row. 
+#         ``1|23`` means the div of sub-heatmap and the output are in a same row.
 # -action Which action for selecting single cell on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`.
 # -output_div Whether to add the output ``div``.
 # -css Self-defined CSS code.
 #
 # == details
-# This function generates HTML fragment for the interactive UI. See the example from `renderInteractiveComplexHeatmap` page.
+# This function generates HTML fragment for the interactive UI. See the example from `makeInteractiveComplexHeatmap` page.
 #
 # == value
 # A UI that can be used in shiny.
 InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
-	width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
+	width1 = 450, height1 = 350, width2 = 370, height2 = 350, 
+	width3 = ifelse(layout == "12|3", 800, 500),
+	layout = c("12|3", "1|23"),
 	action = c("click", "hover", "dblclick"), 
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_div = TRUE, css = "") {
@@ -57,6 +61,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		dblclick = NULL
 		hover = NULL
 	}
+
+	layout = match.arg(layout)[1]
 
 	if(is.null(css)) {css = ""}
 	css[is.na(css)] = ""
@@ -259,9 +265,11 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 				)
 			)
 		),
-		div(style = "clear: both;"),
+		if(layout %in% c("12|3")) div(style = "clear: both;"),
 
-		if(output_div) htmlOutput(qq("@{heatmap_id}_info")) else NULL
+		if(output_div) htmlOutput(qq("@{heatmap_id}_info")) else NULL,
+
+		div(style = "clear: both;")
 	)
 }
 

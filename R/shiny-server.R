@@ -29,12 +29,12 @@
 #     )
 #     
 #     server = function(input, output, session) {
-#         renderInteractiveComplexHeatmap(input, output, session, ht)
+#         makeInteractiveComplexHeatmap(input, output, session, ht)
 #     }
 #     
 #     shiny::shinyApp(ui, server)
 # }
-renderInteractiveComplexHeatmap = function(input, output, session, ht_list, 
+makeInteractiveComplexHeatmap = function(input, output, session, ht_list, 
 	heatmap_id = shiny_env$current_heatmap_id,
 	click_action = NULL, brush_action = NULL, 
 	default_click_action = TRUE, default_brush_action = TRUE) {
@@ -543,6 +543,22 @@ renderInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	})
 }
 
+
+# == title
+# Process the heatmaps on the sever side
+#
+# == param
+# -... All goes to `makeInteractiveComplexHeatmap`.
+#
+# == details
+# The function ``renderInteractiveComplexHeatmap()`` was renamed to ``makeInteractiveComplexHeatmap``
+# to get rid of the confusion of the use of ``render*()`` functions.
+#
+# == value
+# No value is returned.
+renderInteractiveComplexHeatmap = function(...) {
+	makeInteractiveComplexHeatmap(...)
+}
 
 get_pos_from_brush = function(brush) {
 	coords = brush$coords_css

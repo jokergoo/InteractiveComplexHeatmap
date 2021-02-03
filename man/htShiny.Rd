@@ -12,7 +12,8 @@ htShiny(ht_list = get_last_ht(), title = NULL,
     
     # parameters passed to InteractiveComplexHeatmapOutput()
     heatmap_id = NULL, title1 = "Original heatmap", title2 = "Selected sub-heatmap",
-    width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
+    width1 = 450, height1 = 350, width2 = 370, height2 = 350,
+    width3 = ifelse(layout == "12|3", 800, 500), layout = "12|3",
     action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6),
     output_div = TRUE
     )
@@ -31,7 +32,8 @@ htShiny(ht_list = get_last_ht(), title = NULL,
   \item{height1}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{width2}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{height2}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
-  \item{nrow}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{width3}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{layout}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{action}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{brush_opt}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{output_div}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}

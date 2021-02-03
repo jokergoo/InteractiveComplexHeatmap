@@ -51,7 +51,7 @@ htShiny()
 There are also two functions for Shiny app development:
 
 - `InteractiveComplexHeatmapOutput()`: for the UI on the client side.
-- `renderInteractiveComplexHeatmap()`: for processing on the sever side.
+- `makeInteractiveComplexHeatmap()`: for processing on the sever side.
 
 ```r
 library(InteractiveComplexHeatmap)
@@ -65,7 +65,7 @@ ui = fluidPage(
 )
 
 server = function(input, output, session) {
-    renderInteractiveComplexHeatmap(input, output, session, ht)
+    makeInteractiveComplexHeatmap(input, output, session, ht)
 }
 
 shiny::shinyApp(ui, server)
@@ -88,8 +88,8 @@ ui = fluidPage(
 )
 
 server = function(input, output, session) {
-    renderInteractiveComplexHeatmap(input, output, session, ht1, "ht1")
-    renderInteractiveComplexHeatmap(input, output, session, ht2, "ht2")
+    makeInteractiveComplexHeatmap(input, output, session, ht1, "ht1")
+    makeInteractiveComplexHeatmap(input, output, session, ht2, "ht2")
 }
 
 shiny::shinyApp(ui, server)
@@ -206,7 +206,7 @@ htShinyExample()
 ## 
 ## ──────── 6. Dynamicly generate heatmap widget in Shiny app ────────────────────────── 
 ##  6.1 Dynamically generate the widget with InteractiveComplexHeatmapOutput() and
-##      renderInteractiveComplexHeatmap().
+##      makeInteractiveComplexHeatmap().
 ##  6.2 Dynamically generate the widget with InteractiveComplexHeatmapModal(). The
 ##      modal is triggered by an action button.
 ##  6.3 Dynamically select interactive heatmaps. The modal is triggered by radio
