@@ -1,5 +1,10 @@
 
 $(function() {
+
+	$("#@{heatmap_id}_heatmap_control").width($("#@{heatmap_id}_heatmap_resize").width());
+	$("#@{heatmap_id}_sub_heatmap_control").width($("#@{heatmap_id}_sub_heatmap_resize").width());
+
+
 	$("#@{heatmap_id}_heatmap_resize").resizable({
 		stop: function( event, ui ) {
 			document.getElementById("@{heatmap_id}_mask").remove();
@@ -18,6 +23,10 @@ $(function() {
 			$("#@{heatmap_id}_mask").height(ui.size.height);
 			$("#@{heatmap_id}_heatmap").width(ui.size.width);
 			$("#@{heatmap_id}_heatmap").height(ui.size.height);
+			$("#@{heatmap_id}_heatmap img").width(ui.size.width - 4);  // img has 4px margin
+			$("#@{heatmap_id}_heatmap img").height(ui.size.height - 4);
+
+			$("#@{heatmap_id}_heatmap_control").width(ui.size.width);
 
 			$('#@{heatmap_id}_heatmap_input_width').val(ui.size.width);
 			$('#@{heatmap_id}_heatmap_input_height').val(ui.size.height);
@@ -37,8 +46,8 @@ $(function() {
 	$("#@{heatmap_id}_sub_heatmap_resize").resizable({
 		stop: function( event, ui ) {
 			document.getElementById("@{heatmap_id}_mask2").remove();
-			$("#@{heatmap_id}_sub_heatmap").height(ui.size.height-4);
-			$("#@{heatmap_id}_sub_heatmap").width(ui.size.width-4);
+			$("#@{heatmap_id}_sub_heatmap").height(ui.size.height - 4);
+			$("#@{heatmap_id}_sub_heatmap").width(ui.size.width - 4);
 		},
 		start: function(event, ui) {
 			var mask = document.createElement("div");
@@ -51,6 +60,11 @@ $(function() {
 			$("#@{heatmap_id}_mask2").height(ui.size.height);
 			$("#@{heatmap_id}_sub_heatmap").width(ui.size.width);
 			$("#@{heatmap_id}_sub_heatmap").height(ui.size.height);
+
+			$("#@{heatmap_id}_sub_heatmap img").width(ui.size.width - 4);
+			$("#@{heatmap_id}_sub_heatmap img").height(ui.size.height - 4);
+
+			$("#@{heatmap_id}_sub_heatmap_control").width(ui.size.width);
 		}
 	});
 

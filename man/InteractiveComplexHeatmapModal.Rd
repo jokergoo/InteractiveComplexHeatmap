@@ -12,11 +12,12 @@ InteractiveComplexHeatmapModal(
     
     # parameters passed to InteractiveComplexHeatmapOutput()
     title1 = "Original heatmap", title2 = "Selected sub-heatmap",
-    width1 = 450, height1 = 350, width2 = 370, height2 = 350, nrow = 1,
+    width1 = 450, height1 = 350, width2 = 370, height2 = 350,
+    width3 = ifelse(layout == "12|3", 800, 500), layout = "12|3",
     action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6),
     output_div = TRUE,
     
-    # parameters passed to renderInteractiveComplexHeatmap()
+    # parameters passed to makeInteractiveComplexHeatmap()
     click_action = NULL, brush_action = NULL,
     default_click_action = TRUE, default_brush_action = TRUE,
     
@@ -36,14 +37,15 @@ InteractiveComplexHeatmapModal(
   \item{height1}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{width2}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{height2}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
-  \item{nrow}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{width3}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{layout}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{action}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{brush_opt}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{output_div}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
-  \item{click_action}{Pass to \code{\link{renderInteractiveComplexHeatmap}}.}
-  \item{brush_action}{Pass to \code{\link{renderInteractiveComplexHeatmap}}.}
-  \item{default_click_action}{Pass to \code{\link{renderInteractiveComplexHeatmap}}.}
-  \item{default_brush_action}{Pass to \code{\link{renderInteractiveComplexHeatmap}}.}
+  \item{click_action}{Pass to \code{\link{makeInteractiveComplexHeatmap}}.}
+  \item{brush_action}{Pass to \code{\link{makeInteractiveComplexHeatmap}}.}
+  \item{default_click_action}{Pass to \code{\link{makeInteractiveComplexHeatmap}}.}
+  \item{default_brush_action}{Pass to \code{\link{makeInteractiveComplexHeatmap}}.}
   \item{js_code}{Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function that takes "heatmap ID" as the argument and returns the formatted JavaScript code.}
   \item{close_button}{Whether to add a close button at the end of the widget. If it is \code{FALSE}, the widget can be closed by clicking outside of the widget.}
   \item{cancel_action}{Whether to remove the UI from HTML or just hide it when the UI is closed.}

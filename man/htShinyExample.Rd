@@ -24,6 +24,6 @@ A Shiny app object.
 \examples{
 htShinyExample()
 if(interactive()) {
-    htShinyExample(4)
+    htShinyExample(4.2)
 }
 }
