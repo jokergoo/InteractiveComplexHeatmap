@@ -227,3 +227,26 @@ server = function(input, output, session) {
 }
 shiny::shinyApp(ui, server)
 
+
+######################################################
+# title: Reorder by a column that is specified by user.
+
+ui = fluidPage(
+    sliderInput("column", label = "Which column to order?", value = 1, min = 1, max = 10),
+    htmlOutput("heatmap_output")
+)
+
+server = function(input, output, session) {
+
+	m = matrix(rnorm(100), 10)
+	rownames(m) = 1:10
+	colnames(m) = 1:10
+
+	observeEvent(input$column, {
+		order = order(m[, input$column])
+		ht = Heatmap(m[order, , drop = FALSE], cluster_rows = FALSE, cluster_columns = FALSE)
+		InteractiveComplexHeatmapWidget(input, output, session, ht, output_id = "heatmap_output")
+	})
+}
+shiny::shinyApp(ui, server)
+

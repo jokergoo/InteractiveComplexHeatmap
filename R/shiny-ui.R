@@ -27,7 +27,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
 	width1 = 450, height1 = 350, width2 = 370, height2 = 350, 
 	width3 = ifelse(layout == "12|3", 800, 500),
-	layout = c("12|3", "1|23"),
+	layout = c("12|3", "1|23", "123"),
 	action = c("click", "hover", "dblclick"), 
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_div = TRUE, css = "") {
