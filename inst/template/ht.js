@@ -1,9 +1,8 @@
 
 $(function() {
 
-	$("#@{heatmap_id}_heatmap_control").width($("#@{heatmap_id}_heatmap_resize").width());
-	$("#@{heatmap_id}_sub_heatmap_control").width($("#@{heatmap_id}_sub_heatmap_resize").width());
-
+	$("#@{heatmap_id}_heatmap_control").width($("#@{heatmap_id}_heatmap").width());
+	$("#@{heatmap_id}_sub_heatmap_control").width($("#@{heatmap_id}_sub_heatmap").width());
 
 	$("#@{heatmap_id}_heatmap_resize").resizable({
 		stop: function( event, ui ) {

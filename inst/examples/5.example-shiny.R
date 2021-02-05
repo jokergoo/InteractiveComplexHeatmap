@@ -188,3 +188,66 @@ server = function(input, output, session) {
 shinyApp(ui, server)
 
 
+
+
+##########################################################################
+# title: Visualize a DESeq2 results. The selected genes are highlighted in an associated MA plot.
+
+make_maplot = function(res, highlight = NULL) {
+    col = rep("#00000020", nrow(res))
+    names(col) = rownames(res)
+    if(is.null(highlight)) {
+        l = res$padj < 0.01; l[is.na(l)] = FALSE
+        col[l] = "orange"
+    } else {
+        col[highlight] = "orange"
+    }
+    x = res$baseMean
+    y = res$log2FoldChange
+    y[y > 2] = 2
+    y[y < -2] = -2
+    suppressWarnings(
+        plot(x, y, col = col, 
+            pch = ifelse(res$log2FoldChange > 2 | res$log2FoldChange < -2, 1, 16), 
+            cex = 0.5, log = "x",
+            xlab = "baseMean", ylab = "log2 fold change")
+    )
+}
+
+library(shiny)
+ui = fluidPage(
+    InteractiveComplexHeatmapOutput(),
+    uiOutput("maplot_ui")
+)
+
+click_action = function(df, output) {
+    output[["maplot_ui"]] = renderUI({
+           
+        output[["maplot"]] = renderPlot({
+            plot.new()
+        })
+
+        plotOutput("maplot", width = 400)
+    })
+}
+
+brush_action = function(df, output) {
+    output[["maplot_ui"]] = renderUI({
+           
+        output[["maplot"]] = renderPlot({
+            row_index = unique(unlist(df$row_index))
+            make_maplot(res, rownames(m)[row_index])
+        })
+
+        plotOutput("maplot", width = 400)
+    })
+}
+
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht,
+        click_action = click_action, brush_action = brush_action,
+        default_click_action = FALSE, default_brush_action = FALSE)
+}
+
+shinyApp(ui, server)
+
