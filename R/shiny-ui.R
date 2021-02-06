@@ -15,7 +15,7 @@
 #         ``1|23`` means the div of sub-heatmap and the output are in a same row.
 # -action Which action for selecting single cell on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`.
-# -output_div Whether to add the output ``div``.
+# -output_ui Whether to add the output ``div``.
 # -css Self-defined CSS code.
 #
 # == details
@@ -25,12 +25,15 @@
 # A UI that can be used in shiny.
 InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
-	width1 = 450, height1 = 350, width2 = 370, height2 = 350, 
-	width3 = ifelse(layout == "12|3", 800, 500),
-	layout = c("12|3", "1|23", "123"),
-	action = c("click", "hover", "dblclick"), 
+	width1 = ifelse(layout %in% c("1|(2+3)", "1|23"), 800, 450), 
+	height1 = ifelse(layout %in% c("1+(2|3)"), 700, 350), 
+	width2 = 370, 
+	height2 = 350, 
+	width3 = ifelse(layout %in% c("(1+2)|3", "12|3"), 800, 370),
+	layout = "(1+2)|3",
+	action = "click", 
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
-	output_div = TRUE, css = "") {
+	output_ui = default_output_ui(), css = "") {
 
 	if(is.null(heatmap_id)) {
 		increase_widget_index()
@@ -61,8 +64,6 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		dblclick = NULL
 		hover = NULL
 	}
-
-	layout = match.arg(layout)[1]
 
 	if(is.null(css)) {css = ""}
 	css[is.na(css)] = ""
@@ -140,136 +141,254 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		script = basename(temp_js)
     )
 
+    main_heatmap_ui = div(id = qq("@{heatmap_id}_heatmap_group"),
+		h5(title1),
+		div(id = qq("@{heatmap_id}_heatmap_resize"),
+			plotOutput(qq("@{heatmap_id}_heatmap"), height = height1, width = width1,
+				        brush = do.call(brushOpts, c(list(id = qq("@{heatmap_id}_heatmap_brush")), brush_opt)),
+				        click = click, dblclick = dblclick, hover = hover
+			),
+			tags$script(HTML(qq("
+				$('#@{heatmap_id}_heatmap').html('<p style=\"position:relative;top:50%;\">Making heatmap, please wait...</p>');
+			")))
+		),
+		div(id = qq("@{heatmap_id}_heatmap_control"),
+			style = "display:none;",
+			tabsetPanel(
+				tabPanel(HTML("<i class='fa fa-search'></i>"),
+					div(id = qq('@{heatmap_id}_tabs-search'), 
+						div(textInput(qq("@{heatmap_id}_keyword"), placeholder = "Multiple keywords separated by ','", label = "Keywords"), style = "width:250px;float:left;"),
+						div(checkboxInput(qq("@{heatmap_id}_search_regexpr"), label = "Regular expression", value = FALSE), style = "width:150px;float:left;padding-top:20px;padding-left:4px;"),
+						div(style = "clear: both;"),
+						radioButtons(qq("@{heatmap_id}_search_where"), label = "Which dimension to search?", choices = list("on rows" = 1, "on columns" = 2), selected = 1, inline = TRUE),
+						checkboxGroupInput(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = "loading", choiceValues = "", selected = ""),
+						checkboxGroupInput(qq("@{heatmap_id}_search_extend"), label = "Extend sub-heatmap to all heatmaps and annotations?", choiceNames = "yes", choiceValues = 1, selected = NULL),
+						actionButton(qq("@{heatmap_id}_search_action"), label = "Search")
+					),
+					p("Search Heatmap", style = "display:none;")
+				),
+				tabPanel(HTML("<i class='fa fa-brush'></i>"),
+					div(
+						id = qq('@{heatmap_id}_tabs-brush'),
+						HTML(qq('
+							<div class="form-group shiny-input-container" style="float:left; width:120px;">
+							<label>Brush border</label>
+							<div id="@{heatmap_id}_color_pickers_border"></div>
+							</div>
+							<div class="form-group shiny-input-container" style="float:left; width:120px;">
+							<label>Brush fill</label>
+							<div id="@{heatmap_id}_color_pickers_fill"></div>
+							</div>
+							<div style="clear:both;"></div>')
+						),
+						selectizeInput(qq("@{heatmap_id}_color_pickers_border_width"), label = "Border width", 
+							choices = list("1px" = 1, "2px" = 2, "3px" = 3), selected = 1,
+							options = list(render = I("{
+									option: function(item, escape) {
+										return '<div><hr style=\"border-top:' + item.value + 'px solid black;\"></div>'
+									}
+								}"))),
+						sliderInput(qq("@{heatmap_id}_color_pickers_opacity"), label = "Opacity", min = 0, max = 1, value = pickr_opacity)
+					)
+				),
+				tabPanel(HTML("<i class='fa fa-images'></i>"),
+					div(
+						id = qq('@{heatmap_id}_tabs-save-image'),
+						radioButtons(qq("@{heatmap_id}_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
+						numericInput(qq("@{heatmap_id}_heatmap_download_image_width"), label = "Image width (in px)", value = width1),
+						numericInput(qq("@{heatmap_id}_heatmap_download_image_height"), label = "Image height (in px)", value = height1),
+						downloadButton(qq("@{heatmap_id}_heatmap_download_button"), "Save image")
+					)
+				),
+				tabPanel(HTML("<i class='fa fa-expand-arrows-alt'></i>"),
+					div(id = qq('@{heatmap_id}_tabs-resize'),
+						numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", width1),
+						numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", height1),
+						actionButton(qq("@{heatmap_id}_heatmap_input_size_button"), "Change image size")
+					)
+				)
+			)
+		)
+	)
+
+	sub_heatmap_ui = div(id = qq("@{heatmap_id}_sub_heatmap_group"),
+		h5(title2),
+		div(id = qq("@{heatmap_id}_sub_heatmap_resize"),
+			plotOutput(qq("@{heatmap_id}_sub_heatmap"), height = height2, width = width2)
+		),
+		div(id = qq("@{heatmap_id}_sub_heatmap_control"),
+			style = "display:none;",
+			tabsetPanel(
+				tabPanel(HTML("<i class='fa fa-tasks'></i>"),
+					div(id = qq('@{heatmap_id}_sub_tabs-setting'), 
+						div(
+							div(checkboxInput(qq("@{heatmap_id}_show_row_names_checkbox"), label = "Show row names", value = TRUE), style = "float:left;width:150px"),
+							div(checkboxInput(qq("@{heatmap_id}_show_column_names_checkbox"), label = "Show column names", value = TRUE), style = "float:left;width:160px"),
+							div(style = "clear: both;")
+						),
+						div(
+							checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
+							checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = TRUE),
+							checkboxInput(qq("@{heatmap_id}_fill_figure_checkbox"), label = "Fill figure region", value = FALSE)
+						),
+						hr(),
+						div(
+							HTML(qq('
+						<p>
+						Remove <input id="@{heatmap_id}_post_remove" type="number" class="form-control" min="1" value="1" style="width:60px;display:inline;"/>
+						<span id="@{heatmap_id}_post_remove_which">rows</span> from 
+						<select id="@{heatmap_id}_post_remove_dimension" class="form-control" style="width:auto;display:inline;">
+						<option value="top" selected>top</option>
+						<option value="bottom">bottom</option>
+						<option value="left">left</option>
+						<option value="right">right</option></select>
+						</p>
+							')),
+							actionButton(qq("@{heatmap_id}_post_remove_submit"), "Remove"),
+							actionButton(qq("@{heatmap_id}_post_remove_reset"), "Reset"),
+							tags$script(HTML(qq("
+								$('#@{heatmap_id}_post_remove_dimension').change(function() {
+									if($(this).val() == 1 || $(this).val() == 2) {
+										$('#@{heatmap_id}_post_remove_which').text('rows');
+									} else {
+										$('#@{heatmap_id}_post_remove_which').text('columns');
+									}
+								});
+							")))
+						),
+						hr(),
+						p("Click the button below to turn the sub-heatmap into an interactive app.", style = "max-width:300px;"),
+						actionButton(qq("@{heatmap_id}_open_modal"), label = "Interactivate sub-heatmap")
+					)
+				),
+				tabPanel(HTML("<i class='fa fa-table'></i>"),
+					div(id = qq("@{heatmap_id}_sub_tabs-table"),
+						p("Export values in sub-heatmaps as a text table."),
+						actionButton(qq("@{heatmap_id}_open_table"), label = "Open table")
+					)
+				),
+				tabPanel(HTML("<i class='fa fa-images'></i>"),
+					div(id = qq('@{heatmap_id}_sub_tabs-save-image'),
+						radioButtons(qq("@{heatmap_id}_sub_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
+						numericInput(qq("@{heatmap_id}_sub_heatmap_download_image_width"), label = "Image width (in px)", value = width2),
+						numericInput(qq("@{heatmap_id}_sub_heatmap_download_image_height"), label = "Image height (in px)", value = height2),
+						downloadButton(qq("@{heatmap_id}_sub_heatmap_download_button"), "Save image")
+					),
+				),
+				tabPanel(HTML("<i class='fa fa-expand-arrows-alt'></i>"),
+					div(id = qq('@{heatmap_id}_sub_tabs-resize'),
+						numericInput(qq("@{heatmap_id}_sub_heatmap_input_width"), "Box width", width2),
+						numericInput(qq("@{heatmap_id}_sub_heatmap_input_height"), "Box height", height2),
+						actionButton(qq("@{heatmap_id}_sub_heatmap_input_size_button"), "Change image size")
+					)
+				)
+			)
+		)
+	)
+
+	default_output_ui = function() {
+		htmlOutput(qq("@{heatmap_id}_info"))
+	}
+
+	if(identical(output_ui, TRUE)) {
+		output_ui = default_output_ui()
+	} else if(identical(output_ui, FALSE)) {
+		output_ui = NULL
+	}
+
+	if(is.null(output_ui)) {
+		shiny_env[[heatmap_id]] = list(default_output_ui = FALSE)
+	}  else {
+		shiny_env[[heatmap_id]] = list(default_output_ui = identical(output_ui, default_output_ui()))
+	}
+
+	output_ui = div(
+		id = qq("@{heatmap_id}_output_wrapper"),
+		output_ui,
+		style = qq("width: @{width3}px;")
+	)
+
+	if(layout %in% c("(1+2)|3", "12|3")) {
+		layout_css = qq("
+			.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
+				float:left;
+			}
+			.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group {
+				float:left;
+			}
+		")
+
+		tl = tagList(
+			main_heatmap_ui, 
+			sub_heatmap_ui,
+			div(style = "clear: both;"),
+			output_ui
+		)
+	} else if(layout %in% c("1|(2+3)", "1|23")) {
+		layout_css = qq("
+			.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group {
+				float:left;
+			}
+			.@{heatmap_id}_widget #@{heatmap_id}_output_wrapper {
+				float:left;
+			}
+		")
+
+		tl = tagList(
+			main_heatmap_ui, 
+			sub_heatmap_ui,
+			output_ui
+		)
+	} else if(layout %in% c("1+2+3", "123")) {
+		layout_css = qq("
+			.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
+				float:left;
+			}
+			.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group {
+				float:left;
+			}
+			.@{heatmap_id}_widget #@{heatmap_id}_output_wrapper {
+				float:left;
+			}
+		")
+
+		tl = tagList(
+			main_heatmap_ui, 
+			sub_heatmap_ui,
+			output_ui
+		)
+	} else if(layout %in% c("1|2|3")) {
+		layout_css = ""
+		tl = tagList(
+			main_heatmap_ui, 
+			sub_heatmap_ui,
+			output_ui
+		)
+	} else if(layout %in% c("1+(2|3)")) {
+		layout_css = qq("
+			.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
+				float:left;
+			}
+		")
+
+		tl = tagList(
+			main_heatmap_ui,
+			div( 
+				sub_heatmap_ui,
+				output_ui,
+				style = "float: left"
+			)
+		)
+	}
+
 	fluidPage(class = qq("@{heatmap_id}_widget"),
 
 		list(jqueryui_dep, pickr_dep, fontawesome_dep, ht_js_dep),
 
 		htmlOutput(qq("@{heatmap_id}_warning")),
-
-		div(id = qq("@{heatmap_id}_heatmap_group"),
-			h5(title1),
-			div(id = qq("@{heatmap_id}_heatmap_resize"),
-				plotOutput(qq("@{heatmap_id}_heatmap"), height = height1, width = width1,
-					        brush = do.call(brushOpts, c(list(id = qq("@{heatmap_id}_heatmap_brush")), brush_opt)),
-					        click = click, dblclick = dblclick, hover = hover
-				),
-				tags$script(HTML(qq("
-					$('#@{heatmap_id}_heatmap').html('<p style=\"position:relative;top:50%;\">Making heatmap, please wait...</p>');
-				")))
-			),
-			div(id = qq("@{heatmap_id}_heatmap_control"),
-				style = "display:none;",
-				tabsetPanel(
-					tabPanel(HTML("<i class='fa fa-search'></i>"),
-						div(id = qq('@{heatmap_id}_tabs-search'), 
-							div(textInput(qq("@{heatmap_id}_keyword"), placeholder = "Multiple keywords separated by ','", label = "Keywords"), style = "width:250px;float:left;"),
-							div(checkboxInput(qq("@{heatmap_id}_search_regexpr"), label = "Regular expression", value = FALSE), style = "width:150px;float:left;padding-top:20px;padding-left:4px;"),
-							div(style = "clear: both;"),
-							radioButtons(qq("@{heatmap_id}_search_where"), label = "Which dimension to search?", choices = list("on rows" = 1, "on columns" = 2), selected = 1, inline = TRUE),
-							checkboxGroupInput(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = "loading", choiceValues = "", selected = ""),
-							checkboxGroupInput(qq("@{heatmap_id}_search_extend"), label = "Extend sub-heatmap to all heatmaps and annotations?", choiceNames = "yes", choiceValues = 1, selected = NULL),
-							actionButton(qq("@{heatmap_id}_search_action"), label = "Search")
-						),
-						p("Search Heatmap", style = "display:none;")
-					),
-					tabPanel(HTML("<i class='fa fa-brush'></i>"),
-						div(
-							id = qq('@{heatmap_id}_tabs-brush'),
-							HTML(qq('
-								<div class="form-group shiny-input-container" style="float:left; width:120px;">
-								<label>Brush border</label>
-								<div id="@{heatmap_id}_color_pickers_border"></div>
-								</div>
-								<div class="form-group shiny-input-container" style="float:left; width:120px;">
-								<label>Brush fill</label>
-								<div id="@{heatmap_id}_color_pickers_fill"></div>
-								</div>
-								<div style="clear:both;"></div>')
-							),
-							selectizeInput(qq("@{heatmap_id}_color_pickers_border_width"), label = "Border width", 
-								choices = list("1px" = 1, "2px" = 2, "3px" = 3), selected = 1,
-								options = list(render = I("{
-										option: function(item, escape) {
-											return '<div><hr style=\"border-top:' + item.value + 'px solid black;\"></div>'
-										}
-									}"))),
-							sliderInput(qq("@{heatmap_id}_color_pickers_opacity"), label = "Opacity", min = 0, max = 1, value = pickr_opacity)
-						)
-					),
-					tabPanel(HTML("<i class='fa fa-images'></i>"),
-						div(
-							id = qq('@{heatmap_id}_tabs-save-image'),
-							radioButtons(qq("@{heatmap_id}_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
-							numericInput(qq("@{heatmap_id}_heatmap_download_image_width"), label = "Image width (in px)", value = width1),
-							numericInput(qq("@{heatmap_id}_heatmap_download_image_height"), label = "Image height (in px)", value = height1),
-							downloadButton(qq("@{heatmap_id}_heatmap_download_button"), "Save image")
-						)
-					),
-					tabPanel(HTML("<i class='fa fa-expand-arrows-alt'></i>"),
-						div(id = qq('@{heatmap_id}_tabs-resize'),
-							numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", width1),
-							numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", height1),
-							actionButton(qq("@{heatmap_id}_heatmap_input_size_button"), "Change image size")
-						)
-					)
-				)
-			)
-		), 
-
-		div(id = qq("@{heatmap_id}_sub_heatmap_group"),
-			h5(title2),
-			div(id = qq("@{heatmap_id}_sub_heatmap_resize"),
-				plotOutput(qq("@{heatmap_id}_sub_heatmap"), height = height2, width = width2)
-			),
-			div(id = qq("@{heatmap_id}_sub_heatmap_control"),
-				style = "display:none;",
-				tabsetPanel(
-					tabPanel(HTML("<i class='fa fa-tasks'></i>"),
-						div(id = qq('@{heatmap_id}_sub_tabs-setting'), 
-							div(
-								div(checkboxInput(qq("@{heatmap_id}_show_row_names_checkbox"), label = "Show row names", value = TRUE), style = "float:left;width:150px"),
-								div(checkboxInput(qq("@{heatmap_id}_show_column_names_checkbox"), label = "Show column names", value = TRUE), style = "float:left;width:160px"),
-								div(style = "clear: both;")
-							),
-							div(
-								checkboxInput(qq("@{heatmap_id}_show_annotation_checkbox"), label = "Show heatmap annotations", value = TRUE),
-								checkboxInput(qq("@{heatmap_id}_show_cell_fun_checkbox"), label = "Show cell decorations", value = TRUE),
-								checkboxInput(qq("@{heatmap_id}_fill_figure_checkbox"), label = "Fill figure region", value = FALSE)
-							),
-							hr(),
-							p("Click the button below to turn the sub-heatmap into an interactive app.", style = "max-width:300px;"),
-							actionButton(qq("@{heatmap_id}_open_modal"), label = "Interactivate sub-heatmap")
-						)
-					),
-					tabPanel(HTML("<i class='fa fa-table'></i>"),
-						div(id = qq("@{heatmap_id}_sub_tabs-table"),
-							p("Export values in sub-heatmaps as a text table."),
-							actionButton(qq("@{heatmap_id}_open_table"), label = "Open table")
-						)
-					),
-					tabPanel(HTML("<i class='fa fa-images'></i>"),
-						div(id = qq('@{heatmap_id}_sub_tabs-save-image'),
-							radioButtons(qq("@{heatmap_id}_sub_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
-							numericInput(qq("@{heatmap_id}_sub_heatmap_download_image_width"), label = "Image width (in px)", value = width2),
-							numericInput(qq("@{heatmap_id}_sub_heatmap_download_image_height"), label = "Image height (in px)", value = height2),
-							downloadButton(qq("@{heatmap_id}_sub_heatmap_download_button"), "Save image")
-						),
-					),
-					tabPanel(HTML("<i class='fa fa-expand-arrows-alt'></i>"),
-						div(id = qq('@{heatmap_id}_sub_tabs-resize'),
-							numericInput(qq("@{heatmap_id}_sub_heatmap_input_width"), "Box width", width2),
-							numericInput(qq("@{heatmap_id}_sub_heatmap_input_height"), "Box height", height2),
-							actionButton(qq("@{heatmap_id}_sub_heatmap_input_size_button"), "Change image size")
-						)
-					)
-				)
-			)
-		),
-		if(layout %in% c("12|3")) div(style = "clear: both;"),
-
-		if(output_div) htmlOutput(qq("@{heatmap_id}_info")) else NULL,
-
-		div(style = "clear: both;")
+		tl,
+		div(style = "clear: both;"),
+		tags$style(HTML(layout_css))
 	)
 }
 

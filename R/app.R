@@ -20,7 +20,6 @@
 # -layout Pass to `InteractiveComplexHeatmapOutput`.
 # -action Pass to `InteractiveComplexHeatmapOutput`.
 # -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
-# -output_div Pass to `InteractiveComplexHeatmapOutput`.
 #
 # == seealso
 # https://jokergoo.shinyapps.io/interactive_complexHeatmap/
@@ -67,10 +66,13 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 
 	# parameters passed to InteractiveComplexHeatmapOutput()
 	heatmap_id = NULL, title1 = "Original heatmap", title2 = "Selected sub-heatmap",
-	width1 = 450, height1 = 350, width2 = 370, height2 = 350, 
-	width3 = ifelse(layout == "12|3", 800, 500), layout = "12|3",
-	action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6), 
-	output_div = TRUE
+	width1 = ifelse(layout %in% c("1|(2+3)", "1|23"), 800, 450), 
+	height1 = ifelse(layout %in% c("1+(2|3)"), 700, 350), 
+	width2 = 370, 
+	height2 = 350, 
+	width3 = ifelse(layout %in% c("(1+2)|3", "12|3"), 800, 370),
+	layout = "(1+2)|3",
+	action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6)
 
 	) {
 
@@ -112,7 +114,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 		if(hline) hr() else NULL,
 		InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,
 			width1 = width1, height1 = height1, width2 = width2, height2 = height2, layout = layout,
-			action = action, brush_opt = brush_opt, output_div = output_div), 
+			action = action, brush_opt = brush_opt), 
 		html
 	)
 

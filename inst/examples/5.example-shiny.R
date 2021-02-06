@@ -36,8 +36,8 @@ ht = Heatmap(m, show_row_names = FALSE, show_column_names = FALSE, row_km = 2, c
 ht = draw(ht)
 
 ui = fluidPage(
-    InteractiveComplexHeatmapOutput(),
-    htmlOutput("info")
+    InteractiveComplexHeatmapOutput(output_ui = htmlOutput("info")),
+    
 )
 
 click_action = function(df, output) {
@@ -61,8 +61,7 @@ brush_action = function(df, output) {
 
 server = function(input, output, session) {
     makeInteractiveComplexHeatmap(input, output, session, ht,
-        click_action = click_action, brush_action = brush_action,
-        default_click_action = FALSE, default_brush_action = FALSE)
+        click_action = click_action, brush_action = brush_action)
 }
 
 shinyApp(ui, server)
@@ -111,9 +110,15 @@ UNIPROT: @{to_str(query[[g]][, 'UNIPROT'])}
     })
 }
 
+brush_action = function(df, output) {
+    output[["gene_info"]] = renderUI({
+        HTML("")
+    })
+}
+
 server = function(input, output, session) {
     makeInteractiveComplexHeatmap(input, output, session, ht,
-        click_action = click_action)
+        click_action = click_action, brush_action = brush_action)
 }
 
 shinyApp(ui, server)
@@ -216,8 +221,7 @@ make_maplot = function(res, highlight = NULL) {
 
 library(shiny)
 ui = fluidPage(
-    InteractiveComplexHeatmapOutput(),
-    uiOutput("maplot_ui")
+    InteractiveComplexHeatmapOutput(output_ui = uiOutput("maplot_ui"))
 )
 
 click_action = function(df, output) {
@@ -245,8 +249,7 @@ brush_action = function(df, output) {
 
 server = function(input, output, session) {
     makeInteractiveComplexHeatmap(input, output, session, ht,
-        click_action = click_action, brush_action = brush_action,
-        default_click_action = FALSE, default_brush_action = FALSE)
+        click_action = click_action, brush_action = brush_action)
 }
 
 shinyApp(ui, server)

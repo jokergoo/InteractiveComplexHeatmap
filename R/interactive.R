@@ -264,8 +264,8 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 							           slice = NA, 
 							           row_slice = NA,
 						               column_slice = NA,
-							           row_index = IntegerList(0), 
-							           column_index = IntegerList(0)))
+							           row_index = IntegerList(integer(0)), 
+							           column_index = IntegerList(integer(0))))
 					}
 				} else {
 					if( (pos1$y <= vp_min_y && pos2$y >= vp_min_y) ||
@@ -276,8 +276,8 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 							           slice = NA, 
 							           row_slice = NA,
 						               column_slice = NA,
-							           row_index = IntegerList(0), 
-							           column_index = IntegerList(0)))
+							           row_index = IntegerList(integer(0)), 
+							           column_index = IntegerList(integer(0))))
 					}
 				}
 			}
@@ -888,8 +888,8 @@ selectByLabels = function(ht_list = get_last_ht(), row_keywords = NULL, column_k
 												           slice = NA, 
 												           row_slice = NA,
 											               column_slice = NA,
-												           row_index = IntegerList(0), 
-												           column_index = IntegerList(0)))
+												           row_index = IntegerList(integer(0)), 
+												           column_index = IntegerList(integer(0))))
 					}
 				}
 			}
@@ -932,4 +932,66 @@ reformat_df = function(df, ht_list) {
 	df = df[order(factor(df$heatmap, levels = all_ht_name)),  , drop = FALSE]
 
 	return(df)
+}
+
+
+adjust_df = function(df, n_remove = 1, where = "top") {
+	n = nrow(df)
+
+	if(where %in% c("top", "bottom")) {
+		fa = paste(df$heatmap, df$row_slice, sep = ":")
+		for(le in if(where == "top") unique(fa) else rev(unique(fa))) {
+			ind = which(fa == le)
+			
+			nl = length(df[, "row_index"][[ ind[1] ]])
+			if(nl > n_remove) {
+				if(where == "top") {
+					df[, "row_index"][[ ind[1] ]] = df[, "row_index"][[ ind[1] ]][-seq(1, n_remove)]
+				} else {
+					df[, "row_index"][[ ind[1] ]] = df[, "row_index"][[ ind[1] ]][-seq(nl - n_remove + 1, nl)]
+				}
+				n_remove = 0
+			} else {
+				n_remove = n_remove - length(df[, "row_index"][[ ind[[1]] ]])
+				df[, "row_index"][[ ind[[1]] ]] = integer(0)
+			}
+			for(i in ind[-1]) {
+				df[, "row_index"][[i]]= df[, "row_index"][[ ind[1] ]]
+			}
+
+			if(n_remove == 0) break
+		}
+
+		df = df[sapply(df$row_index, length) > 0, , drop = FALSE]
+	} else if(where %in% c("left", "right")) {
+		fa = paste(df$heatmap, df$column_slice, sep = ":")
+		for(le in if(where == "left") unique(fa) else rev(unique(fa))) {
+			ind = which(fa == le)
+			
+			nl = length(df[, "column_index"][[ ind[1] ]])
+			if(nl > n_remove) {
+				if(where == "left") {
+					df[, "column_index"][[ ind[[1]] ]] = df[, "column_index"][[ ind[[1]] ]][-seq(1, n_remove)]
+				} else {
+					df[, "column_index"][[ ind[1] ]] = df[, "column_index"][[ ind[1] ]][-seq(nl - n_remove + 1, nl)]
+				}
+				n_remove = 0
+			} else {
+				n_remove = n_remove - length(df[, "column_index"][[ ind[[1]] ]])
+				df[, "column_index"][[ ind[1] ]] = integer(0)
+			}
+			for(i in ind[-1]) {
+				df[, "column_index"][[i]] = df[, "column_index"][[ ind[1] ]]
+			}
+
+			if(n_remove == 0) break
+		}
+		df = df[sapply(df$column_index, length) > 0, , drop = FALSE]
+	}
+	tb = tapply(df$row_slice, df$heatmap, function(x) all(is.na(x)))
+	tb = tb[tb]
+	if(length(tb)) {
+		df = df[!df$heatmap %in% names(tb), , drop = FALSE]
+	}
+	df
 }
