@@ -141,6 +141,9 @@ For the sub-heatmap, there are following tools:
 You can control whether to show row/column names in the sub-heatmaps, and whether
 to show the annotations as well.
 
+The sub-heatmap can also be converted into a second interactive heatmap by clicking
+the button "Interactivate sub-heatmap". It will be introduced in later sections.
+
 ```{r, echo = FALSE, out.width = "60%"}
 include_graphics("https://jokergoo.github.io/images/tool_subheatmap.png")
 ```

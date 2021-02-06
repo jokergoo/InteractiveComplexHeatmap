@@ -233,7 +233,7 @@ shiny::shinyApp(ui, server)
 
 ui = fluidPage(
     sliderInput("column", label = "Which column to order?", value = 1, min = 1, max = 10),
-    htmlOutput("heatmap_output")
+    InteractiveComplexHeatmapOutput()
 )
 
 server = function(input, output, session) {
@@ -244,8 +244,14 @@ server = function(input, output, session) {
 
 	observeEvent(input$column, {
 		order = order(m[, input$column])
-		ht = Heatmap(m[order, , drop = FALSE], cluster_rows = FALSE, cluster_columns = FALSE)
-		InteractiveComplexHeatmapWidget(input, output, session, ht, output_id = "heatmap_output")
+		ht = Heatmap(m[order, , drop = FALSE], cluster_rows = FALSE, cluster_columns = FALSE,
+			cell_fun = function(j, i, x, y, w, h, fill) {
+				if(j == input$column) {
+					grid.rect((j-0.5)/ncol(m), 0.5, width = w, height = 1, 
+						gp = gpar(fill = "transparent", lwd = 2, lty = 2))
+				}
+			})
+		makeInteractiveComplexHeatmap(input, output, session, ht)
 	})
 }
 shiny::shinyApp(ui, server)

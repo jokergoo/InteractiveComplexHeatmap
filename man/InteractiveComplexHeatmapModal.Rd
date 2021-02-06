@@ -12,14 +12,17 @@ InteractiveComplexHeatmapModal(
     
     # parameters passed to InteractiveComplexHeatmapOutput()
     title1 = "Original heatmap", title2 = "Selected sub-heatmap",
-    width1 = 450, height1 = 350, width2 = 370, height2 = 350,
-    width3 = ifelse(layout == "12|3", 800, 500), layout = "12|3",
+    width1 = ifelse(layout \%in\% c("1|(2+3)", "1|23"), 800, 450),
+    height1 = ifelse(layout \%in\% c("1+(2|3)"), 700, 350),
+    width2 = 370,
+    height2 = 350,
+    width3 = ifelse(layout \%in\% c("(1+2)|3", "12|3"), 800, 370),
+    layout = "(1+2)|3",
     action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6),
-    output_div = TRUE,
+    output_ui = TRUE,
     
     # parameters passed to makeInteractiveComplexHeatmap()
     click_action = NULL, brush_action = NULL,
-    default_click_action = TRUE, default_brush_action = TRUE,
     
     # other configurations
     js_code = "", close_button = TRUE, cancel_action = c("remove", "hide"))
@@ -41,11 +44,9 @@ InteractiveComplexHeatmapModal(
   \item{layout}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{action}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{brush_opt}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
-  \item{output_div}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{output_ui}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{click_action}{Pass to \code{\link{makeInteractiveComplexHeatmap}}.}
   \item{brush_action}{Pass to \code{\link{makeInteractiveComplexHeatmap}}.}
-  \item{default_click_action}{Pass to \code{\link{makeInteractiveComplexHeatmap}}.}
-  \item{default_brush_action}{Pass to \code{\link{makeInteractiveComplexHeatmap}}.}
   \item{js_code}{Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function that takes "heatmap ID" as the argument and returns the formatted JavaScript code.}
   \item{close_button}{Whether to add a close button at the end of the widget. If it is \code{FALSE}, the widget can be closed by clicking outside of the widget.}
   \item{cancel_action}{Whether to remove the UI from HTML or just hide it when the UI is closed.}

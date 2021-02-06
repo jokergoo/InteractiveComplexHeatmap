@@ -306,7 +306,7 @@ include_graphics("https://jokergoo.github.io/images/customize_output3.png")
 ```
 
 
-## Dynamicly generate interactive heatmap widget
+## Dynamically generate interactive heatmap widget
 
 In previous examples, the heatmaps are already generated before making the
 interactive app. There are also scenarios where the heatmaps are generated on
@@ -314,6 +314,40 @@ the fly, e.g. when the matrix is dynamically generated in the middle of an
 analysis or there are multiple matrices and the heatmap is generated according
 to user's selection.
 
+I first demonstrate an use of `makeInteractiveComplexHeatmap()`. In the following 
+example, the matrix is reordered by a selected column:
+
+
+```{r, eval = FALSE}
+ui = fluidPage(
+    sliderInput("column", label = "Which column to order?", 
+        value = 1, min = 1, max = 10),
+    InteractiveComplexHeatmapOutput()
+)
+
+server = function(input, output, session) {
+    m = matrix(rnorm(100), 10)
+    rownames(m) = 1:10
+    colnames(m) = 1:10
+
+    observeEvent(input$column, {
+        order = order(m[, input$column])
+        ht = Heatmap(m[order, , drop = FALSE], 
+            cluster_rows = FALSE, cluster_columns = FALSE)
+        makeInteractiveComplexHeatmap(input, output, session, ht)
+    })
+}
+shiny::shinyApp(ui, server)
+```
+
+A similar but slightly complex example is as follows. It can be run by `htShinyExample(6.8)`.
+
+
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/dynamic_widget4.gif")
+```
+
+The second scenario is the interactive heatmap widget is dynamically generated and inserted.
 There are two other functions `InteractiveComplexHeatmapModal()` and
 `InteractiveComplexHeatmapWidget()` which have very similar behaviors. These
 two functions are normally put inside e.g. `shiny::observeEvent()` and they

@@ -9,12 +9,15 @@ UI for the interactive ComplexHeatmap
 \usage{
 InteractiveComplexHeatmapOutput(heatmap_id = NULL,
     title1 = "Original heatmap", title2 = "Selected sub-heatmap",
-    width1 = 450, height1 = 350, width2 = 370, height2 = 350,
-    width3 = ifelse(layout == "12|3", 800, 500),
-    layout = c("12|3", "1|23"),
-    action = c("click", "hover", "dblclick"),
+    width1 = ifelse(layout \%in\% c("1|(2+3)", "1|23"), 800, 450),
+    height1 = ifelse(layout \%in\% c("1+(2|3)"), 700, 350),
+    width2 = 370,
+    height2 = 350,
+    width3 = ifelse(layout \%in\% c("(1+2)|3", "12|3"), 800, 370),
+    layout = "(1+2)|3",
+    action = "click",
     brush_opt = list(stroke = "#f00", opacity = 0.6),
-    output_div = TRUE, css = "")
+    output_ui = default_output_ui(), css = "")
 }
 \arguments{
 
@@ -29,7 +32,7 @@ InteractiveComplexHeatmapOutput(heatmap_id = NULL,
   \item{layout}{One of \code{12|3} or \code{1|23}. \code{12|3} means the div of original heatmap and sub-heatmap are in a same row.  \code{1|23} means the div of sub-heatmap and the output are in a same row.}
   \item{action}{Which action for selecting single cell on the heatmap? Value should be \code{click}, \code{hover} or \code{dblclick}.}
   \item{brush_opt}{A list of parameters passed to \code{\link[shiny]{brushOpts}}.}
-  \item{output_div}{Whether to add the output \code{div}.}
+  \item{output_ui}{Whether to add the output \code{div}.}
   \item{css}{Self-defined CSS code.}
 
 }

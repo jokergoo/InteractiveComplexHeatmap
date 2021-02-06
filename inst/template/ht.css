@@ -3,18 +3,6 @@
 	margin-bottom: 10px;
 }
 
-.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
-	@{ifelse(layout %in% c('12|3', '123'), 'float:left;', '')}
-}
-
-.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group {
-	@{ifelse(layout %in% c('12|3', '1|23', '123'), 'float:left;', '')}
-}
-
-.@{heatmap_id}_widget #@{heatmap_id}_info {
-	@{ifelse(layout %in% c('1|23', '123'), 'float:left;', '')}
-}
-
 .@{heatmap_id}_widget #@{heatmap_id}_heatmap_group,
 .@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group {
 	margin-right: 10px;

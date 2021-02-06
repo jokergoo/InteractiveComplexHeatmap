@@ -1,2 +1,5 @@
+Changes in version 0.99.7
++ In the sub-heatmap, it allows to remove rows and columns from the four sides.
+
 Changes in version 0.99.0
 + Submit to Bioconductor
