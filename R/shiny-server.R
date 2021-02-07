@@ -35,8 +35,8 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	heatmap_id = shiny_env$current_heatmap_id,
 	click_action = NULL, brush_action = NULL) {
 
-	default_click_action = shiny_env[[heatmap_id]]$default_output_ui
-	default_brush_action = shiny_env[[heatmap_id]]$default_output_ui
+	do_default_click_action = shiny_env[[heatmap_id]]$default_output_ui
+	do_default_brush_action = shiny_env[[heatmap_id]]$default_output_ui
 
 	if(inherits(ht_list, "Heatmap")) {
 		message("The heatmap is suggested to be updated by e.g. `ht = draw(ht)` before sending to the Shiny app.")
@@ -104,7 +104,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		ht_pos( htPositionsOnDevice(ht_list(), include_annotation = TRUE, calibrate = FALSE) )
 		selected( NULL )
 
-		if(default_click_action || default_brush_action) {
+		if(do_default_click_action || do_default_brush_action) {
 			output[[qq("@{heatmap_id}_info")]] = renderUI({
 				HTML("<h5>Output</h5>\n<p>No position is selected.</p>")
 			})
@@ -171,7 +171,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		message(qq("[@{Sys.time()}] no area on the heatmap is selected, Do not make the sub-heatmap."))
 	})
 
-	if(default_click_action || default_brush_action) {
+	if(do_default_click_action || do_default_brush_action) {
 		output[[qq("@{heatmap_id}_info")]] = renderUI({
 			HTML("<h5>Output</h5>\n<p>No position is selected.</p>")
 		})
@@ -289,12 +289,16 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}
 		})
 	
-		if(default_brush_action) {
+		if(do_default_brush_action) {
 			default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 		}
 
 		if(!is.null(brush_action)) {
-			brush_action(selected(), output)
+			if(identical(brush_action, default_brush_action)) {
+				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+			} else {
+				brush_action(selected(), output)
+			}
 		}
 
 		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
@@ -317,12 +321,16 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}
 		})
 	
-		if(default_brush_action) {
+		if(do_default_brush_action) {
 			default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 		}
 
 		if(!is.null(brush_action)) {
-			brush_action(selected(), output)
+			if(identical(brush_action, default_brush_action)) {
+				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+			} else {
+				brush_action(selected(), output)
+			}
 		}
 
 		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
@@ -342,12 +350,16 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}
 		})
 	
-		if(default_brush_action) {
+		if(do_default_brush_action) {
 			default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 		}
 
 		if(!is.null(brush_action)) {
-			brush_action(selected(), output)
+			if(identical(brush_action, default_brush_action)) {
+				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+			} else {
+				brush_action(selected(), output)
+			}
 		}
 
 		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
@@ -364,12 +376,16 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				grid.text("Query keyword is empty.", 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
 			})
 
-			if(default_brush_action) {
+			if(do_default_brush_action) {
 				default_brush_action(input, output, session, heatmap_id, "Query keyword is empty.", selected = selected(), ht_list = ht_list())
 			}
 
 			if(!is.null(brush_action)) {
-				brush_action(selected(), output)
+				if(identical(brush_action, default_brush_action)) {
+					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+				} else {
+					brush_action(selected(), output)
+				}
 			}
 
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "off")
@@ -390,12 +406,16 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				grid.text("No heatmap is selected for searching.", 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
 			})
 
-			if(default_brush_action) {
+			if(do_default_brush_action) {
 				default_brush_action(input, output, session, heatmap_id, "No heatmap is selected for searching.", selected = selected(), ht_list = ht_list())
 			}
 
 			if(!is.null(brush_action)) {
-				brush_action(selected(), output)
+				if(identical(brush_action, default_brush_action)) {
+					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+				} else {
+					brush_action(selected(), output)
+				}
 			}
 			return(invisible(NULL))
 		}
@@ -429,7 +449,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
     			grid.newpage()
 				grid.text(paste(strwrap(qq("Found nothing from heatmaps with keywords '@{keywords2}'."), width = 60), collapse = "\n"), 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
 
-				if(default_brush_action) {
+				if(do_default_brush_action) {
 					default_brush_action(input, output, session, heatmap_id, qq("Found nothing from heatmaps with keywords '@{keywords2}'."), selected = selected(), ht_list = ht_list())
 				}
 
@@ -442,12 +462,16 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}
 		})
 
-		if(default_brush_action) {
+		if(do_default_brush_action) {
 			default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 		}
 
 		if(!is.null(brush_action)) {
-			brush_action(selected(), output)
+			if(identical(brush_action, default_brush_action)) {
+				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+			} else {
+				brush_action(selected(), output)
+			}
 		}
 
 		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
@@ -576,12 +600,16 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			dev.off2()
 		}
 
-		if(default_click_action) {
+		if(do_default_click_action) {
 			default_click_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 		}
 
 		if(!is.null(click_action)) {
-			click_action(selected(), output)
+			if(identical(click_action, default_click_action)) {
+				default_click_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+			} else {
+				click_action(selected(), output)
+			}
 		}
 
 		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({

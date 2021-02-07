@@ -252,7 +252,7 @@ ht = draw(hmap + genelabels,
 	annotation_legend_side = 'right',
 	row_sub_title_side = 'left')
 
-htShiny(ht, width1 = 900, height1 = 1200)
+htShiny(ht, width1 = 900, height1 = 1200, layout = "1+(2|3)")
 
 ####################################################################
 # title: Visualize cell heterogeneity from single cell RNASeq. It is from Supplementary S2 of the ComplexHeatmap paper. https://github.com/jokergoo/supplementary

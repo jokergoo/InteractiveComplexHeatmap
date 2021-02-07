@@ -6,8 +6,7 @@
 # -input Passed from the Shiny server function.
 # -output Passed from the Shiny server function.
 # -session Passed from the Shiny server function.
-# -get_heatmap A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object. The value can also
-#           be a function with no argument that generates such object.
+# -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object.
 # -heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
 # -title1 Pass to `InteractiveComplexHeatmapOutput`.
 # -title2 Pass to `InteractiveComplexHeatmapOutput`.
@@ -53,7 +52,7 @@
 #     shiny::shinyApp(ui, server)
 # }
 InteractiveComplexHeatmapModal = function(
-	input, output, session, get_heatmap, heatmap_id = NULL,
+	input, output, session, ht_list, heatmap_id = NULL,
 
 	# parameters passed to InteractiveComplexHeatmapOutput()
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
@@ -208,12 +207,7 @@ InteractiveComplexHeatmapModal = function(
 	})
 
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_modal_open")]], {
-		if(is.function(get_heatmap)) {
-			ht = get_heatmap()
-		} else {
-			ht = get_heatmap
-		}
-		makeInteractiveComplexHeatmap(input, output, session, ht, heatmap_id = heatmap_id,
+		makeInteractiveComplexHeatmap(input, output, session, ht_list, heatmap_id = heatmap_id,
 			click_action = click_action, brush_action = brush_action)
 	})
 
@@ -229,8 +223,7 @@ InteractiveComplexHeatmapModal = function(
 # -input Passed from the Shiny server function.
 # -output Passed from the Shiny server function.
 # -session Passed from the Shiny server function.
-# -get_heatmap A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object. The value can also
-#           be a function with no argument that generates such object.
+# -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object.
 # -heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
 # -output_id Where the heatmap is put.
 # -title1 Pass to `InteractiveComplexHeatmapOutput`.
@@ -278,7 +271,7 @@ InteractiveComplexHeatmapModal = function(
 #     shiny::shinyApp(ui, server)
 # }
 InteractiveComplexHeatmapWidget = function(
-	input, output, session, get_heatmap, heatmap_id = NULL, output_id,
+	input, output, session, ht_list, heatmap_id = NULL, output_id,
 
 	# parameters passed to InteractiveComplexHeatmapOutput()
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
@@ -338,12 +331,7 @@ InteractiveComplexHeatmapWidget = function(
 	})
 	
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_widget_open")]], {
-		if(is.function(get_heatmap)) {
-			ht = get_heatmap()
-		} else {
-			ht = get_heatmap
-		}
-		makeInteractiveComplexHeatmap(input, output, session, ht, heatmap_id = heatmap_id,
+		makeInteractiveComplexHeatmap(input, output, session, ht_list, heatmap_id = heatmap_id,
 			click_action = click_action, brush_action = brush_action)
 	})
 
