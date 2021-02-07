@@ -8,7 +8,7 @@ Interactive complex heatmap modal
 }
 \usage{
 InteractiveComplexHeatmapModal(
-    input, output, session, get_heatmap, heatmap_id = NULL,
+    input, output, session, ht_list, heatmap_id = NULL,
     
     # parameters passed to InteractiveComplexHeatmapOutput()
     title1 = "Original heatmap", title2 = "Selected sub-heatmap",
@@ -32,7 +32,7 @@ InteractiveComplexHeatmapModal(
   \item{input}{Passed from the Shiny server function.}
   \item{output}{Passed from the Shiny server function.}
   \item{session}{Passed from the Shiny server function.}
-  \item{get_heatmap}{A \code{\link[ComplexHeatmap]{Heatmap-class}} or a \code{\link[ComplexHeatmap]{HeatmapList-class}} object. The value can also be a function with no argument that generates such object.}
+  \item{ht_list}{A \code{\link[ComplexHeatmap]{Heatmap-class}} or a \code{\link[ComplexHeatmap]{HeatmapList-class}} object.}
   \item{heatmap_id}{ID of the plot. If it is not specified, an internal ID is assigned.}
   \item{title1}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{title2}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}

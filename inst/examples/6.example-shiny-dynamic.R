@@ -86,13 +86,10 @@ ui = fluidPage(
 )
 
 server = function(input, output, session) {
-	generate_heatmap = function() {
-		m = matrix(rnorm(100), 10)
-		Heatmap(m)
-	}
-
 	observeEvent(input$show_heatmap, {
-		InteractiveComplexHeatmapModal(input, output, session, get_heatmap = generate_heatmap)
+		m = matrix(rnorm(100), 10)
+		ht = Heatmap(m)
+		InteractiveComplexHeatmapModal(input, output, session, ht)
 	})
 }
 shiny::shinyApp(ui, server)
@@ -107,7 +104,7 @@ ui = fluidPage(
     actionButton("show_heatmap", "Generate_heatmap"),
 )
 
-get_heatmap_fun = function(i) {
+get_heatmap = function(i) {
 	mat_list = list(
 		matrix(rnorm(100), 10),
 		matrix(sample(letters[1:10], 100, replace = TRUE), 10)
@@ -119,7 +116,8 @@ get_heatmap_fun = function(i) {
 server = function(input, output, session) {
 	observeEvent(input$show_heatmap, {
 		i = as.numeric(input$select)
-		InteractiveComplexHeatmapModal(input, output, session, get_heatmap = get_heatmap_fun(i))
+		ht = get_heatmap(i)
+		InteractiveComplexHeatmapModal(input, output, session, ht)
 	})
 }
 shiny::shinyApp(ui, server)
@@ -135,13 +133,11 @@ ui = fluidPage(
 )
 
 server = function(input, output, session) {
-	generate_heatmap = function() {
-		m = matrix(rnorm(100), 10)
-		Heatmap(m)
-	}
 	observeEvent(input$show_heatmap, {
-		InteractiveComplexHeatmapModal(input, output, session, 
-			get_heatmap = generate_heatmap, close_button = FALSE, cancel_action = "hide",
+		m = matrix(rnorm(100), 10)
+		ht = Heatmap(m)
+		InteractiveComplexHeatmapModal(input, output, session, ht,
+			close_button = FALSE, cancel_action = "hide",
 
 			# From the second click of the action button, it just switches the visibility of the
 			# heatmap modal while not regenerate it repeatedly.
