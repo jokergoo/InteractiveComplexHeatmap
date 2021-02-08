@@ -130,7 +130,7 @@ server = function(input, output, session) {
 shiny::shinyApp(ui, server)
 ```
 
-## Interactivate pheatmap(), heatmap.2() and heatmap().
+## Interactivate pheatmap(), heatmap.2() and heatmap()
 
 If you directly use these three funtions, simply replace them with
 `ComplexHeatmap::pheatmap()`, `ComplexHeatmap:::heatmap.2()` and
