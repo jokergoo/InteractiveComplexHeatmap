@@ -1,78 +1,52 @@
 # Dynamically generate heatmap widget in Shiny app
 
-#########################################################
-# title: Dynamically generate the widget with InteractiveComplexHeatmapOutput() and makeInteractiveComplexHeatmap().
+#######################################################
+# title: The matrix is dynamically generated.
 
 library(ComplexHeatmap)
 
 ui = fluidPage(
-    actionButton("show_heatmap", "Generate_heatmap"),
+    sliderInput("n", "Number of rows and columns", value = 10, min = 5, max = 50),
+    InteractiveComplexHeatmapOutput()
+)
+
+server = function(input, output, session) {
+	observe({
+		n = input$n
+		m = matrix(rnorm(n*n), n)
+		ht = Heatmap(m, column_title = paste0("A ", n, "x", n, " matrix"))
+		makeInteractiveComplexHeatmap(input, output, session, ht)
+	})
+}
+shiny::shinyApp(ui, server)
+
+
+######################################################
+# title: Reorder by a column that is specified by user.
+
+ui = fluidPage(
+    sliderInput("column", label = "Which column to order?", value = 1, min = 1, max = 10),
+    InteractiveComplexHeatmapOutput()
 )
 
 server = function(input, output, session) {
 
-	insertUI(selector = "#show_heatmap", 
-		where = "afterEnd",
-		ui = htmlOutput("heatmap_ui"))
+	m = matrix(rnorm(100), 10)
+	rownames(m) = 1:10
+	colnames(m) = 1:10
 
-	open_modal = reactiveVal(1)
-
-	observeEvent(input$show_heatmap, {
-
-		output$heatmap_ui = renderUI({
-			div(id = "heatmap_modal-background",
-				div(id = "heatmap_modal",
-					InteractiveComplexHeatmapOutput(),
-					tags$script("Shiny.setInputValue('fire', Math.random());")
-				),
-				tags$style("
-					#heatmap_modal-background {
-						left: 0;
-						right: 0;
-						top: 0;
-						bottom: 0;
-						background-color: rgb(0, 0, 0, 0.5);
-						position: fixed;
-						overflow-y: auto;
-					}
-					#heatmap_modal {
-						margin: 50px;
-						padding: 5px;
-						position: relative;
-					    background-color: #fff;
-					    background-clip: padding-box;
-						transition: opacity .15s linear;
-						box-shadow: 0 5px 15px rgba(0,0,0,.25);
-						border: 1px solid rgba(0,0,0,.2);
-    					border-radius: 6px;
-    					outline: 0;
-					}
-				"),
-				tags$script(HTML(qq("
-					$(document).mouseup(function(e) {
-					    var container = $('#heatmap_modal');
-
-					    if(!container.is(e.target) && container.has(e.target).length === 0) {
-					        $('#heatmap_modal-background').hide();
-					    }
-					});
-
-					$('#show_heatmap').click(function() {
-						$('#heatmap_modal-background').toggle();
-					});
-					$('#show_heatmap').attr('id', 'show_heatmap_toggle');
-				")))
-			)
-		})
-	})
-
-	observeEvent(input$fire, {
-		m = matrix(rnorm(100), 10)
-		ht = draw(Heatmap(m))
+	observeEvent(input$column, {
+		order = order(m[, input$column])
+		ht = Heatmap(m[order, , drop = FALSE], cluster_rows = FALSE, cluster_columns = FALSE,
+			cell_fun = function(j, i, x, y, w, h, fill) {
+				if(j == input$column) {
+					grid.rect((j-0.5)/ncol(m), 0.5, width = w, height = 1, 
+						gp = gpar(fill = "transparent", lwd = 2, lty = 2))
+				}
+			})
 		makeInteractiveComplexHeatmap(input, output, session, ht)
 	})
 }
-
 shiny::shinyApp(ui, server)
 
 
@@ -202,53 +176,4 @@ server = function(input, output, session) {
 }
 shiny::shinyApp(ui, server)
 
-#######################################################
-# title: The matrix is dynamically generated.
-
-library(ComplexHeatmap)
-
-ui = fluidPage(
-    sliderInput("n", "Number of rows and columns", value = 10, min = 5, max = 50),
-    actionButton("submit", "Submit"),
-    htmlOutput("heatmap_output")
-)
-
-server = function(input, output, session) {
-	observeEvent(input$submit, {
-		n = input$n
-		m = matrix(rnorm(n*n), n)
-		ht=  Heatmap(m, column_title = paste0("A ", n, "x", n, " matrix"))
-		InteractiveComplexHeatmapWidget(input, output, session, ht, output_id = "heatmap_output")
-	})
-}
-shiny::shinyApp(ui, server)
-
-
-######################################################
-# title: Reorder by a column that is specified by user.
-
-ui = fluidPage(
-    sliderInput("column", label = "Which column to order?", value = 1, min = 1, max = 10),
-    InteractiveComplexHeatmapOutput()
-)
-
-server = function(input, output, session) {
-
-	m = matrix(rnorm(100), 10)
-	rownames(m) = 1:10
-	colnames(m) = 1:10
-
-	observeEvent(input$column, {
-		order = order(m[, input$column])
-		ht = Heatmap(m[order, , drop = FALSE], cluster_rows = FALSE, cluster_columns = FALSE,
-			cell_fun = function(j, i, x, y, w, h, fill) {
-				if(j == input$column) {
-					grid.rect((j-0.5)/ncol(m), 0.5, width = w, height = 1, 
-						gp = gpar(fill = "transparent", lwd = 2, lty = 2))
-				}
-			})
-		makeInteractiveComplexHeatmap(input, output, session, ht)
-	})
-}
-shiny::shinyApp(ui, server)
 

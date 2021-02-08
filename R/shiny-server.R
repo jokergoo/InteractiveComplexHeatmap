@@ -73,13 +73,17 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 	# initialize heatmaps
 	ht_list = reactiveVal({
-		if(inherits(ht_list, "Heatmap")) {
-    		ht_list = make_layout(ht_list + NULL)
-    	} else {
-    		if(!ht_list@layout$initialized) {
-    			ht_list = make_layout(ht_list)
-    		}
-    	}
+		tryCatch({
+			dev.null()
+			if(inherits(ht_list, "Heatmap")) {
+	    		ht_list = make_layout(ht_list + NULL)
+	    	} else {
+	    		if(!ht_list@layout$initialized) {
+	    			ht_list = make_layout(ht_list)
+	    		}
+	    	}
+	    }, finally = dev.off2())
+	    
     	ht_list
 	})
 
@@ -96,7 +100,6 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	##                 The default actions
 	###############################################################
 	output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
-		
     	showNotification("Initialize the original heatmap.", duration = 2, type = "message")
 
     	ht_list( draw(ht_list()) )
