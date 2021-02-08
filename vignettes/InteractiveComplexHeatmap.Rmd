@@ -141,6 +141,9 @@ For the sub-heatmap, there are following tools:
 You can control whether to show row/column names in the sub-heatmaps, and whether
 to show the annotations as well.
 
+The sub-heatmap can be fine-turned by removing a certain number of rows/columns
+from the four dimensions.
+
 The sub-heatmap can also be converted into a second interactive heatmap by clicking
 the button "Interactivate sub-heatmap". It will be introduced in later sections.
 
