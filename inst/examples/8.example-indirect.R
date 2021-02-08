@@ -1,7 +1,7 @@
 # Interactivate indirect use of pheatmap(), heatmap.2() and heatmap()
 
 ########################################################
-# title: Indirect use of pheatmap()
+# title: Indirect use of pheatmap().
 
 require(pheatmap)
 assignInNamespace("pheatmap", ComplexHeatmap::pheatmap, ns = "pheatmap")
@@ -27,7 +27,7 @@ sc3_plot_expression(sce, k = 3)
 htShiny()
 
 ##########################################################
-# title: Indirect use of heatmap.2()
+# title: Indirect use of heatmap.2().
 
 require(gplots)
 assignInNamespace("heatmap.2", ComplexHeatmap:::heatmap.2, ns = "gplots")

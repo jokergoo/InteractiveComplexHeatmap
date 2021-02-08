@@ -223,6 +223,11 @@ htShinyExample()
 ##  7.1 Integrate in interactive R Markdown document.
 ##  7.2 Integrate in interactive R Markdown document where the heatmap widgets are
 ##      dynamically generated.
+##
+## ──────── 8. Interactivate indirect use of pheatmap(), heatmap.2() and heatmap() ───── 
+##  8.1 Indirect use of pheatmap().
+##  8.2 Indirect use of heatmap.2().
+##
 ```
 
 ## License
