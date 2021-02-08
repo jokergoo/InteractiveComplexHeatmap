@@ -1,4 +1,4 @@
-# Dynamicly generate heatmap widget in Shiny app
+# Dynamically generate heatmap widget in Shiny app
 
 #########################################################
 # title: Dynamically generate the widget with InteractiveComplexHeatmapOutput() and makeInteractiveComplexHeatmap().
@@ -203,7 +203,7 @@ server = function(input, output, session) {
 shiny::shinyApp(ui, server)
 
 #######################################################
-# title: The matrix is dynamicly generated.
+# title: The matrix is dynamically generated.
 
 library(ComplexHeatmap)
 

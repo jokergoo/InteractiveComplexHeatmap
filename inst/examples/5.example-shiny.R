@@ -197,24 +197,52 @@ shinyApp(ui, server)
 
 ##########################################################################
 # title: Visualize a DESeq2 results. The selected genes are highlighted in an associated MA plot.
+library(airway)
+data(airway)
+se <- airway
+library(DESeq2)
+dds <- DESeqDataSet(se, design = ~ dex)
+keep <- rowSums(counts(dds)) >= 10
+dds <- dds[keep, ]
+
+dds$dex <- relevel(dds$dex, ref = "untrt")
+
+dds <- DESeq(dds)
+res <- results(dds)
+res = as.data.frame(res)
+
+m = counts(dds, normalized = TRUE)
+
+l = res$padj < 0.01; l[is.na(l)] = FALSE
+m = m[l, ]
+
+ht = Heatmap(t(scale(t(m))), name = "z-score",
+    top_annotation = HeatmapAnnotation(df = colData(dds)[, c("dex")]),
+    show_row_names = FALSE, show_column_names = FALSE, row_km = 2,
+    column_title = paste0(sum(l), " significant genes with fdr < 0.01"),
+    show_row_dend = FALSE)
 
 make_maplot = function(res, highlight = NULL) {
     col = rep("#00000020", nrow(res))
+    cex = rep(0.5, nrow(res))
     names(col) = rownames(res)
+    names(cex) = rownames(res)
     if(is.null(highlight)) {
         l = res$padj < 0.01; l[is.na(l)] = FALSE
         col[l] = "orange"
     } else {
         col[highlight] = "orange"
+        cex[highlight] = 0.7
     }
     x = res$baseMean
     y = res$log2FoldChange
     y[y > 2] = 2
     y[y < -2] = -2
+    col[col == "orange" & y < 0] = "darkgreen"
     suppressWarnings(
         plot(x, y, col = col, 
             pch = ifelse(res$log2FoldChange > 2 | res$log2FoldChange < -2, 1, 16), 
-            cex = 0.5, log = "x",
+            cex = cex, log = "x",
             xlab = "baseMean", ylab = "log2 fold change")
     )
 }
