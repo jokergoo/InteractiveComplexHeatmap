@@ -14,6 +14,25 @@ increase_widget_index = function() {
 	shiny_env$i_widget = shiny_env$i_widget + 1
 }
 
+# == title
+# Get all row indicies from the selected data frame
+#
+# == param
+# -df The selected data frame
+#
+all_row_indices = function(df) {
+	unique(unlist(df$row_index))
+}
+
+# == title
+# Get all column indicies from the selected data frame
+#
+# == param
+# -df The selected data frame
+#
+all_column_indices = function(df) {
+	unique(unlist(df$column_index))
+}
 
 # == title (data:rand_mat)
 # A random matrix

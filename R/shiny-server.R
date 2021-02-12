@@ -1281,10 +1281,12 @@ default_brush_action = function(input, output, session, heatmap_id,
 			dump_txt = paste(dump_txt, collapse = "\n")
 			HTML(paste(
 				  qq("<h5>Output</h5>\n<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. Row and column indices can be obtained by copying following code:</p>"),
+				  "<div>",
 				  qq("<p><button id='@{heatmap_id}_show_code' class='btn btn-default'>show/hide code</button></p>"),
 				  qq("<pre id='@{heatmap_id}_code'>"),
 				  dump_txt,
 				  "</pre>",
+				  "</div>",
 				  "<script>",
 				  qq("$('#@{heatmap_id}_code').hide();"),
 				  qq("$('#@{heatmap_id}_show_code').click(function(){ $('#@{heatmap_id}_code').toggle(); });"),
@@ -1340,7 +1342,8 @@ default_click_action = function(input, output, session, heatmap_id, selected = N
 				
 				html = qq("
 <h5>Output</h5>
-<p>Information of the clicked cell</p>
+<div>
+<p>Information of the clicked cell:</p>
 <pre>
 heatmap: @{ht_name}
 heatmap slice: @{slice_name}
@@ -1366,10 +1369,12 @@ value: @{v} <span style='background-color:@{col};width=10px;'>    </span></pre>"
 
 				if(length(value_txt)) {
 					html = qq("@{html}
-<p>Information of the associated annotations</p>
+<p>Information of the associated annotations:</p>
 <pre>
 @{paste(value_txt, collapse = '\n')}</pre>")
 				}
+
+				html = paste0(html, "</div>")
 
 				HTML(html)
 			}

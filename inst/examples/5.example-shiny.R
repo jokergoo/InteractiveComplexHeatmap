@@ -197,6 +197,7 @@ shinyApp(ui, server)
 
 ##########################################################################
 # title: Visualize a DESeq2 results. The selected genes are highlighted in an associated MA plot.
+
 library(airway)
 data(airway)
 se <- airway
@@ -210,6 +211,7 @@ dds$dex <- relevel(dds$dex, ref = "untrt")
 dds <- DESeq(dds)
 res <- results(dds)
 res = as.data.frame(res)
+res = res[, c("baseMean", "log2FoldChange", "padj")]
 
 m = counts(dds, normalized = TRUE)
 
@@ -217,10 +219,14 @@ l = res$padj < 0.01; l[is.na(l)] = FALSE
 m = m[l, ]
 
 ht = Heatmap(t(scale(t(m))), name = "z-score",
-    top_annotation = HeatmapAnnotation(df = colData(dds)[, c("dex")]),
+    top_annotation = HeatmapAnnotation(
+        dex = colData(dds)$dex,
+        sizeFactor = anno_points(colData(dds)$sizeFactor)
+    ),
     show_row_names = FALSE, show_column_names = FALSE, row_km = 2,
-    column_title = paste0(sum(l), " significant genes with fdr < 0.01"),
+    column_title = paste0(sum(l), " significant genes with FDR < 0.01"),
     show_row_dend = FALSE)
+ht = draw(ht)
 
 make_maplot = function(res, highlight = NULL) {
     col = rep("#00000020", nrow(res))
@@ -239,6 +245,7 @@ make_maplot = function(res, highlight = NULL) {
     y[y > 2] = 2
     y[y < -2] = -2
     col[col == "orange" & y < 0] = "darkgreen"
+    par(mar = c(4, 4, 1, 1))
     suppressWarnings(
         plot(x, y, col = col, 
             pch = ifelse(res$log2FoldChange > 2 | res$log2FoldChange < -2, 1, 16), 
@@ -247,14 +254,24 @@ make_maplot = function(res, highlight = NULL) {
     )
 }
 
+
 library(shiny)
 ui = fluidPage(
-    InteractiveComplexHeatmapOutput(output_ui = uiOutput("maplot_ui"))
+    div(
+        InteractiveComplexHeatmapOutput(layout = "1+(2|3)",
+            width1 = 400, height1 = 600, width2 = 300, height2 = 300,
+            style = "float: left;"),
+        div(
+            uiOutput("maplot_ui"),
+            uiOutput("res_table_ui"),
+            style = "float: left;"
+        ),
+        div(style = "clear: both;")
+    )
 )
 
 click_action = function(df, output) {
-    output[["maplot_ui"]] = renderUI({
-           
+    output[["maplot"]] = renderUI({
         output[["maplot"]] = renderPlot({
             plot.new()
         })
@@ -263,15 +280,38 @@ click_action = function(df, output) {
     })
 }
 
+library(DT)
 brush_action = function(df, output) {
-    output[["maplot_ui"]] = renderUI({
-           
+    
+    row_index = unique(unlist(df$row_index))
+    selected = rownames(m)[row_index]
+        
+    output[["maplot_ui"]] = renderUI({   
         output[["maplot"]] = renderPlot({
-            row_index = unique(unlist(df$row_index))
-            make_maplot(res, rownames(m)[row_index])
+            make_maplot(res, selected)
         })
 
-        plotOutput("maplot", width = 400)
+        div(
+            h5("MA-plot"),
+            div(
+                plotOutput("maplot", width = 400), 
+                style = "border: 1px solid grey; padding: 4px;"
+            )
+        )
+    })
+
+    output[["res_table_ui"]] = renderUI({
+        output[["res_table"]] = renderDT(
+            formatRound(datatable(res[selected, ], rownames = TRUE), columns = 1:ncol(res), digits = 3)
+        )
+
+        div(
+            h5("Result table of the selected genes"),
+            div(
+                DTOutput("res_table"),
+                style = "font-size:80%"
+            )
+        )
     })
 }
 
