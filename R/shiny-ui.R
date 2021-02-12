@@ -17,6 +17,7 @@
 # -brush_opt A list of parameters passed to `shiny::brushOpts`.
 # -output_ui Whether to add the output ``div``.
 # -css Self-defined CSS code.
+# -... Pass to the ui container.
 #
 # == details
 # This function generates HTML fragment for the interactive UI. See the example from `makeInteractiveComplexHeatmap` page.
@@ -33,7 +34,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	layout = "(1+2)|3",
 	action = "click", 
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
-	output_ui = default_output_ui(), css = "") {
+	output_ui = default_output_ui(), css = "", ...) {
 
 	if(is.null(heatmap_id)) {
 		increase_widget_index()
@@ -388,7 +389,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		htmlOutput(qq("@{heatmap_id}_warning")),
 		tl,
 		div(style = "clear: both;"),
-		tags$style(HTML(layout_css))
+		tags$style(HTML(layout_css)),
+		...
 	)
 }
 
