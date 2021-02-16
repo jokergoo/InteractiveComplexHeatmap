@@ -1,6 +1,8 @@
 export("InteractiveComplexHeatmapModal")
 export("InteractiveComplexHeatmapOutput")
 export("InteractiveComplexHeatmapWidget")
+export("all_column_indices")
+export("all_row_indices")
 export("htPositionsOnDevice")
 export("htShiny")
 export("htShinyExample")
