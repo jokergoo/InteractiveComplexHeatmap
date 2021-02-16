@@ -12,12 +12,12 @@ htShiny(ht_list = get_last_ht(), title = NULL,
     
     # parameters passed to InteractiveComplexHeatmapOutput()
     heatmap_id = NULL, title1 = "Original heatmap", title2 = "Selected sub-heatmap",
-    width1 = ifelse(layout \%in\% c("1|(2+3)", "1|23"), 800, 450),
-    height1 = ifelse(layout \%in\% c("1+(2|3)"), 700, 350),
+    width1 = ifelse(layout == "1|(2-3)", 800, 450),
+    height1 = ifelse(layout == "1-(2|3)", 700, 350),
     width2 = 370,
     height2 = 350,
-    width3 = ifelse(layout \%in\% c("(1+2)|3", "12|3"), 800, 370),
-    layout = "(1+2)|3",
+    width3 = ifelse(layout == "(1-2)|3", 800, 370),
+    layout = "(1-2)|3",
     action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6)
     )
 }

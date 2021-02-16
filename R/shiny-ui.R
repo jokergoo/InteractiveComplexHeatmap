@@ -11,8 +11,7 @@
 # -width2 Width of the sub-heatmap.
 # -height2 Height of the sub-heatmap.
 # -width3 Width of the output div.
-# -layout One of ``12|3`` or ``1|23``. ``12|3`` means the div of original heatmap and sub-heatmap are in a same row. 
-#         ``1|23`` means the div of sub-heatmap and the output are in a same row.
+# -layout One of ``(1|2)-3``, ``1-(2|3)``, ``1-2-3``, ``1|2|3``, ``1|(2-3)``.
 # -action Which action for selecting single cell on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`.
 # -output_ui Whether to add the output ``div``.
@@ -26,12 +25,12 @@
 # A UI that can be used in shiny.
 InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
-	width1 = ifelse(layout %in% c("1|(2+3)", "1|23"), 800, 450), 
-	height1 = ifelse(layout %in% c("1+(2|3)"), 700, 350), 
+	width1 = ifelse(layout == "1|(2-3)", 800, 450), 
+	height1 = ifelse(layout == "1-(2|3)", 700, 350), 
 	width2 = 370, 
 	height2 = 350, 
-	width3 = ifelse(layout %in% c("(1+2)|3", "12|3"), 800, 370),
-	layout = "(1+2)|3",
+	width3 = ifelse(layout == "(1-2)|3", 800, 370),
+	layout = "(1-2)|3",
 	action = "click", 
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_ui = default_output_ui(), css = "", ...) {
@@ -309,7 +308,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		style = qq("width: @{width3}px;")
 	)
 
-	if(layout %in% c("(1+2)|3", "12|3")) {
+	if(layout %in% c("(1-2)|3", "12|3")) {
 		layout_css = qq("
 			.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
 				float:left;
@@ -325,7 +324,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 			div(style = "clear: both;"),
 			output_ui
 		)
-	} else if(layout %in% c("1|(2+3)", "1|23")) {
+	} else if(layout %in% c("1|(2-3)", "1|23")) {
 		layout_css = qq("
 			.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group {
 				float:left;
@@ -340,7 +339,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 			sub_heatmap_ui,
 			output_ui
 		)
-	} else if(layout %in% c("1+2+3", "123")) {
+	} else if(layout %in% c("1-2-3", "123")) {
 		layout_css = qq("
 			.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
 				float:left;
@@ -365,7 +364,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 			sub_heatmap_ui,
 			output_ui
 		)
-	} else if(layout %in% c("1+(2|3)")) {
+	} else if(layout %in% c("1-(2|3)")) {
 		layout_css = qq("
 			.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
 				float:left;
@@ -377,9 +376,11 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 			div( 
 				sub_heatmap_ui,
 				output_ui,
-				style = "float: left"
+				style = "float:left;"
 			)
 		)
+	} else {
+		stop_wrap("Value of `layout` can only be one of '(1|2)-3', '1-(2|3)', '1-2-3', '1|2|3', '1|(2-3)'.")
 	}
 
 	fluidPage(class = qq("@{heatmap_id}_widget"),

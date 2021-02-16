@@ -218,6 +218,9 @@ m = counts(dds, normalized = TRUE)
 l = res$padj < 0.01; l[is.na(l)] = FALSE
 m = m[l, ]
 
+library(ComplexHeatmap)
+library(circlize)
+
 ht = Heatmap(t(scale(t(m))), name = "z-score",
     top_annotation = HeatmapAnnotation(
         dex = colData(dds)$dex,
@@ -225,7 +228,12 @@ ht = Heatmap(t(scale(t(m))), name = "z-score",
     ),
     show_row_names = FALSE, show_column_names = FALSE, row_km = 2,
     column_title = paste0(sum(l), " significant genes with FDR < 0.01"),
-    show_row_dend = FALSE)
+    show_row_dend = FALSE) + 
+    Heatmap(log10(res$baseMean[l]+1), show_row_names = FALSE, width = unit(5, "mm"),
+        name = "log10(baseMean+1)", show_column_names = FALSE) +
+    Heatmap(res$log2FoldChange[l], show_row_names = FALSE, width = unit(5, "mm"),
+        name = "log2FoldChange", show_column_names = FALSE,
+        col = colorRamp2(c(-2, 0, 2), c("green", "white", "red")))
 ht = draw(ht)
 
 make_maplot = function(res, highlight = NULL) {
@@ -258,7 +266,7 @@ make_maplot = function(res, highlight = NULL) {
 library(shiny)
 ui = fluidPage(
     div(
-        InteractiveComplexHeatmapOutput(layout = "1+(2|3)",
+        InteractiveComplexHeatmapOutput(layout = "1-(2|3)",
             width1 = 400, height1 = 600, width2 = 300, height2 = 300,
             style = "float: left;"),
         div(

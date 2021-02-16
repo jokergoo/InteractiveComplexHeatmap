@@ -108,14 +108,14 @@ heatmap is well visible, e.g. in `htShiny(2.2)`.
 
 The layout of the three components are controlled by the argument `layout`. It
 supports following layouts. Note the values are in a special format to help to
-understand the layout, where the symbol `"+"` corresponds to horizontal
+understand the layout, where the symbol `"-"` corresponds to horizontal
 arrangment and `"|"` corresponds to vertical arrangement.
 
-- `"(1+2)|3"`: Heatmap and sub-heatmap are in a same row, and output is in a second row. This is the default layout.
-- `"1|(2+3)"`: Heatmap is in a single row, while sub-heatmap and output are in a second row.
-- `"1+2+3"`: All three components are in a same row.
+- `"(1-2)|3"`: Heatmap and sub-heatmap are in a same row, and output is in a second row. This is the default layout.
+- `"1|(2-3)"`: Heatmap is in a single row, while sub-heatmap and output are in a second row.
+- `"1-2-3"`: All three components are in a same row.
 - `"1|2|3"`: Each component is in a single row.
-- `"1+(2|3)"`: Being different from the other four layouts, this is a two-column layout. 
+- `"1-(2|3)"`: Being different from the other four layouts, this is a two-column layout. 
      Heatmap is in a sigle column. Sub-heatmap and output are vertically aligned and the two are in the second column.
      An example can be found at `htShinyExample(4.1)`.
 
