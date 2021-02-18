@@ -1408,7 +1408,7 @@ get_anno_value = function(ha, ind) {
 
 				if(is.matrix(x)) {
 					vstr = qq("@{paste0(x[ind, ], '')} <span style='background-color:@{map_to_colors(cm, x[ind, ])};width=10px;'>    </span>", collapse = FALSE)
-					vstr = qq(vstr, collapse = ", ")
+					vstr = paste(vstr, collapse = ", ")
 					txt[i] = qq("@{anno@name}: @{vstr}")
 				} else {
 					txt[i] = qq("@{anno@name}: @{paste0(x[ind], '')} <span style='background-color:@{map_to_colors(cm, x[ind])};width=10px;'>    </span>")
