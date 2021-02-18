@@ -1,18 +1,18 @@
 Package: InteractiveComplexHeatmap
 Type: Package
 Title: Make Interactive Complex Heatmaps
-Version: 0.99.8.1007
-Date: 2021-2-16
+Version: 0.99.8.1008
+Date: 2021-2-18
 Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"),
                   comment = c('ORCID'="0000-0002-7395-8709"))
 Depends: R (>= 4.0.0), 
-Imports: ComplexHeatmap (>= 2.7.5), grDevices, stats, shiny, grid, GetoptLong, 
+Imports: ComplexHeatmap (>= 2.7.7), grDevices, stats, shiny, grid, GetoptLong, 
     S4Vectors (>= 0.26.1), digest, IRanges, kableExtra (>= 1.3.1), utils, svglite,
     htmltools, clisymbols
 Suggests: knitr, rmarkdown, testthat, EnrichedHeatmap, GenomicRanges, data.table,
     circlize, GenomicFeatures, tidyverse, tidyHeatmap, RColorBrewer, cluster,
     org.Hs.eg.db, simplifyEnrichment, GO.db, SC3, GOexpress, SingleCellExperiment,
-    scater, gplots, pheatmap, airway, DESeq2, DT
+    scater, gplots, pheatmap, airway, DESeq2, DT, cola
 VignetteBuilder: knitr
 Description: This package can easily make interactive heatmaps which are produced 
     by the ComplexHeatmap package. It provides two types of interactivities: 

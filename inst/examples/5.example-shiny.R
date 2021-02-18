@@ -37,7 +37,6 @@ ht = draw(ht)
 
 ui = fluidPage(
     InteractiveComplexHeatmapOutput(output_ui = htmlOutput("info")),
-    
 )
 
 click_action = function(df, output) {
@@ -326,6 +325,52 @@ brush_action = function(df, output) {
 server = function(input, output, session) {
     makeInteractiveComplexHeatmap(input, output, session, ht,
         click_action = click_action, brush_action = brush_action)
+}
+
+shinyApp(ui, server)
+
+
+#########################################################################################################
+# title: Interactive correlation heatmap. Clicking on the cell generates a scatterplot of the two corresponding variables.
+
+data(mtcars)
+cor_mat = cor(mtcars)
+
+library(circlize)
+col_fun = colorRamp2(c(-1, 0, 1), c("darkgreen", "white", "red"))
+ht = Heatmap(cor_mat, name = "Correlation",
+    col = col_fun, rect_gp = gpar(type = "none"),
+    cell_fun = function(j, i, x, y, w, h, fill) {
+        grid.rect(x, y, w, h, gp = gpar(fill = "transparent", col = "grey"))
+        grid.circle(x = x, y = y, r = abs(cor_mat[i, j])/2 * min(unit.c(w, h)), 
+            gp = gpar(fill = col_fun(cor_mat[i, j]), col = NA))
+    },
+    show_row_dend = FALSE, show_column_dend = FALSE)
+
+
+ui = fluidPage(
+    InteractiveComplexHeatmapOutput(),
+    plotOutput("scatterplot", width = 400, height = 400)
+)
+
+click_action = function(df, output) {
+    output$scatterplot = renderPlot({
+        nm = colnames(mtcars)
+        i1 = df$row_index
+        i2 = df$column_index
+
+        x = mtcars[, nm[i1]]
+        y = mtcars[, nm[i2]]
+
+        plot(x, y, xlab = nm[i1], ylab = nm[i2],
+            main = paste0("Correlation = ", sprintf('%.3f', cor(x, y))))
+    })
+}
+
+
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht,
+        click_action = click_action)
 }
 
 shinyApp(ui, server)

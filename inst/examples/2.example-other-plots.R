@@ -230,3 +230,55 @@ ht_list = draw(ht_list, merge_legend = TRUE)
 
 htShiny(ht_list, width1 = 600, height1 = 700)
 
+
+###############################################################
+# title: Use last generated heatmap, an example from cola package.
+
+library(cola)
+data(golub_cola)
+
+res = golub_cola["ATC:skmeans"]
+pdf(NULL)
+get_signatures(res, k = 3)
+dev.off()
+htShiny()
+
+###############################################################
+# title: Use last generated heatmap, an app with three interactive heatmaps
+
+library(cola)
+data(golub_cola)
+
+res = golub_cola["ATC:skmeans"]
+
+pdf(NULL)
+consensus_heatmap(res, k = 3)
+dev.off()
+ht1 = ComplexHeatmap:::get_last_ht()
+
+pdf(NULL)
+membership_heatmap(res, k = 3)
+dev.off()
+ht2 = ComplexHeatmap:::get_last_ht()
+
+pdf(NULL)
+get_signatures(res, k = 3)
+dev.off()
+ht3 = ComplexHeatmap:::get_last_ht()
+
+ui = mainPanel(
+    tabsetPanel(
+        tabPanel("Consensus heatmap",  InteractiveComplexHeatmapOutput("heatmap_1")),
+        tabPanel("Membership heatmap", InteractiveComplexHeatmapOutput("heatmap_2")),
+        tabPanel("Signature heatmap",  InteractiveComplexHeatmapOutput("heatmap_3"))
+    )
+)
+
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht1, "heatmap_1")
+    makeInteractiveComplexHeatmap(input, output, session, ht2, "heatmap_2")
+    makeInteractiveComplexHeatmap(input, output, session, ht3, "heatmap_3")
+}
+
+shinyApp(ui, server)
+
