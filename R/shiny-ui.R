@@ -16,7 +16,7 @@
 # -brush_opt A list of parameters passed to `shiny::brushOpts`.
 # -output_ui Whether to add the output ``div``.
 # -css Self-defined CSS code.
-# -... Pass to the ui container.
+# -... Pass to the UI container which is wrapped by `shiny::fluidPage`.
 #
 # == details
 # This function generates HTML fragment for the interactive UI. See the example from `makeInteractiveComplexHeatmap` page.
@@ -396,6 +396,4 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		...
 	)
 }
-
-
 

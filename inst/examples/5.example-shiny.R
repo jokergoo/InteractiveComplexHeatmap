@@ -70,7 +70,6 @@ shinyApp(ui, server)
 # title: Self-define the output. Additional annotations for the selected gene are shown.
 
 library(GetoptLong)
-suppressPackageStartupMessages(library(EnrichedHeatmap))
 load(system.file("extdata", "chr21_test_data.RData", package = "EnrichedHeatmap"))
 
 gene_id = names(rpkm)[1:100]
@@ -268,7 +267,7 @@ library(shiny)
 ui = fluidPage(
     div(
         InteractiveComplexHeatmapOutput(layout = "1-(2|3)",
-            width1 = 400, height1 = 600, width2 = 300, height2 = 300,
+            width1 = 400, height1 = 800, width2 = 300, height2 = 300,
             style = "float: left;"),
         div(
             uiOutput("maplot_ui"),
@@ -278,16 +277,6 @@ ui = fluidPage(
         div(style = "clear: both;")
     )
 )
-
-click_action = function(df, output) {
-    output[["maplot"]] = renderUI({
-        output[["maplot"]] = renderPlot({
-            plot.new()
-        })
-
-        plotOutput("maplot", width = 400)
-    })
-}
 
 library(DT)
 brush_action = function(df, output) {
@@ -326,7 +315,7 @@ brush_action = function(df, output) {
 
 server = function(input, output, session) {
     makeInteractiveComplexHeatmap(input, output, session, ht,
-        click_action = click_action, brush_action = brush_action)
+        brush_action = brush_action)
 }
 
 shinyApp(ui, server)
