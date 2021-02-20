@@ -601,7 +601,22 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	###############################################################
 	##      A click on the heatmap
 	###############################################################
-	observeEvent(input[[qq("@{heatmap_id}_heatmap_click")]], {
+	if(shiny_env[[heatmap_id]]$action == "click") {
+		validate_click_trigger = function(input) {
+			input[[qq("@{heatmap_id}_heatmap_mouse_pos_x1")]] == input[[qq("@{heatmap_id}_heatmap_mouse_pos_x2")]] && 
+			input[[qq("@{heatmap_id}_heatmap_mouse_pos_y1")]] == input[[qq("@{heatmap_id}_heatmap_mouse_pos_y2")]]
+		}
+	} else {
+		validate_click_trigger = function(input) TRUE
+	}
+	observeEvent(input[[ifelse(shiny_env[[heatmap_id]]$action == "click", 
+		                       qq("@{heatmap_id}_heatmap_mouse_action"), 
+		                       qq("@{heatmap_id}_heatmap_click"))]], {
+
+		if(!validate_click_trigger(input)) {
+			return(NULL)
+		}
+
 		pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]])
 		  
 		if(is.null(pos1)) {

@@ -51,6 +51,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	shiny_env$current_heatmap_id = heatmap_id
 
 	action = match.arg(action)[1]
+	shiny_env[[heatmap_id]]$action = action
+
 	if(action == "dblclick") {
 		click = NULL
 		dblclick = qq("@{heatmap_id}_heatmap_click")
@@ -297,9 +299,9 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	}
 
 	if(is.null(output_ui)) {
-		shiny_env[[heatmap_id]] = list(default_output_ui = FALSE)
+		shiny_env[[heatmap_id]]$default_output_ui = FALSE
 	}  else {
-		shiny_env[[heatmap_id]] = list(default_output_ui = identical(output_ui, default_output_ui()))
+		shiny_env[[heatmap_id]]$default_output_ui = identical(output_ui, default_output_ui())
 	}
 
 	output_ui = div(

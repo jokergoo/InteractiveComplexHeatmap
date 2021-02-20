@@ -234,7 +234,7 @@ ht = Heatmap(t(scale(t(m))), name = "z-score",
     Heatmap(res$log2FoldChange[l], show_row_names = FALSE, width = unit(5, "mm"),
         name = "log2FoldChange", show_column_names = FALSE,
         col = colorRamp2(c(-2, 0, 2), c("green", "white", "red")))
-ht = draw(ht)
+ht = draw(ht, merge_legend = TRUE)
 
 make_maplot = function(res, highlight = NULL) {
     col = rep("#00000020", nrow(res))

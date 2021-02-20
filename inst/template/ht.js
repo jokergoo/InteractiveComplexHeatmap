@@ -414,4 +414,21 @@ function @{heatmap_id}_create_color_picker() {
 			}
 		});
 	});
+
+	if('@{shiny_env[[heatmap_id]]$action}' == 'click') {
+		$('#@{heatmap_id}_heatmap').mousedown(function(e) {
+			var parentOffset = $(this).offset();
+			var relX = e.pageX - parentOffset.left;
+			var relY = e.pageY - parentOffset.top;
+			Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_pos_x1', relX);
+			Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_pos_y1', relY);
+		}).mouseup(function(e) {
+			var parentOffset = $(this).offset();
+			var relX = e.pageX - parentOffset.left;
+			var relY = e.pageY - parentOffset.top;
+			Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_pos_x2', relX);
+			Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_pos_y2', relY);
+			Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_action', Math.random());
+		});
+	}
 }
