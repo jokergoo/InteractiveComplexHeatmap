@@ -142,7 +142,7 @@ ht_shiny = function(...) {
 # Examples of the interactive complex heatmaps
 #
 # == param
-# -which An integer of which example to use. The list of all examples can be obtained by executing `htShinyExample` with no argument.
+# -which An index of which example to use. The list of all examples can be obtained by executing `htShinyExample` with no argument.
 #
 # == value
 # A Shiny app object.
