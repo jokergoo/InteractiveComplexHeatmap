@@ -3,6 +3,7 @@
 ##############################################################
 # title: A single Shiny app with two interactive heatmap widgets.
 
+set.seed(8)
 m1 = matrix(rnorm(100*100), 100)
 ht1 = Heatmap(m1)
 ht1 = draw(ht1)
@@ -12,10 +13,10 @@ ht2 = draw(ht2)
 
 ui = fluidPage(
     h3("The first heatmap"),
-    InteractiveComplexHeatmapOutput("heatmap_1", height1 = 200, height2 = 200),
+    InteractiveComplexHeatmapOutput("heatmap_1", height1 = 300, height2 = 300),
     hr(),
     h3("The second heatmap"),
-    InteractiveComplexHeatmapOutput("heatmap_2", height1 = 200, height2 = 200)
+    InteractiveComplexHeatmapOutput("heatmap_2", height1 = 300, height2 = 300)
 )
 
 server = function(input, output, session) {
@@ -242,17 +243,18 @@ make_maplot = function(res, highlight = NULL) {
     names(cex) = rownames(res)
     if(is.null(highlight)) {
         l = res$padj < 0.01; l[is.na(l)] = FALSE
-        col[l] = "orange"
+        col[l] = "red"
     } else {
-        col[highlight] = "orange"
-        cex[highlight] = 0.7
+        col[highlight] = "red"
+        cex[highlight] = 1
     }
     x = res$baseMean
     y = res$log2FoldChange
     y[y > 2] = 2
     y[y < -2] = -2
-    col[col == "orange" & y < 0] = "darkgreen"
+    col[col == "red" & y < 0] = "darkgreen"
     par(mar = c(4, 4, 1, 1))
+
     suppressWarnings(
         plot(x, y, col = col, 
             pch = ifelse(res$log2FoldChange > 2 | res$log2FoldChange < -2, 1, 16), 

@@ -30,3 +30,4 @@ test_that("test selectPosition()", {
 	expect_equal(pos[1, "row_index"][[1]], c(8, 9))
 	expect_equal(pos[1, "column_index"][[1]], c(2, 3, 4))
 })
+

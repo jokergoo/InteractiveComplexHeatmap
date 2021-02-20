@@ -188,12 +188,12 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	###############################################################
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_do_resize")]], {
 
+		width = input[[qq("@{heatmap_id}_heatmap_resize_width")]]
+	    height = input[[qq("@{heatmap_id}_heatmap_resize_height")]]
+
 		output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
 
-			width = isolate(session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]])
-	    	height = isolate(session$clientData[[qq("output_@{heatmap_id}_heatmap_height")]])
-	    	
-	    	showNotification("Making the original heatmap.", duration = 2, type = "message")
+			showNotification("Making the original heatmap.", duration = 2, type = "message")
 
 	    	draw(ht_list())
 
@@ -203,7 +203,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 			message(qq("[@{Sys.time()}] make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
 			session$sendCustomMessage(qq("@{heatmap_id}_remove_brush"), "")
-		})
+		}, width = width, height = height)
 	
 	})
 
@@ -659,8 +659,8 @@ get_pos_from_brush = function(brush) {
 	coords = brush$coords_css
 	if(is.null(coords)) return(NULL)
     height = (brush$range$bottom - brush$range$top)/brush$img_css_ratio$y
-    pos1 = unit(c(coords$xmin, height - coords$ymin), "pt")
-    pos2 = unit(c(coords$xmax, height - coords$ymax), "pt")
+    pos1 = unit(c(coords$xmin, height - coords$ymin), "bigpts")
+    pos2 = unit(c(coords$xmax, height - coords$ymax), "bigpts")
 
     list(pos1, pos2)
 }
@@ -669,7 +669,7 @@ get_pos_from_click = function(click) {
 	coords = click$coords_css
 	if(is.null(coords)) return(NULL)
 	height = (click$range$bottom - click$range$top)/click$img_css_ratio$y
-    pos1 = unit(c(coords$x, height - coords$y), "pt")
+    pos1 = unit(c(coords$x, height - coords$y), "bigpts")
     pos1
 }
 
