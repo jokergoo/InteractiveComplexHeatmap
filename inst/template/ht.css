@@ -15,16 +15,15 @@
 	text-align:center;
 }
 .@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_resize {
-	width: @{width2+4}px;
-	height: @{height2+4}px;
+	width: @{width2 + 4}px;
+	height: @{height2 + 4}px;
 	position: relative;
 	border: 1px solid grey;
 }
 .@{heatmap_id}_widget #@{heatmap_id}_heatmap, 
 .@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap {
 	display: block;
-    margin: auto;
-    margin: auto;
+	margin: auto;
 }
 .@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group .checkbox {
 	padding:2px 0px;

@@ -286,17 +286,19 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 	}
 	if(verbose) cat("\n")
 
-	if(mark) {
-		for(i in seq_len(nrow(ht_pos))) {
-		    x_min = ht_pos[i, "x_min"]
-		    x_max = ht_pos[i, "x_max"]
-		    y_min = ht_pos[i, "y_min"]
-		    y_max = ht_pos[i, "y_max"]
-		    grid.rect(x = x_min, y = y_min,
-		        width = x_max - x_min, height = y_max - y_min, gp = gpar(fill = "transparent"),
-		        just = c("left", "bottom"))
-		}
-	}
+	# if(mark) {
+	# 	for(i in seq_len(nrow(ht_pos))) {
+	# 	    x_min = ht_pos[i, "x_min"]
+	# 	    x_max = ht_pos[i, "x_max"]
+	# 	    y_min = ht_pos[i, "y_min"]
+	# 	    y_max = ht_pos[i, "y_max"]
+	# 	    grid.rect(x = x_min, y = y_min,
+	# 	        width = x_max - x_min, height = y_max - y_min, 
+	# 	        default.units = unit,
+	# 	        gp = gpar(fill = "transparent"),
+	# 	        just = c("left", "bottom"))
+	# 	}
+	# }
 
 	if(overlap_to_heatmap) {
 		return(df)

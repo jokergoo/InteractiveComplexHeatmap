@@ -13,7 +13,10 @@ $(function() {
 			$("#@{heatmap_id}_heatmap img").width(ui.size.width - 4);  // img has 4px margin
 			$("#@{heatmap_id}_heatmap img").height(ui.size.height - 4);
 			
+			Shiny.setInputValue("@{heatmap_id}_heatmap_resize_width", ui.size.width - 4);
+			Shiny.setInputValue("@{heatmap_id}_heatmap_resize_height", ui.size.height - 4);
 			Shiny.setInputValue("@{heatmap_id}_heatmap_do_resize", Math.random());
+			
 		},
 		start: function(event, ui) {
 			var mask = document.createElement("div");
@@ -35,8 +38,8 @@ $(function() {
 			$('#@{heatmap_id}_heatmap_input_height').val(ui.size.height - 4);
 
 			if(parseInt($('#@{heatmap_id}_heatmap_download_format').find('input').filter(':checked').val()) == 2) {
-				width_in_inch = Math.round((ui.size.width-4)*10/100*4/3)/10;
-				height_in_inch = Math.round((ui.size.height-4)*10/100*4/3)/10;
+				width_in_inch = Math.round((ui.size.width - 4)*10/100*4/3)/10;
+				height_in_inch = Math.round((ui.size.height - 4)*10/100*4/3)/10;
 				$('#@{heatmap_id}_heatmap_download_image_width').val(width_in_inch);
 				$('#@{heatmap_id}_heatmap_download_image_height').val(height_in_inch);
 			} else {
@@ -92,10 +95,10 @@ $(function() {
 		width = parseInt(width);
 		var height = $('#@{heatmap_id}_heatmap_input_height').val();
 		height = parseInt(height);
-		$('#@{heatmap_id}_heatmap_resize').width(width+4);
+		$('#@{heatmap_id}_heatmap_resize').width(width + 4);
 		$('#@{heatmap_id}_heatmap').width(width);
 		$('#@{heatmap_id}_heatmap img').width(width);
-		$('#@{heatmap_id}_heatmap_resize').height(height+4);
+		$('#@{heatmap_id}_heatmap_resize').height(height + 4);
 		$('#@{heatmap_id}_heatmap').height(height);
 		$('#@{heatmap_id}_heatmap img').height(height);
 		$('#@{heatmap_id}_heatmap_download_image_width').val(width);
@@ -154,10 +157,10 @@ $(function() {
 		width = parseInt(width);
 		var height = $('#@{heatmap_id}_sub_heatmap_input_height').val();
 		height = parseInt(height);
-		$('#@{heatmap_id}_sub_heatmap_resize').width(width+4);
+		$('#@{heatmap_id}_sub_heatmap_resize').width(width + 4);
 		$('#@{heatmap_id}_sub_heatmap').width(width);
 		$('#@{heatmap_id}_sub_heatmap img').width(width);
-		$('#@{heatmap_id}_sub_heatmap_resize').height(height+4);
+		$('#@{heatmap_id}_sub_heatmap_resize').height(height + 4);
 		$('#@{heatmap_id}_sub_heatmap').height(height);
 		$('#@{heatmap_id}_sub_heatmap img').height(height);
 		$('#@{heatmap_id}_sub_heatmap_download_image_width').val(width);

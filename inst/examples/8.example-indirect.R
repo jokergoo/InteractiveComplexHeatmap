@@ -3,7 +3,6 @@
 ########################################################
 # title: Indirect use of pheatmap().
 
-require(pheatmap)
 assignInNamespace("pheatmap", ComplexHeatmap::pheatmap, ns = "pheatmap")
 
 library(SingleCellExperiment)
@@ -51,3 +50,42 @@ heatmap_GO(
 	go_id = "GO:0034142", result = BP.5, eSet=AlvMac, cexRow=0.4,
 	cexCol=1, cex.main=1, main.Lsplit=30)
 htShiny()
+
+
+########################################################
+# title: Two interactive heatmap widgets from indirect use of pheatmap().
+
+assignInNamespace("pheatmap", ComplexHeatmap::pheatmap, ns = "pheatmap")
+
+p1 = function(mat) {
+	pheatmap::pheatmap(mat, col = c("white", "red"))
+}
+
+p2= function(mat) {
+	pheatmap::pheatmap(mat, col = c("white", "blue"))
+}
+
+mat = matrix(rnorm(100), 10)
+
+pdf(NULL)
+draw(p1(mat))
+dev.off()
+ht1 = ComplexHeatmap:::get_last_ht()
+
+pdf(NULL)
+draw(p2(mat))
+dev.off()
+ht2 = ComplexHeatmap:::get_last_ht()
+
+ui = mainPanel(
+    InteractiveComplexHeatmapOutput("heatmap_1"),
+    InteractiveComplexHeatmapOutput("heatmap_2")
+)
+
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht1, "heatmap_1")
+    makeInteractiveComplexHeatmap(input, output, session, ht2, "heatmap_2")
+}
+
+shinyApp(ui, server)
+
