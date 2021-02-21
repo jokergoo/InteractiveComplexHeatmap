@@ -50,7 +50,6 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	shiny_env[[heatmap_id]] = list()
 	shiny_env$current_heatmap_id = heatmap_id
 
-	action = match.arg(action)[1]
 	shiny_env[[heatmap_id]]$action = action
 
 	if(action == "dblclick") {
