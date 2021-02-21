@@ -601,23 +601,17 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	###############################################################
 	##      A click on the heatmap
 	###############################################################
-	if(shiny_env[[heatmap_id]]$action == "click") {
-		validate_click_trigger = function(input) {
-			input[[qq("@{heatmap_id}_heatmap_mouse_pos_x1")]] == input[[qq("@{heatmap_id}_heatmap_mouse_pos_x2")]] && 
-			input[[qq("@{heatmap_id}_heatmap_mouse_pos_y1")]] == input[[qq("@{heatmap_id}_heatmap_mouse_pos_y2")]]
-		}
-	} else {
-		validate_click_trigger = function(input) TRUE
-	}
-	observeEvent(input[[ifelse(shiny_env[[heatmap_id]]$action == "click", 
+
+	action = shiny_env[[heatmap_id]]$action
+	observeEvent(input[[ifelse(action %in% c("click", "hover"), 
 		                       qq("@{heatmap_id}_heatmap_mouse_action"), 
 		                       qq("@{heatmap_id}_heatmap_click"))]], {
 
-		if(!validate_click_trigger(input)) {
-			return(NULL)
+		if(action == "hover") {
+			pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_hover")]])
+		} else {
+			pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]])
 		}
-
-		pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]])
 		  
 		if(is.null(pos1)) {
 			selected( NULL )
@@ -628,12 +622,12 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		}
 
 		if(do_default_click_action) {
-			default_click_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+			default_click_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list(), action = action)
 		}
 
 		if(!is.null(click_action)) {
 			if(identical(click_action, default_click_action)) {
-				default_click_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+				default_click_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list(), action = action)
 			} else {
 				click_action(selected(), output)
 			}
@@ -681,10 +675,14 @@ get_pos_from_brush = function(brush) {
 }
 
 get_pos_from_click = function(click) {
-	coords = click$coords_css
-	if(is.null(coords)) return(NULL)
-	height = (click$range$bottom - click$range$top)/click$img_css_ratio$y
-    pos1 = unit(c(coords$x, height - coords$y), "bigpts")
+	if(identical(c("x", "y"), names(click))) {
+		pos1 = unit(c(click$x, click$y), "bigpts")
+	} else {
+		coords = click$coords_css
+		if(is.null(coords)) return(NULL)
+		height = (click$range$bottom - click$range$top)/click$img_css_ratio$y
+	    pos1 = unit(c(coords$x, height - coords$y), "bigpts")
+	}
     pos1
 }
 
@@ -1321,17 +1319,17 @@ default_brush_action = function(input, output, session, heatmap_id,
 	})
 }
 
-default_click_action = function(input, output, session, heatmap_id, selected = NULL, ht_list = NULL) {
+default_click_action = function(input, output, session, heatmap_id, selected = NULL, ht_list = NULL, action = "click") {
 	output[[qq("@{heatmap_id}_info")]] = renderUI({
 
 	    if(is.null(selected)) {
 	    	HTML("<h5>Output</h5>\n<p>No cell is selected.</p>")
 	    } else {
-	    	showNotification(qq("Click on the heatmap."), duration = 2, type = "message")
+	    	showNotification(qq("@{action} on the heatmap."), duration = 2, type = "message")
 	    	pos = selected
 
 			if(is.null(pos)) {
-				HTML("<h5>Output</h5>\n<p>You did not click inside the heatmap.</p>")
+				HTML("<h5>Output</h5>\n<p>You did not @{action} inside the heatmap.</p>")
 			} else {
 				ht_name = pos[1, "heatmap"]
 				slice_name = pos[1, "slice"]
@@ -1362,12 +1360,12 @@ default_click_action = function(input, output, session, heatmap_id, selected = N
 			    	# column_label = paste0("'", column_label, "'")
 			    }
 
-			    message(qq("[@{Sys.time()}] click on the heatmap @{slice_name}."))
+			    message(qq("[@{Sys.time()}] @{action} on the heatmap @{slice_name}."))
 				
 				html = qq("
 <h5>Output</h5>
 <div>
-<p>Information of the clicked cell:</p>
+<p>Information of the @{action}ed cell:</p>
 <pre>
 heatmap: @{ht_name}
 heatmap slice: @{slice_name}

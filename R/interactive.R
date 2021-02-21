@@ -5,6 +5,7 @@
 #
 # == param
 # -ht_list A `ComplexHeatmap::HeatmapList-class` object returned by `ComplexHeatmap::draw,Heatmap-method` or `ComplexHeatmap::draw,HeatmapList-method`.
+#         If it is omitted, it uses the last generated heatmap.
 # -mark Whether to mark the selected area as a rectangle.
 # -pos1 If the value is ``NULL``, it can be selected by click on the heatmap (of cource, the heatmap should be on
 #       the interactive graphic device). If it is set, it must be a `grid::unit` object with length two which
@@ -313,6 +314,7 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 #
 # == param
 # -ht_list A `ComplexHeatmap::HeatmapList-class` object returned by `ComplexHeatmap::draw,Heatmap-method` or `ComplexHeatmap::draw,HeatmapList-method`.
+#       If it is omitted, it uses the last generated heatmap.
 # -mark Whether to mark the selected position as a point.
 # -pos If the value is ``NULL``, it can be selected by click on the heatmap (of cource, the heatmap should be on
 #       the interactive graphic device). If it is set, it must be a `grid::unit` object with length two which
@@ -511,6 +513,7 @@ selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verb
 #
 # == param
 # -ht_list A `ComplexHeatmap::HeatmapList-class` object returned by `ComplexHeatmap::draw,Heatmap-method` or `ComplexHeatmap::draw,HeatmapList-method`.
+#          If it is omitted, it uses the last generated heatmap.
 # -unit The unit.
 # -valueOnly Whether only return the numeric values.
 # -include_annotation Internally used.

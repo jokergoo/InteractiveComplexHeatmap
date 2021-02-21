@@ -416,19 +416,37 @@ function @{heatmap_id}_create_color_picker() {
 	});
 
 	if('@{shiny_env[[heatmap_id]]$action}' == 'click') {
+		var @{heatmap_id}_brush_x1;
+		var @{heatmap_id}_brush_x2;
+		var @{heatmap_id}_brush_y1;
+		var @{heatmap_id}_brush_y2;
 		$('#@{heatmap_id}_heatmap').mousedown(function(e) {
 			var parentOffset = $(this).offset();
-			var relX = e.pageX - parentOffset.left;
-			var relY = e.pageY - parentOffset.top;
-			Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_pos_x1', relX);
-			Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_pos_y1', relY);
+			@{heatmap_id}_brush_x1 = e.pageX - parentOffset.left;
+			@{heatmap_id}_brush_y1 = e.pageY - parentOffset.top;
 		}).mouseup(function(e) {
 			var parentOffset = $(this).offset();
-			var relX = e.pageX - parentOffset.left;
-			var relY = e.pageY - parentOffset.top;
-			Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_pos_x2', relX);
-			Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_pos_y2', relY);
-			Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_action', Math.random());
+			@{heatmap_id}_brush_x2 = e.pageX - parentOffset.left;
+			@{heatmap_id}_brush_y2 = e.pageY - parentOffset.top;
+			if(@{heatmap_id}_brush_x1 == @{heatmap_id}_brush_x2 && @{heatmap_id}_brush_y1 == @{heatmap_id}_brush_y2) {
+				Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_action', Math.random());
+			}
 		});
+	}
+
+	if('@{shiny_env[[heatmap_id]]$action}' == 'hover') {
+		var @{heatmap_id}_relX = -1;
+        var @{heatmap_id}_relY = -1;
+        $('#@{heatmap_id}_heatmap').mousemove(function(e) {
+            var parentOffset = $(this).offset();
+            @{heatmap_id}_relX = e.pageX - parentOffset.left;
+            @{heatmap_id}_relY = e.pageY - parentOffset.top;
+        }).mousestop(function() {
+        	var h = $(this).height();
+            if($('#@{heatmap_id}_heatmap_brush').length == 0) {
+                Shiny.setInputValue('@{heatmap_id}_heatmap_hover', {x: @{heatmap_id}_relX, y: h - @{heatmap_id}_relY});
+                Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_action', Math.random());
+            } 
+        })
 	}
 }

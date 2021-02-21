@@ -61,6 +61,19 @@ include_graphics("https://jokergoo.github.io/images/decoration.png")
 
 
 `post_fun` is a self-defined function and always needs one argument `ht_list`.
+Since `post_fun` is applied after the heatmaps are drawn, `ht_list` used in
+`post_fun` actually contains the clustering results (if they are applied). Thus,
+you can do something like follows in `post_fun`:
+
+```{r, eval = FALSE}
+post_fun = function(ht_list) {
+    decorate_heatmap_body("foo", {
+        row_dend(ht_list)
+        row_order(ht_list)
+        ...
+    })
+}
+```
 
 Note the decorations will not be applied on the sub-heatmap.
 
