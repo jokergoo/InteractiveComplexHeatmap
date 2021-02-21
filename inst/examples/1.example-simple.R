@@ -122,3 +122,25 @@ server = function(input, output, session) {
 
 shinyApp(ui, server)
 
+###############################################################
+# title: Demonstrate hover, click and dblclick actions.
+
+m = matrix(rnorm(10*10), 10)
+ht = Heatmap(m)
+ht = draw(ht)
+
+ui = tabsetPanel(
+    tabPanel("hover",  InteractiveComplexHeatmapOutput("heatmap_1", action = "hover")),
+    tabPanel("click", InteractiveComplexHeatmapOutput("heatmap_2", action = "click")),
+    tabPanel("dblclick",  InteractiveComplexHeatmapOutput("heatmap_3", action = "dblclick"))
+)
+
+
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht, "heatmap_1")
+    makeInteractiveComplexHeatmap(input, output, session, ht, "heatmap_2")
+    makeInteractiveComplexHeatmap(input, output, session, ht, "heatmap_3")
+}
+
+shinyApp(ui, server)
+

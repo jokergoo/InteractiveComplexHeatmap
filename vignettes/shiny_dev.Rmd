@@ -124,12 +124,7 @@ sure they are well arranged.
 
 By default, to get the information of a single cell in the heatmap, a `"click"`
 action is used. In `InteractiveComplexHeatmapOutput()`, the action can be set
-to `"hover"` or `"dblclick"`. Note when the action
-is set to click or hover, when applying the brush action, click or hover will
-always be first applied and the output for a single cell appears
-and disappears quickly. A "dblclick" has no conflict with hover, but the user experience
-is less friendly. Thus, "click" is the default action for getting information 
-of a single cell.
+to `"hover"` or `"dblclick"`. 
 
 The initial style of the brush can be specified by `brush_opt` argument. The
 value should be a list and the value will be sent to `shiny::brushOpts()`. Note,

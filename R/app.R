@@ -85,7 +85,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 	} else if(inherits(ht_list, "InputHeatmap")) {
 		ht_list = show(ht_list)
 	} else {
-		if(is.numeric(ht_list)) {
+		if(is.numeric(ht_list) && length(ht_list) == 1) {
 			stop_wrap("Maybe you want to use the function `htShinyExample()`?")
 		}
 	}
@@ -239,7 +239,7 @@ htShinyExample = function(which) {
 			code2[i] = qq("
 ui = fluidPage(
     ui,
-HTML('<hr /><div>
+HTML('<hr /><div style=\"clear:both;\">
 <h3>Information of this Shiny app<h3>
 <h5>Description</h5>
 <pre>@{title}</pre>
