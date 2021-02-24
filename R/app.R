@@ -216,7 +216,7 @@ htShinyExample = function(which) {
 			original_htShiny = htShiny
 
 			htShiny = function(ht, ...) {
-			html = qq("
+				html = qq("
 <hr />
 <div>
 <h3>Information of this Shiny app<h3>
