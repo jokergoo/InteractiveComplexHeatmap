@@ -99,7 +99,7 @@ from the bottom right.
 
 There are several tools under both heatmaps. For the original heatmap, there are following tools:
 
-1. *Search in heatmaps*
+1. *Search heatmap*
 
 It allows to search the heatmap labels to obtain a subset of rows and columns. Once rows or columns are found
 in the heatmaps, the sub-heatmaps will be drawn in the right panel.
@@ -108,7 +108,7 @@ in the heatmaps, the sub-heatmaps will be drawn in the right panel.
 include_graphics("https://jokergoo.github.io/images/tool_search.png")
 ```
 
-2. *Config brush*
+2. *Configure brush*
 
 Border and backgroud of the brush can be configured here:
 
@@ -136,7 +136,7 @@ include_graphics("https://jokergoo.github.io/images/tool_resize.png")
 
 For the sub-heatmap, there are following tools:
 
-1. *Configure sub-heatmaps*
+1. *Configure sub-heatmap*
 
 You can control whether to show row/column names in the sub-heatmaps, and whether
 to show the annotations as well.
@@ -163,7 +163,7 @@ include_graphics("https://jokergoo.github.io/images/tool_table.png")
 
 Similar as in the main heatmap.
 
-4. *Resize sub-heatmaps*
+4. *Resize sub-heatmap*
 
 Similar as in the main heatmap.
 
