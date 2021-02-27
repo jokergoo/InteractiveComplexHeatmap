@@ -18,7 +18,7 @@ increase_widget_index = function() {
 # Get all row indicies from the selected data frame
 #
 # == param
-# -df The selected data frame
+# -df The selected data frame.
 #
 all_row_indices = function(df) {
 	unique(unlist(df$row_index))
@@ -28,7 +28,7 @@ all_row_indices = function(df) {
 # Get all column indicies from the selected data frame
 #
 # == param
-# -df The selected data frame
+# -df The selected data frame.
 #
 all_column_indices = function(df) {
 	unique(unlist(df$column_index))

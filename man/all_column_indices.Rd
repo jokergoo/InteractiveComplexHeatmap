@@ -11,7 +11,7 @@ all_column_indices(df)
 }
 \arguments{
 
-  \item{df}{The selected data frame}
+  \item{df}{The selected data frame.}
 
 }
 \examples{
