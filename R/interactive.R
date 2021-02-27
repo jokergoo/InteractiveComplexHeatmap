@@ -8,7 +8,7 @@
 #         If it is omitted, it uses the last generated heatmap.
 # -mark Whether to mark the selected area as a rectangle.
 # -pos1 If the value is ``NULL``, it can be selected by click on the heatmap (of cource, the heatmap should be on
-#       the interactive graphic device). If it is set, it must be a `grid::unit` object with length two which
+#       the interactive graphics device). If it is set, it must be a `grid::unit` object with length two which
 #       corresponds to the x and y position of the point.
 # -pos2 Another point as ``pos1``, together with ``pos1`` defines the selected region.
 # -verbose Whether to print messages.
@@ -317,7 +317,7 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 #       If it is omitted, it uses the last generated heatmap.
 # -mark Whether to mark the selected position as a point.
 # -pos If the value is ``NULL``, it can be selected by click on the heatmap (of cource, the heatmap should be on
-#       the interactive graphic device). If it is set, it must be a `grid::unit` object with length two which
+#       the interactive graphics device). If it is set, it must be a `grid::unit` object with length two which
 #       corresponds to the x and y position of the point.
 # -verbose Whether to print messages.
 # -ht_pos A value returned by `htPositionsOnDevice`.
