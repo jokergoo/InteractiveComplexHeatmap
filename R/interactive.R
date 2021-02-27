@@ -509,7 +509,7 @@ selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verb
 
 
 # == title
-# Get the heatmap positions on the graphic device
+# Get heatmap positions on the graphics device
 #
 # == param
 # -ht_list A `ComplexHeatmap::HeatmapList-class` object returned by `ComplexHeatmap::draw,Heatmap-method` or `ComplexHeatmap::draw,HeatmapList-method`.
@@ -518,6 +518,9 @@ selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verb
 # -valueOnly Whether only return the numeric values.
 # -include_annotation Internally used.
 # -calibrate Internally used.
+#
+# == details
+# ``ht_list`` must be already updated by ``draw()`` function.
 #
 # == value
 # It returns a `S4Vectors::DataFrame` object of the position of every heatmap slice.

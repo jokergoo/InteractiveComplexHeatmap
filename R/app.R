@@ -1,13 +1,13 @@
 
 # == title
-# Interactive heatmaps with a Shiny app
+# Interactive heatmaps as a Shiny app
 #
 # == param
 # -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object. If it is not specified, the last generated heatmap is used.
 #     Better already updated by ``draw()`` function.
 # -title Title of the app.
-# -description Description of the app.
-# -hline Whether to add the horizontal line (by ``hr`` tag).
+# -description Description of the app. The content will be wrapped by a ``p`` tag and inserted before the interactive heatmap widget.
+# -hline Whether to add the horizontal line (by ``hr`` tag) after ``description``.
 # -html HTML fragment inserted below the heatmap.
 # -heatmap_id Pass to `InteractiveComplexHeatmapOutput`.
 # -title1 Pass to `InteractiveComplexHeatmapOutput`.
@@ -23,7 +23,18 @@
 # -output_ui_float Pass to `InteractiveComplexHeatmapOutput`.
 #
 # == seealso
-# https://jokergoo.shinyapps.io/interactive_complexHeatmap/
+# - https://jokergoo.shinyapps.io/interactive_complexheatmap/
+# - https://jokergoo.shinyapps.io/interactive_complexheatmap_vertical/
+# - https://jokergoo.shinyapps.io/interactive_densityheatmap/
+# - https://jokergoo.shinyapps.io/interactive_oncoprint/
+# - https://jokergoo.shinyapps.io/interactive_enrichedheatmap/
+# - https://jokergooo.shinyapps.io/interactive_upsetp/
+# - https://jokergooo.shinyapps.io/interactive_pheatmap/
+# - https://jokergooo.shinyapps.io/interactive_heatmap/
+# - https://jokergooo.shinyapps.io/interactive_heatmap_2/
+# - https://jokergooo.shinyapps.io/interactive_tidyheatmap/
+#
+# There are also many examples with `htShinyExample`.
 #
 # == value
 # A Shiny app object.
@@ -128,29 +139,34 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 }
 
 # == title
-# Interactive heatmaps with a Shiny app
+# Interactive heatmaps as a Shiny app
 #
 # == param
 # -... All goes to `htShiny`.
 #
 # == value
-# A shiny app object.
+# A Shiny app object.
 #
 ht_shiny = function(...) {
 	htShiny(...)
 }
 
 # == title
-# Examples of the interactive complex heatmaps
+# Examples of interactive complex heatmaps
 #
 # == param
 # -which An index of which example to use. The list of all examples can be obtained by executing `htShinyExample` with no argument.
+#
+# == details
+# In every example, there is a Shiny app opened, also including source code that generates this app.
 #
 # == value
 # A Shiny app object.
 #
 # == example
+# # list all examples
 # htShinyExample()
+#
 # if(interactive()) {
 #     htShinyExample(4.2)
 # }

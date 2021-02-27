@@ -64,16 +64,16 @@ No value is returned.
 if(interactive()) {
     require(ComplexHeatmap)
 
-ui = fluidPage(
+    ui = fluidPage(
         actionButton("show_heatmap", "Generate_heatmap"),
         htmlOutput("heatmap_output")
     )
 
-server = function(input, output, session) {
+    server = function(input, output, session) {
         m = matrix(rnorm(100), 10)
         ht = Heatmap(m)
 
-observeEvent(input$show_heatmap, {
+        observeEvent(input$show_heatmap, {
             InteractiveComplexHeatmapWidget(input, output, session, ht, 
                 output_id = "heatmap_output")
         })

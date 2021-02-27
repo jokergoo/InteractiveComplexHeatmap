@@ -1,10 +1,10 @@
 \name{ht_shiny}
 \alias{ht_shiny}
 \title{
-Interactive heatmaps with a Shiny app
+Interactive heatmaps as a Shiny app
 }
 \description{
-Interactive heatmaps with a Shiny app
+Interactive heatmaps as a Shiny app
 }
 \usage{
 ht_shiny(...)
@@ -15,7 +15,7 @@ ht_shiny(...)
 
 }
 \value{
-A shiny app object.
+A Shiny app object.
 }
 \examples{
 # There is no example

@@ -1,10 +1,10 @@
 \name{htShiny}
 \alias{htShiny}
 \title{
-Interactive heatmaps with a Shiny app
+Interactive heatmaps as a Shiny app
 }
 \description{
-Interactive heatmaps with a Shiny app
+Interactive heatmaps as a Shiny app
 }
 \usage{
 htShiny(ht_list = get_last_ht(), title = NULL,
@@ -26,8 +26,8 @@ htShiny(ht_list = get_last_ht(), title = NULL,
 
   \item{ht_list}{A \code{\link[ComplexHeatmap]{Heatmap-class}} or a \code{\link[ComplexHeatmap]{HeatmapList-class}} object. If it is not specified, the last generated heatmap is used. Better already updated by \code{draw()} function.}
   \item{title}{Title of the app.}
-  \item{description}{Description of the app.}
-  \item{hline}{Whether to add the horizontal line (by \code{hr} tag).}
+  \item{description}{Description of the app. The content will be wrapped by a \code{p} tag and inserted before the interactive heatmap widget.}
+  \item{hline}{Whether to add the horizontal line (by \code{hr} tag) after \code{description}.}
   \item{html}{HTML fragment inserted below the heatmap.}
   \item{heatmap_id}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{title1}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
@@ -44,7 +44,20 @@ htShiny(ht_list = get_last_ht(), title = NULL,
 
 }
 \seealso{
-\url{https://jokergoo.shinyapps.io/interactive_complexHeatmap/}
+\itemize{
+  \item \url{https://jokergoo.shinyapps.io/interactive_complexheatmap/}
+  \item \url{https://jokergoo.shinyapps.io/interactive_complexheatmap_vertical/}
+  \item \url{https://jokergoo.shinyapps.io/interactive_densityheatmap/}
+  \item \url{https://jokergoo.shinyapps.io/interactive_oncoprint/}
+  \item \url{https://jokergoo.shinyapps.io/interactive_enrichedheatmap/}
+  \item \url{https://jokergooo.shinyapps.io/interactive_upsetp/}
+  \item \url{https://jokergooo.shinyapps.io/interactive_pheatmap/}
+  \item \url{https://jokergooo.shinyapps.io/interactive_heatmap/}
+  \item \url{https://jokergooo.shinyapps.io/interactive_heatmap_2/}
+  \item \url{https://jokergooo.shinyapps.io/interactive_tidyheatmap/}
+}
+
+There are also many examples with \code{\link{htShinyExample}}.
 }
 \value{
 A Shiny app object.
@@ -63,7 +76,7 @@ if(interactive()) {
     rownames(m) = 1:10
     colnames(m) = 1:10
 
-ht = Heatmap(m)
+    ht = Heatmap(m)
     ht = draw(ht)
     htShiny(ht)
 }
@@ -74,13 +87,13 @@ if(interactive()) {
     colnames(m1) = 1:10
     ht1 = Heatmap(m1, row_km = 2, column_km = 2)
 
-m2 = matrix(sample(letters[1:10], 100, replace = TRUE), 10)
+    m2 = matrix(sample(letters[1:10], 100, replace = TRUE), 10)
     ht2 = Heatmap(m2)
 
-ht_list = draw(ht1 + ht2)
+    ht_list = draw(ht1 + ht2)
     htShiny(ht_list)
 
-ht_list = ht1 \%v\% ht2
+    ht_list = ht1 \%v\% ht2
     htShiny(ht_list)
 }
 }

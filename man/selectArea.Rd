@@ -34,11 +34,11 @@ if(dev.interactive()) {
     rownames(m) = 1:10
     colnames(m) = 1:10
 
-ht = Heatmap(m)
+    ht = Heatmap(m)
     ht = draw(ht)
     selectArea(ht)
 
-set.seed(123)
+    set.seed(123)
     ht = Heatmap(m, row_km = 2, column_km = 2)
     ht = draw(ht)
     selectArea(ht)

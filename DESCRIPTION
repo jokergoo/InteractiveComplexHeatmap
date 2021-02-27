@@ -14,10 +14,10 @@ Suggests: knitr, rmarkdown, testthat, EnrichedHeatmap, GenomicRanges, data.table
     org.Hs.eg.db, simplifyEnrichment, GO.db, SC3, GOexpress, SingleCellExperiment,
     scater, gplots, pheatmap, airway, DESeq2, DT, cola, BiocManager, gridtext
 VignetteBuilder: knitr
-Description: This package can easily make interactive heatmaps which are produced 
-    by the ComplexHeatmap package. It provides two types of interactivities: 
+Description: This package can easily make heatmaps which are produced 
+    by the ComplexHeatmap package into interactive applications. It provides two types of interactivities: 
     1. on the interactive graphics device, and 2. on a Shiny app. It also provides 
-    functions for integrating the interactive heatmap widgets into other Shiny apps.
+    functions for integrating the interactive heatmap widgets for more complex Shiny app development.
 biocViews: Software, Visualization, Sequencing
 URL: https://github.com/jokergoo/InteractiveComplexHeatmap
 BugReports: https://github.com/jokergoo/InteractiveComplexHeatmap/issues

@@ -29,7 +29,7 @@ if(dev.interactive()) {
     rownames(m) = 1:10
     colnames(m) = 1:10
 
-ht = Heatmap(m)
+    ht = Heatmap(m)
     ht = draw(ht)
     selectPosition(ht)
 }

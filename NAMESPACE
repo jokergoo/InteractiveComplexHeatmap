@@ -8,7 +8,6 @@ export("htShiny")
 export("htShinyExample")
 export("ht_shiny")
 export("makeInteractiveComplexHeatmap")
-export("renderInteractiveComplexHeatmap")
 export("selectArea")
 export("selectPosition")
 
