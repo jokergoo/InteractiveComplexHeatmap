@@ -1,3 +1,6 @@
+Changes in version 0.99.9
++ output can be floating along with mouse positions.
+
 Changes in version 0.99.8
 + click and hover won't conflict with brush.
 
