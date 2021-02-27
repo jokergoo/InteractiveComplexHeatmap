@@ -19,7 +19,7 @@ InteractiveComplexHeatmapWidget(
     width3 = ifelse(layout == "(1-2)|3", 800, 370),
     layout = "(1-2)|3",
     action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6),
-    output_ui = TRUE,
+    output_ui = TRUE, output_ui_float = FALSE,
     
     # parameters passed to makeInteractiveComplexHeatmap()
     click_action = NULL, brush_action = NULL,
@@ -46,6 +46,7 @@ InteractiveComplexHeatmapWidget(
   \item{action}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{brush_opt}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{output_ui}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{output_ui_float}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{click_action}{Pass to \code{\link{makeInteractiveComplexHeatmap}}.}
   \item{brush_action}{Pass to \code{\link{makeInteractiveComplexHeatmap}}.}
   \item{js_code}{Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function that takes "heatmap ID" as the argument and returns the formatted JavaScript code.}
@@ -63,16 +64,16 @@ No value is returned.
 if(interactive()) {
     require(ComplexHeatmap)
 
-    ui = fluidPage(
+ui = fluidPage(
         actionButton("show_heatmap", "Generate_heatmap"),
         htmlOutput("heatmap_output")
     )
 
-    server = function(input, output, session) {
+server = function(input, output, session) {
         m = matrix(rnorm(100), 10)
         ht = Heatmap(m)
 
-        observeEvent(input$show_heatmap, {
+observeEvent(input$show_heatmap, {
             InteractiveComplexHeatmapWidget(input, output, session, ht, 
                 output_id = "heatmap_output")
         })

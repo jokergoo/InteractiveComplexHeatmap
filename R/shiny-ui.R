@@ -14,7 +14,8 @@
 # -layout One of ``(1|2)-3``, ``1-(2|3)``, ``1-2-3``, ``1|2|3``, ``1|(2-3)``.
 # -action Which action for selecting single cell on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`. Do not set an ID for the brush. An internal brush ID is automatically set.
-# -output_ui Whether to add the output ``div``.
+# -output_ui A `shiny::htmlOutput` or other output object. If it is set to ``NULL``, there is no output in the app.
+# -output_ui_float Whether the UI defined by ``output_ui`` floats at the mouse positions.
 # -css Self-defined CSS code.
 # -... Pass to the UI container which is wrapped by `shiny::fluidPage`.
 #
@@ -23,11 +24,11 @@
 #
 # ``layout`` is defined as follows:
 #
-# - `"(1-2)|3"`: Heatmap and sub-heatmap are in a same row, and output is in a second row. This is the default layout.
-# - `"1|(2-3)"`: Heatmap is in a single row, while sub-heatmap and output are in a second row.
-# - `"1-2-3"`: All three components are in a same row.
-# - `"1|2|3"`: Each component is in a single row.
-# - `"1-(2|3)"`: Being different from the other four layouts, this is a two-column layout. Heatmap is in a sigle column. Sub-heatmap and output are vertically aligned and the two are in the second column. 
+# - ``"(1-2)|3"``: Heatmap and sub-heatmap are in a same row, and output is in a second row. This is the default layout.
+# - ``"1|(2-3)"``: Heatmap is in a single row, while sub-heatmap and output are in a second row.
+# - ``"1-2-3"``: All three components are in a same row.
+# - ``"1|2|3"``: Each component is in a single row.
+# - ``"1-(2|3)"``: Being different from the other four layouts, this is a two-column layout. Heatmap is in a sigle column. Sub-heatmap and output are vertically aligned and the two are in the second column. 
 #
 # The hover event is implemented with https://github.com/websanova/mousestop .
 #
@@ -39,15 +40,21 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	height1 = ifelse(layout == "1-(2|3)", 700, 350), 
 	width2 = 370, 
 	height2 = 350, 
-	width3 = ifelse(layout == "(1-2)|3", 800, 370),
+	width3 = ifelse(default_output_ui_float, 370, ifelse(layout == "(1-2)|3", 800, 370)),
 	layout = "(1-2)|3",
 	action = "click", 
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
-	output_ui = default_output_ui(), css = "", ...) {
+	output_ui = default_output_ui(), 
+	output_ui_float = FALSE,
+	css = "", ...) {
 
 	if(is.null(heatmap_id)) {
 		increase_widget_index()
 		heatmap_id = paste0("ht", get_widget_index())
+	}
+
+	default_output_ui = function() {
+		htmlOutput(qq("@{heatmap_id}_info"))
 	}
 
 	if(grepl("^\\d", heatmap_id)) {
@@ -61,6 +68,10 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	shiny_env$current_heatmap_id = heatmap_id
 
 	shiny_env[[heatmap_id]]$action = action
+
+	default_output_ui_float = output_ui_float & identical(output_ui, default_output_ui())
+
+	shiny_env[[heatmap_id]]$output_ui_float = output_ui_float
 
 	if(action %in% c("dblclick", "dbclick")) {
 		click = NULL
@@ -140,7 +151,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 
 	td = tempdir()
 	if(identical(topenv(), .GlobalEnv)) {
-    	ht_js = paste(readLines("~/project/InteractiveComplexHeatmap/inst/template/ht.js"), collapse = "\n")
+    	ht_js = paste(readLines("~/project/development/InteractiveComplexHeatmap/inst/template/ht.js"), collapse = "\n")
     } else {
     	ht_js = paste(readLines(system.file("template", "ht.js", package = "InteractiveComplexHeatmap")), collapse = "\n")
     }
@@ -148,7 +159,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
     writeLines(qq(ht_js), con = temp_js)
 
     if(identical(topenv(), .GlobalEnv)) {
-    	ht_css = paste(readLines("~/project/InteractiveComplexHeatmap/inst/template/ht.css"), collapse = "\n")
+    	ht_css = paste(readLines("~/project/development/InteractiveComplexHeatmap/inst/template/ht.css"), collapse = "\n")
     } else {
 		ht_css = paste(readLines(system.file("template", "ht.css", package = "InteractiveComplexHeatmap")), collapse = "\n")
     }
@@ -307,10 +318,6 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 			)
 		)
 	)
-
-	default_output_ui = function() {
-		htmlOutput(qq("@{heatmap_id}_info"))
-	}
 
 	if(identical(output_ui, TRUE)) {
 		output_ui = default_output_ui()

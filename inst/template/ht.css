@@ -84,3 +84,9 @@
 .@{heatmap_id}_widget #@{heatmap_id}_info {
 	max-width: @{width3}px;
 }
+
+.@{heatmap_id}_widget #@{heatmap_id}_output_wrapper@{ifelse(default_output_ui_float, "", "kjsfis")} {
+	background-color: white;
+	border: 1px solid grey;
+	padding: 4px 10px;
+}

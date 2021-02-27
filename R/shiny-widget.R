@@ -19,6 +19,7 @@
 # -action Pass to `InteractiveComplexHeatmapOutput`.
 # -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
 # -output_ui Pass to `InteractiveComplexHeatmapOutput`.
+# -output_ui_float Pass to `InteractiveComplexHeatmapOutput`.
 # -click_action Pass to `makeInteractiveComplexHeatmap`.
 # -brush_action Pass to `makeInteractiveComplexHeatmap`.
 # -js_code Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function
@@ -63,7 +64,7 @@ InteractiveComplexHeatmapModal = function(
 	width3 = ifelse(layout == "(1-2)|3", 800, 370),
 	layout = "(1-2)|3",
 	action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6), 
-	output_ui = TRUE,
+	output_ui = TRUE, output_ui_float = FALSE,
 
 	# parameters passed to makeInteractiveComplexHeatmap()
 	click_action = NULL, brush_action = NULL, 
@@ -95,7 +96,7 @@ InteractiveComplexHeatmapModal = function(
 				),
 				InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,
 					width1 = width1, height1 = height1, width2 = width2, height2 = height2, width3 = width3, layout = layout,
-					action = action, brush_opt = brush_opt, output_ui = output_ui),
+					action = action, brush_opt = brush_opt, output_ui = output_ui, output_ui_float = output_ui_float),
 				if(close_button) {
 					tagList(
 						tags$hr(),
@@ -237,6 +238,7 @@ InteractiveComplexHeatmapModal = function(
 # -action Pass to `InteractiveComplexHeatmapOutput`.
 # -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
 # -output_ui Pass to `InteractiveComplexHeatmapOutput`.
+# -output_ui_float Pass to `InteractiveComplexHeatmapOutput`.
 # -click_action Pass to `makeInteractiveComplexHeatmap`.
 # -brush_action Pass to `makeInteractiveComplexHeatmap`.
 # -js_code Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function
@@ -282,7 +284,7 @@ InteractiveComplexHeatmapWidget = function(
 	width3 = ifelse(layout == "(1-2)|3", 800, 370),
 	layout = "(1-2)|3",
 	action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6), 
-	output_ui = TRUE,
+	output_ui = TRUE, output_ui_float = FALSE,
 
 	# parameters passed to makeInteractiveComplexHeatmap()
 	click_action = NULL, brush_action = NULL, 
@@ -305,7 +307,7 @@ InteractiveComplexHeatmapWidget = function(
 		div(id = qq("@{heatmap_id}_heatmap_widget"),
 			InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,
 				width1 = width1, height1 = height1, width2 = width2, height2 = height2, width3 = width3, layout = layout,
-				action = action, brush_opt = brush_opt, output_ui = output_ui),
+				action = action, brush_opt = brush_opt, output_ui = output_ui, output_ui_float = output_ui_float),
 			if(close_button) {
 				tagList(
 					tags$hr(),

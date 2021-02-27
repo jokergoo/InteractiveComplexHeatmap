@@ -12,7 +12,7 @@ Imports: ComplexHeatmap (>= 2.7.7), grDevices, stats, shiny, grid, GetoptLong,
 Suggests: knitr, rmarkdown, testthat, EnrichedHeatmap, GenomicRanges, data.table,
     circlize, GenomicFeatures, tidyverse, tidyHeatmap, RColorBrewer, cluster,
     org.Hs.eg.db, simplifyEnrichment, GO.db, SC3, GOexpress, SingleCellExperiment,
-    scater, gplots, pheatmap, airway, DESeq2, DT, cola
+    scater, gplots, pheatmap, airway, DESeq2, DT, cola, BiocManager, gridtext
 VignetteBuilder: knitr
 Description: This package can easily make interactive heatmaps which are produced 
     by the ComplexHeatmap package. It provides two types of interactivities: 
