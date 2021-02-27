@@ -1,15 +1,16 @@
 \name{makeInteractiveComplexHeatmap}
 \alias{makeInteractiveComplexHeatmap}
 \title{
-Process the heatmaps on the sever side
+Process heatmaps on the sever side
 }
 \description{
-Process the heatmaps on the sever side
+Process heatmaps on the sever side
 }
 \usage{
 makeInteractiveComplexHeatmap(input, output, session, ht_list,
     heatmap_id = shiny_env$current_heatmap_id,
-    click_action = NULL, hover_action = NULL, dblclick_action = NULL, brush_action = NULL)
+    click_action = NULL, hover_action = NULL,
+    dblclick_action = NULL, brush_action = NULL)
 }
 \arguments{
 
@@ -32,14 +33,14 @@ if(interactive()) {
     ht = Heatmap(m)
     ht = draw(ht)
 
-ui = fluidPage(
+    ui = fluidPage(
         InteractiveComplexHeatmapOutput()
     )
 
-server = function(input, output, session) {
+    server = function(input, output, session) {
         makeInteractiveComplexHeatmap(input, output, session, ht)
     }
 
-shiny::shinyApp(ui, server)
+    shiny::shinyApp(ui, server)
 }
 }

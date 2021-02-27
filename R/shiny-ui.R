@@ -1,6 +1,6 @@
 
 # == title
-# UI for the interactive ComplexHeatmap
+# UI for the interactive complex heatmaps
 #
 # == param
 # -heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
@@ -11,18 +11,21 @@
 # -width2 Width of the sub-heatmap.
 # -height2 Height of the sub-heatmap.
 # -width3 Width of the output div.
-# -layout One of ``(1|2)-3``, ``1-(2|3)``, ``1-2-3``, ``1|2|3``, ``1|(2-3)``.
+# -layout One of ``"(1|2)-3"``, ``"1-(2|3)"``, ``"1-2-3"``, ``"1|2|3"``, ``"1|(2-3)"``.
 # -action Which action for selecting single cell on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`. Do not set an ID for the brush. An internal brush ID is automatically set.
 # -output_ui A `shiny::htmlOutput` or other output object. If it is set to ``NULL``, there is no output in the app.
+#         If it is not set, default response in server side on user's actions (i.e. click, hover or double click)
+#         is used, i.e. to print the value of the clicked/hovered cell when it is a click/hover/double click action or
+#          a runnable code to get the information of the sub-heatmap that was selected from heatmap when it is a brush action.
 # -output_ui_float Whether the UI defined by ``output_ui`` floats at the mouse positions.
 # -css Self-defined CSS code.
 # -... Pass to the UI container which is wrapped by `shiny::fluidPage`.
 #
 # == details
-# This function generates HTML fragment for the interactive UI. See the example from `makeInteractiveComplexHeatmap` page.
+# This function generates HTML fragment for the interactive UI. See the example in `makeInteractiveComplexHeatmap` page.
 #
-# ``layout`` is defined as follows:
+# ``layout`` is defined as follows (``1`` for the original heatmap, ``2`` for the selected sub-heatmap and ``3`` is for the output:
 #
 # - ``"(1-2)|3"``: Heatmap and sub-heatmap are in a same row, and output is in a second row. This is the default layout.
 # - ``"1|(2-3)"``: Heatmap is in a single row, while sub-heatmap and output are in a second row.
@@ -33,7 +36,7 @@
 # The hover event is implemented with https://github.com/websanova/mousestop .
 #
 # == value
-# A UI that can be used in shiny.
+# A UI that can be used in Shiny.
 InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
 	width1 = ifelse(layout == "1|(2-3)", 800, 450), 

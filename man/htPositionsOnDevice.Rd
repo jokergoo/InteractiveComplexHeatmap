@@ -1,10 +1,10 @@
 \name{htPositionsOnDevice}
 \alias{htPositionsOnDevice}
 \title{
-Get the heatmap positions on the graphic device
+Get heatmap positions on the graphics device
 }
 \description{
-Get the heatmap positions on the graphic device
+Get heatmap positions on the graphics device
 }
 \usage{
 htPositionsOnDevice(ht_list = get_last_ht(), unit = "inch", valueOnly = FALSE,
@@ -19,6 +19,9 @@ htPositionsOnDevice(ht_list = get_last_ht(), unit = "inch", valueOnly = FALSE,
   \item{calibrate}{Internally used.}
 
 }
+\details{
+\code{ht_list} must be already updated by \code{draw()} function.
+}
 \value{
 It returns a \code{\link[S4Vectors:DataFrame-class]{DataFrame}} object of the position of every heatmap slice.
 }
@@ -29,6 +32,6 @@ if(dev.interactive()) {
     ht = draw(ht)
     pos = htPositionsOnDevice(ht)
 
-InteractiveComplexHeatmap:::redraw_ht_vp(pos)
+    InteractiveComplexHeatmap:::redraw_ht_vp(pos)
 }
 }

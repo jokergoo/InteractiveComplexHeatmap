@@ -1,10 +1,10 @@
 \name{htShinyExample}
 \alias{htShinyExample}
 \title{
-Examples of the interactive complex heatmaps
+Examples of interactive complex heatmaps
 }
 \description{
-Examples of the interactive complex heatmaps
+Examples of interactive complex heatmaps
 }
 \usage{
 htShinyExample(which)
@@ -15,14 +15,15 @@ htShinyExample(which)
 
 }
 \details{
-The source code of all examples are in \code{systm.file("examples", "examples.R")}.
-
+In every example, there is a Shiny app opened, also including source code that generates this app.
 }
 \value{
 A Shiny app object.
 }
 \examples{
+# list all examples
 htShinyExample()
+
 if(interactive()) {
     htShinyExample(4.2)
 }

@@ -1,6 +1,6 @@
 
 # == title
-# Process the heatmaps on the sever side
+# Process heatmaps on the sever side
 #
 # == param
 # -input Passed from the Shiny server function.
@@ -34,7 +34,8 @@
 # }
 makeInteractiveComplexHeatmap = function(input, output, session, ht_list, 
 	heatmap_id = shiny_env$current_heatmap_id,
-	click_action = NULL, hover_action = NULL, dblclick_action = NULL, brush_action = NULL) {
+	click_action = NULL, hover_action = NULL, 
+	dblclick_action = NULL, brush_action = NULL) {
 
 	if(shiny_env[[heatmap_id]]$action == "hover") {
 		if(!is.null(hover_action)) click_action = hover_action
@@ -652,23 +653,6 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "off")
 
 	})
-}
-
-
-# == title
-# Process the heatmaps on the sever side
-#
-# == param
-# -... All goes to `makeInteractiveComplexHeatmap`.
-#
-# == details
-# The function ``renderInteractiveComplexHeatmap()`` was renamed to ``makeInteractiveComplexHeatmap``
-# to get rid of the confusion of the use of ``render*()`` functions.
-#
-# == value
-# No value is returned.
-renderInteractiveComplexHeatmap = function(...) {
-	makeInteractiveComplexHeatmap(...)
 }
 
 get_pos_from_brush = function(brush) {

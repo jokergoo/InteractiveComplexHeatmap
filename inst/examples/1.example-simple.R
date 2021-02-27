@@ -123,7 +123,7 @@ server = function(input, output, session) {
 shinyApp(ui, server)
 
 ###############################################################
-# title: Demonstrate hover, click and dblclick actions.
+# title: Demonstrate hover, click and dblclick actions to select cells.
 
 m = matrix(rnorm(10*10), 10)
 ht = Heatmap(m)

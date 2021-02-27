@@ -1,7 +1,7 @@
 # Enriched heatmaps
 
 ####################################################################
-# title: An enriched heatmap.
+# title: A single enriched heatmap.
 
 suppressPackageStartupMessages(library(EnrichedHeatmap))
 load(system.file("extdata", "chr21_test_data.RData", package = "EnrichedHeatmap"))
@@ -52,7 +52,7 @@ suppressPackageStartupMessages(library(EnrichedHeatmap))
 
 if(0) {
 # note the following code takes several minutes to run, so the result objects are already generated
-# and you will find the links after the end of this code chunk. (This code chunk is runnable.)
+# and you will find the links after the end of this code chunk. (This code chunk is still runnable.)
 suppressPackageStartupMessages(library(GenomicRanges))
 suppressPackageStartupMessages(library(data.table))
 suppressPackageStartupMessages(library(circlize))
