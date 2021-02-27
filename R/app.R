@@ -20,6 +20,7 @@
 # -layout Pass to `InteractiveComplexHeatmapOutput`.
 # -action Pass to `InteractiveComplexHeatmapOutput`.
 # -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
+# -output_ui_float Pass to `InteractiveComplexHeatmapOutput`.
 #
 # == seealso
 # https://jokergoo.shinyapps.io/interactive_complexHeatmap/
@@ -72,7 +73,8 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 	height2 = 350, 
 	width3 = ifelse(layout == "(1-2)|3", 800, 370),
 	layout = "(1-2)|3",
-	action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6)
+	action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6),
+	output_ui_float = FALSE
 
 	) {
 
@@ -114,7 +116,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 		if(hline) hr() else NULL,
 		InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,
 			width1 = width1, height1 = height1, width2 = width2, height2 = height2, layout = layout,
-			action = action, brush_opt = brush_opt), 
+			action = action, brush_opt = brush_opt, output_ui_float = output_ui_float), 
 		html
 	)
 
@@ -195,9 +197,9 @@ htShinyExample = function(which) {
 			loaded_pkgs = loaded_pkgs[grepl("^package", loaded_pkgs)]
 			loaded_pkgs = gsub("^package:", "", loaded_pkgs)
 			for(pkg in required_pkgs) {
-				if(!requireNamespace(pkg, quietly = TRUE)) {
-					stop(paste0("Package '", pkg, "' should be installed for running this example."))
-				}
+				
+				check_pkg(pkg)
+				
 				if(!pkg %in% loaded_pkgs) {
 					msg = paste0("Note: Namespace 'package:", pkg, "' is inserted into the search list. It might bring conflicts to some functions.")
 					msg = strwrap(msg)
@@ -269,7 +271,7 @@ HTML('<hr /><div style=\"clear:both;\">
 get_examples = function() {
 
 	if(identical(topenv(), .GlobalEnv)) {
-		example_dir = "~/project/InteractiveComplexHeatmap/inst/examples"
+		example_dir = "~/project/development/InteractiveComplexHeatmap/inst/examples"
 	} else {
 		example_dir = system.file("examples", package = "InteractiveComplexHeatmap")
 	}

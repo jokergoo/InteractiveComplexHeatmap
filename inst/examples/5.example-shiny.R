@@ -136,7 +136,9 @@ ht = ht_clusters(mat, cl, word_cloud_grob_param = list(max_width = 80))
 
 suppressPackageStartupMessages(library(GO.db))
 get_go_term = function(go_id) {
-    suppressMessages(AnnotationDbi::select(GO.db, keys = go_id, columns = "TERM")$TERM)
+    term = suppressMessages(AnnotationDbi::select(GO.db, keys = go_id, columns = "TERM")$TERM)
+    term[is.na(term)] = "NA"
+    term
 }
 
 ui = fluidPage(

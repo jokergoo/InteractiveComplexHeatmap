@@ -9,9 +9,10 @@
 # -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object.
 # -heatmap_id The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app, 
 #     this argument does not need to be specified and it will use the current one specified in `InteractiveComplexHeatmapOutput`.
-# -click_action Additional action at the sever side when receiving a click event on the UI. If ``action`` is selected as ``hover``
-#        or ``dblclick`` in `InteractiveComplexHeatmapOutput`, then this argument controls the action for the hover or dblclick event.
-# -brush_action Additional action at the sever side when receiving a brush event on the UI.
+# -click_action Additional action at the server side when receiving a click event on the UI.
+# -hover_action Additional action at the server side when receiving a hover event on the UI.
+# -dblclick_action Additional action at the server side when receiving a dblclick event on the UI.
+# -brush_action Additional action at the server side when receiving a brush event on the UI.
 #
 # == value
 # No value is returned.
@@ -33,8 +34,14 @@
 # }
 makeInteractiveComplexHeatmap = function(input, output, session, ht_list, 
 	heatmap_id = shiny_env$current_heatmap_id,
-	click_action = NULL, brush_action = NULL) {
+	click_action = NULL, hover_action = NULL, dblclick_action = NULL, brush_action = NULL) {
 
+	if(shiny_env[[heatmap_id]]$action == "hover") {
+		if(!is.null(hover_action)) click_action = hover_action
+	}
+	if(shiny_env[[heatmap_id]]$action == "dblclick") {
+		if(!is.null(dblclick_action)) click_action = dblclick_action
+	}
 	do_default_click_action = shiny_env[[heatmap_id]]$default_output_ui
 	do_default_brush_action = shiny_env[[heatmap_id]]$default_output_ui
 

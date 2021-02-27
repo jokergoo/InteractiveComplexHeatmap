@@ -17,4 +17,5 @@ all_column_indices(df)
 \examples{
 # There is no example
 NULL
+
 }

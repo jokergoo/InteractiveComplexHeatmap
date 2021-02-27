@@ -60,3 +60,27 @@ all_column_indices = function(df) {
 # == example
 # data(rand_mat)
 # rand_mat
+
+
+
+check_pkg = function(pkg) {
+	if(requireNamespace(pkg, quietly = TRUE)) {
+		return(NULL)
+	} else {
+
+		if(!interactive()) {
+			stop_wrap(qq("You need to manually install package '@{pkg}' CRAN/Bioconductor."))
+		}
+
+		answer = readline(qq("Package '@{pkg}' is required but not installed. Do you want to install it? [y|n] "))
+
+		if(tolower(answer) %in% c("y", "yes")) {
+			if(!requireNamespace("BiocManager", quietly = TRUE)) {
+				install.packages("BiocManager")
+			}
+			BiocManager::install(pkg)
+		} else {
+			stop_wrap(qq("You need to manually install package '@{pkg}' from CRAN/Bioconductor."))
+		}
+	}
+}

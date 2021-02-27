@@ -12,7 +12,7 @@ htPositionsOnDevice(ht_list = get_last_ht(), unit = "inch", valueOnly = FALSE,
 }
 \arguments{
 
-  \item{ht_list}{A \code{\link[ComplexHeatmap]{HeatmapList-class}} object returned by \code{\link[ComplexHeatmap:draw-Heatmap-method]{draw,Heatmap-method}} or \code{\link[ComplexHeatmap:draw-HeatmapList-method]{draw,HeatmapList-method}}.}
+  \item{ht_list}{A \code{\link[ComplexHeatmap]{HeatmapList-class}} object returned by \code{\link[ComplexHeatmap:draw-Heatmap-method]{draw,Heatmap-method}} or \code{\link[ComplexHeatmap:draw-HeatmapList-method]{draw,HeatmapList-method}}. If it is omitted, it uses the last generated heatmap.}
   \item{unit}{The unit.}
   \item{valueOnly}{Whether only return the numeric values.}
   \item{include_annotation}{Internally used.}
@@ -29,6 +29,6 @@ if(dev.interactive()) {
     ht = draw(ht)
     pos = htPositionsOnDevice(ht)
 
-    InteractiveComplexHeatmap:::redraw_ht_vp(pos)
+InteractiveComplexHeatmap:::redraw_ht_vp(pos)
 }
 }

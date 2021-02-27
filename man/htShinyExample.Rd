@@ -11,7 +11,7 @@ htShinyExample(which)
 }
 \arguments{
 
-  \item{which}{An integer of which example to use. The list of all examples can be obtained by executing \code{\link{htShinyExample}} with no argument.}
+  \item{which}{An index of which example to use. The list of all examples can be obtained by executing \code{\link{htShinyExample}} with no argument.}
 
 }
 \details{

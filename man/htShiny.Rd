@@ -18,7 +18,8 @@ htShiny(ht_list = get_last_ht(), title = NULL,
     height2 = 350,
     width3 = ifelse(layout == "(1-2)|3", 800, 370),
     layout = "(1-2)|3",
-    action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6)
+    action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6),
+    output_ui_float = FALSE
     )
 }
 \arguments{
@@ -39,6 +40,7 @@ htShiny(ht_list = get_last_ht(), title = NULL,
   \item{layout}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{action}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{brush_opt}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{output_ui_float}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
 
 }
 \seealso{
@@ -61,7 +63,7 @@ if(interactive()) {
     rownames(m) = 1:10
     colnames(m) = 1:10
 
-    ht = Heatmap(m)
+ht = Heatmap(m)
     ht = draw(ht)
     htShiny(ht)
 }
@@ -72,13 +74,13 @@ if(interactive()) {
     colnames(m1) = 1:10
     ht1 = Heatmap(m1, row_km = 2, column_km = 2)
 
-    m2 = matrix(sample(letters[1:10], 100, replace = TRUE), 10)
+m2 = matrix(sample(letters[1:10], 100, replace = TRUE), 10)
     ht2 = Heatmap(m2)
 
-    ht_list = draw(ht1 + ht2)
+ht_list = draw(ht1 + ht2)
     htShiny(ht_list)
 
-    ht_list = ht1 \%v\% ht2
+ht_list = ht1 \%v\% ht2
     htShiny(ht_list)
 }
 }
