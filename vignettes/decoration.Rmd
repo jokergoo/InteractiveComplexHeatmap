@@ -1,5 +1,5 @@
 ---
-title: "Decorations on the heatmaps"
+title: "Decorations on heatmaps"
 author: "Zuguang Gu ( z.gu@dkfz.de )"
 date: "`r Sys.Date()`"
 output: 
@@ -7,7 +7,7 @@ output:
         width: 8
         fig_width: 5
 vignette: >
-  %\VignetteIndexEntry{4. Decorations on the heatmaps}
+  %\VignetteIndexEntry{4. Decorations on heatmaps}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -25,11 +25,11 @@ knitr::opts_chunk$set(
 suppressPackageStartupMessages(library(InteractiveComplexHeatmap))
 ```
 
-In **ComplexHeatmap**, functions `decorate_*()` are used to add graphics after
-the heatmaps are drawn. To also put the decoration graphics in the heatmaps in
+In **ComplexHeatmap**, functions `decorate_*()` (_e.g._ `decorate_annotation()`) are used to add graphics after
+the heatmaps are drawn. To also put the decoration graphics in heatmaps in
 the Shiny app, user needs to wrap all the decoration code into a function and
-send it to `post_fun` argument in `draw()` function. For example, the following
-code to generate a decorated heatmap:
+send it with `post_fun` argument to `draw()` function. For example, the following
+code generates a decorated heatmap:
 
 ```{r, eval = FALSE}
 library(ComplexHeatmap)
@@ -42,7 +42,7 @@ decorate_heatmap_body("foo", {
 ```
 
 To export it as a Shiny app also with decorations, the code needs to be slightly 
-adjusted as:
+adjusted to:
 
 ```{r, eval = FALSE}
 library(InteractiveComplexHeatmap)
@@ -75,7 +75,7 @@ post_fun = function(ht_list) {
 }
 ```
 
-Note the decorations will not be applied on the sub-heatmap.
+Note the decorations will not be applied on the sub-heatmap, so you will not see the decoration graphics there.
 
 <br>
 <br>
