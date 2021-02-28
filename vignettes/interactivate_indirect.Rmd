@@ -37,7 +37,7 @@ library(GOexpress)
 With **InteractiveComplexHeatmap**, the following heatmaps can be exported as an interactive Shiny app:
 
 1. heatmaps directly produced from **ComplexHeatmap**,
-2. heatmaps from other functions or packages which are implement with **ComplexHeatmap**,
+2. heatmaps from other functions or packages which are implemented with **ComplexHeatmap**,
 3. heatmaps originally produced by `stats::heatmap()`, `gplots::heatmap.2()`
    and `pheatmap::pheatmap()`, but can be reproduced by the "translation
    functions": `ComplexHeatmap:::heatmap()`, `ComplexHeatmap:::heatmap.2()`
@@ -55,7 +55,7 @@ which means you don't need to touch your heatmap code. After you see the heatmap
 directly calling `htShiny()` with no argument will produce an interactive heatmap, like magic. :P
 
 Now there is a fourth scenario where the heatmap is produced by third-party
-functions which uses `stats::heatmap()`, `gplots::heatmap.2()` or
+functions which internally use `stats::heatmap()`, `gplots::heatmap.2()` or
 `pheatmap::pheatmap()`. Since now we cannot directly interact with
 `heatmap()`, `heatmap.2()` or `pheatmap()`, how can we turn these heatmaps into
 interactive? The solution is fairly simple. We just need to go to _e.g._ **pheatmap**
@@ -114,7 +114,7 @@ selectMethod("sc3_plot_expression", signature = "SingleCellExperiment")
 
 In this case, changing `pheatmap` in **pheatmap** namespace directly affects `sc3_plot_expression()`.
 
-However, if the heatmap function is called without adding the namespace, you
+However, if the heatmap function is called without adding the namespace (_e.g._, in previous example, the `pheatmap::` prefix), you
 need to first unload the package, modify the heatmap function in the heatmap
 namespace and later load the package back.
 

@@ -1,5 +1,5 @@
 ---
-title: "How interactive ComplexHeatmap is implemented"
+title: "How interactive complex heatmap is implemented"
 author: "Zuguang Gu ( z.gu@dkfz.de )"
 date: "`r Sys.Date()`"
 output: 
@@ -7,7 +7,7 @@ output:
         width: 8
         fig_width: 5
 vignette: >
-  %\VignetteIndexEntry{2. How interactive ComplexHeatmap is implemented}
+  %\VignetteIndexEntry{2. How interactive complex heatmap is implemented}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -38,7 +38,7 @@ which requires interactivity on the heatmaps. The **ComplexHeatmap** package
 is well known for generating **static heatmaps** (a single heatmap or a list
 of heatmaps, possible with complex annotations). Here the package
 **InteractiveComplexHeatmap** brings interactivity to **ComplexHeatmap**. The
-new functionalities allow users to capture sub-heatmaps by clicking or
+new functionalities allow users to capture sub-heatmaps by clicking/hovering single cells or
 selecting areas from heatmaps.
 
 Unlike other packages which support interactive heatmaps based on JavaScript,
@@ -100,6 +100,8 @@ Before executing `htPositionsOnDevice()`, the heatmap should be drawn on the
 device and the layout of heatmaps should have been generated. Thus, the heatmap object
 `ht_list` should be updated explictly by the `draw()` function.
 
+The following code draws the heatmap in a device with 6 inches width and 4 inches height.
+
 ```{r, fig.width = 6, fig.height = 4}
 ht_list = draw(ht_list)
 pos = htPositionsOnDevice(ht_list)
@@ -119,11 +121,7 @@ We can confirm whether the positions are correctly captured by the following
 code. In the next figure, black rectangles correspond to the heatmap slices
 and the dashed rectangle corresponds to the border of the whole image.
 
-```{r, fig.width = 6, fig.height = 4}
-# If you try the code in your interactive R session, you need the following 
-# two lines to open a new device with the same size as the current one.
-# ds = dev.size()
-# dev.new(width = ds[1], height = ds[2])
+```{r, fig.width = 6, fig.height = 4, echo = FALSE}
 grid.newpage()
 grid.rect(gp = gpar(lty = 2))
 for(i in seq_len(nrow(pos))) {
@@ -136,6 +134,23 @@ for(i in seq_len(nrow(pos))) {
 		just = c("left", "bottom")))
 	grid.rect()
 	upViewport()
+}
+```
+
+```{r, fig.width = 6, fig.height = 4, eval = FALSE}
+dev.new(width = 6, height = 4)
+grid.newpage()
+grid.rect(gp = gpar(lty = 2))
+for(i in seq_len(nrow(pos))) {
+  x_min = pos[i, "x_min"]
+  x_max = pos[i, "x_max"]
+  y_min = pos[i, "y_min"]
+  y_max = pos[i, "y_max"]
+  pushViewport(viewport(x = x_min, y = y_min, name = pos[i, "slice"],
+    width = x_max - x_min, height = y_max - y_min,
+    just = c("left", "bottom")))
+  grid.rect()
+  upViewport()
 }
 ```
 
@@ -270,26 +285,47 @@ in `selectPosition()` and `pos1`/`pos2` in `selectArea()` to simulate clicks.
 The values for `pos`, `pos1` and `pos2` all should be a `unit` object of
 length two which correspond to the x and y coordinate of the positions.
 
-```{r, fig.width = 6, fig.height = 4}
+
+```{r, fig.width = 6, fig.height = 4, eval = FALSE}
+pdf(...)
+ht_list = draw(ht_list)
+pos = selectPosition(ht_list, pos = unit(c(3, 3), "cm"))
+dev.off()
+```
+
+```{r, fig.width = 6, fig.height = 4, echo = FALSE}
 # pdf(...) or png(...) or other devices, because under this vignette generation, it is
 # already under a png() device, I don't need to call `png()` explictly.
 ht_list = draw(ht_list)
 pos = selectPosition(ht_list, pos = unit(c(3, 3), "cm"))
-pos
 # remember to dev.off()
 ```
 
-```{r, fig.width = 6, fig.height = 4}
+```{r}
+pos
+```
+
+```{r, fig.width = 6, fig.height = 4, eval = FALSE}
+pdf(...)
+ht_list = draw(ht_list)
+pos = selectArea(ht_list, pos1 = unit(c(3, 3), "cm"), pos2 = unit(c(5, 5), "cm"))
+dev.off()
+```
+
+```{r, fig.width = 6, fig.height = 4, echo = FALSE}
 # pdf(...) or png(...) or other devices
 ht_list = draw(ht_list)
 pos = selectArea(ht_list, pos1 = unit(c(3, 3), "cm"), pos2 = unit(c(5, 5), "cm"))
-pos
 # remember to dev.off()
+```
+
+```{r}
+pos
 ```
 
 Users do not need to use this functionality directly with an off-screen
 graphics device, however, it is very useful when developing a Shiny app where
-the plot is actually under an off-screen graphics device. I will explain it in
+the plot is actually generated under an off-screen graphics device. I will explain it in
 the next section.
 
 ## Shiny app

@@ -211,6 +211,8 @@ on when **InteractiveComplexHeatmap** packags is loaded, which means,
 `library(InteractiveComplexHeatmap)` should be called before making the
 heatmap, or you need to explicitly set `ComplexHeatmap::ht_opt(save_last = TRUE)`.
 
+Examples are in `htShinyExample(1.6)` and `htShinyExample(1.7)`.
+
 Nevertheless, if possible, I still suggest to explictly put the heatmap object
 in `htShiny()` which makes it clear which heatmap is becoming interactive.
 
@@ -227,8 +229,35 @@ you can see in the sub-heatmap. An example is as follows:
 
 
 ```{r, echo = FALSE, out.width = "100%"}
-include_graphics("https://jokergoo.github.io/images/recursive.gif?1")
+include_graphics("https://jokergoo.github.io/images/recursive.gif")
 ```
+
+## Floating output at mouse positions
+
+The output which contains information of the clicked cell or the sub-heatmap by default
+is placed below the heatmaps. Argument `output_ui_float` can be set to `TRUE` so that 
+the output is floating at the positions of mouse.
+
+
+```{r, eval = FALSE}
+htShiny(ht, output_ui_float = TRUE)
+```
+
+As will be explained in [the vignette "Functions for Shiny app development"](shiny_dev.html),
+the output can be self-defined to put customized information. 
+
+There are two examples that can be found with `htShinyExample(9.1)` and `htShinyExample(9.2)`.
+The demonstration is as follows:
+
+<blockquote class="twitter-tweet"><p lang="en" dir="ltr">The second figure shows a self-defined output. The heatmap visualizes GO similarities. <a href="https://t.co/MmKG035BDE">pic.twitter.com/MmKG035BDE</a></p>&mdash; Zuguang Gu (@jokergoo_gu) <a href="https://twitter.com/jokergoo_gu/status/1365399153845678084?ref_src=twsrc%5Etfw">February 26, 2021</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+## Layout
+
+There are three main components in the interactive heatmap UI, _i.e._, the
+orignal heatmap, the sub-heatmap and an output that shows information of the clicked cell or 
+the selected sub-heatmap. The layout of the three components are controlled via `layout` argument,
+see [the vignette "Functions for Shiny app development"](shiny_dev.html#customize-the-widgets) for detailed explanation of the `layout` argument.
+
 
 ## Live examples
 
@@ -438,7 +467,7 @@ htShinyExample()
 ```
 
 You can select one specific example by sending the corresponding index to
-`htShinyExample()`, e.g. to run the example "4. A single heatmap where rows
+`htShinyExample()`, e.g. to run the example "1.4 A single heatmap where rows
 and columns are split.", simply run:
 
 ```{r, eval = FALSE}
@@ -456,44 +485,3 @@ Have fun!
 sessionInfo()
 ```
 
-
-```{r, echo = FALSE, results = "hide"}
-# to get rid of the BiocCheck warning
-invisible(NULL)
-```
-
-```{r, echo = FALSE, results = "hide"}
-invisible(NULL)
-```
-
-```{r, echo = FALSE, results = "hide"}
-invisible(NULL)
-```
-
-```{r, echo = FALSE, results = "hide"}
-invisible(NULL)
-```
-
-```{r, echo = FALSE, results = "hide"}
-invisible(NULL)
-```
-
-```{r, echo = FALSE, results = "hide"}
-invisible(NULL)
-```
-
-```{r, echo = FALSE, results = "hide"}
-invisible(NULL)
-```
-
-```{r, echo = FALSE, results = "hide"}
-invisible(NULL)
-```
-
-```{r, echo = FALSE, results = "hide"}
-invisible(NULL)
-```
-
-```{r, echo = FALSE, results = "hide"}
-invisible(NULL)
-```

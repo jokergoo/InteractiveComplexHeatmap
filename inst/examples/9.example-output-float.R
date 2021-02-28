@@ -32,7 +32,7 @@ server = function(input, output, session) {
 shinyApp(ui, server)
 
 ########################################################
-# title: floating self-defined outputs.
+# title: Floating self-defined outputs.
 
 library(GetoptLong)
 suppressPackageStartupMessages(library(simplifyEnrichment))

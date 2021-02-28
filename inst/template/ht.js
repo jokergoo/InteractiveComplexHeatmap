@@ -451,7 +451,7 @@ function @{heatmap_id}_create_color_picker() {
 	}
 
 	if('@{output_ui_float}' == 'TRUE') {
-		var default_message = "Loading... Don't move your mouse.";
+		var default_message = "Retrieving from server... Don't move mouse.";
 		$('#@{heatmap_id}_output_wrapper').css({'position':'absolute','right':-10000,'left':'auto'});
 	    if('@{shiny_env[[heatmap_id]]$action}' == "hover") {
 	    	var @{heatmap_id}_absX;
