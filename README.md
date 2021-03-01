@@ -173,6 +173,7 @@ htShinyExample()
 ##  1.6 Use last generated heatmap, an example from cola package.
 ##  1.7 Use last generated heatmap, an app with three interactive heatmaps
 ##  1.8 Demonstrate hover, click and dblclick actions.
+##  1.9 Only response to one of click/hover/dblclick/hover events.
 ## 
 ## ──────── 2. On other plots and packages ─────────────────────────────────────────────
 ##  2.1 A density heatmap.
@@ -239,6 +240,7 @@ htShinyExample()
 ##  9.1 A simple example that demonstrates output UI floating with the three
 ##      actions: hover, click and dblclick.
 ##  9.2 floating self-defined outputs.
+##  9.3 Floating output only from one event.
 ## 
 ```
 
