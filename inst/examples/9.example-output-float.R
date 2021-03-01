@@ -111,13 +111,13 @@ ht = Heatmap(m)
 ht = draw(ht)
 
 ui = tabsetPanel(
-    tabPanel("hover",  InteractiveComplexHeatmapOutput("heatmap_1", action = "hover", 
+    tabPanel("response = 'hover'",  InteractiveComplexHeatmapOutput("heatmap_1", action = "hover", 
         response = "hover", output_ui_float = TRUE)),
-    tabPanel("click", InteractiveComplexHeatmapOutput("heatmap_2", action = "click", 
+    tabPanel("response = 'click'", InteractiveComplexHeatmapOutput("heatmap_2", action = "click", 
         response = "click", output_ui_float = TRUE)),
-    tabPanel("dblclick", InteractiveComplexHeatmapOutput("heatmap_3", action = "dblclick", 
+    tabPanel("response = 'dblclick'", InteractiveComplexHeatmapOutput("heatmap_3", action = "dblclick", 
         response = "dblclick", output_ui_float = TRUE)),
-    tabPanel("brush",  InteractiveComplexHeatmapOutput("heatmap_4", 
+    tabPanel("response = 'brush'",  InteractiveComplexHeatmapOutput("heatmap_4", 
         response = "brush", output_ui_float = TRUE))
 )
 

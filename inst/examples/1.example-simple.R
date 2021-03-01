@@ -152,10 +152,10 @@ ht = Heatmap(m)
 ht = draw(ht)
 
 ui = tabsetPanel(
-    tabPanel("hover",  InteractiveComplexHeatmapOutput("heatmap_1", action = "hover", response = "hover")),
-    tabPanel("click", InteractiveComplexHeatmapOutput("heatmap_2", action = "click", response = "click")),
-    tabPanel("dblclick", InteractiveComplexHeatmapOutput("heatmap_3", action = "dblclick", response = "dblclick")),
-    tabPanel("brush",  InteractiveComplexHeatmapOutput("heatmap_4", response = "brush"))
+    tabPanel("response = 'hover'",  InteractiveComplexHeatmapOutput("heatmap_1", action = "hover", response = "hover")),
+    tabPanel("response = 'click'", InteractiveComplexHeatmapOutput("heatmap_2", action = "click", response = "click")),
+    tabPanel("response = 'dblclick'", InteractiveComplexHeatmapOutput("heatmap_3", action = "dblclick", response = "dblclick")),
+    tabPanel("response = 'brush'",  InteractiveComplexHeatmapOutput("heatmap_4", response = "brush"))
 )
 
 server = function(input, output, session) {

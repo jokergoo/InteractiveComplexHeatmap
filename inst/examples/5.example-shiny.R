@@ -342,8 +342,9 @@ ht = Heatmap(cor_mat, name = "Correlation",
 
 
 ui = fluidPage(
-    InteractiveComplexHeatmapOutput(),
-    plotOutput("scatterplot", width = 400, height = 400)
+    InteractiveComplexHeatmapOutput(response = "click", 
+        output_ui = plotOutput("scatterplot", width = 400, height = 400))
+    
 )
 
 click_action = function(df, output) {
