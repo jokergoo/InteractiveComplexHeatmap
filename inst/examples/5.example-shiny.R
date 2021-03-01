@@ -349,8 +349,8 @@ ui = fluidPage(
 click_action = function(df, output) {
     output$scatterplot = renderPlot({
         nm = colnames(mtcars)
-        i1 = df$row_index
-        i2 = df$column_index
+        i1 = df$column_index
+        i2 = df$row_index
 
         x = mtcars[, nm[i1]]
         y = mtcars[, nm[i2]]

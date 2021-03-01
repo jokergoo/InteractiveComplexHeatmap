@@ -132,7 +132,7 @@ ht = draw(ht)
 ui = tabsetPanel(
     tabPanel("hover",  InteractiveComplexHeatmapOutput("heatmap_1", action = "hover")),
     tabPanel("click", InteractiveComplexHeatmapOutput("heatmap_2", action = "click")),
-    tabPanel("dblclick",  InteractiveComplexHeatmapOutput("heatmap_3", action = "dblclick"))
+    tabPanel("dblclick", InteractiveComplexHeatmapOutput("heatmap_3", action = "dblclick"))
 )
 
 
@@ -140,6 +140,29 @@ server = function(input, output, session) {
     makeInteractiveComplexHeatmap(input, output, session, ht, "heatmap_1")
     makeInteractiveComplexHeatmap(input, output, session, ht, "heatmap_2")
     makeInteractiveComplexHeatmap(input, output, session, ht, "heatmap_3")
+}
+
+shinyApp(ui, server)
+
+################################################################
+# title: Only response to one of click/hover/dblclick/hover events.
+
+m = matrix(rnorm(10*10), 10)
+ht = Heatmap(m)
+ht = draw(ht)
+
+ui = tabsetPanel(
+    tabPanel("hover",  InteractiveComplexHeatmapOutput("heatmap_1", action = "hover", response = "hover")),
+    tabPanel("click", InteractiveComplexHeatmapOutput("heatmap_2", action = "click", response = "click")),
+    tabPanel("dblclick", InteractiveComplexHeatmapOutput("heatmap_3", action = "dblclick", response = "dblclick")),
+    tabPanel("brush",  InteractiveComplexHeatmapOutput("heatmap_4", response = "brush"))
+)
+
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht, "heatmap_1")
+    makeInteractiveComplexHeatmap(input, output, session, ht, "heatmap_2")
+    makeInteractiveComplexHeatmap(input, output, session, ht, "heatmap_3")
+    makeInteractiveComplexHeatmap(input, output, session, ht, "heatmap_4")
 }
 
 shinyApp(ui, server)

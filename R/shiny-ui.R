@@ -11,8 +11,11 @@
 # -width2 Width of the sub-heatmap.
 # -height2 Height of the sub-heatmap.
 # -width3 Width of the output div.
-# -layout One of ``"(1|2)-3"``, ``"1-(2|3)"``, ``"1-2-3"``, ``"1|2|3"``, ``"1|(2-3)"``.
+# -layout One of ``"(1|2)-3"``, ``"1-(2|3)"``, ``"1-2-3"``, ``"1|2|3"``, ``"1|(2-3)"``. If there is no response
+#   to ``brush`` which is set with the ``response`` argument, the code ``2`` can be omitted.
 # -action Which action for selecting single cell on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
+# -response Which action needs to be respond on the server side. Value should be in ``click``/``hover``/``dblclick`` and ``brush``.
+#      Please note, if ``brush`` is not selected, there is no "search tool" in the main heatmap.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`. Do not set an ID for the brush. An internal brush ID is automatically set.
 # -output_ui A `shiny::htmlOutput` or other output object. If it is set to ``NULL``, there is no output in the app.
 #         If it is not set, default response in server side on user's actions (i.e. click, hover or double click)
@@ -44,8 +47,9 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	width2 = 370, 
 	height2 = 350, 
 	width3 = ifelse(default_output_ui_float, 370, ifelse(layout == "(1-2)|3", 800, 370)),
-	layout = "(1-2)|3",
+	layout = ifelse("brush" %in% response, "(1-2)|3", "1-3"),
 	action = "click", 
+	response = c(action, "brush"),
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_ui = default_output_ui(), 
 	output_ui_float = FALSE,
@@ -70,8 +74,6 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	shiny_env[[heatmap_id]] = list()
 	shiny_env$current_heatmap_id = heatmap_id
 
-	shiny_env[[heatmap_id]]$action = action
-
 	default_output_ui_float = output_ui_float & identical(output_ui, default_output_ui())
 
 	shiny_env[[heatmap_id]]$output_ui_float = output_ui_float
@@ -91,6 +93,29 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		hover = NULL
 	} else {
 		stop_wrap("`action` can only be one of `click`, `hover` and `dblclick`.")
+	}
+	brush = do.call(brushOpts, c(list(id = qq("@{heatmap_id}_heatmap_brush")), brush_opt))
+
+	shiny_env[[heatmap_id]]$action = action
+	response2 = NULL
+	if(any(response %in% "brush")) response2 = c(response2, "brush")
+	if(any(response %in% c("click", "hover", "dblclick"))) response2 = c(response2, "click")
+	response = response2
+	if(length(response) == 0) {
+		stop_wrap("response can only be click/hover/dblclick + brush.")
+	}
+	shiny_env[[heatmap_id]]$response = response
+
+	has_click_reponse = "click" %in% response
+	has_brush_response = "brush" %in% response
+
+	if(!has_click_reponse) {
+		click = NULL
+		dblclick = NULL
+		hover = NULL
+	}
+	if(!has_brush_response) {
+		brush = NULL
 	}
 
 	if(is.null(css)) {css = ""}
@@ -181,7 +206,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		h5(title1),
 		div(id = qq("@{heatmap_id}_heatmap_resize"),
 			plotOutput(qq("@{heatmap_id}_heatmap"), height = height1, width = width1,
-				        brush = do.call(brushOpts, c(list(id = qq("@{heatmap_id}_heatmap_brush")), brush_opt)),
+				        brush = brush,
 				        click = click, dblclick = dblclick, hover = hover
 			),
 			tags$script(HTML(qq("
@@ -190,60 +215,64 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		),
 		div(id = qq("@{heatmap_id}_heatmap_control"),
 			style = "display:none;",
-			tabsetPanel(
-				tabPanel(HTML("<i class='fa fa-search'></i>"),
-					div(id = qq('@{heatmap_id}_tabs-search'), 
-						div(textInput(qq("@{heatmap_id}_keyword"), placeholder = "Multiple keywords separated by ','", label = "Keywords"), style = "width:250px;float:left;"),
-						div(checkboxInput(qq("@{heatmap_id}_search_regexpr"), label = "Regular expression", value = FALSE), style = "width:150px;float:left;padding-top:20px;padding-left:4px;"),
-						div(style = "clear: both;"),
-						radioButtons(qq("@{heatmap_id}_search_where"), label = "Which dimension to search?", choices = list("on rows" = 1, "on columns" = 2), selected = 1, inline = TRUE),
-						checkboxGroupInput(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = "loading", choiceValues = "", selected = ""),
-						checkboxGroupInput(qq("@{heatmap_id}_search_extend"), label = "Extend sub-heatmap to all heatmaps and annotations?", choiceNames = "yes", choiceValues = 1, selected = NULL),
-						actionButton(qq("@{heatmap_id}_search_action"), label = "Search")
-					),
-					p("Search Heatmap", style = "display:none;")
-				),
-				tabPanel(HTML("<i class='fa fa-brush'></i>"),
-					div(
-						id = qq('@{heatmap_id}_tabs-brush'),
-						HTML(qq('
-							<div class="form-group shiny-input-container" style="float:left; width:120px;">
-							<label>Brush border</label>
-							<div id="@{heatmap_id}_color_pickers_border"></div>
-							</div>
-							<div class="form-group shiny-input-container" style="float:left; width:120px;">
-							<label>Brush fill</label>
-							<div id="@{heatmap_id}_color_pickers_fill"></div>
-							</div>
-							<div style="clear:both;"></div>')
+			{
+				tbl = list(
+					tabPanel(HTML("<i class='fa fa-search'></i>"),
+						div(id = qq('@{heatmap_id}_tabs-search'), 
+							div(textInput(qq("@{heatmap_id}_keyword"), placeholder = "Multiple keywords separated by ','", label = "Keywords"), style = "width:250px;float:left;"),
+							div(checkboxInput(qq("@{heatmap_id}_search_regexpr"), label = "Regular expression", value = FALSE), style = "width:150px;float:left;padding-top:20px;padding-left:4px;"),
+							div(style = "clear: both;"),
+							radioButtons(qq("@{heatmap_id}_search_where"), label = "Which dimension to search?", choices = list("on rows" = 1, "on columns" = 2), selected = 1, inline = TRUE),
+							checkboxGroupInput(qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = "loading", choiceValues = "", selected = ""),
+							checkboxGroupInput(qq("@{heatmap_id}_search_extend"), label = "Extend sub-heatmap to all heatmaps and annotations?", choiceNames = "yes", choiceValues = 1, selected = NULL),
+							actionButton(qq("@{heatmap_id}_search_action"), label = "Search")
 						),
-						selectizeInput(qq("@{heatmap_id}_color_pickers_border_width"), label = "Border width", 
-							choices = list("1px" = 1, "2px" = 2, "3px" = 3), selected = 1,
-							options = list(render = I("{
-									option: function(item, escape) {
-										return '<div><hr style=\"border-top:' + item.value + 'px solid black;\"></div>'
-									}
-								}"))),
-						sliderInput(qq("@{heatmap_id}_color_pickers_opacity"), label = "Opacity", min = 0, max = 1, value = pickr_opacity)
-					)
-				),
-				tabPanel(HTML("<i class='fa fa-images'></i>"),
-					div(
-						id = qq('@{heatmap_id}_tabs-save-image'),
-						radioButtons(qq("@{heatmap_id}_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
-						numericInput(qq("@{heatmap_id}_heatmap_download_image_width"), label = "Image width (in px)", value = width1),
-						numericInput(qq("@{heatmap_id}_heatmap_download_image_height"), label = "Image height (in px)", value = height1),
-						downloadButton(qq("@{heatmap_id}_heatmap_download_button"), "Save image")
-					)
-				),
-				tabPanel(HTML("<i class='fa fa-expand-arrows-alt'></i>"),
-					div(id = qq('@{heatmap_id}_tabs-resize'),
-						numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", width1),
-						numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", height1),
-						actionButton(qq("@{heatmap_id}_heatmap_input_size_button"), "Change image size")
+						p("Search Heatmap", style = "display:none;")
+					),
+					tabPanel(HTML("<i class='fa fa-brush'></i>"),
+						div(
+							id = qq('@{heatmap_id}_tabs-brush'),
+							HTML(qq('
+								<div class="form-group shiny-input-container" style="float:left; width:120px;">
+								<label>Brush border</label>
+								<div id="@{heatmap_id}_color_pickers_border"></div>
+								</div>
+								<div class="form-group shiny-input-container" style="float:left; width:120px;">
+								<label>Brush fill</label>
+								<div id="@{heatmap_id}_color_pickers_fill"></div>
+								</div>
+								<div style="clear:both;"></div>')
+							),
+							selectizeInput(qq("@{heatmap_id}_color_pickers_border_width"), label = "Border width", 
+								choices = list("1px" = 1, "2px" = 2, "3px" = 3), selected = 1,
+								options = list(render = I("{
+										option: function(item, escape) {
+											return '<div><hr style=\"border-top:' + item.value + 'px solid black;\"></div>'
+										}
+									}"))),
+							sliderInput(qq("@{heatmap_id}_color_pickers_opacity"), label = "Opacity", min = 0, max = 1, value = pickr_opacity)
+						)
+					),
+					tabPanel(HTML("<i class='fa fa-images'></i>"),
+						div(
+							id = qq('@{heatmap_id}_tabs-save-image'),
+							radioButtons(qq("@{heatmap_id}_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
+							numericInput(qq("@{heatmap_id}_heatmap_download_image_width"), label = "Image width (in px)", value = width1),
+							numericInput(qq("@{heatmap_id}_heatmap_download_image_height"), label = "Image height (in px)", value = height1),
+							downloadButton(qq("@{heatmap_id}_heatmap_download_button"), "Save image")
+						)
+					),
+					tabPanel(HTML("<i class='fa fa-expand-arrows-alt'></i>"),
+						div(id = qq('@{heatmap_id}_tabs-resize'),
+							numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", width1),
+							numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", height1),
+							actionButton(qq("@{heatmap_id}_heatmap_input_size_button"), "Change image size")
+						)
 					)
 				)
-			)
+				if(!has_brush_response) tbl = tbl[-1]
+				do.call(tabsetPanel, tbl)
+			}
 		)
 	)
 
@@ -340,7 +369,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		style = qq("width: @{width3}px;")
 	)
 
-	if(layout %in% c("(1-2)|3", "12|3")) {
+	if(layout %in% c("(1-2)|3", "12|3", "1|3", "(1)|3", "1|(3)")) {
 		layout_css = qq("
 			.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
 				float:left;
@@ -352,7 +381,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 
 		tl = tagList(
 			main_heatmap_ui, 
-			sub_heatmap_ui,
+			if(has_brush_response) sub_heatmap_ui else NULL,
 			div(style = "clear: both;"),
 			output_ui
 		)
@@ -368,10 +397,10 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 
 		tl = tagList(
 			main_heatmap_ui, 
-			sub_heatmap_ui,
+			if(has_brush_response) sub_heatmap_ui else NULL,
 			output_ui
 		)
-	} else if(layout %in% c("1-2-3", "123")) {
+	} else if(layout %in% c("1-2-3", "123", "13", "1-3")) {
 		layout_css = qq("
 			.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
 				float:left;
@@ -386,14 +415,14 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 
 		tl = tagList(
 			main_heatmap_ui, 
-			sub_heatmap_ui,
+			if(has_brush_response) sub_heatmap_ui else NULL,
 			output_ui
 		)
-	} else if(layout %in% c("1|2|3")) {
+	} else if(layout %in% c("1|2|3", "1|3")) {
 		layout_css = ""
 		tl = tagList(
 			main_heatmap_ui, 
-			sub_heatmap_ui,
+			if(has_brush_response) sub_heatmap_ui else NULL,
 			output_ui
 		)
 	} else if(layout %in% c("1-(2|3)")) {
@@ -406,7 +435,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		tl = tagList(
 			main_heatmap_ui,
 			div( 
-				sub_heatmap_ui,
+				if(has_brush_response) sub_heatmap_ui else NULL,
 				output_ui,
 				style = "float:left;"
 			)

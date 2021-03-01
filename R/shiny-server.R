@@ -46,6 +46,10 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	do_default_click_action = shiny_env[[heatmap_id]]$default_output_ui
 	do_default_brush_action = shiny_env[[heatmap_id]]$default_output_ui
 
+	response = shiny_env[[heatmap_id]]$response
+	has_click_reponse = "click" %in% response
+	has_brush_response = "brush" %in% response
+
 	if(inherits(ht_list, "Heatmap")) {
 		message("The heatmap is suggested to be updated by e.g. `ht = draw(ht)` before sending to the Shiny app.")
 	} else if(inherits(ht_list, "HeatmapList")) {
@@ -281,123 +285,40 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		
 	})
 
-	observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
-
-		if(is.null(input[[qq("@{heatmap_id}_heatmap_brush")]])) {
-			selected( NULL )
-			selected_copy( selected() )
-		} else {
-			lt = get_pos_from_brush(input[[qq("@{heatmap_id}_heatmap_brush")]])
-		  	pos1 = lt[[1]]
-		  	pos2 = lt[[2]]
-		    
-		    dev.null()
-		    selected( selectArea(ht_list(), mark = FALSE, pos1 = pos1, pos2 = pos2, verbose = FALSE, ht_pos = ht_pos(), include_annotation = TRUE, calibrate = FALSE) )
-		    selected_copy( selected() )
-		    dev.off2()
-		}
-
-		updateTextInput(session, qq("@{heatmap_id}_keyword"), value = "")
-
-		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
-			
-    		if(is.null( selected() )) {
-    			grid.newpage()
-				grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
-    		} else {
-    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
-			}
-		})
-	
-		if(do_default_brush_action) {
-			default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
-		}
-
-		if(!is.null(brush_action)) {
-			if(identical(brush_action, default_brush_action)) {
-				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
-			} else {
-				brush_action(selected(), output)
-			}
-		}
-
-		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
-	})
-
-	observeEvent(input[[qq("@{heatmap_id}_post_remove_submit")]], {
-
-		new_selected = adjust_df(selected(), n_remove = input[[qq("@{heatmap_id}_post_remove")]], 
-			where = input[[qq("@{heatmap_id}_post_remove_dimension")]])
-
-		selected(new_selected)
-
-		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
-			
-    		if(nrow( selected() ) == 0) {
-    			grid.newpage()
-				grid.text("No row/column is left.\nPlease change to a smaller number to remove.", 0.5, 0.5, gp = gpar(fontsize = 14))
-    		} else {
-    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
-			}
-		})
-	
-		if(do_default_brush_action) {
-			default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
-		}
-
-		if(!is.null(brush_action)) {
-			if(identical(brush_action, default_brush_action)) {
-				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
-			} else {
-				brush_action(selected(), output)
-			}
-		}
-
-		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
-	})
-
-	observeEvent(input[[qq("@{heatmap_id}_post_remove_reset")]], {
-
-		selected( selected_copy() )
-
-		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
-			
-    		if(is.null( selected() )) {
-    			grid.newpage()
-				grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
-    		} else {
-    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
-			}
-		})
-	
-		if(do_default_brush_action) {
-			default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
-		}
-
-		if(!is.null(brush_action)) {
-			if(identical(brush_action, default_brush_action)) {
-				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
-			} else {
-				brush_action(selected(), output)
-			}
-		}
-
-		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
-	})
-
-
 	###############################################################
 	##      sub-heatmap by selecting or searching
 	###############################################################
-	observeEvent(input[[qq("@{heatmap_id}_search_action")]], {
-		if(input[[qq("@{heatmap_id}_keyword")]] == "") {
-			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
-				grid.newpage()
-				grid.text("Query keyword is empty.", 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
-			})
+	if(has_brush_response) {
+		observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
 
+			if(is.null(input[[qq("@{heatmap_id}_heatmap_brush")]])) {
+				selected( NULL )
+				selected_copy( selected() )
+			} else {
+				lt = get_pos_from_brush(input[[qq("@{heatmap_id}_heatmap_brush")]])
+			  	pos1 = lt[[1]]
+			  	pos2 = lt[[2]]
+			    
+			    dev.null()
+			    selected( selectArea(ht_list(), mark = FALSE, pos1 = pos1, pos2 = pos2, verbose = FALSE, ht_pos = ht_pos(), include_annotation = TRUE, calibrate = FALSE) )
+			    selected_copy( selected() )
+			    dev.off2()
+			}
+
+			updateTextInput(session, qq("@{heatmap_id}_keyword"), value = "")
+
+			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+				
+	    		if(is.null( selected() )) {
+	    			grid.newpage()
+					grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
+	    		} else {
+	    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
+				}
+			})
+		
 			if(do_default_brush_action) {
-				default_brush_action(input, output, session, heatmap_id, "Query keyword is empty.", selected = selected(), ht_list = ht_list())
+				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 			}
 
 			if(!is.null(brush_action)) {
@@ -408,251 +329,338 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				}
 			}
 
-			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "off")
-
-			return(invisible(NULL))
-		}
-
-		keywords2 = keywords = input[[qq("@{heatmap_id}_keyword")]]
-
-		where = input[[qq("@{heatmap_id}_search_where")]]
-		is_regexpr = input[[qq("@{heatmap_id}_search_regexpr")]]
-		sht = input[[qq("@{heatmap_id}_search_heatmaps")]]
-		extend = input[[qq("@{heatmap_id}_search_extend")]]
-
-		if(length(sht) == 0) {
-			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
-				grid.newpage()
-				grid.text("No heatmap is selected for searching.", 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
-			})
-
-			if(do_default_brush_action) {
-				default_brush_action(input, output, session, heatmap_id, "No heatmap is selected for searching.", selected = selected(), ht_list = ht_list())
-			}
-
-			if(!is.null(brush_action)) {
-				if(identical(brush_action, default_brush_action)) {
-					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
-				} else {
-					brush_action(selected(), output)
-				}
-			}
-			return(invisible(NULL))
-		}
-
-		hl = ht_list()
-
-		all_ht_name = sapply(hl@ht_list, function(x) {
-			if(inherits(x, "Heatmap")) x@name else NA
+			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 		})
-		all_ht_name = all_ht_name[!is.na(all_ht_name)]
 
-		message(qq("[@{Sys.time()}] search heatmap @{ifelse(where == 1, 'row', 'column')}s with @{ifelse(is_regexpr, 'regular expression', 'keywords')}: '@{keywords}'."))
+		observeEvent(input[[qq("@{heatmap_id}_post_remove_submit")]], {
 
-		if(!is_regexpr) {
-			keywords = gsub("^\\s+||\\s+$", "", keywords)
-			keywords = strsplit(keywords, "\\s*,\\s*")[[1]]
-		}
+			new_selected = adjust_df(selected(), n_remove = input[[qq("@{heatmap_id}_post_remove")]], 
+				where = input[[qq("@{heatmap_id}_post_remove_dimension")]])
 
-		if(where == 1) {
-			selected( selectByLabels(hl, row_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend)) )
-		} else if(where == 2) {
-			selected( selectByLabels(hl, column_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend)) )
-		} else {
-			selected( selectByLabels(hl, row_keywords = keywords, column_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend)) )
-		}
-		selected_copy( selected() )
+			selected(new_selected)
 
-		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
-			
-    		if(is.null(selected())) {
-    			grid.newpage()
-				grid.text(paste(strwrap(qq("Found nothing from heatmaps with keywords '@{keywords2}'."), width = 60), collapse = "\n"), 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
+			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+				
+	    		if(nrow( selected() ) == 0) {
+	    			grid.newpage()
+					grid.text("No row/column is left.\nPlease change to a smaller number to remove.", 0.5, 0.5, gp = gpar(fontsize = 14))
+	    		} else {
+	    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
+				}
+			})
+		
+			if(do_default_brush_action) {
+				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+			}
+
+			if(!is.null(brush_action)) {
+				if(identical(brush_action, default_brush_action)) {
+					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+				} else {
+					brush_action(selected(), output)
+				}
+			}
+
+			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
+		})
+
+		observeEvent(input[[qq("@{heatmap_id}_post_remove_reset")]], {
+
+			selected( selected_copy() )
+
+			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+				
+	    		if(is.null( selected() )) {
+	    			grid.newpage()
+					grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
+	    		} else {
+	    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
+				}
+			})
+		
+			if(do_default_brush_action) {
+				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+			}
+
+			if(!is.null(brush_action)) {
+				if(identical(brush_action, default_brush_action)) {
+					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+				} else {
+					brush_action(selected(), output)
+				}
+			}
+
+			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
+		})
+
+
+		observeEvent(input[[qq("@{heatmap_id}_search_action")]], {
+			if(input[[qq("@{heatmap_id}_keyword")]] == "") {
+				output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+					grid.newpage()
+					grid.text("Query keyword is empty.", 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
+				})
 
 				if(do_default_brush_action) {
-					default_brush_action(input, output, session, heatmap_id, qq("Found nothing from heatmaps with keywords '@{keywords2}'."), selected = selected(), ht_list = ht_list())
+					default_brush_action(input, output, session, heatmap_id, "Query keyword is empty.", selected = selected(), ht_list = ht_list())
 				}
 
 				if(!is.null(brush_action)) {
-					brush_action(selected(), output)
+					if(identical(brush_action, default_brush_action)) {
+						default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+					} else {
+						brush_action(selected(), output)
+					}
+				}
+
+				session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "off")
+
+				return(invisible(NULL))
+			}
+
+			keywords2 = keywords = input[[qq("@{heatmap_id}_keyword")]]
+
+			where = input[[qq("@{heatmap_id}_search_where")]]
+			is_regexpr = input[[qq("@{heatmap_id}_search_regexpr")]]
+			sht = input[[qq("@{heatmap_id}_search_heatmaps")]]
+			extend = input[[qq("@{heatmap_id}_search_extend")]]
+
+			if(length(sht) == 0) {
+				output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+					grid.newpage()
+					grid.text("No heatmap is selected for searching.", 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
+				})
+
+				if(do_default_brush_action) {
+					default_brush_action(input, output, session, heatmap_id, "No heatmap is selected for searching.", selected = selected(), ht_list = ht_list())
+				}
+
+				if(!is.null(brush_action)) {
+					if(identical(brush_action, default_brush_action)) {
+						default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+					} else {
+						brush_action(selected(), output)
+					}
 				}
 				return(invisible(NULL))
-    		} else {
-    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
 			}
-		})
 
-		if(do_default_brush_action) {
-			default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
-		}
+			hl = ht_list()
 
-		if(!is.null(brush_action)) {
-			if(identical(brush_action, default_brush_action)) {
-				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+			all_ht_name = sapply(hl@ht_list, function(x) {
+				if(inherits(x, "Heatmap")) x@name else NA
+			})
+			all_ht_name = all_ht_name[!is.na(all_ht_name)]
+
+			message(qq("[@{Sys.time()}] search heatmap @{ifelse(where == 1, 'row', 'column')}s with @{ifelse(is_regexpr, 'regular expression', 'keywords')}: '@{keywords}'."))
+
+			if(!is_regexpr) {
+				keywords = gsub("^\\s+||\\s+$", "", keywords)
+				keywords = strsplit(keywords, "\\s*,\\s*")[[1]]
+			}
+
+			if(where == 1) {
+				selected( selectByLabels(hl, row_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend)) )
+			} else if(where == 2) {
+				selected( selectByLabels(hl, column_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend)) )
 			} else {
-				brush_action(selected(), output)
+				selected( selectByLabels(hl, row_keywords = keywords, column_keywords = keywords, keyword_is_regexpr = is_regexpr, include_annotation = TRUE, heatmap = sht, all = length(extend)) )
 			}
-		}
+			selected_copy( selected() )
 
-		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
+			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+				
+	    		if(is.null(selected())) {
+	    			grid.newpage()
+					grid.text(paste(strwrap(qq("Found nothing from heatmaps with keywords '@{keywords2}'."), width = 60), collapse = "\n"), 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
 
-	})
+					if(do_default_brush_action) {
+						default_brush_action(input, output, session, heatmap_id, qq("Found nothing from heatmaps with keywords '@{keywords2}'."), selected = selected(), ht_list = ht_list())
+					}
 
-	output[[qq("@{heatmap_id}_sub_heatmap_download_button")]] = downloadHandler(
-
-		filename = function() {
-			format = as.numeric(input[[qq("@{heatmap_id}_sub_heatmap_download_format")]])
-			fm = c("png", "pdf", "svg")[format]
-			qq("@{heatmap_id}_sub_heatmap.@{fm}")
-		},
-		content = function(file) {
-			
-			format = as.numeric(input[[qq("@{heatmap_id}_sub_heatmap_download_format")]])
-			fm = c("png", "pdf", "svg")[format]
-			dev = list(png, pdf, svglite::svglite)[[format]]
-
-			showNotification(qq("Download sub-heatmap in @{fm}."), duration = 2, type = "message")
-			message(qq("[@{Sys.time()}] Download sub-heatmap in @{fm}."))
-
-			temp = tempfile()
-			width = input[[qq("@{heatmap_id}_sub_heatmap_download_image_width")]]
-			height = input[[qq("@{heatmap_id}_sub_heatmap_download_image_height")]]
-			
-			if(fm == "png") {
-				dev(temp, width = width*2, height = height*2, res = 72*2)
-			} else if(fm == "pdf") {
-				dev(temp, width = width/100*4/3, height = height/100*4/3)
-			} else {
-				dev(temp, width = width, height = height)
-			}
-			if(is.null(selected())) {
-    			grid.newpage()
-				grid.text("No heatmap is available.")
-    		} else {
-    			make_sub_heatmap(input, output, session, heatmap_id, newpage = FALSE, selected = selected(), ht_list = ht_list())
-			}
-		    dev.off()
-
-			file.copy(temp, file)
-		}
-	)
-	
-	observeEvent(input[[qq("@{heatmap_id}_sub_heatmap_input_size_button")]], {
-		
-		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
-			if(is.null(selected())) {
-    			grid.newpage()
-				grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
-    		} else {
-    			make_sub_heatmap(input, output, session, heatmap_id, update_size = FALSE, selected = selected(), ht_list = ht_list())
-			}
-		})
-	})
-
-	observeEvent(input[[qq("@{heatmap_id}_open_table")]], {
-		if(is.null(selected())) {
-			showModal(modalDialog(
-				title = "The selected tables",
-				p("Rows or columns are not selected."),
-				tags$script(HTML("$('.modal-content').draggable();")),
-				easyClose = TRUE,
-				footer = modalButton("Close")
-			))
-		} else {
-			showModal(modalDialog(
-				title = "The selected tables",
-				htmlOutput(qq("@{heatmap_id}_selected_table")),
-				div(
-					numericInput(qq("@{heatmap_id}_digits"), "Digits of numeric values:", value = 2, min = 0),
-					style = "margin-top:5px"
-				),
-				tags$script(HTML("
-					$('.modal-content').draggable();
-					$('.modal-content label').css('display', 'table-cell').css('text-align', 'center').css('vertical-align', 'middle').css('padding-right', '10px');
-					$('.modal-content .form-group').css('display', 'table-row');
-					$('.modal-content input').css('width', '100px');
-				")),
-				easyClose = TRUE,
-				footer = div(downloadButton(qq("@{heatmap_id}_download_table"), "Download"), modalButton("Close")),
-				size = "l"
-			))
-
-			output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
-				HTML(format_html_table(heatmap_id, selected = selected(), ht_list = ht_list()))
+					if(!is.null(brush_action)) {
+						brush_action(selected(), output)
+					}
+					return(invisible(NULL))
+	    		} else {
+	    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
+				}
 			})
 
-		}
-	})
+			if(do_default_brush_action) {
+				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+			}
 
-	
-	observeEvent(input[[qq("@{heatmap_id}_digits")]], {
+			if(!is.null(brush_action)) {
+				if(identical(brush_action, default_brush_action)) {
+					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+				} else {
+					brush_action(selected(), output)
+				}
+			}
 
-		output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
-			HTML(format_html_table(heatmap_id, input[[qq("@{heatmap_id}_digits")]], selected = selected(), ht_list = ht_list()))
+			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
+
 		})
-	})
 
-	output[[qq("@{heatmap_id}_download_table")]] = downloadHandler(
-		filename = function() {
-			qq("@{heatmap_id}_download_table.csv")
-		},
-		content = function(file) {
-			tb = get_sub_matrix(heatmap_id, selected = selected(), ht_list = ht_list())
-			write.table(tb, file, row.names = FALSE, col.names = FALSE, sep = ",", quote = TRUE)
-		}
-	)
+		output[[qq("@{heatmap_id}_sub_heatmap_download_button")]] = downloadHandler(
 
-	observeEvent(input[[qq("@{heatmap_id}_open_modal")]], {
-		InteractiveComplexHeatmapModal(input, output, session, sub_ht_list(), close_button = TRUE)
-	})
+			filename = function() {
+				format = as.numeric(input[[qq("@{heatmap_id}_sub_heatmap_download_format")]])
+				fm = c("png", "pdf", "svg")[format]
+				qq("@{heatmap_id}_sub_heatmap.@{fm}")
+			},
+			content = function(file) {
+				
+				format = as.numeric(input[[qq("@{heatmap_id}_sub_heatmap_download_format")]])
+				fm = c("png", "pdf", "svg")[format]
+				dev = list(png, pdf, svglite::svglite)[[format]]
+
+				showNotification(qq("Download sub-heatmap in @{fm}."), duration = 2, type = "message")
+				message(qq("[@{Sys.time()}] Download sub-heatmap in @{fm}."))
+
+				temp = tempfile()
+				width = input[[qq("@{heatmap_id}_sub_heatmap_download_image_width")]]
+				height = input[[qq("@{heatmap_id}_sub_heatmap_download_image_height")]]
+				
+				if(fm == "png") {
+					dev(temp, width = width*2, height = height*2, res = 72*2)
+				} else if(fm == "pdf") {
+					dev(temp, width = width/100*4/3, height = height/100*4/3)
+				} else {
+					dev(temp, width = width, height = height)
+				}
+				if(is.null(selected())) {
+	    			grid.newpage()
+					grid.text("No heatmap is available.")
+	    		} else {
+	    			make_sub_heatmap(input, output, session, heatmap_id, newpage = FALSE, selected = selected(), ht_list = ht_list())
+				}
+			    dev.off()
+
+				file.copy(temp, file)
+			}
+		)
+		
+		observeEvent(input[[qq("@{heatmap_id}_sub_heatmap_input_size_button")]], {
+			
+			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+				if(is.null(selected())) {
+	    			grid.newpage()
+					grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
+	    		} else {
+	    			make_sub_heatmap(input, output, session, heatmap_id, update_size = FALSE, selected = selected(), ht_list = ht_list())
+				}
+			})
+		})
+
+		observeEvent(input[[qq("@{heatmap_id}_open_table")]], {
+			if(is.null(selected())) {
+				showModal(modalDialog(
+					title = "The selected tables",
+					p("Rows or columns are not selected."),
+					tags$script(HTML("$('.modal-content').draggable();")),
+					easyClose = TRUE,
+					footer = modalButton("Close")
+				))
+			} else {
+				showModal(modalDialog(
+					title = "The selected tables",
+					htmlOutput(qq("@{heatmap_id}_selected_table")),
+					div(
+						numericInput(qq("@{heatmap_id}_digits"), "Digits of numeric values:", value = 2, min = 0),
+						style = "margin-top:5px"
+					),
+					tags$script(HTML("
+						$('.modal-content').draggable();
+						$('.modal-content label').css('display', 'table-cell').css('text-align', 'center').css('vertical-align', 'middle').css('padding-right', '10px');
+						$('.modal-content .form-group').css('display', 'table-row');
+						$('.modal-content input').css('width', '100px');
+					")),
+					easyClose = TRUE,
+					footer = div(downloadButton(qq("@{heatmap_id}_download_table"), "Download"), modalButton("Close")),
+					size = "l"
+				))
+
+				output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
+					HTML(format_html_table(heatmap_id, selected = selected(), ht_list = ht_list()))
+				})
+
+			}
+		})
+
+		
+		observeEvent(input[[qq("@{heatmap_id}_digits")]], {
+
+			output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
+				HTML(format_html_table(heatmap_id, input[[qq("@{heatmap_id}_digits")]], selected = selected(), ht_list = ht_list()))
+			})
+		})
+
+		output[[qq("@{heatmap_id}_download_table")]] = downloadHandler(
+			filename = function() {
+				qq("@{heatmap_id}_download_table.csv")
+			},
+			content = function(file) {
+				tb = get_sub_matrix(heatmap_id, selected = selected(), ht_list = ht_list())
+				write.table(tb, file, row.names = FALSE, col.names = FALSE, sep = ",", quote = TRUE)
+			}
+		)
+
+		observeEvent(input[[qq("@{heatmap_id}_open_modal")]], {
+			InteractiveComplexHeatmapModal(input, output, session, sub_ht_list(), close_button = TRUE)
+		})
+	}
 
 	###############################################################
 	##      A click on the heatmap
 	###############################################################
 
 	action = shiny_env[[heatmap_id]]$action
-	observeEvent(input[[ifelse(action %in% c("click", "hover"), 
-		                       qq("@{heatmap_id}_heatmap_mouse_action"), 
-		                       qq("@{heatmap_id}_heatmap_click"))]], {
+	if(has_click_reponse) {
+		observeEvent(input[[ifelse(action %in% c("click", "hover"), 
+			                       qq("@{heatmap_id}_heatmap_mouse_action"), 
+			                       qq("@{heatmap_id}_heatmap_click"))]], {
 
-		if(action == "hover") {
-			pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_hover")]])
-		} else {
-			pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]])
-		}
-		  
-		if(is.null(pos1)) {
-			selected( NULL )
-		} else {
-			dev.null()
-			selected( selectPosition(ht_list(), mark = FALSE, pos = pos1, verbose = FALSE, ht_pos = ht_pos(), calibrate = FALSE) )
-			dev.off2()
-		}
-
-		if(do_default_click_action) {
-			default_click_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list(), action = action)
-		}
-
-		if(!is.null(click_action)) {
-			if(identical(click_action, default_click_action)) {
-				default_click_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list(), action = action)
+			if(action == "hover") {
+				pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_hover")]])
 			} else {
-				click_action(selected(), output)
+				pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]])
 			}
-		}
+			  
+			if(is.null(pos1)) {
+				selected( NULL )
+			} else {
+				dev.null()
+				selected( selectPosition(ht_list(), mark = FALSE, pos = pos1, verbose = FALSE, ht_pos = ht_pos(), calibrate = FALSE) )
+				dev.off2()
+			}
 
-		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
-			grid.newpage()
-			grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
+			if(do_default_click_action) {
+				default_click_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list(), action = action)
+			}
+
+			if(!is.null(click_action)) {
+				if(identical(click_action, default_click_action)) {
+					default_click_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list(), action = action)
+				} else {
+					click_action(selected(), output)
+				}
+			}
+
+			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+				grid.newpage()
+				grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
+			})
+
+			output[[qq("@{heatmap_id}_sub_heatmap_control")]] = renderUI({
+				NULL
+			})
+
+			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "off")
+
 		})
-
-		output[[qq("@{heatmap_id}_sub_heatmap_control")]] = renderUI({
-			NULL
-		})
-
-		session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "off")
-
-	})
+	}
 }
 
 get_pos_from_brush = function(brush) {

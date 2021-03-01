@@ -131,6 +131,12 @@ The initial style of the brush can be specified by `brush_opt` argument. The
 value should be a list and the value will be sent to `shiny::brushOpts()`. Note,
 the style of the brush can also be manually adjusted in the web page of the Shiny app.
 
+The argument `response` can be set as one of `"click"`, `"hover"`, `"dblclick"` and `"brush"`
+to only respond to one event on heatmap. E.g. if `response` is set to `"click"`, there will 
+be no response for the "brush event" in the interactive heatmap, also the sub-heatmap component
+is removed from the app. [See examples here.](InteractiveComplexHeatmap.html#only-respond-to-one-event)
+
+
 ## Work with R Markdown documents
 
 It is very straightforward to integrate **InteractiveComplexHeatmap** in an
