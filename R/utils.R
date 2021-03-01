@@ -84,3 +84,14 @@ check_pkg = function(pkg) {
 		}
 	}
 }
+
+
+js_has_brush = function(response) {
+	l = "brush" %in% response
+	ifelse(l, "true", "false")
+}
+
+js_has_hover = js_has_dblclick = js_has_click = function(response) {
+	l = "click" %in% response
+	ifelse(l, "true", "false")
+}

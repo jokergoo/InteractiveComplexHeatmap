@@ -1,3 +1,6 @@
+Changes in version 0.99.10
++ add `response` argument so that the server can only respond to one event from UI.
+
 Changes in version 0.99.9
 + output can be floating along with mouse positions.
 

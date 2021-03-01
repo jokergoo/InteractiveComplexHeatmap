@@ -17,8 +17,9 @@ htShiny(ht_list = get_last_ht(), title = NULL,
     width2 = 370,
     height2 = 350,
     width3 = ifelse(layout == "(1-2)|3", 800, 370),
-    layout = "(1-2)|3",
-    action = "click", brush_opt = list(stroke = "#f00", opacity = 0.6),
+    layout = ifelse("brush" \%in\% response, "(1-2)|3", "1-3"),
+    action = "click", response = c(action, "brush"),
+    brush_opt = list(stroke = "#f00", opacity = 0.6),
     output_ui_float = FALSE
     )
 }
@@ -39,6 +40,7 @@ htShiny(ht_list = get_last_ht(), title = NULL,
   \item{width3}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{layout}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{action}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{response}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{brush_opt}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{output_ui_float}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
 
