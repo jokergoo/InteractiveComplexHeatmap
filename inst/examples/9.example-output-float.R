@@ -50,7 +50,6 @@ get_go_term = function(go_id) {
 }
 
 ui = fluidPage(
-	p("After brushing from heatmap, keep the mouse position unchanged. After about 1 second, you will see the output for the brush."),
     InteractiveComplexHeatmapOutput(width1 = 700, height1 = 450, output_ui_float = TRUE,
     	output_ui = htmlOutput("go_info"))
 )
