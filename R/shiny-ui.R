@@ -300,7 +300,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 						div(
 							checkboxInput(qq("@{heatmap_id}_remove_empty_checkbox"), label = "Remove empty rows and columns", value = FALSE),
 							HTML(qq('
-						<p>
+						<p style="padding-top:4px;">
 						Remove <input id="@{heatmap_id}_post_remove" type="number" class="form-control" min="1" value="1" style="width:60px;display:inline;"/>
 						<span id="@{heatmap_id}_post_remove_which">rows</span> from 
 						<select id="@{heatmap_id}_post_remove_dimension" class="form-control" style="width:auto;display:inline;">

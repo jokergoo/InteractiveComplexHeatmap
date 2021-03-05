@@ -290,7 +290,8 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	###############################################################
 	if(has_brush_response) {
 		observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
-
+			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
+			
 			if(is.null(input[[qq("@{heatmap_id}_heatmap_brush")]])) {
 				selected( NULL )
 				selected_copy( selected() )
@@ -329,7 +330,6 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				}
 			}
 
-			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 		})
 
@@ -432,6 +432,9 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 
 		observeEvent(input[[qq("@{heatmap_id}_search_action")]], {
+
+			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
+			
 			if(input[[qq("@{heatmap_id}_keyword")]] == "") {
 				output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 					grid.newpage()
@@ -536,7 +539,6 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				}
 			}
 
-			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 
 		})
