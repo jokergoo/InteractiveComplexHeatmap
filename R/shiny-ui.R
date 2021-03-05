@@ -44,9 +44,9 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap",
 	width1 = ifelse(layout == "1|(2-3)", 800, 450), 
 	height1 = ifelse(layout == "1-(2|3)", 700, 350), 
-	width2 = 370, 
+	width2 = 400, 
 	height2 = 350, 
-	width3 = ifelse(default_output_ui_float, 370, ifelse(layout == "(1-2)|3", 800, 370)),
+	width3 = ifelse(default_output_ui_float, 400, ifelse(layout == "(1-2)|3", 800, 400)),
 	layout = ifelse("brush" %in% response, "(1-2)|3", "1-3"),
 	action = "click", 
 	response = c(action, "brush"),
@@ -298,6 +298,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 						),
 						hr(),
 						div(
+							checkboxInput(qq("@{heatmap_id}_remove_empty_checkbox"), label = "Remove empty rows and columns", value = FALSE),
 							HTML(qq('
 						<p>
 						Remove <input id="@{heatmap_id}_post_remove" type="number" class="form-control" min="1" value="1" style="width:60px;display:inline;"/>
