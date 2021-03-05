@@ -364,6 +364,40 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 		})
 
+		observeEvent(input[[qq("@{heatmap_id}_remove_empty_checkbox")]], {
+			
+			if(input[[qq("@{heatmap_id}_remove_empty_checkbox")]]) {
+				new_selected = adjust_df_remove_empty(selected(), ht_list())
+				selected(new_selected)
+			} else {
+				selected( selected_copy() )
+			}
+			
+			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+				
+	    		if(nrow( selected() ) == 0) {
+	    			grid.newpage()
+					grid.text("All empty rows/columns are removed.", 0.5, 0.5, gp = gpar(fontsize = 14))
+	    		} else {
+	    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
+				}
+			})
+		
+			if(do_default_brush_action) {
+				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+			}
+
+			if(!is.null(brush_action)) {
+				if(identical(brush_action, default_brush_action)) {
+					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+				} else {
+					brush_action(selected(), output)
+				}
+			}
+
+			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
+		}, ignoreInit = TRUE)
+
 		observeEvent(input[[qq("@{heatmap_id}_post_remove_reset")]], {
 
 			selected( selected_copy() )
@@ -389,6 +423,8 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 					brush_action(selected(), output)
 				}
 			}
+
+			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
 
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 		})

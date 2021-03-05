@@ -1003,3 +1003,123 @@ adjust_df = function(df, n_remove = 1, where = "top") {
 	}
 	df
 }
+
+# remove empty rows and columns
+adjust_df_remove_empty = function(df, ht_list, from_rows = TRUE, from_columns = TRUE) {
+
+	if(ht_list@direction == "horizontal") {
+		if(from_rows) {
+			all_row_slices = unique(df$row_slice)
+			row_index_list = lapply(all_row_slices, function(si) {
+				ind = which(df$row_slice ==  si)
+				original_row_index = df$row_index[[ind[1]]]
+				l = rep(FALSE, length(original_row_index))
+
+				# go through every heatmap
+				for(i in ind) {
+					hm = df$heatmap[i]
+					mat = ht_list@ht_list[[hm]]@matrix
+					mat = mat[df$row_index[[i]], df$column_index[[i]], drop = FALSE]
+					if(is.character(mat)) {
+						l = l | apply(mat, 1, function(x) any(!(grepl("^\\s*$", x) | is.na(x))))
+					} else {
+						l = l | apply(mat, 1, function(x) any(!is.na(x)))
+					}
+				}
+				original_row_index[l]
+			})
+			remove_ind = integer(0)
+			for(i in seq_along(all_row_slices)) {
+				if(length(row_index_list[[i]]) > 0) {
+					for(j in which(df$row_slice == all_row_slices[i])) {
+						df$row_index[[j]] = row_index_list[[i]]
+					}
+				} else {
+					remove_ind = which(df$row_slice == all_row_slices[i])
+				}
+			}
+			if(length(remove_ind)) {
+				df = df[-(remove_ind), , drop = FALSE]
+			}
+		}
+
+		if(from_columns) {
+			# now columns, which are restrict in every heatmap
+			column_slice_labels = paste(df$heatmap, df$column_slice, sep = ":")
+			for(le in unique(column_slice_labels)) {
+				ind = which(column_slice_labels == le)
+
+				hm = df$heatmap[ind[1]]
+				mat = ht_list@ht_list[[hm]]@matrix
+				mat = mat[unlist(df$row_index[ind]), df$column_index[[ind[1]]], drop = FALSE]
+				if(is.character(mat)) {
+					l = !apply(mat, 2, function(x) all(is.na(x) | grepl("^\\s*$", x)))
+				} else {
+					l = !apply(mat, 2, function(x) all(is.na(x)))
+				}
+				for(i in ind) {
+					df$column_index[[i]] = df$column_index[[i]][l]
+				}
+			}
+
+			df = df[sapply(df$column_index, length) > 0, , drop = FALSE]
+		}
+	} else {
+		if(from_columns) {
+			all_column_slices = unique(df$column_slice)
+			column_index_list = lapply(all_column_slices, function(si) {
+				ind = which(df$column_slice ==  si)
+				original_column_index = df$column_index[[ind[1]]]
+				l = rep(FALSE, length(original_column_index))
+
+				# go through every heatmap
+				for(i in ind) {
+					hm = df$heatmap[i]
+					mat = ht_list@ht_list[[hm]]@matrix
+					mat = mat[df$row_index[[i]], df$column_index[[i]], drop = FALSE]
+					if(is.character(mat)) {
+						l = l | apply(mat, 2, function(x) any(!(grepl("^\\s*$", x) | is.na(x))))
+					} else {
+						l = l | apply(mat, 2, function(x) any(!is.na(x)))
+					}
+				}
+				original_column_index[l]
+			})
+			remove_ind = integer(0)
+			for(i in seq_along(all_column_slices)) {
+				if(length(column_index_list[[i]]) > 0) {
+					for(j in which(df$column_slice == all_column_slices[i])) {
+						df$column_index[[j]] = column_index_list[[i]]
+					}
+				} else {
+					remove_ind = which(df$column_slice == all_column_slices[i])
+				}
+			}
+			if(length(remove_ind)) {
+				df = df[-(remove_ind), , drop = FALSE]
+			}
+		}
+
+		if(from_rows) {
+			row_slice_labels = paste(df$heatmap, df$row_slice, sep = ":")
+			for(le in unique(row_slice_labels)) {
+				ind = which(row_slice_labels == le)
+
+				hm = df$heatmap[ind[1]]
+				mat = ht_list@ht_list[[hm]]@matrix
+				mat = mat[df$row_index[[ind[1]]], unlist(df$column_index[ind]), drop = FALSE]
+				if(is.character(mat)) {
+					l = !apply(mat, 1, function(x) all(is.na(x) | grepl("^\\s*$", x)))
+				} else {
+					l = !apply(mat, 1, function(x) all(is.na(x)))
+				}
+				for(i in ind) {
+					df$row_index[[i]] = df$row_index[[i]][l]
+				}
+			}
+
+			df = df[sapply(df$row_index, length) > 0, , drop = FALSE]
+		}
+	}
+	df
+}

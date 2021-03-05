@@ -81,9 +81,9 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 	heatmap_id = NULL, title1 = "Original heatmap", title2 = "Selected sub-heatmap",
 	width1 = ifelse(layout == "1|(2-3)", 800, 450), 
 	height1 = ifelse(layout == "1-(2|3)", 700, 350), 
-	width2 = 370, 
+	width2 = 400, 
 	height2 = 350, 
-	width3 = ifelse(layout == "(1-2)|3", 800, 370),
+	width3 = ifelse(layout == "(1-2)|3", 800, 400),
 	layout = ifelse("brush" %in% response, "(1-2)|3", "1-3"),
 	action = "click", response = c(action, "brush"),
 	brush_opt = list(stroke = "#f00", opacity = 0.6),
@@ -121,6 +121,24 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 
 	if(is.character(html)) {
 		html = HTML(html)
+	}
+
+	if(missing(width1) && missing(height1)) {
+		if(inherits(ht_list, "HeatmapList")) {
+			if(ht_list@layout$initialized) {
+				
+				width_ht = ComplexHeatmap:::width(ht_list)	
+				height_ht = ComplexHeatmap:::height(ht_list)
+
+			    if(is_abs_unit(width_ht) && is_abs_unit(height_ht)) {
+		    		width_ht = ceiling(convertWidth(width_ht, "bigpts", valueOnly = TRUE))
+		    		height_ht = ceiling(convertHeight(height_ht, "bigpts", valueOnly = TRUE))
+
+		    		width1 = width_ht
+		    		height1 = height_ht
+		    	}
+		    }
+		} 
 	}
 
 	ui = fluidPage(
