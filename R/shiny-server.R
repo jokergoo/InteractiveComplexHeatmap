@@ -329,6 +329,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				}
 			}
 
+			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 		})
 
@@ -535,6 +536,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				}
 			}
 
+			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 
 		})

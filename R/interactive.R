@@ -1035,7 +1035,7 @@ adjust_df_remove_empty = function(df, ht_list, from_rows = TRUE, from_columns = 
 						df$row_index[[j]] = row_index_list[[i]]
 					}
 				} else {
-					remove_ind = which(df$row_slice == all_row_slices[i])
+					remove_ind = c(remove_ind, which(df$row_slice == all_row_slices[i]))
 				}
 			}
 			if(length(remove_ind)) {
@@ -1092,7 +1092,7 @@ adjust_df_remove_empty = function(df, ht_list, from_rows = TRUE, from_columns = 
 						df$column_index[[j]] = column_index_list[[i]]
 					}
 				} else {
-					remove_ind = which(df$column_slice == all_column_slices[i])
+					remove_ind = c(remove_ind, which(df$column_slice == all_column_slices[i]))
 				}
 			}
 			if(length(remove_ind)) {
