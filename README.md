@@ -6,7 +6,7 @@
 
 **InteractiveComplexHeatmap** is an R package that converts static heatmaps produced from
 [**ComplexHeatmap**](https://github.com/jokergoo/ComplexHeatmap) package into an interactive
-Shiny app with one extra line of code.
+Shiny app only with one extra line of code.
 
 <img src="https://user-images.githubusercontent.com/449218/110212910-e6147e00-7e9d-11eb-94ed-0ac549247888.gif"  width='100%' border="black" />
 
