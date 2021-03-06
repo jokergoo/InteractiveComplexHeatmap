@@ -18,7 +18,7 @@ InteractiveComplexHeatmapModal(
     height2 = 350,
     width3 = ifelse(layout == "(1-2)|3", 800, 370),
     layout = ifelse("brush" \%in\% response, "(1-2)|3", "1-3"),
-    action = "click", response = c(action, "brush"),
+    action = "click", cursor = TRUE, response = c(action, "brush"),
     brush_opt = list(stroke = "#f00", opacity = 0.6),
     output_ui = TRUE, output_ui_float = FALSE,
     
@@ -44,6 +44,7 @@ InteractiveComplexHeatmapModal(
   \item{width3}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{layout}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{action}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{cursor}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{response}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{brush_opt}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{output_ui}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
