@@ -14,6 +14,7 @@
 # -layout One of ``"(1|2)-3"``, ``"1-(2|3)"``, ``"1-2-3"``, ``"1|2|3"``, ``"1|(2-3)"``. If there is no response
 #   to ``brush`` which is set with the ``response`` argument, the code ``2`` can be omitted.
 # -action Which action for selecting single cell on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
+# -cursor WHen moving mouse on heatmap, whether to show the cursors on the four sides?
 # -response Which action needs to be respond on the server side. Value should be in ``click``/``hover``/``dblclick`` and ``brush``.
 #      Please note, if ``brush`` is not selected, there is no "search tool" in the main heatmap.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`. Do not set an ID for the brush. An internal brush ID is automatically set.
@@ -48,7 +49,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	height2 = 350, 
 	width3 = ifelse(default_output_ui_float, 400, ifelse(layout == "(1-2)|3", 800, 400)),
 	layout = ifelse("brush" %in% response, "(1-2)|3", "1-3"),
-	action = "click", 
+	action = "click", cursor = TRUE,
 	response = c(action, "brush"),
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_ui = default_output_ui(), 
@@ -126,6 +127,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	} else {
 		css = paste(css, collapse = "\n")
 	}
+
+	cursor = ifelse(cursor, "true", "false")
 
 	jqueryui_dep = htmltools::htmlDependency(
 		name       = "jqueryui",

@@ -464,47 +464,49 @@ $(function() {
 		})
 	}
 
-	$('#@{heatmap_id}_heatmap').mouseover(function(e) {
-		var parentOffset = $(this).offset();
-        @{heatmap_id}_x = e.pageX - parentOffset.left;
-        @{heatmap_id}_y = e.pageY - parentOffset.top;
+	if(@{cursor}) {
+		$('#@{heatmap_id}_heatmap').mouseover(function(e) {
+			var parentOffset = $(this).offset();
+	        @{heatmap_id}_x = e.pageX - parentOffset.left;
+	        @{heatmap_id}_y = e.pageY - parentOffset.top;
 
-		var right_curser = document.createElement("div");
-		right_curser.setAttribute("id", "@{heatmap_id}_right_curser");
-		$("#@{heatmap_id}_heatmap").append(right_curser);
-		$('#@{heatmap_id}_right_curser').css({'position': 'absolute', 'right': '0px', 'top': @{heatmap_id}_y, 'width': Math.max(0, Math.min(10, $(this).width() - @{heatmap_id}_x - 10)), 'height': '1px', 'background-color': 'black'});
+			var right_curser = document.createElement("div");
+			right_curser.setAttribute("id", "@{heatmap_id}_right_curser");
+			$("#@{heatmap_id}_heatmap").append(right_curser);
+			$('#@{heatmap_id}_right_curser').css({'position': 'absolute', 'right': '0px', 'top': @{heatmap_id}_y, 'width': Math.max(0, Math.min(10, $(this).width() - @{heatmap_id}_x - 10)), 'height': '1px', 'background-color': 'black'});
 
-		var left_curser = document.createElement("div");
-		left_curser.setAttribute("id", "@{heatmap_id}_left_curser");
-		$("#@{heatmap_id}_heatmap").append(left_curser);
-		$('#@{heatmap_id}_left_curser').css({'position': 'absolute', 'left': '0px', 'top': @{heatmap_id}_y, 'width': Math.max(0, Math.min(10, @{heatmap_id}_x - 10)), 'height': '1px', 'background-color': 'black'});
+			var left_curser = document.createElement("div");
+			left_curser.setAttribute("id", "@{heatmap_id}_left_curser");
+			$("#@{heatmap_id}_heatmap").append(left_curser);
+			$('#@{heatmap_id}_left_curser').css({'position': 'absolute', 'left': '0px', 'top': @{heatmap_id}_y, 'width': Math.max(0, Math.min(10, @{heatmap_id}_x - 10)), 'height': '1px', 'background-color': 'black'});
 
-		var top_curser = document.createElement("div");
-		top_curser.setAttribute("id", "@{heatmap_id}_top_curser");
-		$("#@{heatmap_id}_heatmap").append(top_curser);
-		$('#@{heatmap_id}_top_curser').css({'position': 'absolute', 'left': @{heatmap_id}_x, 'top': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, @{heatmap_id}_y - 10)), 'background-color': 'black'});
+			var top_curser = document.createElement("div");
+			top_curser.setAttribute("id", "@{heatmap_id}_top_curser");
+			$("#@{heatmap_id}_heatmap").append(top_curser);
+			$('#@{heatmap_id}_top_curser').css({'position': 'absolute', 'left': @{heatmap_id}_x, 'top': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, @{heatmap_id}_y - 10)), 'background-color': 'black'});
 
-		var bottom_curser = document.createElement("div");
-		bottom_curser.setAttribute("id", "@{heatmap_id}_bottom_curser");
-		$("#@{heatmap_id}_heatmap").append(bottom_curser);
-		$('#@{heatmap_id}_bottom_curser').css({'position': 'absolute', 'left': @{heatmap_id}_x, 'bottom': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, $(this).height() - @{heatmap_id}_y - 10)), 'background-color': 'black'});
+			var bottom_curser = document.createElement("div");
+			bottom_curser.setAttribute("id", "@{heatmap_id}_bottom_curser");
+			$("#@{heatmap_id}_heatmap").append(bottom_curser);
+			$('#@{heatmap_id}_bottom_curser').css({'position': 'absolute', 'left': @{heatmap_id}_x, 'bottom': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, $(this).height() - @{heatmap_id}_y - 10)), 'background-color': 'black'});
 
-	}).mousemove(function(e) {
-		var parentOffset = $(this).offset();
-        @{heatmap_id}_x = e.pageX - parentOffset.left;
-        @{heatmap_id}_y = e.pageY - parentOffset.top;
+		}).mousemove(function(e) {
+			var parentOffset = $(this).offset();
+	        @{heatmap_id}_x = e.pageX - parentOffset.left;
+	        @{heatmap_id}_y = e.pageY - parentOffset.top;
 
-		$('#@{heatmap_id}_right_curser').css({'right': '0px', 'top': @{heatmap_id}_y, 'width': Math.max(0, Math.min(10, $(this).width() - @{heatmap_id}_x - 10)), 'height': '1px'});
-		$('#@{heatmap_id}_left_curser').css({'left': '0px', 'top': @{heatmap_id}_y, 'width': Math.max(0, Math.min(10, @{heatmap_id}_x - 10)), 'height': '1px'});
-		$('#@{heatmap_id}_top_curser').css({'left': @{heatmap_id}_x, 'top': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, @{heatmap_id}_y - 10))});
-		$('#@{heatmap_id}_bottom_curser').css({'left': @{heatmap_id}_x, 'bottom': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, $(this).height() - @{heatmap_id}_y - 10))});
+			$('#@{heatmap_id}_right_curser').css({'right': '0px', 'top': @{heatmap_id}_y, 'width': Math.max(0, Math.min(10, $(this).width() - @{heatmap_id}_x - 10)), 'height': '1px'});
+			$('#@{heatmap_id}_left_curser').css({'left': '0px', 'top': @{heatmap_id}_y, 'width': Math.max(0, Math.min(10, @{heatmap_id}_x - 10)), 'height': '1px'});
+			$('#@{heatmap_id}_top_curser').css({'left': @{heatmap_id}_x, 'top': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, @{heatmap_id}_y - 10))});
+			$('#@{heatmap_id}_bottom_curser').css({'left': @{heatmap_id}_x, 'bottom': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, $(this).height() - @{heatmap_id}_y - 10))});
 
-	}).mouseout(function(e) {
-		$('#@{heatmap_id}_right_curser').remove();
-		$('#@{heatmap_id}_left_curser').remove();
-		$('#@{heatmap_id}_top_curser').remove();
-		$('#@{heatmap_id}_bottom_curser').remove();
-	});
+		}).mouseout(function(e) {
+			$('#@{heatmap_id}_right_curser').remove();
+			$('#@{heatmap_id}_left_curser').remove();
+			$('#@{heatmap_id}_top_curser').remove();
+			$('#@{heatmap_id}_bottom_curser').remove();
+		});
+	}
 });
 
 function @{heatmap_id}_create_color_picker() {

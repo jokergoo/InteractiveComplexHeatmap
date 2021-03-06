@@ -19,6 +19,7 @@
 # -width3 Pass to `InteractiveComplexHeatmapOutput`.
 # -layout Pass to `InteractiveComplexHeatmapOutput`.
 # -action Pass to `InteractiveComplexHeatmapOutput`.
+# -cursor Pass to `InteractiveComplexHeatmapOutput`.
 # -response Pass to `InteractiveComplexHeatmapOutput`.
 # -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
 # -output_ui_float Pass to `InteractiveComplexHeatmapOutput`.
@@ -85,7 +86,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 	height2 = 350, 
 	width3 = ifelse(layout == "(1-2)|3", 800, 400),
 	layout = ifelse("brush" %in% response, "(1-2)|3", "1-3"),
-	action = "click", response = c(action, "brush"),
+	action = "click", cursor = TRUE, response = c(action, "brush"),
 	brush_opt = list(stroke = "#f00", opacity = 0.6),
 	output_ui_float = FALSE
 
@@ -147,7 +148,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 		if(hline) hr() else NULL,
 		InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,
 			width1 = width1, height1 = height1, width2 = width2, height2 = height2, layout = layout,
-			action = action, response = response, brush_opt = brush_opt, output_ui_float = output_ui_float), 
+			action = action, cursor = cursor, response = response, brush_opt = brush_opt, output_ui_float = output_ui_float), 
 		html
 	)
 

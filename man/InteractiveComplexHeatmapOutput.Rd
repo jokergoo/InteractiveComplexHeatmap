@@ -15,7 +15,7 @@ InteractiveComplexHeatmapOutput(heatmap_id = NULL,
     height2 = 350,
     width3 = ifelse(default_output_ui_float, 400, ifelse(layout == "(1-2)|3", 800, 400)),
     layout = ifelse("brush" \%in\% response, "(1-2)|3", "1-3"),
-    action = "click",
+    action = "click", cursor = TRUE,
     response = c(action, "brush"),
     brush_opt = list(stroke = "#f00", opacity = 0.6),
     output_ui = default_output_ui(),
@@ -34,6 +34,7 @@ InteractiveComplexHeatmapOutput(heatmap_id = NULL,
   \item{width3}{Width of the output div.}
   \item{layout}{One of \code{"(1|2)-3"}, \code{"1-(2|3)"}, \code{"1-2-3"}, \code{"1|2|3"}, \code{"1|(2-3)"}. If there is no response to \code{brush} which is set with the \code{response} argument, the code \code{2} can be omitted.}
   \item{action}{Which action for selecting single cell on the heatmap? Value should be \code{click}, \code{hover} or \code{dblclick}.}
+  \item{cursor}{WHen moving mouse on heatmap, whether to show the cursors on the four sides?}
   \item{response}{Which action needs to be respond on the server side. Value should be in \code{click}/\code{hover}/\code{dblclick} and \code{brush}. Please note, if \code{brush} is not selected, there is no "search tool" in the main heatmap.}
   \item{brush_opt}{A list of parameters passed to \code{\link[shiny]{brushOpts}}. Do not set an ID for the brush. An internal brush ID is automatically set.}
   \item{output_ui}{A \code{\link[shiny]{htmlOutput}} or other output object. If it is set to \code{NULL}, there is no output in the app. If it is not set, default response in server side on user's actions (i.e. click, hover or double click) is used, i.e. to print the value of the clicked/hovered cell when it is a click/hover/double click action or a runnable code to get the information of the sub-heatmap that was selected from heatmap when it is a brush action.}
