@@ -8,7 +8,7 @@
 [**ComplexHeatmap**](https://github.com/jokergoo/ComplexHeatmap) package into an interactive
 Shiny app with one extra line of code.
 
-<img src="https://user-images.githubusercontent.com/449218/104457409-542d7a80-55aa-11eb-8cf6-34775e49535c.gif"  width='700' border="black" />
+<img src="https://user-images.githubusercontent.com/449218/110212910-e6147e00-7e9d-11eb-94ed-0ac549247888.gif"  width='100%' border="black" />
 
 ## Install
 
