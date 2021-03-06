@@ -1335,11 +1335,27 @@ default_brush_action = function(input, output, session, heatmap_id,
 
 			selected_df = as.data.frame(selected)
 
-			con = textConnection("dump_txt", "w")
-			dump("selected_df", file = con)
-			close(con)
-			dump_txt = dump_txt[-1]
-			dump_txt = paste(dump_txt, collapse = "\n")
+			# con = textConnection("dump_txt", "w")
+			# dump("selected_df", file = con)
+			# close(con)
+			# dump_txt = dump_txt[-1]
+			# dump_txt = paste(dump_txt, collapse = "\n")
+
+			json_list = sapply(1:nrow(selected_df), function(i) toJSON(selected_df[i, ]))
+			json_list = lapply(json_list, function(x) {
+				x = gsub("^\\[|]$", "", x)
+				x =  gsub('"slice":', '\n  "slice":', x)
+				x =  gsub('"row_slice":', '\n  "row_slice":', x)
+				x =  gsub('"column_slice":', '\n  "column_slice":', x)
+				x =  gsub('"row_index":', '\n  "row_index":', x)
+				x =  gsub('"column_index":', '\n  "column_index":', x)
+				x
+			})
+			json_txt = paste0("[", paste(json_list, collapse = ",\n"), "]")
+			json_txt = gsub("^(.)", "  \\1", json_txt)
+			json_txt = gsub("\n", "\n  ", json_txt)
+			dump_txt = qq("jsonlite::fromJSON('\n@{json_txt}\n')")
+
 			HTML(paste(
 				  qq("<h5>Output</h5>\n<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. Row and column indices can be obtained by copying following code:</p>"),
 				  "<div>",
@@ -1406,13 +1422,13 @@ default_click_action = function(input, output, session, heatmap_id, selected = N
 <div>
 <p>Information of the @{action}ed cell:</p>
 <pre>
-heatmap: @{ht_name}
+heatmap:       @{ht_name}
 heatmap slice: @{slice_name}
-row index: @{row_index}
-row label: @{row_label}
-column index: @{column_index}
-column_label: @{column_label}
-value: @{v} <span style='background-color:@{col};width=10px;'>    </span></pre>")
+row index:     @{row_index}
+row label:     @{row_label}
+column index:  @{column_index}
+column_label:  @{column_label}
+value:         @{v} <span style='background-color:@{col};width=10px;'>    </span></pre>")
 
 				value_txt = NULL
 				if(!is.null(ht@top_annotation)) {
