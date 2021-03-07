@@ -557,3 +557,36 @@ function @{heatmap_id}_create_color_picker() {
 		});
 	});
 }
+
+function create_clipboard(target_element) {
+	var btn = document.createElement("button");
+	btn.setAttribute("data-clipboard-target", "#"+target_element);
+	btn.innerHTML = "<i class='far fa-copy'></i>";
+	
+	var btn_id = target_element + "_clipboard_btn";
+	btn.setAttribute("id", btn_id);
+	btn.setAttribute("class", "btn btn-default");
+	$("#"+target_element).append(btn);
+	$("#"+target_element).css("position", "relative");
+	$("#"+btn_id).css({'position':'absolute','right':0,'top':'0px'});
+
+	var clipboard = new ClipboardJS(btn);
+	clipboard.on('success', function(e) {
+	    e.clearSelection();
+
+	    $("#"+btn_id).after("<div style='position:absolute;top:40px;right:0;padding:8px;border:1px solid #CCC;background-color:white;border-radius:4px;font-family:\"Helvetica Neue\",Helvetica,Arial,sans-serif;'>Copied</div>");
+
+	    $("#"+btn_id).mouseleave(function() {
+	    	$(this).next().remove();
+	    	$(this).unbind("mouseleave");
+	    })
+	});
+	
+	$("#"+target_element).mouseover(function() {
+		$("#"+btn_id).show();
+	}).mouseleave(function() {
+		$("#"+btn_id).hide();
+	});
+}
+
+

@@ -156,6 +156,14 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		stylesheet = c("all.min.css", "v4-shims.min.css")
     )
 
+    clipboard_dep = htmltools::htmlDependency(
+		name       = "clipboard",
+		version    = "2.0.7",
+		package    = "InteractiveComplexHeatmap",
+		src        = "www",
+		script     = c("clipboard.min.js")
+    )
+
     mousestop_dep = htmltools::htmlDependency(
 		name       = "mousestop",
 		version    = "3.0.1",
@@ -450,7 +458,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 
 	fluidPage(class = qq("@{heatmap_id}_widget"),
 
-		list(jqueryui_dep, pickr_dep, fontawesome_dep, mousestop_dep, ht_js_dep),
+		list(jqueryui_dep, pickr_dep, clipboard_dep, fontawesome_dep, mousestop_dep, ht_js_dep),
 
 		htmlOutput(qq("@{heatmap_id}_warning")),
 		tl,
