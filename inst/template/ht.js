@@ -574,10 +574,12 @@ function create_clipboard(target_element) {
 	clipboard.on('success', function(e) {
 	    e.clearSelection();
 
+	    $("#"+btn_id).html("<i class='fa fa-copy'></i>"); 
 	    $("#"+btn_id).after("<div style='position:absolute;top:40px;right:0;padding:8px;border:1px solid #CCC;background-color:white;border-radius:4px;font-family:\"Helvetica Neue\",Helvetica,Arial,sans-serif;'>Copied</div>");
 
 	    $("#"+btn_id).mouseleave(function() {
 	    	$(this).next().remove();
+	    	$("#"+btn_id).html("<i class='far fa-copy'></i>");
 	    	$(this).unbind("mouseleave");
 	    })
 	});
