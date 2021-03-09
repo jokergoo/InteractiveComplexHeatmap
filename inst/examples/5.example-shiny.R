@@ -349,15 +349,19 @@ ui = fluidPage(
 
 click_action = function(df, output) {
     output$scatterplot = renderPlot({
-        nm = colnames(mtcars)
-        i1 = df$column_index
-        i2 = df$row_index
+        if(is.null(df)) {
+            grid.text("You should click on heatmap cells.")
+        } else {
+            nm = colnames(mtcars)
+            i1 = df$column_index
+            i2 = df$row_index
 
-        x = mtcars[, nm[i1]]
-        y = mtcars[, nm[i2]]
+            x = mtcars[, nm[i1]]
+            y = mtcars[, nm[i2]]
 
-        plot(x, y, xlab = nm[i1], ylab = nm[i2],
-            main = paste0("Correlation = ", sprintf('%.3f', cor(x, y))))
+            plot(x, y, xlab = nm[i1], ylab = nm[i2],
+                main = paste0("Correlation = ", sprintf('%.3f', cor(x, y))))
+        }
     })
 }
 
@@ -368,4 +372,99 @@ server = function(input, output, session) {
 }
 
 shinyApp(ui, server)
+
+
+#############################################################################################
+# title: A heatmap on Jaccard coefficients for a list of genomic regions. Clicking on the cell generates a Hilbert curve of how the two sets of genomic regions overlap.
+
+library(GenomicRanges)
+library(HilbertCurve)
+library(ComplexHeatmap)
+library(GetoptLong)
+
+file_list = c(
+    "IDH_DMV" = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121721/suppl/GSE121721_IDH_methylation_features_DMV.bed.gz",
+    "IDH_LMR" = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121721/suppl/GSE121721_IDH_methylation_features_LMR.bed.gz",
+    "IDH_PMD" = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121721/suppl/GSE121721_IDH_methylation_features_PMD.bed.gz",
+
+    "MES_DMV" = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121721/suppl/GSE121721_MES_methylation_features_DMV.bed.gz",
+    "MES_LMR" = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121721/suppl/GSE121721_MES_methylation_features_LMR.bed.gz",
+    "MES_PMD" = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121721/suppl/GSE121721_MES_methylation_features_PMD.bed.gz",
+
+    "RTK_I_DMV" = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121721/suppl/GSE121721_RTK_I_methylation_features_DMV.bed.gz",
+    "RTK_I_LMR" = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121721/suppl/GSE121721_RTK_I_methylation_features_LMR.bed.gz",
+    "RTK_I_PMD" = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121721/suppl/GSE121721_RTK_I_methylation_features_PMD.bed.gz",
+
+    "RTK_II_DMV" = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121721/suppl/GSE121721_RTK_II_methylation_features_DMV.bed.gz",
+    "RTK_II_LMR" = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121721/suppl/GSE121721_RTK_II_methylation_features_LMR.bed.gz",
+    "RTK_II_PMD" = "https://ftp.ncbi.nlm.nih.gov/geo/series/GSE121nnn/GSE121721/suppl/GSE121721_RTK_II_methylation_features_PMD.bed.gz"
+)
+
+gr_list = lapply(file_list, function(x) {
+    tmp = tempfile()
+    download.file(x, tmp)
+    df = read.table(tmp)
+    file.remove(tmp)
+    GRanges(seqnames = df[, 1], ranges = IRanges(df[, 2], df[, 3]))
+})
+
+source("https://raw.githubusercontent.com/jokergoo/epik/master/R/genomic_region_correlation.R")
+
+jaccard_mat = genomic_regions_correlation(gr_list, gr_list)$stat
+
+ht = draw(Heatmap(jaccard_mat, col = c("white", "red"), name = "Jaccard"))
+
+make_hilbert_curve = function(i, j) {
+
+    gr1 = gr_list[[i]]
+    gr2 = gr_list[[j]]
+
+    name1 = names(gr_list)[i]
+    name2 = names(gr_list)[j]
+
+    gr1_unique = setdiff(gr1, gr2)
+    gr_common = intersect(gr1, gr2)
+    gr2_unique = setdiff(gr2, gr1)
+
+    gr = c(gr1_unique, gr_common, gr2_unique)
+
+    l = as.vector(seqnames(gr) == "chr21")
+
+    lgd = Legend(at = c(paste0("unique in ", name1), "in both", paste0("unique in ", name2)), legend_gp = gpar(fill = c("green", "red", "blue")))
+    hc = GenomicHilbertCurve(chr = "chr21", level = 6, reference = TRUE, arrow = FALSE,
+        legend = lgd, title = qq("Compare @{name1} and @{name2}, jaccard = @{sprintf('%.3f', jaccard_mat[i, j])}"))
+    hc_segments(hc, gr, 
+        gp = gpar(col = c(rep("green", length(gr1_unique)),
+                         rep("red", length(gr_common)),
+                         rep("blue", length(gr2_unique))),
+                  lwd = 6))
+}
+
+ui = fluidPage(
+    InteractiveComplexHeatmapOutput(response = "click", 
+        width1 = 600, height1 = 600, 
+        output_ui = plotOutput("hcplot", width = 700, height = 600))
+    
+)
+
+click_action = function(df, output) {
+    output$hcplot = renderPlot({
+        if(is.null(df)) {
+            grid.text("You should click on heatmap cells.")
+        } else {
+            i1 = df$column_index
+            i2 = df$row_index
+            make_hilbert_curve(i1, i2)
+        }
+    })
+}
+
+
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht,
+        click_action = click_action)
+}
+
+shinyApp(ui, server)
+
 
