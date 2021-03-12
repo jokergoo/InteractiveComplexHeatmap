@@ -94,7 +94,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 
 	if(is.null(ht_list)) {
 		if(length(dev.list())) {
-			stop_wrap("No heatmap is detected. Detected there is opened graphics device. If the heatmap was already made in that device, enter `ComplexHeatmap::ht_opt(save_last = TRUE)` and run `htShiny()` again.")
+			stop_wrap("No heatmap is detected. Detected there is opened graphics device. If the heatmap was already made in that device, enter `ComplexHeatmap::ht_opt(save_last = TRUE)`, regenerate the heatmap and run `htShiny()` again.")
 		} else {
 			stop_wrap("No heatmap is detected.")
 		}
@@ -203,7 +203,7 @@ htShinyExample = function(which) {
 			for(i in seq_along(title)) {
 				lines = strwrap(title[i], width = getOption("width") - 5)
 				lines[1] = paste0(" ", i_cate, ".", i, " ", lines[1])
-				lines[-1] = paste0(strrep(" ", 5), lines[-1])
+				lines[-1] = paste0(strrep(" ", 1 + nchar(i_cate) + 1 + nchar(i) + 1), lines[-1])
 				cat(paste(lines, collapse = "\n"))
 				cat("\n")
 			}
