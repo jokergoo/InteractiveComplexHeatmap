@@ -70,7 +70,7 @@ check_pkg = function(pkg) {
 	} else {
 
 		if(!interactive()) {
-			stop_wrap(qq("You need to manually install package '@{pkg}' CRAN/Bioconductor."))
+			stop_wrap(qq("You need to manually install package '@{pkg}' from CRAN/Bioconductor."))
 		}
 
 		answer = readline(qq("Package '@{pkg}' is required but not installed. Do you want to install it? [y|n] "))
