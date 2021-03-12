@@ -177,21 +177,29 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 #      Please note, if ``brush`` is not selected, there is no "search tool" in the main heatmap.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`. Do not set an ID for the brush. An internal brush ID is automatically set.
 #
-mainHeatmapOutput = function(heatmap_id, title = "Original heatmap",
+mainHeatmapOutput = function(heatmap_id, title = NULL,
 	width = 450, height = 350, 
 	action = "click", cursor = TRUE,
 	response = c(action, "brush"),
 	brush_opt = list(stroke = "#f00", opacity = 0.6)) {
 
+	if(missing(heatmap_id)) {
+		if(length(shiny_env$heatmap) == 1) {
+			heatmap_id = names(shiny_env$heatmap)
+		} else if(length(shiny_env$heatmap) == 0) {
+			increase_widget_index()
+			heatmap_id = paste0("ht", get_widget_index())
+		}
+	}
+
 	if(grepl("^\\d", heatmap_id)) {
 		stop_wrap("heatmap_id cannot start with digits.")
 	}
-	if(!grepl("^[a-zA-Z0-9_]+$", heatmap_id)) {
-		stop_wrap("heatmap_id can only contain letters, numbers and underlines.")
-	}
 
-	shiny_env[[heatmap_id]] = list()
-	shiny_env$current_heatmap_id = heatmap_id
+	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
+		shiny_env$heatmap[[heatmap_id]] = list()
+		shiny_env$current_heatmap_id = heatmap_id
+	}
 
 	if(action %in% c("dblclick", "dbclick")) {
 		click = NULL
@@ -211,7 +219,7 @@ mainHeatmapOutput = function(heatmap_id, title = "Original heatmap",
 	}
 	brush = do.call(brushOpts, c(list(id = qq("@{heatmap_id}_heatmap_brush")), brush_opt))
 
-	shiny_env[[heatmap_id]]$action = action
+	shiny_env$heatmap[[heatmap_id]]$action = action
 	response2 = NULL
 	if(any(response %in% "brush")) response2 = c(response2, "brush")
 	if(any(response %in% c("click", "hover", "dblclick"))) response2 = c(response2, "click")
@@ -219,7 +227,7 @@ mainHeatmapOutput = function(heatmap_id, title = "Original heatmap",
 	if(length(response) == 0) {
 		stop_wrap("response can only be click/hover/dblclick + brush.")
 	}
-	shiny_env[[heatmap_id]]$response = response
+	shiny_env$heatmap[[heatmap_id]]$response = response
 
 	has_click_reponse = "click" %in% response
 	has_brush_response = "brush" %in% response
@@ -314,6 +322,10 @@ mainHeatmapOutput = function(heatmap_id, title = "Original heatmap",
 				$('#@{heatmap_id}_heatmap').html('<p style=\"position:relative;top:50%;\">Making heatmap, please wait...</p>');
 			")))
 		),
+		tags$script(HTML(qq('
+			$("#@{heatmap_id}_heatmap_resize").css("width", $("#@{heatmap_id}_heatmap").width() + 4);
+			$("#@{heatmap_id}_heatmap_resize").css("height", $("#@{heatmap_id}_heatmap").height() + 4);
+		'))),
 		div(id = qq("@{heatmap_id}_heatmap_control"),
 			style = "display:none;",
 			{
@@ -358,22 +370,28 @@ mainHeatmapOutput = function(heatmap_id, title = "Original heatmap",
 						div(
 							id = qq('@{heatmap_id}_tabs-save-image'),
 							radioButtons(qq("@{heatmap_id}_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
-							numericInput(qq("@{heatmap_id}_heatmap_download_image_width"), label = "Image width (in px)", value = width),
-							numericInput(qq("@{heatmap_id}_heatmap_download_image_height"), label = "Image height (in px)", value = height),
+							numericInput(qq("@{heatmap_id}_heatmap_download_image_width"), label = "Image width (in px)", value = 0),
+							numericInput(qq("@{heatmap_id}_heatmap_download_image_height"), label = "Image height (in px)", value = 0),
 							downloadButton(qq("@{heatmap_id}_heatmap_download_button"), "Save image")
 						)
 					),
 					tabPanel(HTML("<i class='fa fa-expand-arrows-alt'></i>"),
 						div(id = qq('@{heatmap_id}_tabs-resize'),
-							numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", width),
-							numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", height),
+							numericInput(qq("@{heatmap_id}_heatmap_input_width"), "Box width", 0),
+							numericInput(qq("@{heatmap_id}_heatmap_input_height"), "Box height", 0),
 							actionButton(qq("@{heatmap_id}_heatmap_input_size_button"), "Change image size")
 						)
 					)
 				)
 				if(!has_brush_response) tbl = tbl[-(1:2)]
 				do.call(tabsetPanel, tbl)
-			}
+			},
+			tags$script(HTML(qq("
+				$('#@{heatmap_id}_heatmap_download_image_width').val($('#@{heatmap_id}_heatmap').width());
+				$('#@{heatmap_id}_heatmap_download_image_height').val($('#@{heatmap_id}_heatmap').height());
+				$('#@{heatmap_id}_heatmap_input_width').val($('#@{heatmap_id}_heatmap').width());
+				$('#@{heatmap_id}_heatmap_input_height').val($('#@{heatmap_id}_heatmap').height());
+			")))
 		)
 	)
 	main_heatmap_ui
@@ -388,8 +406,21 @@ mainHeatmapOutput = function(heatmap_id, title = "Original heatmap",
 # -width Width of the sub-heatmap.
 # -height Height of the sub-heatmap.
 #
-subHeatmapOutput = function(heatmap_id, title = "Selected sub-heatmap",
+subHeatmapOutput = function(heatmap_id, title = NULL,
 	width = 400, height = 350) {
+
+	if(missing(heatmap_id)) {
+		if(length(shiny_env$heatmap) == 1) {
+			heatmap_id = names(shiny_env$heatmap)
+		} else if(length(shiny_env$heatmap) == 0) {
+			increase_widget_index()
+			heatmap_id = paste0("ht", get_widget_index())
+		}
+	}
+	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
+		shiny_env$heatmap[[heatmap_id]] = list()
+		shiny_env$current_heatmap_id = heatmap_id
+	}
 
 	sub_heatmap_ui = div(
 		id = qq("@{heatmap_id}_sub_heatmap_group"),
@@ -400,6 +431,10 @@ subHeatmapOutput = function(heatmap_id, title = "Selected sub-heatmap",
 		div(id = qq("@{heatmap_id}_sub_heatmap_resize"),
 			plotOutput(qq("@{heatmap_id}_sub_heatmap"), height = height, width = width)
 		),
+		tags$script(HTML(qq('
+			$("#@{heatmap_id}_sub_heatmap_resize").css("width", $("#@{heatmap_id}_sub_heatmap").width() + 4);
+			$("#@{heatmap_id}_sub_heatmap_resize").css("height", $("#@{heatmap_id}_sub_heatmap").height() + 4);
+		'))),
 		div(id = qq("@{heatmap_id}_sub_heatmap_control"),
 			style = "display:none;",
 			tabsetPanel(
@@ -455,19 +490,25 @@ subHeatmapOutput = function(heatmap_id, title = "Selected sub-heatmap",
 				tabPanel(HTML("<i class='fa fa-images'></i>"),
 					div(id = qq('@{heatmap_id}_sub_tabs-save-image'),
 						radioButtons(qq("@{heatmap_id}_sub_heatmap_download_format"), label = "Which format?", choices = list("png" = 1, "pdf" = 2, "svg" = 3), selected = 1, inline = TRUE),
-						numericInput(qq("@{heatmap_id}_sub_heatmap_download_image_width"), label = "Image width (in px)", value = width),
-						numericInput(qq("@{heatmap_id}_sub_heatmap_download_image_height"), label = "Image height (in px)", value = height),
+						numericInput(qq("@{heatmap_id}_sub_heatmap_download_image_width"), label = "Image width (in px)", value = 0),
+						numericInput(qq("@{heatmap_id}_sub_heatmap_download_image_height"), label = "Image height (in px)", value = 0),
 						downloadButton(qq("@{heatmap_id}_sub_heatmap_download_button"), "Save image")
 					),
 				),
 				tabPanel(HTML("<i class='fa fa-expand-arrows-alt'></i>"),
 					div(id = qq('@{heatmap_id}_sub_tabs-resize'),
-						numericInput(qq("@{heatmap_id}_sub_heatmap_input_width"), "Box width", width),
-						numericInput(qq("@{heatmap_id}_sub_heatmap_input_height"), "Box height", height),
+						numericInput(qq("@{heatmap_id}_sub_heatmap_input_width"), "Box width", 0),
+						numericInput(qq("@{heatmap_id}_sub_heatmap_input_height"), "Box height", 0),
 						actionButton(qq("@{heatmap_id}_sub_heatmap_input_size_button"), "Change image size")
 					)
 				)
-			)
+			),
+			tags$script(HTML(qq("
+				$('#@{heatmap_id}_sub_heatmap_download_image_width').val($('#@{heatmap_id}_sub_heatmap').width());
+				$('#@{heatmap_id}_sub_heatmap_download_image_height').val($('#@{heatmap_id}_sub_heatmap').height());
+				$('#@{heatmap_id}_sub_heatmap_input_width').val($('#@{heatmap_id}_sub_heatmap').width());
+				$('#@{heatmap_id}_sub_heatmap_input_height').val($('#@{heatmap_id}_sub_heatmap').height());
+			")))
 		)
 	)
 
@@ -492,12 +533,28 @@ default_output_ui = function(heatmap_id) {
 #          a runnable code to get the information of the sub-heatmap that was selected from heatmap when it is a brush action.
 # -output_ui_float Whether the UI defined by ``output_ui`` floats at the mouse positions.
 # -action It is only used when ``output_ui_float`` is set to ``TRUE`` to properly bind the floating frame to the event on heatmap.
+#      If `HeatmapInfoOutput` is executed after `mainHeatmapOutput`, the value for it is automatically assigned.
 # -response It is only used when ``output_ui_float = TRUE`` and ``response = "brush"``, so that clicking or hovering in a same
 #      position won't have any effect, in other word, there is only response from brushing.
+#       If `HeatmapInfoOutput` is executed after `mainHeatmapOutput`, the value for it is automatically assigned.
 #
-HeatmapInfoOutput = function(heatmap_id, title = "Output", width = 400, 
+HeatmapInfoOutput = function(heatmap_id, title = NULL, width = 400, 
 	output_ui = default_output_ui(heatmap_id), 
 	output_ui_float = FALSE, action = NULL, response = NULL) {
+
+	if(missing(heatmap_id)) {
+		if(length(shiny_env$heatmap) == 1) {
+			heatmap_id = names(shiny_env$heatmap)
+		} else if(length(shiny_env$heatmap) == 0) {
+			increase_widget_index()
+			heatmap_id = paste0("ht", get_widget_index())
+		}
+	}
+
+	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
+		shiny_env$heatmap[[heatmap_id]] = list()
+		shiny_env$current_heatmap_id = heatmap_id
+	}
 
 	if(identical(output_ui, TRUE)) {
 		output_ui = default_output_ui(heatmap_id)
@@ -505,33 +562,33 @@ HeatmapInfoOutput = function(heatmap_id, title = "Output", width = 400,
 		output_ui = NULL
 	}
 
-	shiny_env[[heatmap_id]]$output_ui_float = output_ui_float
+	shiny_env$heatmap[[heatmap_id]]$output_ui_float = output_ui_float
 
 	if(is.null(output_ui)) {
-		shiny_env[[heatmap_id]]$default_output_ui = FALSE
+		shiny_env$heatmap[[heatmap_id]]$default_output_ui = FALSE
 	}  else {
-		shiny_env[[heatmap_id]]$default_output_ui = identical(output_ui, default_output_ui(heatmap_id))
+		shiny_env$heatmap[[heatmap_id]]$default_output_ui = identical(output_ui, default_output_ui(heatmap_id))
 	}
 
-	default_output_ui_float = output_ui_float & shiny_env[[heatmap_id]]$default_output_ui
+	default_output_ui_float = output_ui_float & shiny_env$heatmap[[heatmap_id]]$default_output_ui
 
 	if(is.null(response)) {
-		if(is.null(shiny_env[[heatmap_id]]$response)) {
+		if(is.null(shiny_env$heatmap[[heatmap_id]]$response)) {
 			response = c("click", "brush")
 		} else {
-			response = shiny_env[[heatmap_id]]$response
+			response = shiny_env$heatmap[[heatmap_id]]$response
 		}
 	}
 
 	if(is.null(action)) {
-		if(is.null(shiny_env[[heatmap_id]]$action)) {
+		if(is.null(shiny_env$heatmap[[heatmap_id]]$action)) {
 			if(identical(response, "brush")) {
 				action = ""
 			} else {
 				action = "click"
 			}
 		} else {
-			action = shiny_env[[heatmap_id]]$action
+			action = shiny_env$heatmap[[heatmap_id]]$action
 		}
 	} else {
 		if(identical(response, "brush")) {

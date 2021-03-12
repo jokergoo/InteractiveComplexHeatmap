@@ -137,6 +137,49 @@ to only respond to one event on heatmap. E.g. if `response` is set to `"click"`,
 be no response for the "brush event" in the interactive heatmap, also the sub-heatmap component
 is removed from the app. Please go to Section ["Only respond to one event"](InteractiveComplexHeatmap.html#only-respond-to-one-event) for examples.
 
+`InteractiveComplexHeatmapOutput()` manages the three components. The three components can also be
+separated into `mainHeatmapOutput()`, `subHeatmapOutput()` and `HeatmapInfoOutput()`. Then, it is possible
+to integrate with other packages such as **shinydashboard**.
+
+```{r, eval = FALSE}
+body = dashboardBody(
+    fluidRow(
+        box(
+            title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
+            mainHeatmapOutput("ht", title = NULL)
+        ),
+        box(
+            title = "Sub-heatmap", width = 4, solidHeader = TRUE, status = "primary",
+            subHeatmapOutput("ht", title = NULL)
+        ),
+        box(
+            title = "Output", width = 4, solidHeader = TRUE, status = "primary",
+            HeatmapInfoOutput("ht", title = NULL)
+        )
+    )
+)
+
+ui = dashboardPage(
+    dashboardHeader(),
+    dashboardSidebar(),
+    body
+)
+
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht, "ht")
+}
+
+shinyApp(ui, server)
+```
+
+```{r, echo = FALSE, out.width = "100%"}
+include_graphics("https://jokergoo.github.io/images/shinydashboard.png")
+```
+
+Please note, since now the three components are generated independently, to correctly connect the three components
+as well as the server side, the heatmap ID must be explicitely specified in all the functions.
+More examples on integrating with **shinydashboard** can be found with `htShinyExample(10.1)` and `htShinyExample(10.2)`.
+
 
 ## Work with R Markdown documents
 

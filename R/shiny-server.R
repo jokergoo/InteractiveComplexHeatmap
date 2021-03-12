@@ -37,16 +37,16 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	click_action = NULL, hover_action = NULL, 
 	dblclick_action = NULL, brush_action = NULL) {
 
-	if(shiny_env[[heatmap_id]]$action == "hover") {
+	if(shiny_env$heatmap[[heatmap_id]]$action == "hover") {
 		if(!is.null(hover_action)) click_action = hover_action
 	}
-	if(shiny_env[[heatmap_id]]$action == "dblclick") {
+	if(shiny_env$heatmap[[heatmap_id]]$action == "dblclick") {
 		if(!is.null(dblclick_action)) click_action = dblclick_action
 	}
-	do_default_click_action = shiny_env[[heatmap_id]]$default_output_ui
-	do_default_brush_action = shiny_env[[heatmap_id]]$default_output_ui
+	do_default_click_action = shiny_env$heatmap[[heatmap_id]]$default_output_ui
+	do_default_brush_action = shiny_env$heatmap[[heatmap_id]]$default_output_ui
 
-	response = shiny_env[[heatmap_id]]$response
+	response = shiny_env$heatmap[[heatmap_id]]$response
 	has_click_reponse = "click" %in% response
 	has_brush_response = "brush" %in% response
 
@@ -656,7 +656,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	##      A click on the heatmap
 	###############################################################
 
-	action = shiny_env[[heatmap_id]]$action
+	action = shiny_env$heatmap[[heatmap_id]]$action
 	if(has_click_reponse) {
 		observeEvent(input[[ifelse(action %in% c("click", "hover"), 
 			                       qq("@{heatmap_id}_heatmap_mouse_action"), 
