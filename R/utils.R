@@ -5,6 +5,7 @@ get_last_ht = function() {
 
 shiny_env = new.env()
 shiny_env$i_widget = 0
+shiny_env$heatmap = list()
 
 get_widget_index = function() {
 	shiny_env$i_widget
@@ -95,3 +96,5 @@ js_has_hover = js_has_dblclick = js_has_click = function(response) {
 	l = "click" %in% response
 	ifelse(l, "true", "false")
 }
+
+

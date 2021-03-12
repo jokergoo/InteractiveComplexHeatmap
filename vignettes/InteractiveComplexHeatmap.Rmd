@@ -183,7 +183,7 @@ There are other vignettes focusing on more specific topics:
 they do not directly return the `Heatmap`/`HeatmapList` object. This is of no
 problem to make these heatmaps interactive because the last generated heatmap
 object is automatically saved and calling `htShiny()` without the heatmap
-object will automatically use the last one. I demonstrate this functionality
+object will automatically use the last one (by internally using the function `ComplexHeatmap:::get_last_ht()`). I demonstrate this functionality
 with [the **cola** pacakge](https://bioconductor.org/packages/cola/).
 
 **cola** package heavily uses **ComplexHeatmap** to implement various customized heatmaps

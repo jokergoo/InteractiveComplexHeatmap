@@ -31,6 +31,7 @@ importFrom("jsonlite", "fromJSON", "toJSON")
 importFrom("kableExtra", "scroll_box", "kable_styling", "kbl", "column_spec", "row_spec")
 importFrom("stats", "rnorm")
 importFrom("utils", "install.packages")
+importFrom("utils", "packageDescription", "packageVersion")
 importFrom("utils", "write.csv")
 importFrom("utils", "write.table")
 

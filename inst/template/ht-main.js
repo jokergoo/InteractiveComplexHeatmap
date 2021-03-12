@@ -42,11 +42,12 @@ $(function() {
 				$('#@{heatmap_id}_heatmap_download_image_width').val(width_in_inch);
 				$('#@{heatmap_id}_heatmap_download_image_height').val(height_in_inch);
 			} else {
-				$('#@{heatmap_id}_heatmap_download_image_width').val(ui.size.width);
-				$('#@{heatmap_id}_heatmap_download_image_height').val(ui.size.height);
+				$('#@{heatmap_id}_heatmap_download_image_width').val(ui.size.width - 4);
+				$('#@{heatmap_id}_heatmap_download_image_height').val(ui.size.height - 4);
 			}
 		},
 		zIndex: 0,
+		containment: "parent"
 	});
 
 	$('#@{heatmap_id}_keyword').click(function() {
@@ -203,7 +204,7 @@ $(function() {
 	}
 
 
-	if('@{shiny_env[[heatmap_id]]$action}' == 'click') {
+	if('@{action}' == 'click') {
 		var @{heatmap_id}_brush_x1;
 		var @{heatmap_id}_brush_x2;
 		var @{heatmap_id}_brush_y1;
@@ -222,7 +223,7 @@ $(function() {
 		});
 	}
 
-	if('@{shiny_env[[heatmap_id]]$action}' == 'hover') {
+	if('@{action}' == 'hover') {
 		var @{heatmap_id}_x;
         var @{heatmap_id}_y;
         $('#@{heatmap_id}_heatmap').mousemove(function(e) {

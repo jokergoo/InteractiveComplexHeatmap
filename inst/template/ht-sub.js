@@ -2,7 +2,7 @@
 $(function() {
 
 	$("#@{heatmap_id}_sub_heatmap_control").width($("#@{heatmap_id}_sub_heatmap").width());
-	
+
 	$("#@{heatmap_id}_sub_heatmap_resize").resizable({
 		stop: function( event, ui ) {
 			document.getElementById("@{heatmap_id}_mask2").remove();
@@ -22,13 +22,26 @@ $(function() {
 			$("#@{heatmap_id}_mask2").height(ui.size.height);
 			$("#@{heatmap_id}_sub_heatmap").width(ui.size.width - 4);
 			$("#@{heatmap_id}_sub_heatmap").height(ui.size.height - 4);
-
 			$("#@{heatmap_id}_sub_heatmap img").width(ui.size.width - 4);
 			$("#@{heatmap_id}_sub_heatmap img").height(ui.size.height - 4);
 
 			$("#@{heatmap_id}_sub_heatmap_control").width(ui.size.width);
+
+			$('#@{heatmap_id}_sub_heatmap_input_width').val(ui.size.width - 4);
+			$('#@{heatmap_id}_sub_heatmap_input_height').val(ui.size.height - 4);
+
+			if(parseInt($('#@{heatmap_id}_sub_heatmap_download_format').find('input').filter(':checked').val()) == 2) {
+				width_in_inch = Math.round((ui.size.width - 4)*10/100*4/3)/10;
+				height_in_inch = Math.round((ui.size.height - 4)*10/100*4/3)/10;
+				$('#@{heatmap_id}_sub_heatmap_download_image_width').val(width_in_inch);
+				$('#@{heatmap_id}_sub_heatmap_download_image_height').val(height_in_inch);
+			} else {
+				$('#@{heatmap_id}_sub_heatmap_download_image_width').val(ui.size.width - 4);
+				$('#@{heatmap_id}_sub_heatmap_download_image_height').val(ui.size.height - 4);
+			}
 		},
 		zIndex: 0,
+		containment: "parent"
 	});
 	
 	

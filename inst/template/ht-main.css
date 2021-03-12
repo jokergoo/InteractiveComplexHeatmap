@@ -6,8 +6,6 @@
 	margin-right: 10px;
 }
 #@{heatmap_id}_heatmap_resize {
-	width: @{width + 4}px;
-	height: @{height + 4}px;
 	position:relative;
 	border:1px solid grey;
 	text-align:center;
