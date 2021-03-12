@@ -125,7 +125,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 			if(do_default_click_action || do_default_brush_action) {
 				output[[qq("@{heatmap_id}_info")]] = renderUI({
-					HTML("<h5>Output</h5>\n<p>No position is selected.</p>")
+					HTML("<p>No position is selected.</p>")
 				})
 			}
 			message(qq("[@{Sys.time()}] initialize the original heatmap and calculate positions."))
@@ -189,7 +189,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 		if(do_default_click_action || do_default_brush_action) {
 			output[[qq("@{heatmap_id}_info")]] = renderUI({
-				HTML("<h5>Output</h5>\n<p>No position is selected.</p>")
+				HTML("<p>No position is selected.</p>")
 			})
 		}
 
@@ -751,7 +751,7 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 
     	all_ht_name = unique(selected$heatmap)
 
-    	ignored_anno = c("anno_oncoprint_barplot", "anno_zoom", "anno_empty")
+    	ignored_anno = c("anno_oncoprint_barplot", "anno_zoom", "anno_empty", "anno_block")
 
     	ht_select = NULL
 		for(ht_name in all_ht_name) {
@@ -1312,7 +1312,7 @@ default_brush_action = function(input, output, session, heatmap_id,
 	output[[qq("@{heatmap_id}_info")]] = renderUI({
 
 		if(is.null(selected)) {
-			HTML(qq("<h5>Output</h5>\n<p>@{default_text}</p>"))
+			HTML(qq("<p>@{default_text}</p>"))
 		} else {
 
 			selected = selected[!is.na(selected$row_slice), ]
@@ -1357,7 +1357,7 @@ default_brush_action = function(input, output, session, heatmap_id,
 			dump_txt = qq("jsonlite::fromJSON('\n@{json_txt}\n')")
 
 			HTML(paste(
-				  qq("<h5>Output</h5>\n<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. Row and column indices can be obtained by copying following code:</p>"),
+				  qq("<p>Selected over @{n_ht} heatmap@{ifelse(n_ht > 1, 's', '')} with @{nr} row@{ifelse(nr > 1, 's', '')} and @{nc} column@{ifelse(nc > 1, 's', '')}. Row and column indices can be obtained by copying following code:</p>"),
 				  "<div>",
 				  qq("<p><button id='@{heatmap_id}_show_code' class='btn btn-default'>show/hide code</button></p>"),
 				  qq("<div id='@{heatmap_id}_code_wrapper'>"),
@@ -1381,13 +1381,13 @@ default_click_action = function(input, output, session, heatmap_id, selected = N
 	output[[qq("@{heatmap_id}_info")]] = renderUI({
 
 	    if(is.null(selected)) {
-	    	HTML("<h5>Output</h5>\n<p>No cell is selected.</p>")
+	    	HTML("<p>No cell is selected.</p>")
 	    } else {
 	    	showNotification(qq("@{action} on the heatmap."), duration = 2, type = "message")
 	    	pos = selected
 
 			if(is.null(pos)) {
-				HTML("<h5>Output</h5>\n<p>You did not @{action} inside the heatmap.</p>")
+				HTML("<p>You did not @{action} inside the heatmap.</p>")
 			} else {
 				ht_name = pos[1, "heatmap"]
 				slice_name = pos[1, "slice"]
@@ -1421,7 +1421,6 @@ default_click_action = function(input, output, session, heatmap_id, selected = N
 			    message(qq("[@{Sys.time()}] @{action} on the heatmap @{slice_name}."))
 				
 				html = qq("
-<h5>Output</h5>
 <div>
 <p>Information of the @{action}ed cell:</p>
 <pre>

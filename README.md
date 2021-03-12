@@ -8,7 +8,14 @@
 [**ComplexHeatmap**](https://github.com/jokergoo/ComplexHeatmap) package into an interactive
 Shiny app only with one extra line of code.
 
+The first example is the default layout of the interactive complex heatmap widget.
+
 <img src="https://user-images.githubusercontent.com/449218/110212910-e6147e00-7e9d-11eb-94ed-0ac549247888.gif"  width='100%' border="black" />
+
+The second example demonstrates the integration with the package **shinydashboard**.
+
+<img src="https://user-images.githubusercontent.com/449218/110935123-4a688f00-832f-11eb-8e03-90c41eba0598.gif" width="100%" border="black" />
+
 
 ## Install
 
