@@ -47,7 +47,7 @@ $(function() {
 			}
 		},
 		zIndex: 0,
-		containment: "parent"
+		containment: @{containment}
 	});
 
 	$('#@{heatmap_id}_keyword').click(function() {

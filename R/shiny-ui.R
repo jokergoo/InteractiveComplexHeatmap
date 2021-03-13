@@ -24,6 +24,7 @@
 #         is used, i.e. to print the value of the clicked/hovered cell when it is a click/hover/double click action or
 #          a runnable code to get the information of the sub-heatmap that was selected from heatmap when it is a brush action.
 # -output_ui_float Whether the UI defined by ``output_ui`` floats at the mouse positions.
+# -containment
 # -... Pass to the UI container which is wrapped by `shiny::fluidPage`.
 #
 # == details
@@ -53,7 +54,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	response = c(action, "brush"),
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_ui = default_output_ui(heatmap_id), 
-	output_ui_float = FALSE,
+	output_ui_float = FALSE, containment = FALSE,
 	...) {
 
 	if(is.null(heatmap_id)) {
@@ -62,8 +63,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	}
 
 	main_heatmap_ui = mainHeatmapOutput(heatmap_id, title = title1, width = width1, height = height1, action = action,
-		cursor = cursor, response = response, brush_opt = brush_opt)
-	sub_heatmap_ui = subHeatmapOutput(heatmap_id, title = title2, width = width2, height = height2)
+		cursor = cursor, response = response, brush_opt = brush_opt, containment = containment)
+	sub_heatmap_ui = subHeatmapOutput(heatmap_id, title = title2, width = width2, height = height2, containment = containment)
 	
 	if(is.null(width3)) {
 		width3 = width1
@@ -176,12 +177,15 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 # -response Which action needs to be respond on the server side. Value should be in ``click``/``hover``/``dblclick`` and ``brush``.
 #      Please note, if ``brush`` is not selected, there is no "search tool" in the main heatmap.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`. Do not set an ID for the brush. An internal brush ID is automatically set.
+# -containment If this output is inside a container, whether the resizing be restricted inside this container? The value can be logical,
+#     or a string ``"parent"``/``"document"``, or a string of selector.
 #
 mainHeatmapOutput = function(heatmap_id, title = NULL,
 	width = 450, height = 350, 
 	action = "click", cursor = TRUE,
 	response = c(action, "brush"),
-	brush_opt = list(stroke = "#f00", opacity = 0.6)) {
+	brush_opt = list(stroke = "#f00", opacity = 0.6),
+	containment = FALSE) {
 
 	if(missing(heatmap_id)) {
 		if(length(shiny_env$heatmap) == 1) {
@@ -301,6 +305,14 @@ mainHeatmapOutput = function(heatmap_id, title = NULL,
     	pickr_opacity = brush_opt$opacity
     }
 
+    if(identical(containment, FALSE)) {
+		containment = "false"
+	} else if(identical(containment, TRUE)) {
+		containment = qq("$('#@{heatmap_id}_heatmap_group').parent()")
+	} else {
+		containment = paste0('"', containment, '"')
+	}
+
     main_heatmap_ui = div(id = qq("@{heatmap_id}_heatmap_group"),
 
     	list(jqueryui_dep, 
@@ -392,7 +404,7 @@ mainHeatmapOutput = function(heatmap_id, title = NULL,
 				$('#@{heatmap_id}_heatmap_input_width').val($('#@{heatmap_id}_heatmap').width());
 				$('#@{heatmap_id}_heatmap_input_height').val($('#@{heatmap_id}_heatmap').height());
 			")))
-		)
+		)	
 	)
 	main_heatmap_ui
 }
@@ -405,9 +417,11 @@ mainHeatmapOutput = function(heatmap_id, title = NULL,
 # -title Title of the sub-heatmap.
 # -width Width of the sub-heatmap.
 # -height Height of the sub-heatmap.
+# -containment If this output is inside a container, whether the resizing be restricted inside this container? The value can be logical,
+#     or a string ``"parent"``/``"document"``, or a string of selector.
 #
 subHeatmapOutput = function(heatmap_id, title = NULL,
-	width = 400, height = 350) {
+	width = 400, height = 350, containment = FALSE) {
 
 	if(missing(heatmap_id)) {
 		if(length(shiny_env$heatmap) == 1) {
@@ -420,6 +434,14 @@ subHeatmapOutput = function(heatmap_id, title = NULL,
 	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
 		shiny_env$heatmap[[heatmap_id]] = list()
 		shiny_env$current_heatmap_id = heatmap_id
+	}
+
+	if(identical(containment, FALSE)) {
+		containment = "false"
+	} else if(identical(containment, TRUE)) {
+		containment = qq("$('#@{heatmap_id}_sub_heatmap_group').parent()")
+	} else {
+		containment = paste0('"', containment, '"')
 	}
 
 	sub_heatmap_ui = div(
@@ -509,7 +531,8 @@ subHeatmapOutput = function(heatmap_id, title = NULL,
 				$('#@{heatmap_id}_sub_heatmap_input_width').val($('#@{heatmap_id}_sub_heatmap').width());
 				$('#@{heatmap_id}_sub_heatmap_input_height').val($('#@{heatmap_id}_sub_heatmap').height());
 			")))
-		)
+		),
+		style = qq("width:@{width}; height:@{height};")
 	)
 
 	sub_heatmap_ui
@@ -596,12 +619,20 @@ HeatmapInfoOutput = function(heatmap_id, title = NULL, width = 400,
 		}
 	}
 
+	if(is.numeric(width)) {
+		if(width > 1) {
+			width = paste0(width, "px")
+		} else {
+			width = paste0(width*100, "%")
+		}
+	}
+
     div(
 		id = qq("@{heatmap_id}_output_wrapper"),
 		add_js_css_dep(heatmap_id, js_file = "ht-output.js", css_file = "ht-output.css"),
 		if(identical(title, NULL) || identical(title, "")) NULL else h5(title),
 		output_ui,
-		style = qq("width: @{width}px;"),
+		style = qq("width: @{width};"),
 		if(output_ui_float) tags$script(HTML(qq("$(document.body).append( $('#@{heatmap_id}_output_wrapper').detach() );"))) else NULL
 	)
 }
