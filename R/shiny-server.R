@@ -82,7 +82,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	if(!has_normal_matrix) {
 		stop_wrap("There should be at least one normal heatmap (nrow > 0 and ncol > 0) in the heatmap list.")
 	}
-
+	
 	# initialize heatmaps
 	ht_list = reactiveVal({
 		tryCatch({
@@ -103,7 +103,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	ht_pos = reactiveVal(NULL)
 	selected = reactiveVal(NULL)
 	selected_copy = reactiveVal(NULL)
-	heatmap_initialized = reactiveVal(TRUE)
+	heatmap_initialized = reactiveVal(FALSE)
 
 	sub_ht_list = reactiveVal()
 
@@ -178,6 +178,17 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		    		)
 		    	})
 		    }
+
+		    session$resetBrush(qq("@{heatmap_id}_heatmap_brush"))
+
+		    if(!is.null(click_action)) {
+		    	click_action(NULL, output)
+		    }
+		    if(!is.null(brush_action)) {
+		    	brush_action(NULL, output)
+		    }
+
+		    heatmap_initialized(TRUE)
 		})
 
 		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
@@ -290,6 +301,9 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	###############################################################
 	if(has_brush_response) {
 		observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
+
+			req(heatmap_initialized())
+
 			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
 			
 			if(is.null(input[[qq("@{heatmap_id}_heatmap_brush")]])) {
@@ -540,6 +554,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}
 
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
+			session$resetBrush(qq("@{heatmap_id}_heatmap_brush"))
 
 		})
 
@@ -661,6 +676,8 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		observeEvent(input[[ifelse(action %in% c("click", "hover"), 
 			                       qq("@{heatmap_id}_heatmap_mouse_action"), 
 			                       qq("@{heatmap_id}_heatmap_click"))]], {
+
+			req(heatmap_initialized())
 
 			if(action == "hover") {
 				pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_hover")]])

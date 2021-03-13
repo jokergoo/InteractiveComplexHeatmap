@@ -131,30 +131,37 @@ dds$dex <- relevel(dds$dex, ref = "untrt")
 dds <- DESeq(dds)
 res <- results(dds)
 res = as.data.frame(res)
-res = res[, c("baseMean", "log2FoldChange", "padj")]
-
-m = counts(dds, normalized = TRUE)
-
-l = res$padj < 0.01; l[is.na(l)] = FALSE
-m = m[l, ]
 
 library(ComplexHeatmap)
 library(circlize)
 
-ht = Heatmap(t(scale(t(m))), name = "z-score",
-    top_annotation = HeatmapAnnotation(
-        dex = colData(dds)$dex,
-        sizeFactor = anno_points(colData(dds)$sizeFactor)
-    ),
-    show_row_names = FALSE, show_column_names = FALSE, row_km = 2,
-    column_title = paste0(sum(l), " significant genes with FDR < 0.01"),
-    show_row_dend = FALSE) + 
-    Heatmap(log10(res$baseMean[l]+1), show_row_names = FALSE, width = unit(5, "mm"),
-        name = "log10(baseMean+1)", show_column_names = FALSE) +
-    Heatmap(res$log2FoldChange[l], show_row_names = FALSE, width = unit(5, "mm"),
-        name = "log2FoldChange", show_column_names = FALSE,
-        col = colorRamp2(c(-2, 0, 2), c("green", "white", "red")))
-ht = draw(ht, merge_legend = TRUE)
+env = new.env()
+
+make_heatmap = function(fdr = 0.01, base_mean = 0, log2fc = 0) {
+	l = res$padj <= fdr & res$baseMean >= base_mean & abs(res$log2FoldChange) >= log2fc; l[is.na(l)] = FALSE
+
+	if(sum(l) == 0) return(NULL)
+
+	m = counts(dds, normalized = TRUE)
+	m = m[l, ]
+
+	env$row_index = which(l)
+
+	ht = Heatmap(t(scale(t(m))), name = "z-score",
+	    top_annotation = HeatmapAnnotation(
+	        dex = colData(dds)$dex,
+	        sizeFactor = anno_points(colData(dds)$sizeFactor)
+	    ),
+	    show_row_names = FALSE, show_column_names = FALSE, row_km = 2,
+	    column_title = paste0(sum(l), " significant genes with FDR < ", fdr),
+	    show_row_dend = FALSE) + 
+	    Heatmap(log10(res$baseMean[l]+1), show_row_names = FALSE, width = unit(5, "mm"),
+	        name = "log10(baseMean+1)", show_column_names = FALSE) +
+	    Heatmap(res$log2FoldChange[l], show_row_names = FALSE, width = unit(5, "mm"),
+	        name = "log2FoldChange", show_column_names = FALSE,
+	        col = colorRamp2(c(-2, 0, 2), c("green", "white", "red")))
+	ht = draw(ht, merge_legend = TRUE)
+}
 
 make_maplot = function(res, highlight = NULL) {
     col = rep("#00000020", nrow(res))
@@ -183,21 +190,19 @@ make_maplot = function(res, highlight = NULL) {
     )
 }
 
-
 library(DT)
 brush_action = function(df, output) {
     
     row_index = unique(unlist(df$row_index))
-    selected = rownames(m)[row_index]
+    selected = env$row_index[row_index]
         
     output[["maplot"]] = renderPlot({
         make_maplot(res, selected)
     })
 
     output[["res_table"]] = renderDT(
-        formatRound(datatable(res[selected, ], rownames = TRUE), columns = 1:ncol(res), digits = 3)
+        formatRound(datatable(res[selected, c("baseMean", "log2FoldChange", "padj")], rownames = TRUE), columns = 1:ncol(res), digits = 3)
     )
-
 }
 
 library(shinydashboard)
@@ -229,14 +234,29 @@ body = dashboardBody(
 )
 
 ui = dashboardPage(
-    dashboardHeader(),
-    dashboardSidebar(disable = TRUE),
+    dashboardHeader(title = "DESeq2 results"),
+    dashboardSidebar(
+    	selectInput("cutoff", label = "Cutoff for FDRs:", c("0.05" = 0.05, "0.01" = 0.01, "0.001" = 0.001)),
+    	numericInput("base_mean", label = "Minimal base mean:", value = 0),
+    	numericInput("log2fc", label = "Minimal abs(log2 fold change):", value = 0),
+    	actionButton("filter", label = "Generate heatmap")
+    ),
     body
 )
 
 server = function(input, output, session) {
-    makeInteractiveComplexHeatmap(input, output, session, ht, "ht",
-        brush_action = brush_action)
+	observeEvent(input$filter, {
+		ht = make_heatmap(fdr = as.numeric(input$cutoff), base_mean = input$base_mean, log2fc = input$log2fc)
+		if(!is.null(ht)) {
+		    makeInteractiveComplexHeatmap(input, output, session, ht, "ht",
+		        brush_action = brush_action)
+		} else {
+			output$ht_heatmap = renderPlot({
+				grid.newpage()
+				grid.text("No row exists after filtering.")
+			})
+		}
+	})
 }
 
 shinyApp(ui, server)
