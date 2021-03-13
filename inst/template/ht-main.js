@@ -50,10 +50,6 @@ $(function() {
 		containment: @{containment}
 	});
 
-	$('#@{heatmap_id}_keyword').click(function() {
-		$('#@{heatmap_id}_heatmap_brush').remove();
-	});
-
 	if(@{tolower(as.character(has_brush_response))}) {
 		$('#@{heatmap_id}_search_regexpr').change(function() {
 			if(this.checked) {
