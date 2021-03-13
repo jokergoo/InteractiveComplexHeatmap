@@ -41,7 +41,7 @@ $(function() {
 			}
 		},
 		zIndex: 0,
-		containment: "parent"
+		containment: @{containment}
 	});
 	
 	

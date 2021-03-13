@@ -97,7 +97,7 @@ body = dashboardBody(
 	fluidRow(
 		box(title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
 			mainHeatmapOutput("ht", response = "click"),
-			HeatmapInfoOutput("ht", output_ui_float = TRUE)
+			HeatmapInfoOutput("ht", output_ui_float = TRUE) # this line can be put anywhere
 		)
 	)
 )
@@ -205,12 +205,13 @@ body = dashboardBody(
     fluidRow(
         column(width = 4,
             box(title = "Differential heatmap", width = NULL, solidHeader = TRUE, status = "primary",
-                mainHeatmapOutput("ht", height = 800)
+                mainHeatmapOutput("ht", height = 800, containment = TRUE)
             )
         ),
         column(width = 4,
+        	id = "column2",
             box(title = "Sub-heatmap", width = NULL, solidHeader = TRUE, status = "primary",
-                subHeatmapOutput("ht", title = NULL)
+                subHeatmapOutput("ht", title = NULL, containment = TRUE)
             ),
             box(title = "Output", width = NULL, solidHeader = TRUE, status = "primary",
                 HeatmapInfoOutput("ht", title = NULL)
