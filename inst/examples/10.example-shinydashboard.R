@@ -168,10 +168,7 @@ make_maplot = function(res, highlight = NULL) {
     cex = rep(0.5, nrow(res))
     names(col) = rownames(res)
     names(cex) = rownames(res)
-    if(is.null(highlight)) {
-        l = res$padj < 0.01; l[is.na(l)] = FALSE
-        col[l] = "red"
-    } else {
+    if(!is.null(highlight)) {
         col[highlight] = "red"
         cex[highlight] = 1
     }
@@ -190,21 +187,62 @@ make_maplot = function(res, highlight = NULL) {
     )
 }
 
+make_volcano = function(res, highlight = NULL) {
+    col = rep("#00000020", nrow(res))
+    cex = rep(0.5, nrow(res))
+    names(col) = rownames(res)
+    names(cex) = rownames(res)
+    if(!is.null(highlight)) {
+        col[highlight] = "red"
+        cex[highlight] = 1
+    }
+    x = res$log2FoldChange
+    y = -log10(res$padj)
+    col[col == "red" & x < 0] = "darkgreen"
+    par(mar = c(4, 4, 1, 1))
+
+    suppressWarnings(
+        plot(x, y, col = col, 
+            pch = 16, 
+            cex = cex,
+            xlab = "log2 fold change", ylab = "-log10(FDR)")
+    )
+}
+
 library(DT)
-brush_action = function(df, output) {
+brush_action = function(df, input, output, session) {
     
     row_index = unique(unlist(df$row_index))
     selected = env$row_index[row_index]
         
-    output[["maplot"]] = renderPlot({
+    output[["ma_plot"]] = renderPlot({
         make_maplot(res, selected)
     })
 
+    output[["volcanno_plot"]] = renderPlot({
+        make_volcano(res, selected)
+    })
+
     output[["res_table"]] = renderDT(
-        formatRound(datatable(res[selected, c("baseMean", "log2FoldChange", "padj")], rownames = TRUE), columns = 1:ncol(res), digits = 3)
+        formatRound(datatable(res[selected, c("baseMean", "log2FoldChange", "padj")], rownames = TRUE), columns = 1:3, digits = 3)
     )
+
+    output[["note"]] = renderUI({
+    	if(!is.null(df)) {
+    		HTML(qq("<p>Row indices captured in <b>Output</b> only correspond to the matrix of the differential genes. To get the row indices in the original matrix,  you need to perform:</p>
+<pre>
+l = res$padj <= @{input$fdr} & 
+    res$baseMean >= @{input$base_mean} & 
+    abs(res$log2FoldChange) >= @{input$log2fc}
+l[is.na(l)] = FALSE
+which(l)[row_index]
+</pre>
+<p>where <code>res</code> is the complete data frame from DESeq2 analysis and <code>row_index</code> is the <code>row_index</code> column captured from the code in <b>Output</b>.</p>"))
+    	}
+    })
 }
 
+library(shiny)
 library(shinydashboard)
 body = dashboardBody(
     fluidRow(
@@ -220,11 +258,17 @@ body = dashboardBody(
             ),
             box(title = "Output", width = NULL, solidHeader = TRUE, status = "primary",
                 HeatmapInfoOutput("ht", title = NULL)
-            )
+            ),
+            box(title = "Note", width = NULL, solidHeader = TRUE, status = "primary",
+                htmlOutput("note")
+            ),
         ),
         column(width = 4,
             box(title = "MA-plot", width = NULL, solidHeader = TRUE, status = "primary",
-                plotOutput("maplot")
+                plotOutput("ma_plot")
+            ),
+            box(title = "Volcanno plot", width = NULL, solidHeader = TRUE, status = "primary",
+                plotOutput("volcanno_plot")
             ),
             box(title = "Result table of the selected genes", width = NULL, solidHeader = TRUE, status = "primary",
                 DTOutput("res_table")
@@ -236,7 +280,7 @@ body = dashboardBody(
 ui = dashboardPage(
     dashboardHeader(title = "DESeq2 results"),
     dashboardSidebar(
-    	selectInput("cutoff", label = "Cutoff for FDRs:", c("0.05" = 0.05, "0.01" = 0.01, "0.001" = 0.001)),
+    	selectInput("fdr", label = "Cutoff for FDRs:", c("0.001" = 0.001, "0.01" = 0.01, "0.05" = 0.05)),
     	numericInput("base_mean", label = "Minimal base mean:", value = 0),
     	numericInput("log2fc", label = "Minimal abs(log2 fold change):", value = 0),
     	actionButton("filter", label = "Generate heatmap")
@@ -246,7 +290,7 @@ ui = dashboardPage(
 
 server = function(input, output, session) {
 	observeEvent(input$filter, {
-		ht = make_heatmap(fdr = as.numeric(input$cutoff), base_mean = input$base_mean, log2fc = input$log2fc)
+		ht = make_heatmap(fdr = as.numeric(input$fdr), base_mean = input$base_mean, log2fc = input$log2fc)
 		if(!is.null(ht)) {
 		    makeInteractiveComplexHeatmap(input, output, session, ht, "ht",
 		        brush_action = brush_action)
@@ -256,7 +300,7 @@ server = function(input, output, session) {
 				grid.text("No row exists after filtering.")
 			})
 		}
-	})
+	}, ignoreNULL = FALSE)
 }
 
 shinyApp(ui, server)
