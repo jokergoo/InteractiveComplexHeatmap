@@ -7,8 +7,8 @@ UI for the sub-heatmaps
 UI for the sub-heatmaps
 }
 \usage{
-subHeatmapOutput(heatmap_id, title = "Selected sub-heatmap",
-    width = 400, height = 350)
+subHeatmapOutput(heatmap_id, title = NULL,
+    width = 400, height = 350, containment = FALSE)
 }
 \arguments{
 
@@ -16,6 +16,7 @@ subHeatmapOutput(heatmap_id, title = "Selected sub-heatmap",
   \item{title}{Title of the sub-heatmap.}
   \item{width}{Width of the sub-heatmap.}
   \item{height}{Height of the sub-heatmap.}
+  \item{containment}{If this output is inside a container, whether the resizing be restricted inside this container? The value can be logical, or a string \code{"parent"}/\code{"document"}, or a string of selector.}
 
 }
 \examples{

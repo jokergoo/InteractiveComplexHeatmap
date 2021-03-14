@@ -19,7 +19,7 @@ InteractiveComplexHeatmapOutput(heatmap_id = NULL,
     response = c(action, "brush"),
     brush_opt = list(stroke = "#f00", opacity = 0.6),
     output_ui = default_output_ui(heatmap_id),
-    output_ui_float = FALSE,
+    output_ui_float = FALSE, containment = FALSE,
     ...)
 }
 \arguments{
@@ -40,6 +40,7 @@ InteractiveComplexHeatmapOutput(heatmap_id = NULL,
   \item{brush_opt}{A list of parameters passed to \code{\link[shiny]{brushOpts}}. Do not set an ID for the brush. An internal brush ID is automatically set.}
   \item{output_ui}{A \code{\link[shiny]{htmlOutput}} or other output object. If it is set to \code{NULL}, there is no output in the app. If it is not set, default response in server side on user's actions (i.e. click, hover or double click) is used, i.e. to print the value of the clicked/hovered cell when it is a click/hover/double click action or a runnable code to get the information of the sub-heatmap that was selected from heatmap when it is a brush action.}
   \item{output_ui_float}{Whether the UI defined by \code{output_ui} floats at the mouse positions.}
+  \item{containment}{-containment}
   \item{...}{Pass to the UI container which is wrapped by \code{\link[shiny]{fluidPage}}.}
 
 }

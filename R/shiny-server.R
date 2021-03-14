@@ -83,6 +83,67 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		stop_wrap("There should be at least one normal heatmap (nrow > 0 and ncol > 0) in the heatmap list.")
 	}
 	
+
+	if(!is.null(click_action)) {
+		args = names(as.list(formals(click_action)))
+		nal = length(args)
+		if(nal == 2) {
+			click_action2 = function(df, input, output, session) {
+				click_action(df, output)
+			}
+		} else if(nal == 3) {
+			if(identical(args[2:3], c("output", "input"))) {
+				click_action2 = function(df, input, output, session) {
+					click_action(df, output, input)
+				}
+			} else {
+				click_action2 = function(df, input, output, session) {
+					click_action(df, input, output)
+				}
+			}
+		} else {
+			if(identical(args[2:3], c("output", "input"))) {
+				click_action2 = function(df, input, output, session) {
+					click_action(df, output, input, session)
+				}
+			} else {
+				click_action2 = click_action
+			}
+		}
+	} else {
+		click_action2 = NULL
+	}
+
+	if(!is.null(brush_action)) {
+		args = names(as.list(formals(brush_action)))
+		nal = length(args)
+		if(nal == 2) {
+			brush_action2 = function(df, input, output, session) {
+				brush_action(df, output)
+			}
+		} else if(nal == 3) {
+			if(identical(args[2:3], c("output", "input"))) {
+				brush_action2 = function(df, input, output, session) {
+					brush_action(df, output, input)
+				}
+			} else {
+				brush_action2 = function(df, input, output, session) {
+					brush_action(df, input, output)
+				}
+			}
+		} else {
+			if(identical(args[2:3], c("output", "input"))) {
+				brush_action2 = function(df, input, output, session) {
+					brush_action(df, output, input, session)
+				}
+			} else {
+				brush_action2 = brush_action
+			}
+		}
+	} else {
+		brush_action2 = NULL
+	}
+
 	# initialize heatmaps
 	ht_list = reactiveVal({
 		tryCatch({
@@ -181,11 +242,11 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 		    session$resetBrush(qq("@{heatmap_id}_heatmap_brush"))
 
-		    if(!is.null(click_action)) {
-		    	click_action(NULL, output)
+		    if(!is.null(click_action2)) {
+		    	click_action2(NULL, input, output, session)
 		    }
-		    if(!is.null(brush_action)) {
-		    	brush_action(NULL, output)
+		    if(!is.null(brush_action2)) {
+		    	brush_action2(NULL, input, output, session)
 		    }
 
 		    heatmap_initialized(TRUE)
@@ -340,7 +401,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				if(identical(brush_action, default_brush_action)) {
 					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 				} else {
-					brush_action(selected(), output)
+					brush_action2(selected(), input, output, session)
 				}
 			}
 
@@ -372,7 +433,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				if(identical(brush_action, default_brush_action)) {
 					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 				} else {
-					brush_action(selected(), output)
+					brush_action2(selected(), input, output, session)
 				}
 			}
 
@@ -406,7 +467,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				if(identical(brush_action, default_brush_action)) {
 					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 				} else {
-					brush_action(selected(), output)
+					brush_action2(selected(), input, output, session)
 				}
 			}
 
@@ -435,7 +496,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				if(identical(brush_action, default_brush_action)) {
 					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 				} else {
-					brush_action(selected(), output)
+					brush_action2(selected(), input, output, session)
 				}
 			}
 
@@ -463,7 +524,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 					if(identical(brush_action, default_brush_action)) {
 						default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 					} else {
-						brush_action(selected(), output)
+						brush_action2(selected(), input, output, session)
 					}
 				}
 
@@ -493,7 +554,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 					if(identical(brush_action, default_brush_action)) {
 						default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 					} else {
-						brush_action(selected(), output)
+						brush_action2(selected(), input, output, session)
 					}
 				}
 				return(invisible(NULL))
@@ -533,7 +594,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 					}
 
 					if(!is.null(brush_action)) {
-						brush_action(selected(), output)
+						brush_action2(selected(), input, output, session)
 					}
 					return(invisible(NULL))
 	    		} else {
@@ -549,7 +610,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				if(identical(brush_action, default_brush_action)) {
 					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
 				} else {
-					brush_action(selected(), output)
+					brush_action2(selected(), input, output, session)
 				}
 			}
 
@@ -701,7 +762,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				if(identical(click_action, default_click_action)) {
 					default_click_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list(), action = action)
 				} else {
-					click_action(selected(), output)
+					click_action2(selected(), input, output, session)
 				}
 			}
 
