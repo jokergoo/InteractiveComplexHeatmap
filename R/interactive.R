@@ -698,7 +698,9 @@ htPositionsOnDevice = function(ht_list = get_last_ht(), unit = "inch", valueOnly
 
 redraw_ht_vp = function(pos) {
 	ds = dev.size()
-	dev.new(width = ds[1], height = ds[2])
+	if(dev.interactive()) {
+		dev.new(width = ds[1], height = ds[2])
+	}
 	grid.newpage()
 	
 	for(i in seq_len(nrow(pos))) {

@@ -13,6 +13,7 @@
 # -hover_action Additional action at the server side when receiving a hover event on the UI.
 # -dblclick_action Additional action at the server side when receiving a dblclick event on the UI.
 # -brush_action Additional action at the server side when receiving a brush event on the UI.
+# -res Resolution of the plot.
 #
 # == value
 # No value is returned.
@@ -35,7 +36,7 @@
 makeInteractiveComplexHeatmap = function(input, output, session, ht_list, 
 	heatmap_id = shiny_env$current_heatmap_id,
 	click_action = NULL, hover_action = NULL, 
-	dblclick_action = NULL, brush_action = NULL) {
+	dblclick_action = NULL, brush_action = NULL, res = 72) {
 
 	if(shiny_env$heatmap[[heatmap_id]]$action == "hover") {
 		if(!is.null(hover_action)) click_action = hover_action
@@ -49,6 +50,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	response = shiny_env$heatmap[[heatmap_id]]$response
 	has_click_reponse = "click" %in% response
 	has_brush_response = "brush" %in% response
+	only_brush_output_response = !(has_brush_response) & "brush-output" %in% response
 
 	if(inherits(ht_list, "Heatmap")) {
 		message("The heatmap is suggested to be updated by e.g. `ht = draw(ht)` before sending to the Shiny app.")
@@ -149,10 +151,10 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		tryCatch({
 			dev.null()
 			if(inherits(ht_list, "Heatmap")) {
-	    		ht_list = make_layout(ht_list + NULL)
+	    		ht_list = draw(ht_list + NULL)
 	    	} else {
 	    		if(!ht_list@layout$initialized) {
-	    			ht_list = make_layout(ht_list)
+	    			ht_list = draw(ht_list)
 	    		}
 	    	}
 	    }, finally = dev.off2())
@@ -201,44 +203,44 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}
 			session$sendCustomMessage(qq("@{heatmap_id}_initialized"), "")
 
-			width_div = session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]]
-		    height_div = session$clientData[[qq("output_@{heatmap_id}_heatmap_height")]]
+			# width_div = session$clientData[[qq("output_@{heatmap_id}_heatmap_width")]]
+		 #    height_div = session$clientData[[qq("output_@{heatmap_id}_heatmap_height")]]
 		    
-		    width_ht = ComplexHeatmap:::width(ht_list)	
-		    height_ht = ComplexHeatmap:::height(ht_list)
+		 #    width_ht = ComplexHeatmap:::width(ht_list)	
+		 #    height_ht = ComplexHeatmap:::height(ht_list)
 
-		    df = ht_pos
-		    df = df[!is.na(df$row_slice), , drop = FALSE]
-		    x_min = df$x_min; x_min = convertX(x_min, "bigpts", valueOnly = TRUE)
-		    x_max = df$x_max; x_max = convertX(x_max, "bigpts", valueOnly = TRUE)
-		    y_min = df$y_min; y_min = convertY(y_min, "bigpts", valueOnly = TRUE)
-		    y_max = df$y_max; y_max = convertY(y_max, "bigpts", valueOnly = TRUE)
+		 #    df = ht_pos
+		 #    df = df[!is.na(df$row_slice), , drop = FALSE]
+		 #    x_min = df$x_min; x_min = convertX(x_min, "bigpts", valueOnly = TRUE)
+		 #    x_max = df$x_max; x_max = convertX(x_max, "bigpts", valueOnly = TRUE)
+		 #    y_min = df$y_min; y_min = convertY(y_min, "bigpts", valueOnly = TRUE)
+		 #    y_max = df$y_max; y_max = convertY(y_max, "bigpts", valueOnly = TRUE)
 
-		    warning_msg = ""
-		    if(any(x_min < 0) || any(x_max > width_div) || any(y_min < 0) || any(y_max > height_div)) {
-		    	warning_msg = qq("Heatmaps exceed the figure region")
-		    	if(is_abs_unit(width_ht) && is_abs_unit(height_ht)) {
-		    		width_ht = ceiling(convertWidth(width_ht, "bigpts", valueOnly = TRUE))
-		    		height_ht = ceiling(convertHeight(height_ht, "bigpts", valueOnly = TRUE))
-		    		warning_msg = qq("@{warning_msg} because the heatmaps have widths and heights in absolute units and the figure size is too small to fully contain them. You can set the width and height as <code>htShiny(..., width1 = @{width_ht}, height1 = @{height_ht})</code>, or similarly in <code>InteractiveComplexHeatmapOutput()</code> or other related functions.")
-		    	} else if(is_abs_unit(width_ht)) {
-		    		width_ht = ceiling(convertWidth(width_ht, "bigpts", valueOnly = TRUE))
-		    		warning_msg = qq("@{warning_msg} because the heatmaps have widths in absolute units and the figure size is too small to fully contain them. You can set the width as <code>htShiny(..., width1 = @{width_ht})</code>, or similarly in <code>InteractiveComplexHeatmapOutput()</code> or other related functions.")
-		    	} else if(is_abs_unit(height_ht)) {
-		    		height_ht = ceiling(convertHeight(height_ht, "bigpts", valueOnly = TRUE))
-		    		warning_msg = qq("@{warning_msg} because the heatmaps have heights in absolute units and the figure size is too small to fully contain them. You can set the height as <code>htShiny(..., height1 = @{height_ht})</code>, or similarly in <code>InteractiveComplexHeatmapOutput()</code> or other related functions.")
-		    	}
+		 #    warning_msg = ""
+		 #    if(any(x_min < 0) || any(x_max > width_div) || any(y_min < 0) || any(y_max > height_div)) {
+		 #    	warning_msg = qq("Heatmaps exceed the div region")
+		 #    	if(is_abs_unit(width_ht) && is_abs_unit(height_ht)) {
+		 #    		width_ht = ceiling(convertWidth(width_ht, "bigpts", valueOnly = TRUE))
+		 #    		height_ht = ceiling(convertHeight(height_ht, "bigpts", valueOnly = TRUE))
+		 #    		warning_msg = qq("@{warning_msg} because the heatmaps have widths and heights in absolute units and the div size is too small to fully contain them. You can set the width and height as <code>htShiny(..., width1 = @{width_ht}, height1 = @{height_ht})</code>, or similarly in <code>InteractiveComplexHeatmapOutput()</code> or other related functions.")
+		 #    	} else if(is_abs_unit(width_ht)) {
+		 #    		width_ht = ceiling(convertWidth(width_ht, "bigpts", valueOnly = TRUE))
+		 #    		warning_msg = qq("@{warning_msg} because the heatmaps have widths in absolute units and the div size is too small to fully contain them. You can set the width as <code>htShiny(..., width1 = @{width_ht})</code>, or similarly in <code>InteractiveComplexHeatmapOutput()</code> or other related functions.")
+		 #    	} else if(is_abs_unit(height_ht)) {
+		 #    		height_ht = ceiling(convertHeight(height_ht, "bigpts", valueOnly = TRUE))
+		 #    		warning_msg = qq("@{warning_msg} because the heatmaps have heights in absolute units and the div size is too small to fully contain them. You can set the height as <code>htShiny(..., height1 = @{height_ht})</code>, or similarly in <code>InteractiveComplexHeatmapOutput()</code> or other related functions.")
+		 #    	}
 
-		    	output[[qq("@{heatmap_id}_warning")]] = renderUI({
-		    		div(id = qq("@{heatmap_id}_warning_content"),
-		    			h5("Warning"),
-		    			p(HTML(warning_msg)),
-		    			p(HTML(qq("<a href='#' onclick='$(\"#@{heatmap_id}_warning_content\").remove();false;'>Close</a>")),
-		    				style = "position:relative; right:0; top:0"),
-		    			style = "border: 1px solid red; border-radius: 4px; background-color:#FFDDDD; padding:5px 5px 2px 20px; max-width:850px",
-		    		)
-		    	})
-		    }
+		 #    	output[[qq("@{heatmap_id}_warning")]] = renderUI({
+		 #    		div(id = qq("@{heatmap_id}_warning_content"),
+		 #    			h5("Warning"),
+		 #    			p(HTML(warning_msg)),
+		 #    			p(HTML(qq("<a href='#' onclick='$(\"#@{heatmap_id}_warning_content\").remove();false;'>Close</a>")),
+		 #    				style = "position:relative; right:0; top:0"),
+		 #    			style = "border: 1px solid red; border-radius: 4px; background-color:#FFDDDD; padding:5px 5px 2px 20px; max-width:850px",
+		 #    		)
+		 #    	})
+		 #    }
 
 		    session$resetBrush(qq("@{heatmap_id}_heatmap_brush"))
 
@@ -250,14 +252,14 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		    }
 
 		    heatmap_initialized(TRUE)
-		})
+		}, res = res)
 
 		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 			grid.newpage()
 			grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
 
 			message(qq("[@{Sys.time()}] no area on the heatmap is selected, Do not make the sub-heatmap."))
-		})
+		}, res = res)
 
 		if(do_default_click_action || do_default_brush_action) {
 			output[[qq("@{heatmap_id}_info")]] = renderUI({
@@ -287,7 +289,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 			message(qq("[@{Sys.time()}] make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
 			session$sendCustomMessage(qq("@{heatmap_id}_remove_brush"), "")
-		}, width = width, height = height)
+		}, width = width, height = height, res = res)
 	
 	})
 
@@ -353,7 +355,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	    	message(qq("[@{Sys.time()}] Resizing the original heatmap (device size: @{width}x@{height} px)."))
 
 	    	session$sendCustomMessage(qq("@{heatmap_id}_remove_brush"), "")
-	    }, width = width, height = height)
+	    }, width = width, height = height, res = res)
 		
 	})
 
@@ -366,12 +368,11 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			req(heatmap_initialized())
 
 			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
-			
 			if(is.null(input[[qq("@{heatmap_id}_heatmap_brush")]])) {
 				selected( NULL )
 				selected_copy( selected() )
 			} else {
-				lt = get_pos_from_brush(input[[qq("@{heatmap_id}_heatmap_brush")]])
+				lt = get_pos_from_brush(input[[qq("@{heatmap_id}_heatmap_brush")]], res/72)
 			  	pos1 = lt[[1]]
 			  	pos2 = lt[[2]]
 			    
@@ -391,7 +392,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	    		} else {
 	    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
 				}
-			})
+			}, res = res)
 		
 			if(do_default_brush_action) {
 				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
@@ -423,7 +424,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	    		} else {
 	    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
 				}
-			})
+			}, res = res)
 		
 			if(do_default_brush_action) {
 				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
@@ -457,7 +458,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	    		} else {
 	    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
 				}
-			})
+			}, res = res)
 		
 			if(do_default_brush_action) {
 				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
@@ -486,7 +487,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	    		} else {
 	    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
 				}
-			})
+			}, res = res)
 		
 			if(do_default_brush_action) {
 				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
@@ -514,7 +515,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 					grid.newpage()
 					grid.text("Query keyword is empty.", 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
-				})
+				}, res = res)
 
 				if(do_default_brush_action) {
 					default_brush_action(input, output, session, heatmap_id, "Query keyword is empty.", selected = selected(), ht_list = ht_list())
@@ -544,7 +545,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 					grid.newpage()
 					grid.text("No heatmap is selected for searching.", 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
-				})
+				}, res = res)
 
 				if(do_default_brush_action) {
 					default_brush_action(input, output, session, heatmap_id, "No heatmap is selected for searching.", selected = selected(), ht_list = ht_list())
@@ -600,7 +601,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	    		} else {
 	    			sub_ht_list( make_sub_heatmap(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list()) )
 				}
-			})
+			}, res = res)
 
 			if(do_default_brush_action) {
 				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
@@ -667,7 +668,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	    		} else {
 	    			make_sub_heatmap(input, output, session, heatmap_id, update_size = FALSE, selected = selected(), ht_list = ht_list())
 				}
-			})
+			}, res = res)
 		})
 
 		observeEvent(input[[qq("@{heatmap_id}_open_table")]], {
@@ -726,6 +727,39 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		observeEvent(input[[qq("@{heatmap_id}_open_modal")]], {
 			InteractiveComplexHeatmapModal(input, output, session, sub_ht_list(), close_button = TRUE)
 		})
+	} else if(only_brush_output_response) {
+		observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
+
+			req(heatmap_initialized())
+			
+			if(is.null(input[[qq("@{heatmap_id}_heatmap_brush")]])) {
+				selected( NULL )
+				selected_copy( selected() )
+			} else {
+				lt = get_pos_from_brush(input[[qq("@{heatmap_id}_heatmap_brush")]], res/72)
+			  	pos1 = lt[[1]]
+			  	pos2 = lt[[2]]
+			    
+			    dev.null()
+			    selected( selectArea(ht_list(), mark = FALSE, pos1 = pos1, pos2 = pos2, verbose = FALSE, ht_pos = ht_pos(), include_annotation = TRUE, calibrate = FALSE) )
+			    selected_copy( selected() )
+			    dev.off2()
+			}
+		
+			if(do_default_brush_action) {
+				default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+			}
+
+			if(!is.null(brush_action)) {
+				if(identical(brush_action, default_brush_action)) {
+					default_brush_action(input, output, session, heatmap_id, selected = selected(), ht_list = ht_list())
+				} else {
+					brush_action2(selected(), input, output, session)
+				}
+			}
+
+			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
+		})
 	}
 
 	###############################################################
@@ -741,9 +775,9 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			req(heatmap_initialized())
 
 			if(action == "hover") {
-				pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_hover")]])
+				pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_hover")]], res/72)
 			} else {
-				pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]])
+				pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]], res/72)
 			}
 			  
 			if(is.null(pos1)) {
@@ -769,7 +803,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 				grid.newpage()
 				grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
-			})
+			}, res = res)
 
 			output[[qq("@{heatmap_id}_sub_heatmap_control")]] = renderUI({
 				NULL
@@ -781,17 +815,18 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	}
 }
 
-get_pos_from_brush = function(brush) {
+get_pos_from_brush = function(brush, ratio = 1) {
 	coords = brush$coords_css
 	if(is.null(coords)) return(NULL)
     height = (brush$range$bottom - brush$range$top)/brush$img_css_ratio$y
     pos1 = unit(c(coords$xmin, height - coords$ymin), "bigpts")
     pos2 = unit(c(coords$xmax, height - coords$ymax), "bigpts")
-
+	pos1 = pos1/ratio
+	pos2 = pos2/ratio
     list(pos1, pos2)
 }
 
-get_pos_from_click = function(click) {
+get_pos_from_click = function(click, ratio = 1) {
 	if(identical(c("x", "y"), names(click))) {
 		pos1 = unit(c(click$x, click$y), "bigpts")
 	} else {
@@ -800,6 +835,8 @@ get_pos_from_click = function(click) {
 		height = (click$range$bottom - click$range$top)/click$img_css_ratio$y
 	    pos1 = unit(c(coords$x, height - coords$y), "bigpts")
 	}
+	pos1[1] = pos1[1]/ratio
+	pos1[2] = pos1[2]/ratio
     pos1
 }
 

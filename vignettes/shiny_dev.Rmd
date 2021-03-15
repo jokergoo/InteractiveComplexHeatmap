@@ -325,12 +325,22 @@ unique(unlist(df$row_index))
 unique(unlist(df$column_index))
 ```
 
-Or use the helper functions:
+
+If users want to use the values in `input` or `session`, `click_action` and `brush_action` can also
+be specified as functions with four arguments:
 
 ```{r, eval = FALSE}
-all_row_indices(df)
-all_column_indices(df)
+function(df, input, output, session) {
+    output[["info"]] = renderUI({  # or output$info = ...
+        if(is.null(df)) { # have not clicked into the heatmap body
+            ...
+        } else {
+            ...
+        }
+    })
+}
 ```
+
 
 If `action` in `InteractiveComplexHeatmapOutput()` is set to `"hover"` or `"dblclick"`, the corresponding
 argument for action is `hover_action` or `dblclick_action`. The usage is exactly the same as `click_action`.

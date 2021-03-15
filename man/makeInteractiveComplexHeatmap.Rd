@@ -10,7 +10,7 @@ Process heatmaps on the sever side
 makeInteractiveComplexHeatmap(input, output, session, ht_list,
     heatmap_id = shiny_env$current_heatmap_id,
     click_action = NULL, hover_action = NULL,
-    dblclick_action = NULL, brush_action = NULL)
+    dblclick_action = NULL, brush_action = NULL, res = 72)
 }
 \arguments{
 
@@ -23,6 +23,7 @@ makeInteractiveComplexHeatmap(input, output, session, ht_list,
   \item{hover_action}{Additional action at the server side when receiving a hover event on the UI.}
   \item{dblclick_action}{Additional action at the server side when receiving a dblclick event on the UI.}
   \item{brush_action}{Additional action at the server side when receiving a brush event on the UI.}
+  \item{res}{Resolution of the plot.}
 
 }
 \value{
