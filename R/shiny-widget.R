@@ -16,6 +16,7 @@
 # -height2 Pass to `InteractiveComplexHeatmapOutput`.
 # -width3 Pass to `InteractiveComplexHeatmapOutput`.
 # -layout Pass to `InteractiveComplexHeatmapOutput`.
+# -compact Pass to `InteractiveComplexHeatmapOutput`.
 # -action Pass to `InteractiveComplexHeatmapOutput`.
 # -cursor Pass to `InteractiveComplexHeatmapOutput`.
 # -response Pass to `InteractiveComplexHeatmapOutput`.
@@ -64,7 +65,7 @@ InteractiveComplexHeatmapModal = function(
 	width2 = 370, 
 	height2 = 350, 
 	width3 = ifelse(layout == "(1-2)|3", 800, 370),
-	layout = ifelse("brush" %in% response, "(1-2)|3", "1-3"),
+	layout = ifelse("brush" %in% response, "(1-2)|3", "1-3"), compact = FALSE,
 	action = "click", cursor = TRUE, response = c(action, "brush"),
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_ui = TRUE, output_ui_float = FALSE,
@@ -98,7 +99,7 @@ InteractiveComplexHeatmapModal = function(
 					HTML("<i class='fa fa-times'></i>")
 				),
 				InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,
-					width1 = width1, height1 = height1, width2 = width2, height2 = height2, width3 = width3, layout = layout,
+					width1 = width1, height1 = height1, width2 = width2, height2 = height2, width3 = width3, layout = layout, compact = compact,
 					action = action, cursor = cursor, response = response, brush_opt = brush_opt, output_ui = output_ui, output_ui_float = output_ui_float),
 				if(close_button) {
 					tagList(
@@ -238,6 +239,7 @@ InteractiveComplexHeatmapModal = function(
 # -height2 Pass to `InteractiveComplexHeatmapOutput`.
 # -width3 Pass to `InteractiveComplexHeatmapOutput`.
 # -layout Pass to `InteractiveComplexHeatmapOutput`.
+# -compact Pass to `InteractiveComplexHeatmapOutput`.
 # -action Pass to `InteractiveComplexHeatmapOutput`.
 # -cursor Pass to `InteractiveComplexHeatmapOutput`.
 # -response Pass to `InteractiveComplexHeatmapOutput`.
@@ -287,7 +289,7 @@ InteractiveComplexHeatmapWidget = function(
 	width2 = 370, 
 	height2 = 350, 
 	width3 = ifelse(layout == "(1-2)|3", 800, 370),
-	layout = ifelse("brush" %in% response, "(1-2)|3", "1-3"),
+	layout = ifelse("brush" %in% response, "(1-2)|3", "1-3"), compact = FALSE,
 	action = "click", cursor = TRUE, response = c(action, "brush"),
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_ui = TRUE, output_ui_float = FALSE,
@@ -312,7 +314,7 @@ InteractiveComplexHeatmapWidget = function(
 	output[[output_id]] = renderUI({
 		div(id = qq("@{heatmap_id}_heatmap_widget"),
 			InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,
-				width1 = width1, height1 = height1, width2 = width2, height2 = height2, width3 = width3, layout = layout,
+				width1 = width1, height1 = height1, width2 = width2, height2 = height2, width3 = width3, layout = layout, compact = compact,
 				action = action, cursor = cursor, response = response, brush_opt = brush_opt, output_ui = output_ui, output_ui_float = output_ui_float),
 			if(close_button) {
 				tagList(

@@ -14,6 +14,7 @@
 # -width3 Width of the output div.
 # -layout One of ``"(1|2)-3"``, ``"1-(2|3)"``, ``"1-2-3"``, ``"1|2|3"``, ``"1|(2-3)"``. If there is no response
 #   to ``brush`` which is set with the ``response`` argument, the code ``2`` can be omitted.
+# -compact If the value is ``TRUE``, there will be no sub-heatmap, and output floats at the mouse position when click/hover on the main heatmap.
 # -action Which action for selecting single cell on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
 # -cursor WHen moving mouse on heatmap, whether to show the cursors on the four sides?
 # -response Which action needs to be respond on the server side. Value should be in ``click``/``hover``/``dblclick`` and ``brush``.
@@ -49,7 +50,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	width2 = 400, 
 	height2 = 350, 
 	width3 = NULL,
-	layout = ifelse("brush" %in% response, "(1-2)|3", "1-3"),
+	layout = ifelse("brush" %in% response, "(1-2)|3", "1-3"), compact = FALSE,
 	action = "click", cursor = TRUE,
 	response = c(action, "brush"),
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
@@ -62,8 +63,30 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		heatmap_id = paste0("ht", get_widget_index())
 	}
 
+	if(compact) {
+		if(missing(response)) {
+			response = c(action, "brush-output")
+		} else {
+			response = setdiff(c(response, "brush-output"), "brush")
+		}
+		main_heatmap_ui = mainHeatmapOutput(heatmap_id, title = title1, width = width1, height = height1, action = action,
+			cursor = cursor, response = response, brush_opt = brush_opt, containment = containment)
+		output_ui = HeatmapInfoOutput(heatmap_id, title = title3, width = width3, output_ui = output_ui, output_ui_float = TRUE,
+			action = action, response = response)
+
+		ui = fluidPage(class = qq("@{heatmap_id}_widget"),
+			htmlOutput(qq("@{heatmap_id}_warning")),
+			main_heatmap_ui,
+			output_ui,
+			...
+		)
+		return(ui)
+	}
+
+
 	main_heatmap_ui = mainHeatmapOutput(heatmap_id, title = title1, width = width1, height = height1, action = action,
 		cursor = cursor, response = response, brush_opt = brush_opt, containment = containment)
+
 	sub_heatmap_ui = subHeatmapOutput(heatmap_id, title = title2, width = width2, height = height2, containment = containment)
 	
 	if(is.null(width3)) {
@@ -77,6 +100,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		action = action, response = response)
 
 	has_brush_response = "brush" %in% response
+	only_brush_output_response = !(has_brush_response) & "brush-output" %in% response
 
 	if(layout %in% c("(1-2)|3", "12|3", "1|3", "(1)|3", "1|(3)")) {
 		layout_css = qq("
@@ -154,8 +178,6 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	}
 
 	fluidPage(class = qq("@{heatmap_id}_widget"),
-
-		htmlOutput(qq("@{heatmap_id}_warning")),
 		tl,
 		div(style = "clear: both;"),
 		tags$style(HTML(layout_css)),
@@ -226,6 +248,7 @@ mainHeatmapOutput = function(heatmap_id, title = NULL,
 	shiny_env$heatmap[[heatmap_id]]$action = action
 	response2 = NULL
 	if(any(response %in% "brush")) response2 = c(response2, "brush")
+	if(any(response %in% "brush-output")) response2 = c(response2, "brush-output")
 	if(any(response %in% c("click", "hover", "dblclick"))) response2 = c(response2, "click")
 	response = response2
 	if(length(response) == 0) {
@@ -235,13 +258,14 @@ mainHeatmapOutput = function(heatmap_id, title = NULL,
 
 	has_click_reponse = "click" %in% response
 	has_brush_response = "brush" %in% response
+	only_brush_output_response = !(has_brush_response) & "brush-output" %in% response
 
 	if(!has_click_reponse) {
 		click = NULL
 		dblclick = NULL
 		hover = NULL
 	}
-	if(!has_brush_response) {
+	if(!has_brush_response & !only_brush_output_response) {
 		brush = NULL
 	}
 
@@ -322,6 +346,8 @@ mainHeatmapOutput = function(heatmap_id, title = NULL,
     		 mousestop_dep,
     		 add_js_css_dep(heatmap_id, js_file = "ht-main.js", css_file = "ht-main.css")
     	),
+
+    	# htmlOutput(qq("@{heatmap_id}_warning")),
 
 		if(identical(title, NULL) || identical(title, "")) NULL else h5(title),
 

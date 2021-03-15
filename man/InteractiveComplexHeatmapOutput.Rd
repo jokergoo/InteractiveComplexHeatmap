@@ -14,7 +14,7 @@ InteractiveComplexHeatmapOutput(heatmap_id = NULL,
     width2 = 400,
     height2 = 350,
     width3 = NULL,
-    layout = ifelse("brush" \%in\% response, "(1-2)|3", "1-3"),
+    layout = ifelse("brush" \%in\% response, "(1-2)|3", "1-3"), compact = FALSE,
     action = "click", cursor = TRUE,
     response = c(action, "brush"),
     brush_opt = list(stroke = "#f00", opacity = 0.6),
@@ -34,6 +34,7 @@ InteractiveComplexHeatmapOutput(heatmap_id = NULL,
   \item{height2}{Height of the sub-heatmap.}
   \item{width3}{Width of the output div.}
   \item{layout}{One of \code{"(1|2)-3"}, \code{"1-(2|3)"}, \code{"1-2-3"}, \code{"1|2|3"}, \code{"1|(2-3)"}. If there is no response to \code{brush} which is set with the \code{response} argument, the code \code{2} can be omitted.}
+  \item{compact}{If the value is \code{TRUE}, there will be no sub-heatmap, and output floats at the mouse position when click/hover on the main heatmap.}
   \item{action}{Which action for selecting single cell on the heatmap? Value should be \code{click}, \code{hover} or \code{dblclick}.}
   \item{cursor}{WHen moving mouse on heatmap, whether to show the cursors on the four sides?}
   \item{response}{Which action needs to be respond on the server side. Value should be in \code{click}/\code{hover}/\code{dblclick} and \code{brush}. Please note, if \code{brush} is not selected, there is no "search tool" in the main heatmap.}
