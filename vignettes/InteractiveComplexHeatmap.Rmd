@@ -6,7 +6,6 @@ output:
     rmarkdown::html_vignette:
         width: 8
         fig_width: 5
-        self_contained: false
 vignette: >
   %\VignetteIndexEntry{1. How to visualize heatmaps interactively}
   %\VignetteEngine{knitr::rmarkdown}
@@ -24,6 +23,7 @@ knitr::opts_chunk$set(
     fig.align = "center"
 )
 ```
+
 
 ```{r, echo = FALSE}
 suppressPackageStartupMessages(library(InteractiveComplexHeatmap))
@@ -96,7 +96,7 @@ found in the text below the heatmaps. If an area is selected, a sub-heatmap is
 drawn on the right side of the app. Both heatmaps can be resized by dragging
 from the bottom right.
 
-<p><img width='100%' style='border:1px solid grey;padding: 4px;' src='https://jokergoo.github.io/images/example3.gif' /></p>
+<<img width='100%' style='border:1px solid grey;padding: 4px;' src='https://user-images.githubusercontent.com/449218/110212910-e6147e00-7e9d-11eb-94ed-0ac549247888.gif' />
 
 There are several tools under both heatmaps. For the original heatmap, there are following tools:
 
@@ -105,25 +105,20 @@ There are several tools under both heatmaps. For the original heatmap, there are
 It allows to search the heatmap labels to obtain a subset of rows and columns. Once rows or columns are found
 in the heatmaps, the sub-heatmaps will be drawn in the right panel.
 
-```{r, echo = FALSE, out.width = "100%"}
-include_graphics("https://jokergoo.github.io/images/tool_search.png")
-```
+<img src='https://jokergoo.github.io/images/tool_search.png' width='100%' />
+
 
 2. *Configure brush*
 
 Border and backgroud of the brush can be configured here:
 
-```{r, echo = FALSE, out.width = "100%"}
-include_graphics("https://jokergoo.github.io/images/tool_brush.png")
-```
+<img src="https://jokergoo.github.io/images/tool_brush.png" width="100%" />
 
 3. *Save image*
 
 The main heatmap can be saved into a file with one of the three formats (`png`, `pdf` and `svg`).
 
-```{r, echo = FALSE, out.width = "60%"}
-include_graphics("https://jokergoo.github.io/images/tool_save_image.png")
-```
+<img src="https://jokergoo.github.io/images/tool_save_image.png" width="60%" />
 
 4. *Resize image*
 
@@ -131,9 +126,7 @@ The size of the original heatmap can be controlled by dragging the box,
 however, it can be precisely controlled by entering the width and height, as
 shown in the following figure:
 
-```{r, echo = FALSE, out.width = "60%"}
-include_graphics("https://jokergoo.github.io/images/tool_resize.png")
-```
+<img src="https://jokergoo.github.io/images/tool_resize.png" width="60%" />
 
 For the sub-heatmap, there are following tools:
 
@@ -148,17 +141,13 @@ from the four dimensions.
 The sub-heatmap can also be converted into a second interactive heatmap by clicking
 the button "Interactivate sub-heatmap". It will be introduced in later sections.
 
-```{r, echo = FALSE, out.width = "60%"}
-include_graphics("https://jokergoo.github.io/images/tool_subheatmap.png")
-```
+<img src="https://jokergoo.github.io/images/tool_subheatmap.png" width="60%" />
 
 2. *Export table*
 
 The values in the sub-heatmaps can be viewed and exported as a text table:
 
-```{r, echo = FALSE, out.width = "100%"}
-include_graphics("https://jokergoo.github.io/images/tool_table.png")
-```
+<img src="https://jokergoo.github.io/images/tool_table.png" width="100%" />
 
 3. *Save sub-heatmap as an image*
 
@@ -203,9 +192,7 @@ get_signatures(golub_cola["ATC:skmeans"], k = 2) # this makes the heatmap
 htShiny()
 ```
 
-```{r, echo = FALSE, out.width = "100%"}
-include_graphics("https://jokergoo.github.io/images/signature_heatmap.png")
-```
+<img src="https://jokergoo.github.io/images/signature_heatmap.png" width="100%" />
 
 Note the functionality of automatically saving the last heatmap is only turned
 on when **InteractiveComplexHeatmap** packags is loaded, which means,
@@ -229,9 +216,7 @@ This process can be recursively applied untill you are satisfied with the detail
 you can see in the sub-heatmap. An example is as follows:
 
 
-```{r, echo = FALSE, out.width = "100%"}
-include_graphics("https://jokergoo.github.io/images/recursive.gif")
-```
+<img src="https://jokergoo.github.io/images/recursive.gif" width="100%" />
 
 ## Floating output to mouse positions
 
@@ -247,16 +232,12 @@ htShiny(ht, output_ui_float = TRUE)
 There are two examples: `htShinyExample(9.1)` and `htShinyExample(9.2)`.
 The demonstration is as follows:
 
-```{r, echo = FALSE, out.width = "100%"}
-include_graphics("https://jokergoo.github.io/images/float1.gif")
-```
+<img src="https://jokergoo.github.io/images/float1.gif" width="100%" />
 
 As will be explained in [the vignette "Functions for Shiny app development"](shiny_dev.html),
 the output can be self-defined to put customized information. The self-defined output can also be floated:
 
-```{r, echo = FALSE, out.width = "100%"}
-include_graphics("https://jokergoo.github.io/images/float2.gif")
-```
+<img src="https://jokergoo.github.io/images/float2.gif" width="100%" />
 
 ## Layout
 
@@ -276,9 +257,7 @@ The following figure demonstrates only responding to `"click"` or `"brush"` wher
 floats at mouse positions. Runnable examples
 are in `htShinyExample(1.9)` and `htShinyExample(9.3)`.
 
-```{r, echo = FALSE, out.width = "100%"}
-include_graphics("https://jokergoo.github.io/images/response.gif")
-```
+<img src="https://jokergoo.github.io/images/response.gif" width="100%" />
 
 ## Live examples
 

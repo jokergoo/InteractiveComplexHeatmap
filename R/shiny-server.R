@@ -9,11 +9,13 @@
 # -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object.
 # -heatmap_id The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app, 
 #     this argument does not need to be specified and it will use the current one specified in `InteractiveComplexHeatmapOutput`.
-# -click_action Additional action at the server side when receiving a click event on the UI.
+# -click_action Additional action at the server side when receiving a click event on the UI. This self-defined function
+#     should accept two or four arguments. If it is two arguments, they should be ``df`` and ``output`` and if it is four arguments,
+#     they should be ``df``, ``input``, ``output`` and ``session``.
 # -hover_action Additional action at the server side when receiving a hover event on the UI.
 # -dblclick_action Additional action at the server side when receiving a dblclick event on the UI.
 # -brush_action Additional action at the server side when receiving a brush event on the UI.
-# -res Resolution of the plot.
+# -res Resolution of the plot, pass to `shiny::renderPlot`.
 #
 # == value
 # No value is returned.

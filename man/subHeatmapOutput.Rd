@@ -16,11 +16,12 @@ subHeatmapOutput(heatmap_id, title = NULL,
   \item{title}{Title of the sub-heatmap.}
   \item{width}{Width of the sub-heatmap.}
   \item{height}{Height of the sub-heatmap.}
-  \item{containment}{If this output is inside a container, whether the resizing be restricted inside this container? The value can be logical, or a string \code{"parent"}/\code{"document"}, or a string of selector.}
+  \item{containment}{Whether the resizing is restricted in a certain parent div? Value can be \code{TRUE}/\code{FALSE} or a JQuery selector.}
 
 }
+\seealso{
+\code{\link{mainHeatmapOutput}}.
+}
 \examples{
-# There is no example
-NULL
-
+# See examples on the help page of mainHeatmapOutput()
 }

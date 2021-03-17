@@ -321,7 +321,10 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 #       corresponds to the x and y position of the point.
 # -verbose Whether to print messages.
 # -ht_pos A value returned by `htPositionsOnDevice`.
-# -calibrate Internally used.
+# -calibrate Internally used. Mainly works for Rstudio desktop IDE.
+#
+# == details
+# The regions can be selected interactively or manually by setting ``pos``.
 #
 # == value
 # A `S4Vectors::DataFrame` object with row indices and column indices corresponding to the selected position.
@@ -520,7 +523,7 @@ selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verb
 # -calibrate Internally used.
 #
 # == details
-# ``ht_list`` must be already updated by ``draw()`` function.
+# ``ht_list`` must have been already updated by ``draw()`` function. The function needs to be executed under a graphics device where the heatmap is written.
 #
 # == value
 # It returns a `S4Vectors::DataFrame` object of the position of every heatmap slice.

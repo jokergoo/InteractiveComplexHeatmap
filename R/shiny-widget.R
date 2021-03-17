@@ -32,7 +32,9 @@
 # -cancel_action Whether to remove the UI from HTML or just hide it when the UI is closed.
 #
 # == details
-# It create an interactive heatmap "modal" according to a certain action.
+# It creates an interactive heatmap "modal" according to a certain action.
+#
+# The function is normally put inside `shiny::observe` or `shiny::observeEvent`.
 #
 # == value
 # No value is returned.
@@ -254,7 +256,9 @@ InteractiveComplexHeatmapModal = function(
 # -cancel_action Whether to remove the UI from HTML or just hide it when the UI is closed.
 #
 # == details
-# It create an interactive heatmap widget according to a certain action. The UI is placed to the output ID that user defined.
+# It creates an interactive heatmap widget according to a certain action. The UI is placed to the output ID that user defined.
+#
+# The function is normally put inside `shiny::observe` or `shiny::observeEvent`.
 #
 # == value
 # No value is returned.

@@ -61,6 +61,7 @@
 #     htShiny(ht)
 # }
 #
+# # vertical heatmap list
 # if(interactive()) {
 #     m1 = matrix(rnorm(100), 10)
 #     rownames(m1) = 1:10
@@ -75,6 +76,13 @@
 #     
 #     ht_list = ht1 \%v\% ht2
 #     htShiny(ht_list)
+# }
+#
+# # compact mode
+# if(interactive()) {
+#     m = matrix(rnorm(100), 10)
+#     Heatmap(m)
+#     htShiny(compact = TRUE)
 # }
 htShiny = function(ht_list = get_last_ht(), title = NULL, 
 	description = NULL, hline = TRUE, html = NULL, 
