@@ -59,7 +59,9 @@ InteractiveComplexHeatmapWidget(
 
 }
 \details{
-It create an interactive heatmap widget according to a certain action. The UI is placed to the output ID that user defined.
+It creates an interactive heatmap widget according to a certain action. The UI is placed to the output ID that user defined.
+
+The function is normally put inside \code{\link[shiny]{observe}} or \code{\link[shiny]{observeEvent}}.
 }
 \value{
 No value is returned.

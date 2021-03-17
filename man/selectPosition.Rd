@@ -17,8 +17,11 @@ selectPosition(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verbose = TRUE,
   \item{pos}{If the value is \code{NULL}, it can be selected by click on the heatmap (of cource, the heatmap should be on the interactive graphics device). If it is set, it must be a \code{\link[grid]{unit}} object with length two which corresponds to the x and y position of the point.}
   \item{verbose}{Whether to print messages.}
   \item{ht_pos}{A value returned by \code{\link{htPositionsOnDevice}}.}
-  \item{calibrate}{Internally used.}
+  \item{calibrate}{Internally used. Mainly works for Rstudio desktop IDE.}
 
+}
+\details{
+The regions can be selected interactively or manually by setting \code{pos}.
 }
 \value{
 A \code{\link[S4Vectors:DataFrame-class]{DataFrame}} object with row indices and column indices corresponding to the selected position.

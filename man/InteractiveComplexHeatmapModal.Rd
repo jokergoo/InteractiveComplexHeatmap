@@ -58,7 +58,9 @@ InteractiveComplexHeatmapModal(
 
 }
 \details{
-It create an interactive heatmap "modal" according to a certain action.
+It creates an interactive heatmap "modal" according to a certain action.
+
+The function is normally put inside \code{\link[shiny]{observe}} or \code{\link[shiny]{observeEvent}}.
 }
 \value{
 No value is returned.

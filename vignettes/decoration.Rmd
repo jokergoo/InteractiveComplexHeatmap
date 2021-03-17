@@ -55,9 +55,8 @@ ht = draw(ht, post_fun = post_fun)
 htShiny(ht)
 ```
 
-```{r, echo = FALSE, out.width = "100%"}
-include_graphics("https://jokergoo.github.io/images/decoration.png")
-```
+
+<img src="https://jokergoo.github.io/images/decoration.png" width="100%" />
 
 
 `post_fun` is a self-defined function and always needs one argument `ht_list`.

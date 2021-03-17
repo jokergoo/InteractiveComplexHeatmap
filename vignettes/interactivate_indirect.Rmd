@@ -6,7 +6,6 @@ output:
     rmarkdown::html_vignette:
         width: 8
         fig_width: 5
-        self_contained: false
 vignette: >
   %\VignetteIndexEntry{5. Interactivate indirect use of pheatmap(), heatmap.2() and heatmap()}
   %\VignetteEngine{knitr::rmarkdown}

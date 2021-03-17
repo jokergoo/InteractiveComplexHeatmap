@@ -20,7 +20,7 @@ htPositionsOnDevice(ht_list = get_last_ht(), unit = "inch", valueOnly = FALSE,
 
 }
 \details{
-\code{ht_list} must be already updated by \code{draw()} function.
+\code{ht_list} must have been already updated by \code{draw()} function. The function needs to be executed under a graphics device where the heatmap is written.
 }
 \value{
 It returns a \code{\link[S4Vectors:DataFrame-class]{DataFrame}} object of the position of every heatmap slice.
