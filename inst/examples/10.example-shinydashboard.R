@@ -10,7 +10,7 @@ ht = Heatmap(m)
 body = dashboardBody(
 	fluidRow(
 		box(title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
-			mainHeatmapOutput("ht")
+			originalHeatmapOutput("ht")
 		),
 		box(title = "Sub-heatmap", width = 4, solidHeader = TRUE, status = "primary",
 			subHeatmapOutput("ht")
@@ -54,7 +54,7 @@ side_bar = dashboardSidebar(
 single_heatmap_ui = function(heatmap_id) {
 	fluidRow(
 		box(title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
-			mainHeatmapOutput(heatmap_id)
+			originalHeatmapOutput(heatmap_id)
 		),
 		box(title = "Sub-heatmap", width = 4, solidHeader = TRUE, status = "primary",
 			subHeatmapOutput(heatmap_id)
@@ -96,7 +96,7 @@ ht = Heatmap(m)
 body = dashboardBody(
 	fluidRow(
 		box(title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
-			mainHeatmapOutput("ht", response = "click"),
+			originalHeatmapOutput("ht", response = "click"),
 			HeatmapInfoOutput("ht", output_ui_float = TRUE) # this line can be put anywhere
 		)
 	)
@@ -248,7 +248,7 @@ body = dashboardBody(
     fluidRow(
         column(width = 4,
             box(title = "Differential heatmap", width = NULL, solidHeader = TRUE, status = "primary",
-                mainHeatmapOutput("ht", height = 800, containment = TRUE)
+                originalHeatmapOutput("ht", height = 800, containment = TRUE)
             )
         ),
         column(width = 4,

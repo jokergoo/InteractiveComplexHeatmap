@@ -17,7 +17,7 @@
 # -calibrate Internally used. Mainly works for Rstudio desktop IDE.
 #
 # == details
-# The regions can be selected interactively or manually by setting ``pos1`` and ``pos2``.
+# The regions can be selected interactively or selected manually by setting ``pos1`` and ``pos2``.
 #
 # == value
 # A `S4Vectors::DataFrame` object with row indices and column indices corresponding to the selected region.
@@ -324,7 +324,7 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 # -calibrate Internally used. Mainly works for Rstudio desktop IDE.
 #
 # == details
-# The regions can be selected interactively or manually by setting ``pos``.
+# The regions can be selected interactively or selected manually by setting ``pos``.
 #
 # == value
 # A `S4Vectors::DataFrame` object with row indices and column indices corresponding to the selected position.

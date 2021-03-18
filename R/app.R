@@ -4,11 +4,11 @@
 #
 # == param
 # -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object. If it is not specified, the last generated heatmap is used.
-#     Better already updated by ``draw()`` function.
+#     The heatmap object should better be already updated by ``draw()`` function.
 # -title Title of the app.
 # -description Description of the app. The content will be wrapped by a ``p`` tag and inserted before the interactive heatmap widget.
 # -hline Whether to add the horizontal line (by ``hr`` tag) after ``description``.
-# -html HTML fragment inserted below the heatmap.
+# -html HTML fragment inserted below the heatmap. The value can be a string or be wrapped by `shiny::HTML`.
 # -heatmap_id Pass to `InteractiveComplexHeatmapOutput`.
 # -title1 Pass to `InteractiveComplexHeatmapOutput`.
 # -title2 Pass to `InteractiveComplexHeatmapOutput`.
@@ -25,6 +25,16 @@
 # -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
 # -output_ui_float Pass to `InteractiveComplexHeatmapOutput`.
 #
+# == details
+# With any ``Heatmap``/``HeatmapList`` object, directly send to ``htShiny()`` to create a Shiny app for the heatmap(s):
+#
+#     htShiny(ht_list)
+#
+# If the heatmaps are already drawn, ``ht_list`` can be omitted and the last heatmap object is retrieved automatically:
+#
+#     Heatmap(...) + other_heatmaps_or_annotations # or other functions that internally use Heatmap()
+#     htShiny()
+#
 # == seealso
 # - https://jokergoo.shinyapps.io/interactive_complexheatmap/
 # - https://jokergoo.shinyapps.io/interactive_complexheatmap_vertical/
@@ -37,7 +47,7 @@
 # - https://jokergooo.shinyapps.io/interactive_heatmap_2/
 # - https://jokergooo.shinyapps.io/interactive_tidyheatmap/
 #
-# There are also many examples with `htShinyExample`.
+# There are also many examples that can be get with `htShinyExample`.
 #
 # == value
 # A Shiny app object.
@@ -123,7 +133,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 	}
 	
 	if(is.null(description)) {
-		description = "You can click a position or select an area from the heatmap. The original heatmap and the selected sub-heatmap can be resized by dragging from the bottom right of the box. "
+		description = "You can click a position or select an area from the heatmap. The original heatmap and the selected sub-heatmap can be resized by dragging from the bottom right of the box."
 	}
 	if(is.character(description)) {
 		description = p(description)
@@ -188,7 +198,7 @@ ht_shiny = function(...) {
 # -which An index of which example to use. The list of all examples can be obtained by executing `htShinyExample` with no argument.
 #
 # == details
-# In every example, there is a Shiny app opened, also including source code that generates this app.
+# In every example, there is a Shiny app opened, which also includes source code that generates this app.
 #
 # == value
 # A Shiny app object.
