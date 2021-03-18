@@ -1,6 +1,6 @@
 
 # == title
-# Interactive complex heatmap modal
+# Interactive complex heatmap modal dialog
 #
 # == param
 # -input Passed from the Shiny server function.
@@ -32,7 +32,7 @@
 # -cancel_action Whether to remove the UI from HTML or just hide it when the UI is closed.
 #
 # == details
-# It creates an interactive heatmap "modal" according to a certain action.
+# It creates an interactive heatmap "modal dialog" according to a certain action.
 #
 # The function is normally put inside `shiny::observe` or `shiny::observeEvent`.
 #

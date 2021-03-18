@@ -1,5 +1,5 @@
-\name{mainHeatmapOutput}
-\alias{mainHeatmapOutput}
+\name{originalHeatmapOutput}
+\alias{originalHeatmapOutput}
 \title{
 UI for the main complex heatmaps
 }
@@ -7,7 +7,7 @@ UI for the main complex heatmaps
 UI for the main complex heatmaps
 }
 \usage{
-mainHeatmapOutput(heatmap_id, title = NULL,
+originalHeatmapOutput(heatmap_id, title = NULL,
     width = 450, height = 350,
     action = "click", cursor = TRUE,
     response = c(action, "brush"),
