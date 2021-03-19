@@ -22,6 +22,7 @@
 # -output_ui A `shiny::htmlOutput` or other ``*Output`` object (defined in shiny or other related packages). If it is set to ``NULL``, there is no output component in the app.
 # -output_ui_float Whether the UI defined by ``output_ui`` floats at the mouse positions.
 # -containment Whether the resizing is restricted in a certain parent div? Value can be ``TRUE``/``FALSE`` or a JQuery selector.
+# -internal Internally used.
 # -... Pass to the UI container which is wrapped by `shiny::fluidPage`.
 #
 # == details
@@ -52,6 +53,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	brush_opt = list(stroke = "#f00", opacity = 0.6), 
 	output_ui = default_output_ui(heatmap_id), 
 	output_ui_float = FALSE, containment = FALSE,
+	internal = FALSE,
 	...) {
 
 	if(is.null(heatmap_id)) {
@@ -65,13 +67,13 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		} else {
 			response = setdiff(c(response, "brush-output"), "brush")
 		}
-		main_heatmap_ui = mainHeatmapOutput(heatmap_id, title = title1, width = width1, height = height1, action = action,
-			cursor = cursor, response = response, brush_opt = brush_opt, containment = containment)
+		main_heatmap_ui = originalHeatmapOutput(heatmap_id, title = title1, width = width1, height = height1, action = action,
+			cursor = cursor, response = response, brush_opt = brush_opt, containment = containment, internal = internal)
 		output_ui = HeatmapInfoOutput(heatmap_id, title = title3, width = width3, output_ui = output_ui, output_ui_float = TRUE,
-			action = action, response = response)
+			action = action, response = response, internal = internal)
 
 		ui = fluidPage(class = qq("@{heatmap_id}_widget"),
-			htmlOutput(qq("@{heatmap_id}_warning")),
+			# htmlOutput(qq("@{heatmap_id}_warning")),
 			main_heatmap_ui,
 			output_ui,
 			...
@@ -80,20 +82,22 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	}
 
 
-	main_heatmap_ui = mainHeatmapOutput(heatmap_id, title = title1, width = width1, height = height1, action = action,
-		cursor = cursor, response = response, brush_opt = brush_opt, containment = containment)
+	main_heatmap_ui = originalHeatmapOutput(heatmap_id, title = title1, width = width1, height = height1, action = action,
+		cursor = cursor, response = response, brush_opt = brush_opt, containment = containment, internal = internal)
 
-	sub_heatmap_ui = subHeatmapOutput(heatmap_id, title = title2, width = width2, height = height2, containment = containment)
+	sub_heatmap_ui = subHeatmapOutput(heatmap_id, title = title2, width = width2, height = height2, containment = containment, internal = internal)
 	
 	if(is.null(width3)) {
 		width3 = width1
 		if(layout %in% c("(1-2)|3", "12|3")) {
 			width3 = width1 + width2
+		} else if(layout %in% "1-(2|3)") {
+			width3 = width2
 		}
 	}
 
 	output_ui = HeatmapInfoOutput(heatmap_id, title = title3, width = width3, output_ui = output_ui, output_ui_float = output_ui_float,
-		action = action, response = response)
+		action = action, response = response, internal = internal)
 
 	has_brush_response = "brush" %in% response
 	only_brush_output_response = !(has_brush_response) & "brush-output" %in% response
@@ -196,6 +200,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 #          ``brush`` responds in two places which are the sub-heatmap and the output components and ``brush-output`` only responds in the output component.
 # -brush_opt A list of parameters passed to `shiny::brushOpts`. Do not set an ID for the brush. An internal brush ID is automatically set.
 # -containment Whether the resizing is restricted in a certain parent div? Value can be ``TRUE``/``FALSE`` or a JQuery selector.
+# -internal Internally used.
 #
 # == seealso
 # `subHeatmapOutput`, `HeatmapInfoOutput`.
@@ -234,7 +239,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 	action = "click", cursor = TRUE,
 	response = c(action, "brush"),
 	brush_opt = list(stroke = "#f00", opacity = 0.6),
-	containment = FALSE) {
+	containment = FALSE, internal = FALSE) {
 
 	if(missing(heatmap_id)) {
 		if(length(shiny_env$heatmap) == 1) {
@@ -251,7 +256,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 
 	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
 		shiny_env$heatmap[[heatmap_id]] = list()
-		shiny_env$current_heatmap_id = heatmap_id
+		if(!internal) shiny_env$current_heatmap_id = heatmap_id
 	}
 
 	if(action %in% c("dblclick", "dbclick")) {
@@ -276,6 +281,23 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 	response2 = NULL
 	if(any(response %in% "brush")) response2 = c(response2, "brush")
 	if(any(response %in% "brush-output")) response2 = c(response2, "brush-output")
+
+	if("click" %in% response) {
+		if(!"click" %in% action) {
+			stop_wrap("'click' is set with argument `response`, so 'click' must also be specified with argument `action`.")
+		}
+	}
+	if("hover" %in% response) {
+		if(!"hover" %in% action) {
+			stop_wrap("'hover' is set with argument `response`, so 'hover' must also be specified with argument `action`.")
+		}
+	}
+	if("dblclick" %in% response) {
+		if(!"dblclick" %in% action) {
+			stop_wrap("'dblclick' is set with argument `response`, so 'dblclick' must also be specified with argument `action`.")
+		}
+	}
+
 	if(any(response %in% c("click", "hover", "dblclick"))) response2 = c(response2, "click")
 	response = response2
 	if(length(response) == 0) {
@@ -471,6 +493,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 # -width Width of the sub-heatmap.
 # -height Height of the sub-heatmap.
 # -containment Whether the resizing is restricted in a certain parent div? Value can be ``TRUE``/``FALSE`` or a JQuery selector.
+# -internal Internally used.
 #
 # == seealso
 # `originalHeatmapOutput`.
@@ -478,7 +501,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 # == example
 # # See examples on the help page of originalHeatmapOutput()
 subHeatmapOutput = function(heatmap_id, title = NULL,
-	width = 400, height = 350, containment = FALSE) {
+	width = 400, height = 350, containment = FALSE, internal = FALSE) {
 
 	if(missing(heatmap_id)) {
 		if(length(shiny_env$heatmap) == 1) {
@@ -490,7 +513,7 @@ subHeatmapOutput = function(heatmap_id, title = NULL,
 	}
 	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
 		shiny_env$heatmap[[heatmap_id]] = list()
-		shiny_env$current_heatmap_id = heatmap_id
+		if(!internal) shiny_env$current_heatmap_id = heatmap_id
 	}
 
 	if(identical(containment, FALSE)) {
@@ -613,6 +636,7 @@ default_output_ui = function(heatmap_id) {
 #      If `HeatmapInfoOutput` is executed after `originalHeatmapOutput`, the value for it is automatically decided
 # -response It is only used when ``output_ui_float = TRUE`` and ``response = "brush"`` or ``response = "brush-output"``, so that single clicking or hovering won't have any effect, in other word, there is only response from brushing.
 #       If `HeatmapInfoOutput` is executed after `originalHeatmapOutput`, the value for it is automatically decided
+# -internal Internally used.
 #
 # == seealso
 # `originalHeatmapOutput`, `subHeatmapOutput`.
@@ -621,7 +645,7 @@ default_output_ui = function(heatmap_id) {
 # # See examples on the help page of originalHeatmapOutput()
 HeatmapInfoOutput = function(heatmap_id, title = NULL, width = 400, 
 	output_ui = default_output_ui(heatmap_id), 
-	output_ui_float = FALSE, action = NULL, response = NULL) {
+	output_ui_float = FALSE, action = NULL, response = NULL, internal = FALSE) {
 
 	if(missing(heatmap_id)) {
 		if(length(shiny_env$heatmap) == 1) {
@@ -634,7 +658,7 @@ HeatmapInfoOutput = function(heatmap_id, title = NULL, width = 400,
 
 	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
 		shiny_env$heatmap[[heatmap_id]] = list()
-		shiny_env$current_heatmap_id = heatmap_id
+		if(!internal) shiny_env$current_heatmap_id = heatmap_id
 	}
 
 	if(identical(output_ui, TRUE)) {

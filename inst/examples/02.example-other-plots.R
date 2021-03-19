@@ -12,6 +12,8 @@ htShiny(ht, width1 = 500)
 ####################################################################
 # title: An oncoPrint.
 
+# This example is directly copied from ComplexHeatmap book:
+# https://jokergoo.github.io/ComplexHeatmap-reference/book/oncoprint.html#apply-to-cbioportal-dataset
 mat = read.table(system.file("extdata", package = "ComplexHeatmap", 
 	"tcga_lung_adenocarcinoma_provisional_ras_raf_mek_jnk_signalling.txt"), 
 	header = TRUE, stringsAsFactors = FALSE, sep = "\t")
@@ -77,6 +79,7 @@ htShiny(ht, width1 = 800)
 ####################################################################
 # title: An interactive heatmap from pheatmap().
 
+# The example is from pheatmap::pheatmap help page.
 test = matrix(rnorm(200), 20, 10)
 test[1:10, seq(1, 10, 2)] = test[1:10, seq(1, 10, 2)] + 3
 test[11:20, seq(2, 10, 2)] = test[11:20, seq(2, 10, 2)] + 2
@@ -139,16 +142,13 @@ htShiny(ht)
 ####################################################################
 # title: A heatmap produced from tidyHeatmap package.
 
+# The example is from tidyHeatmap GitHub readme.
 suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(tidyHeatmap))
 mtcars_tidy <- 
     mtcars %>% 
     as_tibble(rownames="Car name") %>% 
-    
-    # Scale
     mutate_at(vars(-`Car name`, -hp, -vs), scale) %>%
-    
-    # tidyfy
     pivot_longer(cols = -c(`Car name`, hp, vs), names_to = "Property", values_to = "Value")
 
 mtcars_heatmap <- 
@@ -162,7 +162,6 @@ htShiny(mtcars_heatmap)
 ####################################################################
 # title: Genome-scale heatmap.
 
-suppressPackageStartupMessages(library(ComplexHeatmap))
 suppressPackageStartupMessages(library(circlize))
 suppressPackageStartupMessages(library(GenomicRanges))
 

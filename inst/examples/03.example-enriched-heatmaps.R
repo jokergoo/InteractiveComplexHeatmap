@@ -51,7 +51,7 @@ htShiny(ht_list, width1 = 600, height1 = 600)
 suppressPackageStartupMessages(library(EnrichedHeatmap))
 
 if(0) {
-# note the following code takes several minutes to run, so the result objects are already generated
+# note the following code takes some minutes to run, so the result objects are already generated
 # and you will find the links after the end of this code chunk. (This code chunk is still runnable.)
 suppressPackageStartupMessages(library(GenomicRanges))
 suppressPackageStartupMessages(library(data.table))

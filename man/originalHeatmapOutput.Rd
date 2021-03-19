@@ -1,10 +1,10 @@
 \name{originalHeatmapOutput}
 \alias{originalHeatmapOutput}
 \title{
-UI for the main complex heatmaps
+UI for the original heatmap
 }
 \description{
-UI for the main complex heatmaps
+UI for the original heatmap
 }
 \usage{
 originalHeatmapOutput(heatmap_id, title = NULL,
@@ -12,7 +12,7 @@ originalHeatmapOutput(heatmap_id, title = NULL,
     action = "click", cursor = TRUE,
     response = c(action, "brush"),
     brush_opt = list(stroke = "#f00", opacity = 0.6),
-    containment = FALSE)
+    containment = FALSE, internal = FALSE)
 }
 \arguments{
 
@@ -22,9 +22,10 @@ originalHeatmapOutput(heatmap_id, title = NULL,
   \item{height}{Height of the original heatmap.}
   \item{action}{Which action for selecting single cells on the heatmap? Value should be \code{click}, \code{hover} or \code{dblclick}.}
   \item{cursor}{When moving mouse on heatmap, whether to show the cursors on the four sides?}
-  \item{response}{Which action needs to be responded on the server side? Value should be in \code{click}/\code{hover}/\code{dblclick}, \code{brush} and \code{brush-output}. If \code{brush} is not selected, there is no "search tool" in the main heatmap.}
+  \item{response}{Which action needs to be responded on the server side? Value should be in \code{click}/\code{hover}/\code{dblclick}, \code{brush} and \code{brush-output}. \code{brush} responds in two places which are the sub-heatmap and the output components and \code{brush-output} only responds in the output component.}
   \item{brush_opt}{A list of parameters passed to \code{\link[shiny]{brushOpts}}. Do not set an ID for the brush. An internal brush ID is automatically set.}
   \item{containment}{Whether the resizing is restricted in a certain parent div? Value can be \code{TRUE}/\code{FALSE} or a JQuery selector.}
+  \item{internal}{Internally used.}
 
 }
 \seealso{
@@ -39,7 +40,7 @@ if(interactive()) {
     body = dashboardBody(
         fluidRow(
             box(title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
-                mainHeatmapOutput("ht")
+                originalHeatmapOutput("ht")
             ),
             box(title = "Sub-heatmap", width = 4, solidHeader = TRUE, status = "primary",
                 subHeatmapOutput("ht")

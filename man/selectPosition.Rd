@@ -21,7 +21,7 @@ selectPosition(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verbose = TRUE,
 
 }
 \details{
-The regions can be selected interactively or manually by setting \code{pos}.
+The regions can be selected interactively or selected manually by setting \code{pos}.
 }
 \value{
 A \code{\link[S4Vectors:DataFrame-class]{DataFrame}} object with row indices and column indices corresponding to the selected position.

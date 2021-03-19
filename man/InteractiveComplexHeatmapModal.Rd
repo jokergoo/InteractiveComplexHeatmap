@@ -1,10 +1,10 @@
 \name{InteractiveComplexHeatmapModal}
 \alias{InteractiveComplexHeatmapModal}
 \title{
-Interactive complex heatmap modal
+Interactive complex heatmap modal dialog
 }
 \description{
-Interactive complex heatmap modal
+Interactive complex heatmap modal dialog
 }
 \usage{
 InteractiveComplexHeatmapModal(
@@ -58,7 +58,7 @@ InteractiveComplexHeatmapModal(
 
 }
 \details{
-It creates an interactive heatmap "modal" according to a certain action.
+It creates an interactive heatmap "modal dialog" according to a certain action.
 
 The function is normally put inside \code{\link[shiny]{observe}} or \code{\link[shiny]{observeEvent}}.
 }

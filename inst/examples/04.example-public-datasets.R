@@ -1,8 +1,10 @@
 # On public datasets
 
 ####################################################################
-# title: An example from Lewis et al 2019. GitHub repo: https://github.com/kevinblighe/E-MTAB-6141
+# title: An example from Lewis et al 2019.
 
+# The code is copied from https://github.com/kevinblighe/E-MTAB-6141 without any change.
+# Only one additional line is added in the end of this example to export the heatmap into interactive.
 suppressPackageStartupMessages(require(RColorBrewer))
 suppressPackageStartupMessages(require(ComplexHeatmap))
 suppressPackageStartupMessages(require(circlize))
@@ -252,11 +254,13 @@ ht = draw(hmap + genelabels,
 	annotation_legend_side = 'right',
 	row_sub_title_side = 'left')
 
-htShiny(ht, width1 = 900, height1 = 1200, layout = "1|(2-3)")
+htShiny(ht, width1 = 900, height1 = 1200, layout = "1-(2|3)")
 
 ####################################################################
-# title: Visualize cell heterogeneity from single cell RNASeq. It is from Supplementary S2 of the ComplexHeatmap paper. https://github.com/jokergoo/supplementary
+# title: Visualize cell heterogeneity from single cell RNASeq. 
 
+# The code is copied from Supplementary S2 of the ComplexHeatmap paper without any change. 
+# https://github.com/jokergoo/supplementary
 suppressPackageStartupMessages(library(circlize))
 suppressPackageStartupMessages(library(ComplexHeatmap))
 suppressPackageStartupMessages(library(GetoptLong))
@@ -305,8 +309,10 @@ htShiny(ht_list, width1 = 900, height1 = 600, width2 = 500)
 
 
 ####################################################################
-# title: Correlations between methylation, expression and other genomic features. It is from Supplementary S3 of the ComplexHeatmap paper. https://github.com/jokergoo/supplementary
+# title: Correlations between methylation, expression and other genomic features.
 
+# The code is copied from Supplementary S3 of the ComplexHeatmap paper without any change. 
+# https://github.com/jokergoo/supplementary
 suppressPackageStartupMessages(library(ComplexHeatmap))
 suppressPackageStartupMessages(library(circlize))
 suppressPackageStartupMessages(library(RColorBrewer))

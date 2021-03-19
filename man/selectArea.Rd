@@ -23,7 +23,7 @@ selectArea(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = TRUE, verbo
 
 }
 \details{
-The regions can be selected interactively or manually by setting \code{pos1} and \code{pos2}.
+The regions can be selected interactively or selected manually by setting \code{pos1} and \code{pos2}.
 }
 \value{
 A \code{\link[S4Vectors:DataFrame-class]{DataFrame}} object with row indices and column indices corresponding to the selected region.

@@ -29,6 +29,14 @@ knitr::opts_chunk$set(
 p {
     margin: 1em 0;
 }
+img {
+    background-color: #FFFFFF;
+    padding: 2px;
+    border: 1px solid #DDDDDD;
+    border-radius: 3px;
+    border: 1px solid #CCCCCC;
+    margin: 0 5px;
+}
 </style>
 
 Heatmaps are mainly for visualizing common patterns that are shared by groups
@@ -36,14 +44,14 @@ of rows and columns. After the patterns are observed, the next step is
 to extract the corresponding groups of rows and columns from the heatmap,
 which requires interactivity on the heatmaps. The **ComplexHeatmap** package
 is well known for generating **static heatmaps** (a single heatmap or a list
-of heatmaps, possible with complex annotations). Here the package
+of heatmaps, possibly with complex annotations). Here the package
 **InteractiveComplexHeatmap** brings interactivity to **ComplexHeatmap**. The
 new functionalities allow users to capture sub-heatmaps by clicking/hovering single cells or
 selecting areas from heatmaps.
 
 Unlike other packages which support interactive heatmaps based on JavaScript,
 _e.g._, **iheatmapr**, **heatmaply** and **d3heatmap**,
-**InteractiveComplexHeatmap** has a special way to capture the positions that
+the package **InteractiveComplexHeatmap** has a special way to capture the positions that
 users selected and to extract the corresponding values from the matrices. In
 this vignette, I will explain in details how the interactivity is implemented based on
 **ComplexHeatmap**.
@@ -71,7 +79,7 @@ ht_list = Heatmap(mat1, name = "mat_a", row_km = 2, column_km = 2) +
 2. on a Shiny app.
 
 The interactivity on the interactive graphics device is the basis of the
-interactivity of the Shiny app, so in the following, I will first introduce
+interactivity of the Shiny app, so in the following sections, I will first introduce
 how the interactivity is implemneted with the interactive graphics device.
 
 ## On the interactive graphics device
@@ -84,21 +92,22 @@ I will first explain how **InteractiveComplexHeatmap** captures the positions
 that user clicked on the device and how it is associated to the values in the
 matrix.
 
-When user clicks on the device, the physical locations relative in the device
+When user clicks on the device, the physical locations relative in the device (offsets to the bottom left of the device on both x and y directions)
 are captured by `grid::grid.locator()`. The physical locations of the heatmaps
 (more precisely, the heatmap slices) can also be captured by `grid::deviceLoc()`.
-With knowing the exact positions of the selected points and the heatmaps, it is possible
-to tell which heatmap the selected points are in. Furthermore, by calculating
-the relative distance of the selected points in that heatmap, it is also possible to
-know which rows and columns the selected points correspond to.
+With knowing the exact positions of the clicked points and the heatmaps, it is possible
+to tell which heatmap the clicked points are in. Furthermore, by calculating
+the relative distance of the clicked points in that heatmap, it is also possible to
+know which rows and columns the clicked points correspond to.
 
 For associating user's clicked points and the heatmaps, we first need to calculate the
 positions of all heatmaps. There is a helper function `htPositionsOnDevice()`
 that does this job.
 
 Before executing `htPositionsOnDevice()`, the heatmap should be drawn on the
-device and the layout of heatmaps should have been generated. Thus, the heatmap object
-`ht_list` should be updated explictly by the `draw()` function.
+device and the layout of heatmaps should have been generated so that `htPositionsOnDevice()` can
+access various viewports of the plot. Thus, the heatmap object
+`ht_list` should be updated explicitly by the `draw()` function.
 
 The following code draws the heatmap in a device with 6 inches width and 4 inches height.
 
@@ -125,15 +134,15 @@ and the dashed rectangle corresponds to the border of the whole image.
 grid.newpage()
 grid.rect(gp = gpar(lty = 2))
 for(i in seq_len(nrow(pos))) {
-	x_min = pos[i, "x_min"]
-	x_max = pos[i, "x_max"]
-	y_min = pos[i, "y_min"]
-	y_max = pos[i, "y_max"]
-	pushViewport(viewport(x = x_min, y = y_min, name = pos[i, "slice"],
-		width = x_max - x_min, height = y_max - y_min,
-		just = c("left", "bottom")))
-	grid.rect()
-	upViewport()
+    x_min = pos[i, "x_min"]
+    x_max = pos[i, "x_max"]
+    y_min = pos[i, "y_min"]
+    y_max = pos[i, "y_max"]
+    pushViewport(viewport(x = x_min, y = y_min, name = pos[i, "slice"],
+        width = x_max - x_min, height = y_max - y_min,
+        just = c("left", "bottom")))
+    grid.rect()
+    upViewport()
 }
 ```
 
@@ -142,28 +151,29 @@ dev.new(width = 6, height = 4)
 grid.newpage()
 grid.rect(gp = gpar(lty = 2))
 for(i in seq_len(nrow(pos))) {
-  x_min = pos[i, "x_min"]
-  x_max = pos[i, "x_max"]
-  y_min = pos[i, "y_min"]
-  y_max = pos[i, "y_max"]
-  pushViewport(viewport(x = x_min, y = y_min, name = pos[i, "slice"],
-    width = x_max - x_min, height = y_max - y_min,
-    just = c("left", "bottom")))
-  grid.rect()
-  upViewport()
+    x_min = pos[i, "x_min"]
+    x_max = pos[i, "x_max"]
+    y_min = pos[i, "y_min"]
+    y_max = pos[i, "y_max"]
+    pushViewport(viewport(x = x_min, y = y_min, name = pos[i, "slice"],
+        width = x_max - x_min, height = y_max - y_min,
+        just = c("left", "bottom")))
+    grid.rect()
+    upViewport()
 }
 ```
 
 Yes, the positions of all heatmap slices are correctly captured!
 
-Since now we know the location of the point that user clicked (by
+Since now we know the location of the clicked points (by
 `grid::grid.locator()`) and the positions of all heatmap slices, it is
 possible to calculate which row and which column in the original matrix user's
-point corresponds to.
+click corresponds to.
 
 In the next figure, the blue point with the coordinate $(a, b)$ is clicked by
 user. The heatmap slice where user clicked into has range $(x_1,x_2)$ on x
-direction and range $(y_1, y_2)$ on y direction. There are $n_r$ rows ($n_r
+direction and range $(y_1, y_2)$ on y direction and this heatmap slice can be easily
+found by comparing the locations of every heatmap slice to the position of the click. There are $n_r$ rows ($n_r
 =8$) and $n_c$ columns ($n_c = 5$) in this heatmap slice and they are marked
 by dashed lines. Note all the coordinate values (_i.e._, $a$, $b$, $x_1$,
 $y_1$, $x_2$ and $y_2$) are measured as the physical positions in the graphics
@@ -193,16 +203,16 @@ the row and column index of the original matrix that corresponds to user's
 point easily with $i_r$ and $i_c$.
 
 Denote the matrix for the complete heatmap (without slicing) as $M$, and denote the subset
-of row and column indices in that heatmap as $p$ and $q$. Note, $p$ and $q$ can be 
+of row and column indices in that heatmap as $o^{\mathrm{row}}$ and $o^{\mathrm{col}}$. Note, $o^{\mathrm{row}}$ and $o^{\mathrm{col}}$ can be 
 reordered due to clustering. Then the row and column indices ($j_r$ and $j_c$) for the selected point in $M$ are
 
-$$j_r = p_{i_r}$$
-$$j_c = q_{i_c}$$
+$$j_r = o^{\mathrm{row}}_{i_r}$$
+$$j_c = o^{\mathrm{col}}_{i_c}$$
 
 And the corresponding value in $M$ is $M_{j_r, j_c}$.
 
 **InteractiveComplexHeatmap** has two functions `selectPosition()` and
-`selectArea()` which allows users to pick single positions or select areas
+`selectArea()` which allow users to pick single positions or select areas
 from the heatmaps. Under the interactive graphics device, users do not need to
 run `htPositionsOnDevice()` explicitly. The positions of heatmaps are
 automatically calculated, cached and reused if the heatmaps are the same and
@@ -211,7 +221,10 @@ will be automatically re-executed.
 
 The next image shows an example of using `selectPosition()`. 
 
-<p><img width='100%' style='border:1px solid grey;padding: 4px;' src='https://jokergoo.github.io/images/example1.gif' /></p>
+
+<script>
+document.write('<img width="100%" src="https://jokergoo.github.io/images/example1.gif" />');
+</script>
 
 Interactively, the function asks user to click one position on the heatmap.
 The function returns a `DataFrame` which contains the heatmap name, slice name
@@ -238,12 +251,15 @@ returns `NULL`.
 Similarly, the `selectArea()` function asks user to click two positions on the
 heatmap which defines an area. 
 
-<p><img width='100%' style='border:1px solid grey;padding: 4px;' src='https://jokergoo.github.io/images/example2.gif' /></p>
+
+<script>
+document.write('<img width="100%" src="https://jokergoo.github.io/images/example2.gif" />');
+</script>
 
 Note since the selected area may overlap over multiple heatmaps and slices,
 the function returns a `DataFrame` with multiple rows which contains the
 heatmap names, slice names and the row/column indices in that heatmap. An
-example output can be found by clicking the button below.
+example output is as follows.
 
 ```
 ## DataFrame with 4 rows and 6 columns
@@ -334,11 +350,11 @@ With the three functions `htPositionsOnDevice()`, `selectPosition()` and
 `selectArea()`, it is possible to implement Shiny apps for interactively
 working with heatmaps. Now the problem is how does the server side capture the
 positions that user clicked on the web page. Luckily, there is a solution for
-this. The output heatmap is normally put with a `shiny::plotOutput()` and
+this. The output heatmap is normally put within a `shiny::plotOutput()` and
 `plotOutput()` provides two actions `click` and `brush`. Then on the server
 side, it is possible to get the information of the positions that user
-clicked. The positions can be set to `selectPosition()` and `selectArea()` via
-`pos` or `pos1`/`pos2` arguments and then they can be correctly correspond to
+clicked. The positions can then be set to `selectPosition()` and `selectArea()` via
+`pos` or `pos1`/`pos2` arguments to correctly correspond to
 the values in original matrices.
 
 

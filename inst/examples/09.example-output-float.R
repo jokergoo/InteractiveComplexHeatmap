@@ -15,10 +15,11 @@ ht_list = Heatmap(mat1, name = "mat_a", row_km = 2, column_km = 2,
 
 ht_list = draw(ht_list)
 
+# Note the output from brusing also floats.
 ui = fluidPage(
     tabsetPanel(
-    	tabPanel("action = 'click'", InteractiveComplexHeatmapOutput("ht1", output_ui_float = TRUE, action = "click")),
-    	tabPanel("action = 'hover'", InteractiveComplexHeatmapOutput("ht2", output_ui_float = TRUE, action = "hover")),
+    	tabPanel("action = 'click'",    InteractiveComplexHeatmapOutput("ht1", output_ui_float = TRUE, action = "click")),
+    	tabPanel("action = 'hover'",    InteractiveComplexHeatmapOutput("ht2", output_ui_float = TRUE, action = "hover")),
     	tabPanel("action = 'dblclick'", InteractiveComplexHeatmapOutput("ht3", output_ui_float = TRUE, action = "dblclick"))
    	)
 )
@@ -54,6 +55,8 @@ ui = fluidPage(
     	output_ui = htmlOutput("go_info"))
 )
 
+# The following click_action and brush_action are self-defined actions corresponding to the click
+# and brush events on heatmap.
 library(GetoptLong)
 click_action = function(df, output) {
     output[["go_info"]] = renderUI({
@@ -103,7 +106,7 @@ shinyApp(ui, server)
 
 
 ########################################################################
-# title: Floating output only from one event.
+# title: Floating output only from one event on heatmap, i.e. hover/click/dblclick/brush-output.
 
 m = matrix(rnorm(10*10), 10)
 ht = Heatmap(m)
@@ -116,8 +119,8 @@ ui = tabsetPanel(
         response = "click", output_ui_float = TRUE)),
     tabPanel("response = 'dblclick'", InteractiveComplexHeatmapOutput("heatmap_3", action = "dblclick", 
         response = "dblclick", output_ui_float = TRUE)),
-    tabPanel("response = 'brush'",  InteractiveComplexHeatmapOutput("heatmap_4", 
-        response = "brush", output_ui_float = TRUE))
+    tabPanel("response = 'brush-output'",  InteractiveComplexHeatmapOutput("heatmap_4", 
+        response = "brush-output", output_ui_float = TRUE))
 )
 
 server = function(input, output, session) {

@@ -138,6 +138,26 @@ $(function() {
 		Shiny.setInputValue("@{heatmap_id}_heatmap_brush", null);
 	})
 
+	Shiny.addCustomMessageHandler('@{heatmap_id}_reset_ui', function(message) {
+		if($('#@{heatmap_id}_sub_heatmap_control').length) {
+			var objs2 = $('#@{heatmap_id}_sub_heatmap_control li a');
+			
+			$('#@{heatmap_id}_sub_heatmap_control').hide();
+			$('#@{heatmap_id}_sub_heatmap_control .tab-content').hide();
+
+			$(objs2[0]).css("background-color", "white");
+			$(objs2[1]).css("background-color", "white");
+			$(objs2[2]).css("background-color", "white");
+			$(objs2[3]).css("background-color", "white");
+
+			$($(objs2[0]).attr("href")).attr("visible", 0);
+			$($(objs2[1]).attr("href")).attr("visible", 0);
+			$($(objs2[2]).attr("href")).attr("visible", 0);
+			$($(objs2[3]).attr("href")).attr("visible", 0);
+		}
+		Shiny.setInputValue("@{heatmap_id}_reset_ui_done", Math.random());
+	})
+
 	// similar function as "jquery ui tabs"
 	var objs = $('#@{heatmap_id}_heatmap_control li a');
 	if(@{tolower(as.character(has_brush_response))}) {
