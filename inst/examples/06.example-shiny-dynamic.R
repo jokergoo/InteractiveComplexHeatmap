@@ -17,6 +17,7 @@ server = function(input, output, session) {
 		ht = Heatmap(m, column_title = paste0("A ", n, "x", n, " matrix"))
 		makeInteractiveComplexHeatmap(input, output, session, ht)
 	})
+
 }
 shiny::shinyApp(ui, server)
 

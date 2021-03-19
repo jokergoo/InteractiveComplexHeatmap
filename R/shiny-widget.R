@@ -102,7 +102,8 @@ InteractiveComplexHeatmapModal = function(
 				),
 				InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,
 					width1 = width1, height1 = height1, width2 = width2, height2 = height2, width3 = width3, layout = layout, compact = compact,
-					action = action, cursor = cursor, response = response, brush_opt = brush_opt, output_ui = output_ui, output_ui_float = output_ui_float),
+					action = action, cursor = cursor, response = response, brush_opt = brush_opt, output_ui = output_ui, output_ui_float = output_ui_float,
+					internal = TRUE),
 				if(close_button) {
 					tagList(
 						tags$hr(),
@@ -216,7 +217,7 @@ InteractiveComplexHeatmapModal = function(
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_modal_open")]], {
 		makeInteractiveComplexHeatmap(input, output, session, ht_list, heatmap_id = heatmap_id,
 			click_action = click_action, brush_action = brush_action)
-	})
+	}, once = TRUE)
 
 	observeEvent(input[[qq("@{heatmap_id}_heatmap_modal_remove")]], {
 		removeUI(qq("#@{heatmap_id}_heatmap_modal_background"))
@@ -319,7 +320,8 @@ InteractiveComplexHeatmapWidget = function(
 		div(id = qq("@{heatmap_id}_heatmap_widget"),
 			InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,
 				width1 = width1, height1 = height1, width2 = width2, height2 = height2, width3 = width3, layout = layout, compact = compact,
-				action = action, cursor = cursor, response = response, brush_opt = brush_opt, output_ui = output_ui, output_ui_float = output_ui_float),
+				action = action, cursor = cursor, response = response, brush_opt = brush_opt, output_ui = output_ui, output_ui_float = output_ui_float,
+				internal = TRUE),
 			if(close_button) {
 				tagList(
 					tags$hr(),

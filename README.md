@@ -14,7 +14,7 @@ The first example is the default layout of the interactive complex heatmap widge
 
 The second example demonstrates a DESeq2 result with integrating the package **shinydashboard**.
 
-<img src="https://user-images.githubusercontent.com/449218/110992793-b4f0ed80-8376-11eb-82de-d117ef242e85.gif" width="100%" border="black" />
+<img src="https://user-images.githubusercontent.com/449218/111832925-b16ae280-88f1-11eb-8530-290374f9f2c2.gif" width="100%" border="black" />
 
 
 ## Install

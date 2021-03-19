@@ -126,7 +126,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 	}
 
 	if(is.null(title)) {
-		title = "ComplexHeatmap Shiny App"
+		title = "InteractiveComplexHeatmap Shiny App"
 	}
 	if(is.character(title)) {
 		title = titlePanel(title)
@@ -215,7 +215,7 @@ htShinyExample = function(which) {
 		cat("There are following examples. Individual example can be run by e.g. htShinyExample(1.1).\n\n")
 		for(i_cate in seq_along(examples)) {
 			category = examples[[i_cate]]$category
-			cat(strrep(clisymbols::symbol$line, 8), paste0(i_cate, "."), category, strrep(clisymbols::symbol$line, getOption("width") - 8 - nchar(category)), "\n")
+			cat(strrep(clisymbols::symbol$line, 8), paste0(i_cate, "."), category, strrep(clisymbols::symbol$line, max(0, getOption("width") - 8 - nchar(category))), "\n")
 
 			e = examples[[i_cate]]$example
 			title = vapply(e, function(x) x$title, "")

@@ -20,6 +20,7 @@ InteractiveComplexHeatmapOutput(heatmap_id = NULL,
     brush_opt = list(stroke = "#f00", opacity = 0.6),
     output_ui = default_output_ui(heatmap_id),
     output_ui_float = FALSE, containment = FALSE,
+    internal = FALSE,
     ...)
 }
 \arguments{
@@ -33,15 +34,16 @@ InteractiveComplexHeatmapOutput(heatmap_id = NULL,
   \item{width2}{Width of the sub-heatmap.}
   \item{height2}{Height of the sub-heatmap.}
   \item{width3}{Width of the output div.}
-  \item{layout}{One of \code{"(1|2)-3"}, \code{"1-(2|3)"}, \code{"1-2-3"}, \code{"1|2|3"}, \code{"1|(2-3)"}. If \code{brush} is not set with the argument \code{response}, the code \code{2} can be omitted.}
-  \item{compact}{If the value is \code{TRUE}, there will be no sub-heatmap, and output floats at the mouse position when click/hover on the main heatmap.}
+  \item{layout}{One of \code{"(1|2)-3"}, \code{"1-(2|3)"}, \code{"1-2-3"}, \code{"1|2|3"}, \code{"1|(2-3)"}. If \code{brush} is not set with the argument \code{response}, which means there is no sub-heatmap panel, the code \code{2} can be omitted.}
+  \item{compact}{If the value is \code{TRUE}, there will be no sub-heatmap, and output floats at the mouse position when click/hover on the original heatmap.}
   \item{action}{Which action for selecting single cells on the heatmap? Value should be \code{click}, \code{hover} or \code{dblclick}.}
   \item{cursor}{When moving mouse on heatmap, whether to show the cursors on the four sides?}
-  \item{response}{Which action needs to be responded on the server side? Value should be in \code{click}/\code{hover}/\code{dblclick}, \code{brush} and \code{brush-output}. If \code{brush} is not selected, there is no "search tool" in the main heatmap.}
+  \item{response}{Which action needs to be responded on the server side? Value should be in \code{click}/\code{hover}/\code{dblclick}, \code{brush} and \code{brush-output}. \code{brush} responds in two places which are the sub-heatmap and the output components and \code{brush-output} only responds in the output component.}
   \item{brush_opt}{A list of parameters passed to \code{\link[shiny]{brushOpts}}. Do not set an ID for the brush. An internal brush ID is automatically set.}
-  \item{output_ui}{A \code{\link[shiny]{htmlOutput}} or other \code{*Output} object (from shiny). If it is set to \code{NULL}, there is no output in the app.}
+  \item{output_ui}{A \code{\link[shiny]{htmlOutput}} or other \code{*Output} object (defined in shiny or other related packages). If it is set to \code{NULL}, there is no output component in the app.}
   \item{output_ui_float}{Whether the UI defined by \code{output_ui} floats at the mouse positions.}
   \item{containment}{Whether the resizing is restricted in a certain parent div? Value can be \code{TRUE}/\code{FALSE} or a JQuery selector.}
+  \item{internal}{Internally used.}
   \item{...}{Pass to the UI container which is wrapped by \code{\link[shiny]{fluidPage}}.}
 
 }

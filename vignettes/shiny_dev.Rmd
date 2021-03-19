@@ -16,6 +16,14 @@ vignette: >
 p {
     margin: 1em 0;
 }
+img {
+    background-color: #FFFFFF;
+    padding: 2px;
+    border: 1px solid #DDDDDD;
+    border-radius: 3px;
+    border: 1px solid #CCCCCC;
+    margin: 0 5px;
+}
 </style>
 
 ```{r, echo = FALSE}

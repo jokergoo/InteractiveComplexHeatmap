@@ -6,6 +6,9 @@ get_last_ht = function() {
 shiny_env = new.env()
 shiny_env$i_widget = 0
 shiny_env$heatmap = list()
+shiny_env$obs = list()
+shiny_env$action_button_count = list()
+shiny_env$initialized = list()
 
 get_widget_index = function() {
 	shiny_env$i_widget

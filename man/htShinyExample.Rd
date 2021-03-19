@@ -15,7 +15,7 @@ htShinyExample(which)
 
 }
 \details{
-In every example, there is a Shiny app opened, also including source code that generates this app.
+In every example, there is a Shiny app opened, which also includes source code that generates this app.
 }
 \value{
 A Shiny app object.

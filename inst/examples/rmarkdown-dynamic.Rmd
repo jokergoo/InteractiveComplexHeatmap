@@ -26,9 +26,6 @@ ui = fluidPage(
 
 server = function(input, output, session) {
 	observeEvent(input$show_heatmap, {
-		showModal(modalDialog(
-			title = "foo"
-			))
 		InteractiveComplexHeatmapModal(input, output, session, ht)
 	})
 }

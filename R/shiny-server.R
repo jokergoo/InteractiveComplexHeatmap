@@ -55,10 +55,10 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	only_brush_output_response = !(has_brush_response) & "brush-output" %in% response
 
 	if(inherits(ht_list, "Heatmap")) {
-		message("The heatmap is suggested to be updated by e.g. `ht = draw(ht)` before sending to the Shiny app.")
+		message(qq("[@{Sys.time()}] The heatmap is suggested to be updated by e.g. `ht = draw(ht)` before sending to the Shiny app."))
 	} else if(inherits(ht_list, "HeatmapList")) {
 		if(!ht_list@layout$initialized) {
-			message("The heatmap list is suggested to be udpated by e.g. `ht_list = draw(ht_list)` before sending to the Shiny app.")
+			message(qq("[@{Sys.time()}] The heatmap list is suggested to be udpated by e.g. `ht_list = draw(ht_list)` before sending to the Shiny app."))
 		}
 	} else {
 		stop_wrap("`ht_list` can only be a Heatmap/HeatmapList object.")
@@ -86,7 +86,6 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	if(!has_normal_matrix) {
 		stop_wrap("There should be at least one normal heatmap (nrow > 0 and ncol > 0) in the heatmap list.")
 	}
-	
 
 	if(!is.null(click_action)) {
 		args = names(as.list(formals(click_action)))
@@ -148,6 +147,20 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		brush_action2 = NULL
 	}
 
+	action = shiny_env$heatmap[[heatmap_id]]$action
+
+
+	if(is.null(shiny_env$obs[[heatmap_id]])) {
+		shiny_env$obs[[heatmap_id]] = list()
+	}
+	if(length(shiny_env$obs[[heatmap_id]])) {
+		message(qq("[@{Sys.time()}] remove previous observeEvent for heatmap id: '@{heatmap_id}'."))
+		for(nm in names(shiny_env$obs[[heatmap_id]])) {
+			# message(qq("[@{Sys.time()}] remove previous observeEvent: '@{nm}'."))
+			shiny_env$obs[[heatmap_id]][[nm]]$destroy()
+		}
+	}
+
 	# initialize heatmaps
 	ht_list = reactiveVal({
 		tryCatch({
@@ -170,12 +183,14 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	selected_copy = reactiveVal(NULL)
 	heatmap_initialized = reactiveVal(FALSE)
 
-	sub_ht_list = reactiveVal()
+	sub_ht_list = reactiveVal(NULL)
+
+	session$sendCustomMessage(qq("@{heatmap_id}_reset_ui"), "")
 
 	###############################################################
 	##                 The default actions
 	###############################################################
-	observeEvent(heatmap_initialized(), {
+	shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_initialize")]] = observeEvent(input[[qq("@{heatmap_id}_reset_ui_done")]], {
 
 		output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
 
@@ -193,7 +208,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 					HTML("<p>No position is selected.</p>")
 				})
 			}
-			message(qq("[@{Sys.time()}] initialize the original heatmap and calculate positions."))
+			message(qq("[@{Sys.time()}] initialize the original heatmap (ID: @{heatmap_id}) and calculate positions."))
 
 			lt = check_heatmap_in_search(heatmap_id, ht_list)
 
@@ -268,13 +283,14 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				HTML("<p>No position is selected.</p>")
 			})
 		}
-
 	}, once = TRUE)
 
 	###############################################################
 	##                 resizing
 	###############################################################
-	observeEvent(input[[qq("@{heatmap_id}_heatmap_do_resize")]], {
+	shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_do_resize")]] = observeEvent(input[[qq("@{heatmap_id}_heatmap_do_resize")]], {
+
+		req(heatmap_initialized())
 
 		width = input[[qq("@{heatmap_id}_heatmap_resize_width")]]
 	    height = input[[qq("@{heatmap_id}_heatmap_resize_height")]]
@@ -292,7 +308,6 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			message(qq("[@{Sys.time()}] make the original heatmap and calculate positions (device size: @{width}x@{height} px)."))
 			session$sendCustomMessage(qq("@{heatmap_id}_remove_brush"), "")
 		}, width = width, height = height, res = res)
-	
 	})
 
 	###############################################################
@@ -337,8 +352,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		}
 	)
 	
-
-	observeEvent(input[[qq("@{heatmap_id}_heatmap_resize_button")]], {
+	shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_resize_button")]] = observeEvent(input[[qq("@{heatmap_id}_heatmap_resize_button")]], {
 
 		req(heatmap_initialized())
 
@@ -365,7 +379,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	##      sub-heatmap by selecting or searching
 	###############################################################
 	if(has_brush_response) {
-		observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_brush")]] = observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
 
 			req(heatmap_initialized())
 
@@ -411,10 +425,13 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 		})
 
-		observeEvent(input[[qq("@{heatmap_id}_post_remove_submit")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_post_remove_submit")]] = observeEvent(input[[qq("@{heatmap_id}_post_remove_submit")]], {
 
+			req(heatmap_initialized())
+
+			where = input[[qq("@{heatmap_id}_post_remove_dimension")]]
 			new_selected = adjust_df(selected(), n_remove = input[[qq("@{heatmap_id}_post_remove")]], 
-				where = input[[qq("@{heatmap_id}_post_remove_dimension")]])
+				where = where)
 
 			selected(new_selected)
 
@@ -440,11 +457,16 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				}
 			}
 
+			showNotification(qq("remove one @{ifelse(where %in% c('top', 'botton'), 'row', 'column')} from @{where} of sub-heatmap."), duration = 2, type = "message")
+	    	message(qq("[@{Sys.time()}] remove one @{ifelse(where %in% c('top', 'botton'), 'row', 'column')} from @{where} from sub-heatmap."))
+
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 		})
 
-		observeEvent(input[[qq("@{heatmap_id}_remove_empty_checkbox")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_remove_empty_checkbox")]] = observeEvent(input[[qq("@{heatmap_id}_remove_empty_checkbox")]], {
 			
+			req(heatmap_initialized())
+
 			if(input[[qq("@{heatmap_id}_remove_empty_checkbox")]]) {
 				new_selected = adjust_df_remove_empty(selected(), ht_list())
 				selected(new_selected)
@@ -474,10 +496,15 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				}
 			}
 
+			showNotification(qq("remove empty rows and columns from sub-heatmap."), duration = 2, type = "message")
+	    	message(qq("[@{Sys.time()}] remove empty rows and columns from sub-heatmap."))
+
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 		}, ignoreInit = TRUE)
 
-		observeEvent(input[[qq("@{heatmap_id}_post_remove_reset")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_post_remove_reset")]] = observeEvent(input[[qq("@{heatmap_id}_post_remove_reset")]], {
+
+			req(heatmap_initialized())
 
 			selected( selected_copy() )
 
@@ -505,11 +532,16 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
 
+			showNotification(qq("reset sub-heatmap."), duration = 2, type = "message")
+	    	message(qq("[@{Sys.time()}] reset sub-heatmap."))
+
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 		})
 
 
-		observeEvent(input[[qq("@{heatmap_id}_search_action")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_search_action")]] = observeEvent(input[[qq("@{heatmap_id}_search_action")]], {
+
+			req(heatmap_initialized())
 
 			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
 			
@@ -661,8 +693,10 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}
 		)
 		
-		observeEvent(input[[qq("@{heatmap_id}_sub_heatmap_input_size_button")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_sub_heatmap_input_size_button")]] = observeEvent(input[[qq("@{heatmap_id}_sub_heatmap_input_size_button")]], {
 			
+			req(heatmap_initialized())
+
 			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
 				if(is.null(selected())) {
 	    			grid.newpage()
@@ -673,7 +707,10 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}, res = res)
 		})
 
-		observeEvent(input[[qq("@{heatmap_id}_open_table")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_open_table")]] = observeEvent(input[[qq("@{heatmap_id}_open_table")]], {
+
+			req(heatmap_initialized())
+
 			if(is.null(selected())) {
 				showModal(modalDialog(
 					title = "The selected tables",
@@ -690,26 +727,36 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 						numericInput(qq("@{heatmap_id}_digits"), "Digits of numeric values:", value = 2, min = 0),
 						style = "margin-top:5px"
 					),
-					tags$script(HTML("
+					tags$script(HTML(qq("
 						$('.modal-content').draggable();
 						$('.modal-content label').css('display', 'table-cell').css('text-align', 'center').css('vertical-align', 'middle').css('padding-right', '10px');
 						$('.modal-content .form-group').css('display', 'table-row');
 						$('.modal-content input').css('width', '100px');
-					")),
+						Shiny.setInputValue('@{heatmap_id}_selected_table_create', Math.random());
+					"))),
 					easyClose = TRUE,
 					footer = div(downloadButton(qq("@{heatmap_id}_download_table"), "Download"), modalButton("Close")),
 					size = "l"
 				))
-
-				output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
-					HTML(format_html_table(heatmap_id, selected = selected(), ht_list = ht_list()))
-				})
-
 			}
+
+			showNotification(qq("Open selected sub-heatmap as a text table."), duration = 2, type = "message")
+	    	message(qq("[@{Sys.time()}] open selected sub-heatmap as a text table."))
+
 		})
 
-		
-		observeEvent(input[[qq("@{heatmap_id}_digits")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_selected_table_create")]] = observeEvent(input[[qq("@{heatmap_id}_selected_table_create")]], {
+			
+			req(heatmap_initialized())
+
+			output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
+				HTML(format_html_table(heatmap_id, selected = selected(), ht_list = ht_list()))
+			})
+		})
+
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_digits")]] = observeEvent(input[[qq("@{heatmap_id}_digits")]], {
+
+			req(heatmap_initialized())
 
 			output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
 				HTML(format_html_table(heatmap_id, input[[qq("@{heatmap_id}_digits")]], selected = selected(), ht_list = ht_list()))
@@ -726,11 +773,15 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}
 		)
 
-		observeEvent(input[[qq("@{heatmap_id}_open_modal")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_open_modal")]] = observeEvent(input[[qq("@{heatmap_id}_open_modal")]], {
+			
+			req(heatmap_initialized())
+
 			InteractiveComplexHeatmapModal(input, output, session, sub_ht_list(), close_button = TRUE)
 		})
+
 	} else if(only_brush_output_response) {
-		observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_brush")]] = observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
 
 			req(heatmap_initialized())
 			
@@ -768,9 +819,8 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	##      A click on the heatmap
 	###############################################################
 
-	action = shiny_env$heatmap[[heatmap_id]]$action
 	if(has_click_reponse) {
-		observeEvent(input[[ifelse(action %in% c("click", "hover"), 
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_click")]] = observeEvent(input[[ifelse(action %in% c("click", "hover"), 
 			                       qq("@{heatmap_id}_heatmap_mouse_action"), 
 			                       qq("@{heatmap_id}_heatmap_click"))]], {
 
@@ -1161,7 +1211,6 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 
 # if annotation is included, top/bottom annotation are all put at the bottom of the matrix
 get_sub_matrix = function(heatmap_id, digits = 2, include_annotation = TRUE, selected = NULL, ht_list = NULL) {
-	message(qq("[@{Sys.time()}] fetch selected tables."))
 
 	dev.null()
 	on.exit(dev.off2())
@@ -1695,3 +1744,10 @@ format_html_table = function(heatmap_id, digits = 2, selected = NULL, ht_list = 
 	kb
 }
 
+
+observeEvent2 = function(eventExpr, handlerExpr, ..., label) {
+	if(is.null(shiny_env$obs[[label]])) {
+		observeEvent(eventExpr, handlerExpr, ...)
+		shiny_env$obs[[label]] = TRUE
+	}
+}
