@@ -30,11 +30,9 @@ shinyApp(ui, server)
 ####################################################################
 # title: Self-define the output. The selected sub-matrix is shown as a text table.
 
-library(GetoptLong)
-m = matrix(rnorm(100*100), 100)
-rownames(m) = paste0("R", 1:100)
-colnames(m) = paste0("C", 1:100)
-ht = Heatmap(m, show_row_names = FALSE, show_column_names = FALSE, row_km = 2, column_km = 2)
+library(GetoptLong)  # for the qq() function which does variable intepolation
+data(rand_mat)
+ht = Heatmap(rand_mat, show_row_names = FALSE, show_column_names = FALSE)
 ht = draw(ht)
 
 # We directly assign the new UI to the argument `output_ui` to replace the default output UI.
