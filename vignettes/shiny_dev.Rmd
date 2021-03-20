@@ -46,6 +46,8 @@ functions for integrating the interactive heatmap widgets into other Shiny apps.
 - `InteractiveComplexHeatmapOutput()`: for building UI on the client side.
 - `makeInteractiveComplexHeatmap()`: for processing on the sever side.
 
+### With one interactive heatmap widget
+
 The usage is simple. Following is an example that you can directly copy and paste to your R session.
 
 ```{r, eval = FALSE}
@@ -53,23 +55,30 @@ library(ComplexHeatmap)
 library(InteractiveComplexHeatmap)
 library(shiny)
 
-m = matrix(rnorm(100*100), nrow = 100)
-ht = Heatmap(m)
-ht = draw(ht)
+data(rand_mat) # simply a random matrix
+ht1 = Heatmap(rand_mat, name = "mat",
+    show_row_names = FALSE, show_column_names = FALSE)
+ht1 = draw(ht1)
 
 ui = fluidPage(
     h3("My first interactive ComplexHeatmap Shiny app"),
+    p("This is an interactive heatmap visualization on a random matrix."),
     InteractiveComplexHeatmapOutput()
 )
 
 server = function(input, output, session) {
-    makeInteractiveComplexHeatmap(input, output, session, ht)
+    makeInteractiveComplexHeatmap(input, output, session, ht1)
 }
 
 shinyApp(ui, server)
 ```
 
-<img src="https://jokergoo.github.io/images/app_demo1.png" width="100%" />
+<script>
+document.write('<img src="https://jokergoo.github.io/images/app_demo1.png" width="100%" />');
+</script>
+
+
+### With multiple interactive heatmap widgets
 
 You can also put multiple interactive heatmaps widgets in a single Shiny app,
 but this time you must assign a "**heatmap ID**" for each one, so that
@@ -77,10 +86,8 @@ but this time you must assign a "**heatmap ID**" for each one, so that
 The heatmap ID should start with letters.
 
 ```{r, eval = FALSE}
-ht1 = Heatmap(m, col = c("white", "blue"))
-ht1 = draw(ht1)
-ht2 = Heatmap(m, col = c("white", "red"))
-ht2 = draw(ht2)
+mat2 = matrix(sample(letters[1:10], 100, replace = TRUE), 10)
+ht2 = draw(Heatmap(mat2, name = "mat2"))
 
 ui = fluidPage(
     h3("The first heatmap"),
@@ -89,17 +96,31 @@ ui = fluidPage(
     h3("The second heatmap"),
     InteractiveComplexHeatmapOutput("heatmap_2")
 )
-
 server = function(input, output, session) {
     makeInteractiveComplexHeatmap(input, output, session, ht1, "heatmap_1")
     makeInteractiveComplexHeatmap(input, output, session, ht2, "heatmap_2")
 }
-
 shinyApp(ui, server)
 ```
 
-<img src="https://jokergoo.github.io/images/app_demo2.png" width=100% />
 
+<script>
+document.write('<img src="https://jokergoo.github.io/images/app_two.png" width=100% />');
+</script>
+
+Similarly, multiple interactive heatmap widgets can be arranged by a list of tabs:
+
+```{r, eval = FALSE}
+ui = tabsetPanel(
+    tabPanel("Numeric", InteractiveComplexHeatmapOutput("heatmap_1")),
+    tabPanel("character", InteractiveComplexHeatmapOutput("heatmap_2"))
+)
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht1, "heatmap_1")
+    makeInteractiveComplexHeatmap(input, output, session, ht2, "heatmap_2")
+}
+shinyApp(ui, server)
+```
 
 ## Customize the widgets
 
@@ -109,43 +130,60 @@ the selected sub-heatmap. The original heatmap and sub-heatmap components can be
 dragging the two boxes, but still, `InteractiveComplexHeatmapOutput()`
 provides arguments of `width1`, `width2`, `height1` and `height2` to control
 the initial sizes of the two components. They can be manually set to make sure the
-heatmap is well visible, e.g. in `htShiny(2.2)`.
-
-The layout of the three components are controlled by the argument `layout`. It
-supports following layouts. Note the values are in a special format to help to
-understand the layout, where the symbol `"-"` corresponds to horizontal
-arrangment and `"|"` corresponds to vertical arrangement.
-
-- `"(1-2)|3"`: Heatmap and sub-heatmap are in a same row, and output is in a second row. This is the default layout.
-- `"1|(2-3)"`: Heatmap is in a single row, while sub-heatmap and output are in a second row.
-- `"1-2-3"`: All three components are in a same row.
-- `"1|2|3"`: Each component is in a single row.
-- `"1-(2|3)"`: Being different from the other four layouts, this is a two-column layout. 
-     Heatmap is in a sigle column. Sub-heatmap and output are vertically aligned and the two are in the second column.
-     An example can be found at `htShinyExample(4.1)`.
-
-With different layouts, different default values are assigned to widths and heights of the three components to make
-sure they are well aligned.
-
-By default, to get the information of a single cell in the heatmap, a `"click"`
-action is used. In `InteractiveComplexHeatmapOutput()`, the action can also be set
-to `"hover"` or `"dblclick"`. The example in `htShinyExample(1.8)` demonstrates 
-usages of these three actions.
+heatmap is well aligned, e.g. in `htShinyExample(2.2)`.
 
 The initial style of the brush can be specified by `brush_opt` argument. The
 value should be a list and the value will be sent to `shiny::brushOpts()`. Note,
-the style of the brush can also be manually adjusted in the web page of the Shiny app.
+the style of the brush can also be manually adjusted in the Shiny app.
 
-The argument `response` can be set as one of `"click"`, `"hover"`, `"dblclick"`, `"brush"` and `"brush-output"`
-to only respond to one event on heatmap. E.g. if `response` is set to `"click"`, there will 
+### The layout
+
+The layout of the three components are controlled by argument `layout`. It
+supports following values:
+
+- `"(1-2)|3"`: Original heatmap and sub-heatmap are in the same row, and output is in a
+  second row. This is the default layout.
+- `"1|(2-3)"`: Original heatmap is in a single row, while sub-heatmap and output are in
+  a second row.
+- `"1-2-3"`: All three components are in the same row.
+- `"1|2|3"`: Each component is in a single row.
+- `"1-(2|3)"`: Being different from the other four layouts, this is a
+  two-column layout. Original heatmap is in a single column. Sub-heatmap and output are
+  vertically aligned and the two are in the second column. An example can be
+  found at `htShinyExample(4.1)`.
+
+Note the values for `layout` are in a special format to help to
+understand the layout, where the three code `1`, `2` and `3` correspond to original heatmap, sub-heatmap and output respectively,
+symbol `"-"` corresponds to horizontal
+alignment and `"|"` corresponds to vertical alignment.
+With different layouts, different default values are assigned to widths and
+heights of the three components to make sure they are well aligned.
+
+
+### Action on single heatmap cells
+
+By default, to get the information of a single cell in the heatmap, a `"click"`
+action is used. In `InteractiveComplexHeatmapOutput()`, the action can also be set
+to `"hover"` or `"dblclick"`, then hovering or double clicking will trigger the response on the sever side.
+The example in `htShinyExample(1.9)` demonstrates usages of these three actions.
+
+### Which action to respond
+
+The argument `response` can be set as a vector with values in `"click"`, `"hover"`, `"dblclick"`, `"brush"` and `"brush-output"`
+to only respond to one or multiple events on heatmap. E.g. if `response` is only set to `"click"`, there will 
 be no response for the "brush event" in the interactive heatmap, also the sub-heatmap component
 is removed from the app. Please go to Section ["Only respond to one event"](InteractiveComplexHeatmap.html#only-respond-to-one-event) for examples.
-A brush on heatmap triggers two responses, one in the sub-heatmap and one in the output. If `"brush-output"`
-is included in `response`, you can still brush on the heatmap, but there is only response in the output.
 
-`InteractiveComplexHeatmapOutput()` manages the three components. The three components can also be
-separated into `mainHeatmapOutput()`, `subHeatmapOutput()` and `HeatmapInfoOutput()`. Then, it is possible
-to integrate with other packages such as **shinydashboard**.
+A brush on heatmap by default triggers two responses, one in the sub-heatmap and one in the output. If `"brush-output"`
+is included in `response` instead of `"brush"`, you can still brush on the heatmap, but there is only response in the output,
+and the sub-heatmap component is removed from the app.
+
+### Separately specify the three UI components
+
+`InteractiveComplexHeatmapOutput()` contains all three UI components. The three components can be
+separately specified as three individual functions: `mainHeatmapOutput()`, `subHeatmapOutput()` and `HeatmapInfoOutput()`. 
+This provides flexibility for the UI arrangement, e.g. to integrate with package **shinydashboard** where each UI component
+is wrapped within an individual box.
 
 ```{r, eval = FALSE}
 body = dashboardBody(
@@ -178,12 +216,16 @@ server = function(input, output, session) {
 shinyApp(ui, server)
 ```
 
-<img src="https://jokergoo.github.io/images/shinydashboard.png" width="100%" />
+
+<script>
+document.write('<img src="https://jokergoo.github.io/images/shinydashboard.png" width="100%" />');
+</script>
 
 Please note, since now the three components are generated independently, to correctly connect the three components
-as well as the server side, the heatmap ID must be explicitely specified in all the functions.
-More examples on integrating with **shinydashboard** can be found with `htShinyExample(10.1)` and `htShinyExample(10.2)`.
-
+as well as the server side, the heatmap ID must be explicitely specified in all functions.
+More examples on integrating with **shinydashboard** can be found from `htShinyExample(10.1)` to `htShinyExample(10.5)`.
+In vignette ["A Shiny app for visualizing DESeq2 results"](deseq2_app.html), we demonstrate a complex app where
+the three UI components are specified separately to work with **shinydashboard**.
 
 ## Work with R Markdown documents
 
@@ -222,8 +264,9 @@ shiny::shinyApp(ui, server)
 ```
 ````
 
-<img src="https://jokergoo.github.io/images/rmarkdown.png" width="100%" />
-
+<script>
+document.write('<img src="https://jokergoo.github.io/images/rmarkdown.png" width="100%" />');
+</script>
 
 ## Self-define the output
 
@@ -235,9 +278,10 @@ In `makeInteractiveComplexHeatmap()`, there are two arguments `click_action`
 and `brush_action` which accept self-defined functions and define how to
 respond after the heatmap is clicked or brushed. The input for the two
 functions should accept two arguments, one is a `DataFrame` object which
-contains the information of which row(s) and columns(s) are selected by users,
+contains the information of which row(s) and columns(s) selected by users,
 and the second argument should always be `output` which is used in the Shiny
-app.
+app. `click_action` and `brush_action` can also be functions with four arguments
+which also includes `input` and `session`, in a form of `function(df, input, output, session) {...}`.
 
 To use `click_action` or `brush_action`, a `htmlOutput` (or other similar
 `*Output`) should be first set up in the UI, then the Shiny application knows where to
@@ -265,7 +309,7 @@ the ID set in `htmlOutput()` is `"info"`):
 ```{r, eval = FALSE}
 function(df, output) {
     output[["info"]] = renderUI({  # or output$info = ...
-        if(is.null(df)) { # have not clicked into the heatmap body
+        if(is.null(df)) { # have not clicked or brushed into the heatmap body
             ...
         } else {
             ...
@@ -328,7 +372,7 @@ unique(unlist(df$column_index))
 ```
 
 
-If users want to use the values in `input` or `session`, `click_action` and `brush_action` can also
+Note again, if users want to use the values in `input` or `session`, `click_action` and `brush_action` can also
 be specified as functions with four arguments:
 
 ```{r, eval = FALSE}
@@ -347,20 +391,19 @@ function(df, input, output, session) {
 If `action` in `InteractiveComplexHeatmapOutput()` is set to `"hover"` or `"dblclick"`, the corresponding
 argument for action is `hover_action` or `dblclick_action`. The usage is exactly the same as `click_action`.
 
+### Examples of self-defining output
 
-In the following example, in the UI, I add a new `htmlOutput` with ID `info`.
-On the sever side, I define `click_action` to print a styled text and define
+In this section, I will demonstrate several examples of implementing self-defined output.
+
+In the first example, I replace the default ui with a new `htmlOutput("info")`.
+On the sever side, I define a `click_action` to print a styled text and a
 `brush_action` to print the table of the selected rows and columns from the
-heatmap.
-
-You can also run the following example simply by `htShinyExample(5.2)`.
+heatmap. This following example can be run by `htShinyExample(5.2)`.
 
 ```{r, eval = FALSE}
 library(GetoptLong)  # for the qq() function which does variable intepolation
-m = matrix(rnorm(100*100), 100)
-rownames(m) = paste0("R", 1:100)
-colnames(m) = paste0("C", 1:100)
-ht = Heatmap(m, show_row_names = FALSE, show_column_names = FALSE, row_km = 2, column_km = 2)
+data(rand_mat)
+ht = Heatmap(rand_mat, show_row_names = FALSE, show_column_names = FALSE)
 ht = draw(ht)
 
 ui = fluidPage(
@@ -394,15 +437,19 @@ server = function(input, output, session) {
 shinyApp(ui, server)
 ```
 
-<img src="https://jokergoo.github.io/images/customize_output.png" width="100%" />
+<script>
+document.write('<img src="https://jokergoo.github.io/images/customize_output.gif" width="100%" />');
+</script>
 
-`htShinyExample(5.3)` gives another scenario where the output needs to be
-self-defined. In that example, an gene expression matrix is visualized and
+The second example gives another scenario where the output needs to be
+self-defined. In this example, an gene expression matrix is visualized and
 clicking on the heatmap will print the corresponding gene and some other
 annotations related to this gene (e.g. the corresponding gene symbol, RefSeq
 IDs and UniProt IDs). Run `htShinyExample(5.3)` to see how this is implemented.
 
-<img src="https://jokergoo.github.io/images/customize_output2.png" width="100%" />
+<script>
+document.write('<img src="https://jokergoo.github.io/images/customize_output2.png" width="100%" />');
+</script>
 
 `htShinyExample(5.4)` gives an example where the heatmap visualizes
 correlations of a list of Gene Ontology terms (The plot is generated by [the
@@ -411,34 +458,55 @@ package](https://bioconductor.org/packages/simplifyEnrichment/)). In this
 example, the click and brush actions are self-defined so that the selected GO
 IDs as well as their detailed descriptions are printed.
 
-<img src="https://jokergoo.github.io/images/customize_output3.png" width="100%" />
 
-`htShinyExample(5.5)` links selected differential genes to 
-the MA plot in a DESeq2 analysis, where the MA plot is implemented as the "output".
+<script>
+document.write('<img src="https://jokergoo.github.io/images/customize_output3.png" width="100%" />');
+</script>
 
-<img src="https://jokergoo.github.io/images/deseq2.gif" width="100%" />
+`htShinyExample(5.5)` visualizes an correlation heatmap where clicking on the cell
+generates a scatter plot of the two corresponding variables. In this example,
+I set `response = "click"` in `InteractiveComplexHeatmapOutput()`, so that the sub-heatmap
+is removed from the app and the scatterplot (the output) is directly placed on the right
+of the original correlation heatmap.
 
-`htShinyExample(5.6)` visualizes an correlation heatmap where clicking on the cell
-generates a scatter plot of the two corresponding variables.
 
-<img src="https://jokergoo.github.io/images/corrheatmap.gif" width="100%" />
+<script>
+document.write('<img src="https://jokergoo.github.io/images/corrheatmap.gif" width="100%" />');
+</script>
+
+`htShinyExample(5.6)` visualizes an a heatmap of pairwise Jaccard coefficients for 
+multiple lists of genomic regions. Clicking on the heatmap cell draws a Hilbert curve 
+(draw by [the **HilbertCurve** package](https://bioconductor.org/packages/HilbertCurve/)) which 
+shows how the two corresponding sets of genomic regions overlap. 
+
+
+<script>
+document.write('<img src="https://jokergoo.github.io/images/hilbert_curve.gif" width="100%" />');
+</script>
 
 Instead of occupying static space, the output component can be floated to the
-mouse positions by setting `output_ui_float = TRUE` so that clicking, hovering
+mouse positions by setting `output_ui_float = TRUE` in `InteractiveComplexHeatmapOutput()` so that clicking, hovering
 or brushing from the heatmap opens a frame that contains the output.
 There are two examples: `htShinyExample(9.1)` and `htShinyExample(9.2)`.
 The demonstration is as follows:
 
-<img src="https://jokergoo.github.io/images/float1.gif" width="100%" />
 
-As will be explained in [the vignette "Functions for Shiny app development"](shiny_dev.html),
-the output can be self-defined to put customized information. The self-defined output can also be floated:
+<script>
+document.write('<img src="https://jokergoo.github.io/images/float1.gif" width="100%" />');
+</script>
 
-<img src="https://jokergoo.github.io/images/float2.gif" width="100%" />
+
+The self-defined output can also be floated if the self-defined UI replaces the default UI by setting
+`InteractiveComplexHeatmapOutput(..., output_ui = new_output_ui)`:
+
+
+<script>
+document.write('<img src="https://jokergoo.github.io/images/float2.gif" width="100%" />');
+</script>
 
 ## Compact mode
 
-In `InteractiveComplexHeatmapOutput()`, argument `compact` can be set to `TRUE`, so there is only the main heatmap
+In `InteractiveComplexHeatmapOutput()`, argument `compact` can be set to `TRUE`, so there is only the original heatmap
 and the output is floating at the mouse positions if hovering/clicking on heatmap. The calling
 
 ```{r, eval = FALSE}
@@ -455,10 +523,10 @@ Self-defined output can still be used here, e.g.
 
 ```{r, eval = FALSE}
 new_output_ui = ...
-InteractiveComplexHeatmap(..., response = c(action, "brush-output"), 
-    output_ui = new_output_ui, output_ui_float = TRUE)
+InteractiveComplexHeatmap(..., compact = TRUE, output_ui = new_output_ui)
 ```
 
+See examples with `htShinyExample(1.11)`.
 
 ## Dynamically generate interactive heatmap widget
 
@@ -467,15 +535,18 @@ interactive app. There are also scenarios where the heatmaps are generated on
 the fly, e.g. when the matrix is dynamically generated in the middle of an
 analysis. There might be following scenarios:
 
-1. The matrix is dynamically generated, e.g. the dimension of the matrix or
-   subset of rows and columns are dynamically selected.
-2. The heatmaps are dynamically configurated, e.g. the method for clustering or
-   for calculating distance is dynamically selected.
-3. The heatmap annotations are dynamically selected.
-4. If there are multiple heatmaps, which heatmaps are going to be drawn is 
-   dynamically selected.
+- The heatmap is based on a subset of matrix which is filtered by users, _e.g._, the expression matrix
+   for differentially expressed genes filtered by different cutoffs.
+- The annotations are dynamically provided by users.
+- The heatmap parameters are changed by users, _e.g._, the clustering method or the splitting variable.
+- If there are multiple heatmaps, which heatmaps are going to be drawn is dynamically selected.
 
-I first demonstrate an use of `makeInteractiveComplexHeatmap()`. In the following 
+In **InteractiveComplexHeatmap**, there are three ways to dynamically generate the interactive heatmap widgets
+which I will explain one by one.
+
+### Directly use `makeInteractiveComplexHeatmap()`
+
+I first demonstrate use of `makeInteractiveComplexHeatmap()`. In the following 
 example, the matrix is reordered by a user-selected column:
 
 
@@ -504,7 +575,15 @@ shiny::shinyApp(ui, server)
 A similar but slightly complex example is as follows. It can be run by `htShinyExample(6.2)`.
 
 
-<img src="https://jokergoo.github.io/images/dynamic_widget4.gif" width="100%" />
+<script>
+document.write('<img src="https://jokergoo.github.io/images/dynamic_widget4.gif" width="100%" />');
+</script>
+
+The use is very natural. `makeInteractiveComplexHeatmap()` is put inside an `observeEvent()` or an `observe()`
+so that every time `input$column` changes, it triggers an update of the interactive heatmap widgets.
+
+
+### Use `InteractiveComplexHeatmapModal()` and `InteractiveComplexHeatmapWidget()`
 
 In the first example, the interactive heatmap is already generated when the
 Shiny app is loaded. There is a second scenario where the complete interactive heatmap
@@ -537,11 +616,14 @@ shiny::shinyApp(ui, server)
 ```
 
 As shown in the following figure, `InteractiveComplexHeatmapModal()` will open
-an "modal" which includes the interactive heatmap. 
+an "modal frame" which includes the interactive heatmap. 
 
-<img src="https://jokergoo.github.io/images/dynamic_widget.gif" width="100%" />
 
-In the next example (`htShinyExample(6.4)`), a different heatmap is generated
+<script>
+document.write('<img src="https://jokergoo.github.io/images/dynamic_widget.gif" width="100%" />');
+</script>
+
+In the next example which is also available in `htShinyExample(6.4)`, a different heatmap is generated
 according to user's selection.
 
 ```{r, eval = FALSE}
@@ -568,7 +650,10 @@ server = function(input, output, session) {
 shiny::shinyApp(ui, server)
 ```
 
-<img src="https://jokergoo.github.io/images/dynamic_widget_radio_selection.gif" width="100%" />
+
+<script>
+document.write('<img src="https://jokergoo.github.io/images/dynamic_widget_radio_selection.gif" width="100%" />');
+</script>
 
 The usage of `InteractiveComplexHeatmapWidget()` is very similar as
 `InteractiveComplexHeatmapModal()`, except that now for
@@ -577,7 +662,7 @@ defined by `shiny::htmlOutput()` in UI, and later the interactive heatmap widget
 put there.
 
 I modify the previous example with `InteractiveComplexHeatmapWidget()`. Now in the UI, 
-I add one line with `htmlOutput()` with ID `heatmap_output`, and this ID is set
+I add one line where I specify `htmlOutput()` with ID `"heatmap_output"`, and this ID is set
 in `InteractiveComplexHeatmapWidget()` correspondingly.
 
 ```{r, eval = FALSE}
@@ -600,7 +685,9 @@ shiny::shinyApp(ui, server)
 The app looks like follows:
 
 
-<img src="https://jokergoo.github.io/images/dynamic_widget2.gif" width="100%" />
+<script>
+document.write('<img src="https://jokergoo.github.io/images/dynamic_widget2.gif" width="100%" />');
+</script>
 
 `InteractiveComplexHeatmapModal()` and `InteractiveComplexHeatmapWidget()`
 all accept an argument `js_code` where customized JavaScript code can be
@@ -638,4 +725,12 @@ server = function(input, output, session) {
 shiny::shinyApp(ui, server)
 ```
 
-<img src="https://jokergoo.github.io/images/dynamic_widget3.gif" width="100%" />
+<script>
+document.write('<img src="https://jokergoo.github.io/images/dynamic_widget3.gif" width="100%" />');
+</script>
+
+<br>
+<br>
+<br>
+<br>
+<br>
