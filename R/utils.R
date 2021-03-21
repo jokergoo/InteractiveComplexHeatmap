@@ -101,3 +101,60 @@ js_has_hover = js_has_dblclick = js_has_click = function(response) {
 }
 
 
+guess_best_km = function(mat, max_km = 10) {
+    wss = NA
+    max_km = min(c(nrow(mat) - 1, max_km))
+    for (i in 2:max_km) {
+        oe = try(fit <- kmeans(mat, centers = i, iter.max = 50), silent = TRUE)
+        if(inherits(oe, "error")) {
+            break
+        }
+        wss[i] = fit$tot.withinss
+        if(is.na(wss[1])) wss[1] = fit$totss
+    }
+    k = 1:max_km
+    k = k[seq_along(wss)]
+    if(length(k) == 1) {
+        return(1)
+    } else if(length(k) == 2) {
+        return(2)
+    } else {
+        min(elbow_finder(k, wss)[1], knee_finder(k, wss)[1])
+    }
+}
+
+# https://stackoverflow.com/questions/2018178/finding-the-best-trade-off-point-on-a-curve
+elbow_finder <- function(x_values, y_values) {
+	# Max values to create line
+	max_x_x <- max(x_values)
+	max_x_y <- y_values[which.max(x_values)]
+	max_y_y <- max(y_values)
+	max_y_x <- x_values[which.max(y_values)]
+	max_df <- data.frame(x = c(max_y_x, max_x_x), y = c(max_y_y, max_x_y))
+
+	# Creating straight line between the max values
+	fit <- lm(max_df$y ~ max_df$x)
+
+	# Distance from point to line
+	distances <- c()
+	for(i in 1:length(x_values)) {
+	distances <- c(distances, abs(coef(fit)[2]*x_values[i] - y_values[i] + coef(fit)[1]) / sqrt(coef(fit)[2]^2 + 1^2))
+	}
+
+	# Max distance point
+	x_max_dist <- x_values[which.max(distances)]
+	y_max_dist <- y_values[which.max(distances)]
+
+	return(c(x_max_dist, y_max_dist))
+}
+
+# https://raghavan.usc.edu//papers/kneedle-simplex11.pdf
+knee_finder = function(x, y) {
+    n = length(x)
+    a = (y[n] - y[1])/(x[n] - x[1])
+    b = y[1] - a*x[1]
+    d = a*x - y
+    x[which.max(d)]
+}
+
+
