@@ -27,6 +27,9 @@ img {
 </style>
 
 In this vignette, I demonstrate how to implement a Shiny app for visualizing DESeq2 results with **InteractiveComplexHeatmap** package.
+
+## Implement from scratch
+
 First we run DESeq2 analysis on the **airway** dataset:
 
 ```{r, eval = FALSE}
@@ -293,6 +296,23 @@ This app can be directly generated with `htShinyExample(10.5)`. A demonstration 
 document.write('<img src="https://user-images.githubusercontent.com/449218/111832925-b16ae280-88f1-11eb-8530-290374f9f2c2.gif" width="100%" />');
 </script>
 
+
+## The function `interactivate()`
+
+**InteractiveComplexHeatmap** has a generic function `interactivate()` which aims to provide an API to generate
+Shiny apps for objects that contain results for specific analysis. Currently, it only has an implementation for the
+`DESeqDataSet` object, which is from DESeq2 analysis. It can be simply used as:
+
+```{r, eval = FALSE}
+library(DESeq2)
+library(airway)
+data(airway)
+
+dds = DESeqDataSet(sairwaye, design = ~ dex)
+dds = DESeq(dds)
+
+interactivate(dds)
+```
 
 <br>
 <br>
