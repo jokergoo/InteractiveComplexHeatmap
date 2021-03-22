@@ -181,7 +181,7 @@ and the sub-heatmap component is removed from the app.
 ### Separately specify the three UI components
 
 `InteractiveComplexHeatmapOutput()` contains all three UI components. The three components can be
-separately specified as three individual functions: `mainHeatmapOutput()`, `subHeatmapOutput()` and `HeatmapInfoOutput()`. 
+separately specified as three individual functions: `originalHeatmapOutput()`, `subHeatmapOutput()` and `HeatmapInfoOutput()`. 
 This provides flexibility for the UI arrangement, e.g. to integrate with package **shinydashboard** where each UI component
 is wrapped within an individual box.
 
@@ -190,7 +190,7 @@ body = dashboardBody(
     fluidRow(
         box(
             title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
-            mainHeatmapOutput("ht", title = NULL)
+            originalHeatmapOutput("ht", title = NULL)
         ),
         box(
             title = "Sub-heatmap", width = 4, solidHeader = TRUE, status = "primary",

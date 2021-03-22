@@ -177,16 +177,16 @@ FDR: @{df[1, 'padj']}</pre>
             }
         })
 
-        output[["volcanno_plot"]] = renderPlot({
+        output[["volcano_plot"]] = renderPlot({
             make_volcano(res, selected)
         })
 
-        output[["volcanno_plot_selected"]] = renderUI({
-            req(input$volcanno_plot_click)
+        output[["volcano_plot_selected"]] = renderUI({
+            req(input$volcano_plot_click)
             res2 = res
             res2$index = 1:nrow(res2)
             res2$logfdr = -log10(res2$padj)
-            df = nearPoints(res2, input$volcanno_plot_click, xvar = "log2FoldChange", yvar = "logfdr")
+            df = nearPoints(res2, input$volcano_plot_click, xvar = "log2FoldChange", yvar = "logfdr")
             df = df[df$index %in% selected, , drop = FALSE]
             if(nrow(df) == 0) {
                 return(NULL)
@@ -258,16 +258,16 @@ FDR: @{df[1, 'padj']}</pre>
             }
         })
 
-        output[["volcanno_plot"]] = renderPlot({
+        output[["volcano_plot"]] = renderPlot({
             make_volcano(res, selected)
         })
 
-        output[["volcanno_plot_selected"]] = renderUI({
-            req(input$volcanno_plot_click)
+        output[["volcano_plot_selected"]] = renderUI({
+            req(input$volcano_plot_click)
             res2 = res
             res2$index = 1:nrow(res2)
             res2$logfdr = -log10(res2$padj)
-            df = nearPoints(res2, input$volcanno_plot_click, xvar = "log2FoldChange", yvar = "logfdr")
+            df = nearPoints(res2, input$volcano_plot_click, xvar = "log2FoldChange", yvar = "logfdr")
             df = df[df$index %in% selected, , drop = FALSE]
             if(nrow(df) == 0) {
                 return(NULL)
@@ -321,10 +321,10 @@ FDR: @{df[1, 'padj']}</pre>
                     plotOutput("ma_plot", click = "ma_plot_click"),
                     htmlOutput("ma_plot_selected")
                 ),
-                shinydashboard::box(title = "Volcanno plot", width = NULL, solidHeader = TRUE, status = "primary",
+                shinydashboard::box(title = "Volcano plot", width = NULL, solidHeader = TRUE, status = "primary",
                     p("Click on the highlighted point to see its related information."),
-                    plotOutput("volcanno_plot", click = "volcanno_plot_click"),
-                    htmlOutput("volcanno_plot_selected")
+                    plotOutput("volcano_plot", click = "volcano_plot_click"),
+                    htmlOutput("volcano_plot_selected")
                 ),
                 shinydashboard::box(title = "Result table of the selected genes", width = NULL, solidHeader = TRUE, status = "primary",
                     DT::DTOutput("res_table")

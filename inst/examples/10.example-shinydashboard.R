@@ -264,7 +264,7 @@ brush_action = function(df, input, output, session) {
         make_maplot(res, selected)
     })
 
-    output[["volcanno_plot"]] = renderPlot({
+    output[["volcano_plot"]] = renderPlot({
         make_volcano(res, selected)
     })
 
@@ -316,8 +316,8 @@ body = dashboardBody(
             box(title = "MA-plot", width = NULL, solidHeader = TRUE, status = "primary",
                 plotOutput("ma_plot")
             ),
-            box(title = "Volcanno plot", width = NULL, solidHeader = TRUE, status = "primary",
-                plotOutput("volcanno_plot")
+            box(title = "Volcano plot", width = NULL, solidHeader = TRUE, status = "primary",
+                plotOutput("volcano_plot")
             ),
             box(title = "Result table of the selected genes", width = NULL, solidHeader = TRUE, status = "primary",
                 DTOutput("res_table")
