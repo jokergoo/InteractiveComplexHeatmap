@@ -40,7 +40,7 @@
 selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = TRUE,
 	ht_pos = NULL, include_annotation = FALSE, calibrate = TRUE) {
 
-	if(missing(ht_list)) {
+	if(is.null(ht_list)) {
 		stop_wrap("The heatmap object must be provided.")
 	}
 
@@ -342,7 +342,7 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verbose = TRUE,
 	ht_pos = NULL, calibrate = TRUE) {
 
-	if(missing(ht_list)) {
+	if(is.null(ht_list)) {
 		stop_wrap("The heatmap object must be provided.")
 	}
 
