@@ -583,6 +583,41 @@ The use is very natural. `makeInteractiveComplexHeatmap()` is put inside an `obs
 so that every time `input$column` changes, it triggers an update of the interactive heatmap widgets.
 
 
+In the following code block defined in `server` function:
+
+```{r, eval = FALSE}
+    ...
+    observeEvent(input$column, {
+        order = order(m[, input$column])
+        ht = Heatmap(m[order, , drop = FALSE], 
+            cluster_rows = FALSE, cluster_columns = FALSE)
+        makeInteractiveComplexHeatmap(input, output, session, ht)
+    })
+    ...
+```
+
+`makeInteractiveComplexHeatmap()` internally creates a list of responses by
+`observeEvent()`. Every time when `input$column` triggers the update of
+`makeInteractiveComplexHeatmap()`, all the calls of `observeEvent()` will be
+re-executed. Re-executing `observeEvent()` only adds the observations to the
+current observation list while not overwrites them, thus, repeatedly executing
+`makeInteractiveComplexHeatmap()` will make a same observatin running multiple
+times. To solve this issue, `makeInteractiveComplexHeatmap()` saves all
+the observations returned by `observeEvent()` and it tries to first destroies
+all the avaiable observations that have been created. However, if user-defined
+reponses via `click_action` and `brush_action` use `observe()` or `observeEvent()`,
+they must manually recorded so that they can also be destroied when updating `makeInteractiveComplexHeatmap()`.
+See the following example:
+
+```{r, eval = FALSE}
+click_action = function(df, input, output, session) {
+    obs = observeEvent(input$foo, {
+        ...
+    })
+    record_observation(obs)
+}
+```
+
 ### Use `InteractiveComplexHeatmapModal()` and `InteractiveComplexHeatmapWidget()`
 
 In the first example, the interactive heatmap is already generated when the
