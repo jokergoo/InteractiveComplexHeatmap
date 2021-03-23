@@ -1744,10 +1744,22 @@ format_html_table = function(heatmap_id, digits = 2, selected = NULL, ht_list = 
 	kb
 }
 
+# == title
+# Record the observation object
+# 
+# == param
+# -obs Observation object returned by `shiny::observe` or `shiny::observeEvent`.
+# -heatmap_id The Heatmap ID.
+#
+record_observation = function(obs, heatmap_id = shiny_env$current_heatmap_id) {
+	obs_id = shiny_env$i_obs + 1
+	shiny_env$i_obs = obs_id
 
-observeEvent2 = function(eventExpr, handlerExpr, ..., label) {
-	if(is.null(shiny_env$obs[[label]])) {
-		observeEvent(eventExpr, handlerExpr, ...)
-		shiny_env$obs[[label]] = TRUE
+	if(is.null(shiny_env$obs[[heatmap_id]])) {
+		shiny_env$obs[[heatmap_id]] = list()
 	}
+
+	shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_obs_@{obs_id}")]] = obs
+	invisible(NULL)
 }
+
