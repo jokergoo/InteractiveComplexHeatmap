@@ -773,7 +773,8 @@ with a simple example. The following example is runnable.
 ```{r, eval = FALSE}
 ui = fluidPage(
     actionButton("action", "Generate heatmap"),
-    plotOutput("heatmap", width = 500, height = 500, click = "heatmap_click", brush = "heatmap_brush"),
+    plotOutput("heatmap", width = 500, height = 500, click = "heatmap_click", 
+        brush = "heatmap_brush"),
     verbatimTextOutput("output")
 )
 server = function(input, output, session) {
@@ -798,8 +799,8 @@ server = function(input, output, session) {
     observeEvent(input$heatmap_click, {
         pos = InteractiveComplexHeatmap:::get_pos_from_click(input$heatmap_click)
 
-        selection = selectPosition(ht_obj(), pos, mark = FALSE, ht_pos = ht_pos_obj(), verbose = FALSE)
-
+        selection = selectPosition(ht_obj(), pos, mark = FALSE, ht_pos = ht_pos_obj(), 
+            verbose = FALSE)
         output$output = renderPrint({
             print(selection)
         })
@@ -808,8 +809,8 @@ server = function(input, output, session) {
     observeEvent(input$heatmap_brush, {
         lt = InteractiveComplexHeatmap:::get_pos_from_brush(input$heatmap_brush)
 
-        selection = selectArea(ht_obj(), lt[[1]], lt[[2]], mark = FALSE, ht_pos = ht_pos_obj(), verbose = FALSE)
-
+        selection = selectArea(ht_obj(), lt[[1]], lt[[2]], mark = FALSE, ht_pos = ht_pos_obj(), 
+            verbose = FALSE)
         output$output = renderPrint({
             print(selection)
         })
