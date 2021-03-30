@@ -764,6 +764,71 @@ shiny::shinyApp(ui, server)
 document.write('<img src="https://jokergoo.github.io/images/dynamic_widget3.gif" width="100%" />');
 </script>
 
+## Implement interactivity from scratch
+
+**InteractiveComplexHeatmap** provides rich tools for interactively working with heatmaps. However, some people
+might want to develop their own tools while they only need the information of which cells are selected. Next I demonstrate it
+with a simple example. The following example is runnable.
+
+```{r, eval = FALSE}
+ui = fluidPage(
+    actionButton("action", "Generate heatmap"),
+    plotOutput("heatmap", width = 500, height = 500, click = "heatmap_click", brush = "heatmap_brush"),
+    verbatimTextOutput("output")
+)
+server = function(input, output, session) {
+
+    ht_obj = reactiveVal(NULL)
+    ht_pos_obj = reactiveVal(NULL)
+
+    observeEvent(input$action, {
+        m = matrix(rnorm(100), 10)
+        rownames(m) = 1:10
+        colnames(m) = 1:10
+
+        output$heatmap = renderPlot({
+            ht = draw(Heatmap(m))
+            ht_pos = htPositionsOnDevice(ht)
+
+            ht_obj(ht)
+            ht_pos_obj(ht_pos)
+        })
+    })
+
+    observeEvent(input$heatmap_click, {
+        pos = InteractiveComplexHeatmap:::get_pos_from_click(input$heatmap_click)
+
+        selection = selectPosition(ht_obj(), pos, mark = FALSE, ht_pos = ht_pos_obj(), verbose = FALSE)
+
+        output$output = renderPrint({
+            print(selection)
+        })
+    })
+
+    observeEvent(input$heatmap_brush, {
+        lt = InteractiveComplexHeatmap:::get_pos_from_brush(input$heatmap_brush)
+
+        selection = selectArea(ht_obj(), lt[[1]], lt[[2]], mark = FALSE, ht_pos = ht_pos_obj(), verbose = FALSE)
+
+        output$output = renderPrint({
+            print(selection)
+        })
+    })
+}
+shinyApp(ui, server)
+```
+
+In this simple Shiny app, a click or a brush on heatmap prints the corresponding data frame that contains the information of the selected cells.
+
+There are several points that need to be noticed:
+
+1. `draw()` and `htPositionsOnDevice()` need to be put inside the `renderPlot()`.
+2. To get the position of the click on heatmap, `InteractiveComplexHeatmap:::get_pos_from_click()` should be used. Note this function is not exported, thus you need
+   to add `InteractiveComplexHeatmap:::` prefix. With knowing the position of the click, it can be sent to `selectPosition()` to correspond to the original matrix.
+3. Similarly, to get the positions of the area that was brushed on heatmap, `InteractiveComplexHeatmap:::get_pos_from_brush()` should be used.
+
+This method also works for complex heatmaps, e.g. with row or column splitting, or with multiple heatmaps.
+
 <br>
 <br>
 <br>
