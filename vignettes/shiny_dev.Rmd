@@ -797,7 +797,7 @@ server = function(input, output, session) {
     })
 
     observeEvent(input$heatmap_click, {
-        pos = InteractiveComplexHeatmap:::get_pos_from_click(input$heatmap_click)
+        pos = getPositionFromClick(input$heatmap_click)
 
         selection = selectPosition(ht_obj(), pos, mark = FALSE, ht_pos = ht_pos_obj(), 
             verbose = FALSE)
@@ -807,7 +807,7 @@ server = function(input, output, session) {
     })
 
     observeEvent(input$heatmap_brush, {
-        lt = InteractiveComplexHeatmap:::get_pos_from_brush(input$heatmap_brush)
+        lt = getPositionFromBrush(input$heatmap_brush)
 
         selection = selectArea(ht_obj(), lt[[1]], lt[[2]], mark = FALSE, ht_pos = ht_pos_obj(), 
             verbose = FALSE)
@@ -824,9 +824,10 @@ In this simple Shiny app, a click or a brush on heatmap prints the corresponding
 There are several points that need to be noticed:
 
 1. `draw()` and `htPositionsOnDevice()` need to be put inside the `renderPlot()`.
-2. To get the position of the click on heatmap, `InteractiveComplexHeatmap:::get_pos_from_click()` should be used. Note this function is not exported, thus you need
-   to add `InteractiveComplexHeatmap:::` prefix. With knowing the position of the click, it can be sent to `selectPosition()` to correspond to the original matrix.
-3. Similarly, to get the positions of the area that was brushed on heatmap, `InteractiveComplexHeatmap:::get_pos_from_brush()` should be used.
+2. To get the position of the click on heatmap, `getPositionFromClick()`
+   should be used. With knowing the position of the click, it can be sent to
+   `selectPosition()` to correspond to the original matrix.
+3. Similarly, to get the positions of the area that was brushed on heatmap, `getPositionFromBrush()` should be used.
 
 This method also works for complex heatmaps, e.g. with row or column splitting, or with multiple heatmaps.
 
