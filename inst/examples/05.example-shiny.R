@@ -339,3 +339,58 @@ server = function(input, output, session) {
 }
 
 shinyApp(ui, server)
+
+################################################
+# title: Implement interactivity from scratch.
+
+library(shiny)
+
+ui = fluidPage(
+    actionButton("action", "Generate heatmap"),
+    plotOutput("heatmap", width = 500, height = 500, click = "heatmap_click", 
+        brush = "heatmap_brush"),
+    verbatimTextOutput("output")
+)
+
+server = function(input, output, session) {
+
+    ht_obj = reactiveVal(NULL)
+    ht_pos_obj = reactiveVal(NULL)
+
+    observeEvent(input$action, {
+        m = matrix(rnorm(100), 10)
+        rownames(m) = 1:10
+        colnames(m) = 1:10
+
+        output$heatmap = renderPlot({
+            ht = draw(Heatmap(m))
+            ht_pos = htPositionsOnDevice(ht)
+
+            ht_obj(ht)
+            ht_pos_obj(ht_pos)
+        })
+    })
+
+    observeEvent(input$heatmap_click, {
+        pos = getPositionFromClick(input$heatmap_click)
+
+        selection = selectPosition(ht_obj(), pos, mark = FALSE, ht_pos = ht_pos_obj(), 
+            verbose = FALSE)
+        output$output = renderPrint({
+            print(selection)
+        })
+    })
+
+    observeEvent(input$heatmap_brush, {
+        lt = getPositionFromBrush(input$heatmap_brush)
+
+        selection = selectArea(ht_obj(), lt[[1]], lt[[2]], mark = FALSE, ht_pos = ht_pos_obj(), 
+            verbose = FALSE)
+        output$output = renderPrint({
+            print(selection)
+        })
+    })
+}
+
+shinyApp(ui, server)
+

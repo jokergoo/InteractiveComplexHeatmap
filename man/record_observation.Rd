@@ -18,4 +18,5 @@ record_observation(obs, heatmap_id = shiny_env$current_heatmap_id)
 \examples{
 # There is no example
 NULL
+
 }

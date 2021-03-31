@@ -878,6 +878,22 @@ get_pos_from_brush = function(brush, ratio = 1) {
     list(pos1, pos2)
 }
 
+# == title
+# Get the position of the brushed area on the heatmap image
+#
+# == param
+# -brush The input brush object. Assume ``heatmap_brush`` is the ID set to argument ``brush`` in `shiny::plotOutput`, then the value here is ``input$heatmap_brush``.
+# -ratio The relative resolution. The value should the ratio between ``res`` set in `makeInteractiveComplexHeatmap` and 72 (``res/72``).
+#
+# == value
+# A list of length two. The two elements correspons to the coordinates of the two diagonal points.
+#
+# == seealso
+# `getPositionFromClick`, `getPositionFromHover`, `getPositionFromDblclick`.
+getPositionFromBrush = function(brush, ratio = 1) {
+	get_pos_from_brush(brush, ratio)
+}
+
 get_pos_from_click = function(click, ratio = 1) {
 	if(identical(c("x", "y"), names(click))) {
 		pos1 = unit(c(click$x, click$y), "bigpts")
@@ -890,6 +906,48 @@ get_pos_from_click = function(click, ratio = 1) {
 	pos1[1] = pos1[1]/ratio
 	pos1[2] = pos1[2]/ratio
     pos1
+}
+
+# == title
+# Get the position of clicked point on the heatmap image
+#
+# == param
+# -click The input click object. Assume ``heatmap_click`` is the ID set to argument ``click`` in `shiny::plotOutput`, then the value here is ``input$heatmap_click``.
+# -ratio The relative resolution. The value should the ratio between ``res`` set in `makeInteractiveComplexHeatmap` and 72 (``res/72``).
+#
+# == value
+# A `grid::unit` object of length two which are the coordinates of the clicked points.
+#
+# == seealso
+# `getPositionFromBrush`, `getPositionFromHover`, `getPositionFromDblclick`.
+getPositionFromClick = function(click, ratio = 1) {
+	get_pos_from_click(click, ratio)
+}
+
+# == title
+# Get the position of hovered point on the heatmap image
+#
+# == param
+# -hover The input hover object. Assume ``heatmap_hover`` is the ID set to argument ``hover`` in `shiny::plotOutput`, then the value here is ``input$heatmap_hover``.
+# -ratio The relative resolution. The value should the ratio between ``res`` set in `makeInteractiveComplexHeatmap` and 72 (``res/72``).
+#
+# == value
+# A `grid::unit` object of length two which are the coordinates of the hover points.
+getPositionFromHover = function(hover, ratio = 1) {
+	get_pos_from_click(hover, ratio)
+}
+
+# == title
+# Get the position of double clicked point on the heatmap image
+#
+# == param
+# -dblclick The input dblclick object. Assume ``heatmap_dblclick`` is the ID set to argument ``dblclick`` in `shiny::plotOutput`, then the value here is ``input$heatmap_dblclick``.
+# -ratio The relative resolution. The value should the ratio between ``res`` set in `makeInteractiveComplexHeatmap` and 72 (``res/72``).
+#
+# == value
+# A `grid::unit` object of length two which are the coordinates of the double clicked points.
+getPositionFromDblclick = function(dblclick, ratio = 1) {
+	get_pos_from_click(dblclick, ratio)
 }
 
 make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TRUE, 
