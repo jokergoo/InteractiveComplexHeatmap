@@ -3,8 +3,12 @@
 	max-width: @{width}px;
 }
 
+#@{heatmap_id}_output_wrapper {
+	background-color: white
+}
+
 #@{heatmap_id}_output_wrapper@{ifelse(default_output_ui_float, "", "kjsfis")} {
-	background-color: white;
-	border: 1px solid grey;
+	border: 1px solid #CCC;
 	padding: 4px 10px;
+	border-radius: 4px;
 }

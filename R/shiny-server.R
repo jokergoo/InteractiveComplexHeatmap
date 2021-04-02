@@ -154,6 +154,13 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		shiny_env$obs[[heatmap_id]] = list()
 	}
 	if(length(shiny_env$obs[[heatmap_id]])) {
+		for(nm in names(shiny_env$obs[[heatmap_id]])) {
+			if(shiny_env$obs[[heatmap_id]][[nm]]$.destroyed) {
+				shiny_env$obs[[heatmap_id]][[nm]] = NULL
+			}
+		}
+	}
+	if(length(shiny_env$obs[[heatmap_id]])) {
 		message(qq("[@{Sys.time()}] remove previous observeEvent for heatmap id: '@{heatmap_id}'."))
 		for(nm in names(shiny_env$obs[[heatmap_id]])) {
 			# message(qq("[@{Sys.time()}] remove previous observeEvent: '@{nm}'."))
