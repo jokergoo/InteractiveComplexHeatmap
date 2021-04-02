@@ -41,7 +41,8 @@
 # == value
 # A UI that can be used in Shiny.
 InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
-	title1 = "Original heatmap", title2 = "Selected sub-heatmap", title3 = "Output",
+	title1 = "Original heatmap", title2 = "Selected sub-heatmap", 
+	title3 = if(output_ui_float) NULL else "Output",
 	width1 = ifelse(layout == "1|(2-3)", 800, 450), 
 	height1 = ifelse(layout == "1-(2|3)", 700, 350), 
 	width2 = 400, 
@@ -61,11 +62,28 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		heatmap_id = paste0("ht", get_widget_index())
 	}
 
+	if(is.null(width3)) {
+		if(compact) {
+			width3 = 400
+		} else if(output_ui_float) {
+			width3 = 400
+		} else {
+			width3 = width1
+			if(layout %in% c("(1-2)|3", "12|3")) {
+				width3 = width1 + width2
+			} else if(layout %in% "1-(2|3)") {
+				width3 = width2
+			}
+		}
+	}
+
 	if(compact) {
 		if(missing(response)) {
 			response = c(action, "brush-output")
-		} else {
+		} else if(any(c("brush", "brush-output") %in% response)) {
 			response = setdiff(c(response, "brush-output"), "brush")
+		} else { 
+			response = response
 		}
 		main_heatmap_ui = originalHeatmapOutput(heatmap_id, title = title1, width = width1, height = height1, action = action,
 			cursor = cursor, response = response, brush_opt = brush_opt, containment = containment, internal = internal)
@@ -86,15 +104,6 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		cursor = cursor, response = response, brush_opt = brush_opt, containment = containment, internal = internal)
 
 	sub_heatmap_ui = subHeatmapOutput(heatmap_id, title = title2, width = width2, height = height2, containment = containment, internal = internal)
-	
-	if(is.null(width3)) {
-		width3 = width1
-		if(layout %in% c("(1-2)|3", "12|3")) {
-			width3 = width1 + width2
-		} else if(layout %in% "1-(2|3)") {
-			width3 = width2
-		}
-	}
 
 	output_ui = HeatmapInfoOutput(heatmap_id, title = title3, width = width3, output_ui = output_ui, output_ui_float = output_ui_float,
 		action = action, response = response, internal = internal)
@@ -714,7 +723,7 @@ HeatmapInfoOutput = function(heatmap_id, title = NULL, width = 400,
 		add_js_css_dep(heatmap_id, js_file = "ht-output.js", css_file = "ht-output.css"),
 		if(identical(title, NULL) || identical(title, "")) NULL else h5(title),
 		output_ui,
-		style = qq("width: @{width};"),
+		style = qq("width: @{width}"),
 		if(output_ui_float) tags$script(HTML(qq("$(document.body).append( $('#@{heatmap_id}_output_wrapper').detach() );"))) else NULL
 	)
 }

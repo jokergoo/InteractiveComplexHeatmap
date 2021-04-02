@@ -64,18 +64,32 @@ click_action = function(df, output) {
             go_id1 = rownames(mat)[df$row_index]
             go_id2 = colnames(mat)[df$column_index]
 
-            HTML(qq(
-"<pre>
-## Row GO ID
-<a href='http://amigo.geneontology.org/amigo/term/@{go_id1}' target='_blank'>@{go_id1}</a>: @{get_go_term(go_id1)}
+            oe = try(term1 <- get_go_term(go_id1), silent = TRUE)
+            if(inherits(oe, "try-error")) {
+                term1 = ""
+            }
+            oe = try(term2 <- get_go_term(go_id2), silent = TRUE)
+            if(inherits(oe, "try-error")) {
+                term2 = ""
+            }
 
-## Column GO ID:
-<a href='http://amigo.geneontology.org/amigo/term/@{go_id2}' target='_blank'>@{go_id2}</a>: @{get_go_term(go_id2)}
-</pre>"
+            v = mat[go_id1, go_id2]
+            col = col_fun(v)
+
+            HTML(qq(
+"<div style='padding:5px 10px;border:1px solid black; width:600px; background-color:white;'>
+<h5>GO similarity</h5>
+<p>@{sprintf('%.3f', v)}  <span style='background-color:@{col};width=10px;'>&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+<h5>Row GO ID</h5>
+<p><a href='http://amigo.geneontology.org/amigo/term/@{go_id1}' target='_blank'>@{go_id1}</a>: @{term1}</p>
+<h5>Column GO ID</h5>
+<p><a href='http://amigo.geneontology.org/amigo/term/@{go_id2}' target='_blank'>@{go_id2}</a>: @{term2}</p>
+</div>"
 ))
         }
     })
 }
+
 
 brush_action = function(df, output) {
     output[["go_info"]] = renderUI({
@@ -87,11 +101,11 @@ brush_action = function(df, output) {
 
             go_id = union(go_id1, go_id2)
 
-            go_text = qq("<a href='http://amigo.geneontology.org/amigo/term/@{go_id}' target='_blank'>@{go_id}</a>: @{get_go_term(go_id)}\n")
+            go_text = qq("<p><a href='http://amigo.geneontology.org/amigo/term/@{go_id}' target='_blank'>@{go_id}</a>: @{get_go_term(go_id)}</p>\n")
             HTML(qq(
-"<pre>
+"<div style='padding:5px 10px;border:1px solid black; width:600px; background-color:white;'>
 @{go_text}
-</pre>"
+</div>"
 ))
         }
     })
