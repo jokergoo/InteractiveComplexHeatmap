@@ -201,6 +201,11 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 		output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
 
+			dvl = dev.list()
+			if(!grepl("off_screen", names(dvl)[length(dvl)])) {
+				warning_wrap(qq("Detect there is already an off-screen device opened: '@{names(dvl)[length(dvl)]}', please close it by dev.off() and reopen the application."))
+			}
+
 	    	showNotification("Initialize the original heatmap.", duration = 2, type = "message")
 
 	    	ht_list = ht_list()
@@ -435,10 +440,11 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_post_remove_submit")]] = observeEvent(input[[qq("@{heatmap_id}_post_remove_submit")]], {
 
 			req(heatmap_initialized())
+			req(input[[qq("@{heatmap_id}_post_remove")]])
 
 			where = input[[qq("@{heatmap_id}_post_remove_dimension")]]
 			new_selected = adjust_df(selected(), n_remove = input[[qq("@{heatmap_id}_post_remove")]], 
-				where = where)
+				where = where, ht_direction = ht_list()@direction)
 
 			selected(new_selected)
 

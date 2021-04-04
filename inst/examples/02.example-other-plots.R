@@ -229,3 +229,11 @@ ht_list = draw(ht_list, merge_legend = TRUE)
 
 htShiny(ht_list, width1 = 600, height1 = 700)
 
+#####################################################
+# title: A package-dependency heatmap. You can try to control "Fill figure region" and "Remove empty rows and columns" in the tools under the sub-heatmap.
+
+library(pkgndep)
+x = pkgndep("ComplexHeatmap")
+plot(x)
+htShiny(layout = "1|(2-3)")
+

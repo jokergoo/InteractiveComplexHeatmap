@@ -101,7 +101,7 @@ $(function() {
 		}
 	});
 
-	if(@{tolower(as.character(has_brush_response))}) {
+	if(@{tolower(as.character(has_brush_response))} || @{tolower(as.character(only_brush_output_response))}) {
 		$('#@{heatmap_id}_color_pickers_border_width').change(function() {
 			var val = $(this).val();
 			$('#@{heatmap_id}_heatmap_brush').css('border-width', val);

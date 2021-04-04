@@ -125,7 +125,7 @@ shinyApp(ui, server)
 
 
 ########################################################
-# title: Only contain the original heatmap where output floats
+# title: Only contain the original heatmap where output floats.
 
 library(shinydashboard)
 m = matrix(rnorm(100), 10)
@@ -134,7 +134,7 @@ ht = Heatmap(m)
 body = dashboardBody(
 	fluidRow(
 		box(title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
-			originalHeatmapOutput("ht", response = "click"),
+			originalHeatmapOutput("ht", response = c("click", "brush-output")),
 			HeatmapInfoOutput("ht", output_ui_float = TRUE) # this line can be put anywhere
 		)
 	)
@@ -154,7 +154,7 @@ shinyApp(ui, server)
 
 
 #########################################################
-# title: A complex dashboard that visualizes a DESeq2 results
+# title: A complex dashboard that visualizes a DESeq2 results.
 
 # First we perform DESeq2 analysis on the airway dataset.
 library(airway)

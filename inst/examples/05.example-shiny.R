@@ -55,7 +55,7 @@ brush_action = function(df, output) {
     column_index = unique(unlist(df$column_index))
     output[["info"]] = renderUI({
         if(!is.null(df)) {
-            HTML(kable_styling(kbl(m[row_index, column_index, drop = FALSE], digits = 2, format = "html"), 
+            HTML(kable_styling(kbl(rand_mat[row_index, column_index, drop = FALSE], digits = 2, format = "html"), 
                 full_width = FALSE, position = "left"))
         }
     })
@@ -341,7 +341,7 @@ server = function(input, output, session) {
 shinyApp(ui, server)
 
 ################################################
-# title: Implement interactivity from scratch.
+# title: Implement interactivity from scratch. Instead of generating the whole interactive heatmap widget, it only returns the information of rows and columns that user have selected on heatmap and users can use this information to build their own interactive heatmap widgets.
 
 library(shiny)
 

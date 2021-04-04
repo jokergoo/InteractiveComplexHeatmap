@@ -11,7 +11,7 @@ getPositionFromDblclick(dblclick, ratio = 1)
 }
 \arguments{
 
-  \item{dblclick}{The input dblclick object. Assume \code{heatmap_dblclick} is the value set to argument \code{dblclick} in \code{\link[shiny]{plotOutput}}, then the value here is \code{input$heatmap_dblclick}.}
+  \item{dblclick}{The input dblclick object. Assume \code{heatmap_dblclick} is the ID set to argument \code{dblclick} in \code{\link[shiny]{plotOutput}}, then the value here is \code{input$heatmap_dblclick}.}
   \item{ratio}{The relative resolution. The value should the ratio between \code{res} set in \code{\link{makeInteractiveComplexHeatmap}} and 72 (\code{res/72}).}
 
 }
@@ -21,4 +21,5 @@ A \code{\link[grid]{unit}} object of length two which are the coordinates of the
 \examples{
 # There is no example
 NULL
+
 }

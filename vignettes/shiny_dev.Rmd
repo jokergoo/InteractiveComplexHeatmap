@@ -731,8 +731,8 @@ example where the heatmap widget is triggered by clicking on the action
 button, every time when clicking on the button, the widget is regenerated
 although the heatmaps are actually the same. Actually we can change the
 behavior of the button that from the second click it just switches the
-visibility of the heatmap widget. Note here we also need to set `cancel_action = "hide"`
-so that the heatmap UI is not removed from HTML document after it is closed.
+visibility of the heatmap widget. See more examples in `htShinyExample(6.5)`
+and `htShinyExample(6.7)`.
 
 ```{r, eval = FALSE}
 ui = fluidPage(
@@ -744,16 +744,16 @@ server = function(input, output, session) {
     m = matrix(rnorm(100), 10)
     ht = Heatmap(m)
     
-    observeEvent(input$show_heatmap, {
+    observeEvent(input$show_heatmap1, {
         InteractiveComplexHeatmapWidget(input, output, session, ht, 
-            output_id = "heatmap_output", cancel_action = "hide",
-
-            js_code = function(heatmap_id) {
-                "$('#show_heatmap').click(function() {
+            output_id = "heatmap_output", close_button = FALSE,
+            
+            js_code = "
+                $('#show_heatmap').click(function() {
                     $('#heatmap_output').toggle('slow');
                 }).text('Show/hide heatmap').
                    attr('id', 'show_heatmap_toggle');
-            "}
+            "
         )
     })
 }

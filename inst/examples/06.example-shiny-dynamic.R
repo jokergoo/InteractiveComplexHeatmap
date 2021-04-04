@@ -1,7 +1,7 @@
 # Dynamically generate heatmap widget in Shiny app
 
 #######################################################
-# title: The matrix is dynamically generated.
+# title: The matrix with different dimensions is dynamically generated.
 
 library(ComplexHeatmap)
 
@@ -112,17 +112,17 @@ server = function(input, output, session) {
 		m = matrix(rnorm(100), 10)
 		ht = Heatmap(m)
 		InteractiveComplexHeatmapModal(input, output, session, ht,
-			close_button = FALSE, cancel_action = "hide",
+			cancel_action = "hide",
 
 			# From the second click of the action button, it just switches the visibility of the
 			# heatmap modal while not regenerate it repeatedly.
 			# Here I simply change the id of the action button to disconnect the binding.
 			js_code = function(heatmap_id) {
-				"$('#show_heatmap').click(function() {
-					$('#@{heatmap_id}_heatmap_modal-background').toggle();
-				});
-				$('#show_heatmap').attr('id', 'show_heatmap_toggle');
-			"}
+                qq("$('#show_heatmap').click(function() {
+                    $('#@{heatmap_id}_heatmap_modal_background').toggle('slow');
+                }).text('Show/hide heatmap').
+                   attr('id', 'show_heatmap_toggle');
+            ")}
 		)
 	})
 }
@@ -153,25 +153,48 @@ shiny::shinyApp(ui, server)
 
 library(ComplexHeatmap)
 
-ui = fluidPage(
-    actionButton("show_heatmap", "Generate_heatmap"),
-    htmlOutput("heatmap_output")
+ui = tabsetPanel(
+    tabPanel("close_button = FALSE", 
+    	div(p("The JavaScript code directly changes the visibility of the htmOutput."),
+		    actionButton("show_heatmap1", "Generate_heatmap"),
+		    htmlOutput("heatmap_output1")
+		)
+	),
+	tabPanel("cancel_action = 'hide'", 
+    	div(p("The behavior of the close action is changed to 'hide' so that the interactive heatmap widget can be closed which hides the widget and clicking on the button changes its visibility."),
+		    actionButton("show_heatmap2", "Generate_heatmap"),
+		    htmlOutput("heatmap_output2")
+		)
+	)
 )
 
 server = function(input, output, session) {
 	m = matrix(rnorm(100), 10)
 	ht = Heatmap(m)
 	
-	observeEvent(input$show_heatmap, {
+	observeEvent(input$show_heatmap1, {
 		InteractiveComplexHeatmapWidget(input, output, session, ht, 
-			output_id = "heatmap_output", cancel_action = "hide",
+			output_id = "heatmap_output1", close_button = FALSE,
+			
+			js_code = "
+			    $('#show_heatmap1').click(function() {
+                    $('#heatmap_output1').toggle('slow');
+                }).text('Show/hide heatmap').
+                   attr('id', 'show_heatmap_toggle1');
+            "
+		)
+	})
+
+	observeEvent(input$show_heatmap2, {
+		InteractiveComplexHeatmapWidget(input, output, session, ht, "ht",
+			output_id = "heatmap_output2", cancel_action = "hide",
 			
 			js_code = function(heatmap_id) {
-				"$('#show_heatmap').click(function() {
-					$('#heatmap_output').toggle('slow');
-				}).text('Show/hide heatmap').
-				   attr('id', 'show_heatmap_toggle');
-			"}
+                qq("$('#show_heatmap2').click(function() {
+                    $('#@{heatmap_id}_heatmap_widget').toggle('slow');
+                }).text('Show/hide heatmap').
+                   attr('id', 'show_heatmap_toggle2');
+            ")}
 		)
 	})
 }

@@ -57,6 +57,7 @@ ui = fluidPage(
 
 # The following click_action and brush_action are self-defined actions corresponding to the click
 # and brush events on heatmap.
+col_fun = ht@ht_list[[1]]@matrix_color_mapping@col_fun
 library(GetoptLong)
 click_action = function(df, output) {
     output[["go_info"]] = renderUI({

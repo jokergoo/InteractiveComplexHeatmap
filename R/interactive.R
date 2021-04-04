@@ -947,60 +947,94 @@ reformat_df = function(df, ht_list) {
 	return(df)
 }
 
-
-adjust_df = function(df, n_remove = 1, where = "top") {
+adjust_df = function(df, n_remove = 1, where = "top", ht_direction = "horizontal") {
+	all_row_slices = df$row_slice
+	all_column_slices = df$column_slice
 	n = nrow(df)
 
-	if(where %in% c("top", "bottom")) {
-		fa = paste(df$heatmap, df$row_slice, sep = ":")
-		for(le in if(where == "top") unique(fa) else rev(unique(fa))) {
-			ind = which(fa == le)
-			
-			nl = length(df[, "row_index"][[ ind[1] ]])
-			if(nl > n_remove) {
-				if(where == "top") {
-					df[, "row_index"][[ ind[1] ]] = df[, "row_index"][[ ind[1] ]][-seq(1, n_remove)]
+	if(ht_direction == "horizontal") {
+		if(where == "top") {
+			min_row_slices = min(all_row_slices)
+			for(i in which(all_row_slices == min_row_slices)) {
+				nl = length(df[, "row_index"][[i]])
+				if(nl > n_remove) {
+					df[, "row_index"][[i]] = df[, "row_index"][[i]][-seq(1, n_remove)]
 				} else {
-					df[, "row_index"][[ ind[1] ]] = df[, "row_index"][[ ind[1] ]][-seq(nl - n_remove + 1, nl)]
+					df[, "row_index"][[i]] = integer(0)
 				}
-				n_remove = 0
-			} else {
-				n_remove = n_remove - length(df[, "row_index"][[ ind[[1]] ]])
-				df[, "row_index"][[ ind[[1]] ]] = integer(0)
 			}
-			for(i in ind[-1]) {
-				df[, "row_index"][[i]]= df[, "row_index"][[ ind[1] ]]
-			}
-
-			if(n_remove == 0) break
-		}
-
-		df = df[sapply(df$row_index, length) > 0, , drop = FALSE]
-	} else if(where %in% c("left", "right")) {
-		fa = paste(df$heatmap, df$column_slice, sep = ":")
-		for(le in if(where == "left") unique(fa) else rev(unique(fa))) {
-			ind = which(fa == le)
-			
-			nl = length(df[, "column_index"][[ ind[1] ]])
-			if(nl > n_remove) {
-				if(where == "left") {
-					df[, "column_index"][[ ind[[1]] ]] = df[, "column_index"][[ ind[[1]] ]][-seq(1, n_remove)]
+		} else if(where == "bottom") {
+			max_row_slices = max(all_row_slices)
+			for(i in which(all_row_slices == max_row_slices)) {
+				nl = length(df[, "row_index"][[i]])
+				if(nl > n_remove) {
+					df[, "row_index"][[i]] = df[, "row_index"][[i]][-seq(nl - n_remove + 1, nl)]
 				} else {
-					df[, "column_index"][[ ind[1] ]] = df[, "column_index"][[ ind[1] ]][-seq(nl - n_remove + 1, nl)]
+					df[, "row_index"][[i]] = integer(0)
 				}
-				n_remove = 0
-			} else {
-				n_remove = n_remove - length(df[, "column_index"][[ ind[[1]] ]])
-				df[, "column_index"][[ ind[1] ]] = integer(0)
 			}
-			for(i in ind[-1]) {
-				df[, "column_index"][[i]] = df[, "column_index"][[ ind[1] ]]
+		} else if(where == "left") {
+			for(i in which(df$heatmap == df$heatmap[1] & df$column_slice == df$column_slice[1])) {
+				nl = length(df[, "column_index"][[i]])
+				if(nl > n_remove) {
+					df[, "column_index"][[i]] = df[, "column_index"][[i]][-seq(1, n_remove)]
+				} else {
+					df[, "column_index"][[i]] = integer(0)
+				}
 			}
-
-			if(n_remove == 0) break
+		} else if(where == "right") {
+			for(i in which(df$heatmap == df$heatmap[n] & df$column_slice == df$column_slice[n])) {
+				nl = length(df[, "column_index"][[i]])
+				if(nl > n_remove) {
+					df[, "column_index"][[i]] = df[, "column_index"][[i]][-seq(nl - n_remove + 1, nl)]
+				} else {
+					df[, "column_index"][[i]] = integer(0)
+				}
+			}
 		}
-		df = df[sapply(df$column_index, length) > 0, , drop = FALSE]
+	} else {
+		if(where == "top") {
+			for(i in which(df$heatmap == df$heatmap[1] & df$row_slice == df$row_slice[1])) {
+				nl = length(df[, "row_index"][[i]])
+				if(nl > n_remove) {
+					df[, "row_index"][[i]] = df[, "row_index"][[i]][-seq(1, n_remove)]
+				} else {
+					df[, "row_index"][[i]] = integer(0)
+				}
+			}
+		} else if(where == "bottom") {
+			for(i in which(df$heatmap == df$heatmap[n] & df$row_slice == df$row_slice[n])) {
+				nl = length(df[, "row_index"][[i]])
+				if(nl > n_remove) {
+					df[, "row_index"][[i]] = df[, "row_index"][[i]][-seq(nl - n_remove + 1, nl)]
+				} else {
+					df[, "row_index"][[i]] = integer(0)
+				}
+			}
+		} else if(where == "left") {
+			min_column_slices = min(all_column_slices)
+			for(i in which(all_column_slices == min_column_slices)) {
+				nl = length(df[, "column_index"][[i]])
+				if(nl > n_remove) {
+					df[, "column_index"][[i]] = df[, "column_index"][[i]][-seq(1, n_remove)]
+				} else {
+					df[, "column_index"][[i]] = integer(0)
+				}
+			}
+		} else if(where == "right") {
+			max_column_slices = max(all_column_slices)
+			for(i in which(all_column_slices == max_column_slices)) {
+				nl = length(df[, "column_index"][[i]])
+				if(nl > n_remove) {
+					df[, "column_index"][[i]] = df[, "column_index"][[i]][-seq(nl - n_remove + 1, nl)]
+				} else {
+					df[, "column_index"][[i]] = integer(0)
+				}
+			}
+		}
 	}
+
+	df = df[sapply(df$row_index, length) > 0 & sapply(df$column_index, length) > 0, , drop = FALSE]
 	tb = tapply(df$row_slice, df$heatmap, function(x) all(is.na(x)))
 	tb = tb[tb]
 	if(length(tb)) {

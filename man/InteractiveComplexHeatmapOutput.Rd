@@ -8,7 +8,8 @@ UI for the interactive complex heatmaps
 }
 \usage{
 InteractiveComplexHeatmapOutput(heatmap_id = NULL,
-    title1 = "Original heatmap", title2 = "Selected sub-heatmap", title3 = "Output",
+    title1 = "Original heatmap", title2 = "Selected sub-heatmap",
+    title3 = if(output_ui_float) NULL else "Output",
     width1 = ifelse(layout == "1|(2-3)", 800, 450),
     height1 = ifelse(layout == "1-(2|3)", 700, 350),
     width2 = 400,
