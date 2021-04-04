@@ -9,21 +9,28 @@ library(SingleCellExperiment)
 library(SC3)
 library(scater)
 
-sce <- SingleCellExperiment(
-    assays = list(
-        counts = as.matrix(yan),
-        logcounts = log2(as.matrix(yan) + 1)
-    ), 
-    colData = ann
-)
+if(0) {
+	# the following code is runnable. To save the runtime of this example, the object `sce` is already generated. 
+	sce <- SingleCellExperiment(
+	    assays = list(
+	        counts = as.matrix(yan),
+	        logcounts = log2(as.matrix(yan) + 1)
+	    ), 
+	    colData = ann
+	)
 
-rowData(sce)$feature_symbol <- rownames(sce)
-sce <- sce[!duplicated(rowData(sce)$feature_symbol), ]
-sce <- runPCA(sce)
-sce <- sc3(sce, ks = 2:4, biology = TRUE)
+	rowData(sce)$feature_symbol <- rownames(sce)
+	sce <- sce[!duplicated(rowData(sce)$feature_symbol), ]
+	sce <- runPCA(sce)
+	sce <- sc3(sce, ks = 2:4, biology = TRUE)
+}
 
+download.file("https://jokergoo.github.io/SC3_sce.rds", "SC3_sce.rds")
+sce = readRDS("SC3_sce.rds")
+file.remove("SC3_sce.rds")
 # pheatmap() is internally used in sc3_plot_expression()
-sc3_plot_expression(sce, k = 3)
+# If you run the following code in an interactive graphics device, you don't need to use `draw()` here.
+draw(sc3_plot_expression(sce, k = 3))
 htShiny()
 
 ##########################################################
@@ -45,9 +52,10 @@ BP.5 <- subset_scores(
 	p.val=0.05)
 
 # heatmap.2() is internally used in heatmap_GO()
-heatmap_GO(
+# If you run the following code in an interactive graphics device, you don't need to use `draw()` here.
+draw(heatmap_GO(
 	go_id = "GO:0034142", result = BP.5, eSet=AlvMac, cexRow=0.4,
-	cexCol=1, cex.main=1, main.Lsplit=30)
+	cexCol=1, cex.main=1, main.Lsplit=30))
 htShiny()
 
 

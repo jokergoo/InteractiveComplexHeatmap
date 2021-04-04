@@ -73,6 +73,8 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 				width3 = width1 + width2
 			} else if(layout %in% "1-(2|3)") {
 				width3 = width2
+			} else if(layout %in% "1|(2-3)") {
+				width3 = width1 - width2
 			}
 		}
 	}
@@ -479,7 +481,11 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 						)
 					)
 				)
-				if(!has_brush_response) tbl = tbl[-(1:2)]
+				if(!has_brush_response & !only_brush_output_response) { 
+					tbl = tbl[-(1:2)]
+				} else if(!has_brush_response & only_brush_output_response) {
+					tbl = tbl[-1]
+				}
 				do.call(tabsetPanel, tbl)
 			},
 			tags$script(HTML(qq("

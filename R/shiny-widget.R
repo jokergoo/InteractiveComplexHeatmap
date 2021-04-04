@@ -159,7 +159,8 @@ InteractiveComplexHeatmapModal = function(
 				        } else {
 				        	$('#@{heatmap_id}_heatmap_modal_background').@{cancel_action}();
 				        }
-					})
+					});
+					@{js_code}
 				")))
 			} else {
 				tags$script(HTML(qq("

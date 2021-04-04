@@ -54,7 +54,7 @@ server = function(input, output, session) {
 	observeEvent(input$show_heatmap, {
 		i = as.numeric(input$select)
 		InteractiveComplexHeatmapWidget(input, output, session, 
-			get_heatmap = get_heatmap_fun(i), output_id = "heatmap_output")
+			ht_list = get_heatmap_fun(i), output_id = "heatmap_output")
 	})
 }
 shiny::shinyApp(ui, server)
@@ -122,7 +122,7 @@ server = function(input, output, session) {
 	observeEvent(input$show_heatmap, {
 		i = as.numeric(input$select)
 		InteractiveComplexHeatmapWidget(input, output, session, 
-			get_heatmap = get_heatmap_fun(i), output_id = "heatmap_output")
+			ht_list = get_heatmap_fun(i), output_id = "heatmap_output")
 	})
 }
 shiny::shinyApp(ui, server)
