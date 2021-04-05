@@ -410,8 +410,7 @@ y = lt$y
 
 fit_2d_density = function(x, y) {
     data = cbind(x, y)
-    Hdiag = Hpi.diag(x = data)
-    kde(x = data, H = Hdiag)
+    kde(x = data)
 }
 
 ht_2d_density = function(fit, ...) {
