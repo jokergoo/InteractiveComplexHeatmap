@@ -394,3 +394,109 @@ server = function(input, output, session) {
 
 shinyApp(ui, server)
 
+
+#######################################################################
+# title: Implement interactivity from scratch. A visualization of 2D density distribution. Brushing on heatmap triggers a new 2D density estimation only on the subset of data.
+
+library(InteractiveComplexHeatmap)
+library(ComplexHeatmap)
+library(RColorBrewer)
+library(shiny)
+library(ks)
+
+lt = readRDS(system.file("extdata", "2d_density_xy.rds", package = "InteractiveComplexHeatmap"))
+x = lt$x
+y = lt$y
+
+fit_2d_density = function(x, y) {
+    data = cbind(x, y)
+    Hdiag = Hpi.diag(x = data)
+    kde(x = data, H = Hdiag)
+}
+
+ht_2d_density = function(fit, ...) {
+
+    m = fit$estimate
+    m = t(m)
+    m = m[rev(seq_len(nrow(m))), , drop = FALSE]
+    ht = Heatmap(m, name = "Density",
+        col = rev(brewer.pal(11, "Spectral")),
+        show_row_names = FALSE, show_column_names = FALSE, 
+        cluster_rows = FALSE, cluster_columns = FALSE,
+        left_annotation = rowAnnotation(yaxis = anno_empty(border = FALSE)),
+        bottom_annotation = HeatmapAnnotation(xaxis = anno_empty(border = FALSE)),
+        ...
+    )
+
+    ht@heatmap_param$post_fun = function(ht) {
+        decorate_heatmap_body("Density", {
+            pushViewport(viewport(xscale = range(fit$eval.points[[1]]),
+                                  yscale = range(fit$eval.points[[2]]), 
+                                  clip = FALSE))
+            grid.rect(gp = gpar(fill = NA))
+            grid.xaxis(gp = gpar(fontsize = 8))
+            grid.yaxis(gp = gpar(fontsize = 8))
+            upViewport()
+        })
+    }
+    ht
+}
+
+ui = fluidPage(
+    plotOutput("heatmap", width = 400, height = 400, brush = "heatmap_brush"),
+    plotOutput("selected", width = 400, height = 400),
+    tags$style(HTML("
+        #heatmap, #selected {
+            float:left;
+            margin-top:20px;
+        }
+    "))
+)
+
+server = function(input, output, session) {
+
+    ht_obj = reactiveVal(NULL)
+    ht_pos_obj = reactiveVal(NULL)
+    original_fit_obj = reactiveVal(NULL)
+
+    output$heatmap = renderPlot({
+
+        fit = fit_2d_density(x, y)
+        ht = ht_2d_density(fit, column_title = "2D density of the complete dataset")
+        
+        ht = draw(ht)
+        ht_pos = htPositionsOnDevice(ht)
+
+        ht_obj(ht)
+        ht_pos_obj(ht_pos)
+        original_fit_obj(fit)
+    })
+
+    observeEvent(input$heatmap_brush, {
+        lt = getPositionFromBrush(input$heatmap_brush)
+
+        selection = selectArea(ht_obj(), lt[[1]], lt[[2]], mark = FALSE, ht_pos = ht_pos_obj(), 
+            verbose = FALSE)
+        
+        original_fit = original_fit_obj()
+        xrange = range(original_fit$eval.points[[1]][unlist(selection$column_index)])
+        yrange = range(rev(original_fit$eval.points[[2]])[unlist(selection$row_index)])
+        
+        l = x >= xrange[1] & x <= xrange[2] & y >= yrange[1] & y <= yrange[2]
+
+        output$selected = renderPlot({
+            if(sum(l) <= 2) {
+                grid.newpage()
+                grid.text("No enough data points.")
+            } else {
+                fit = fit_2d_density(x[l], y[l])
+                ht = ht_2d_density(fit, column_title = "2D density of the selected subset")
+                draw(ht)
+            }
+        })
+    })
+}
+
+shinyApp(ui, server)
+
+
