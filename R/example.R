@@ -104,7 +104,7 @@ htShinyExample = function(which) {
 <div>
 <h3>Information of this Shiny app<h3>
 <h5>Description</h5>
-<pre>@{title}</pre>
+<pre>@{ind[1]}.@{ind[2]} @{title}</pre>
 <h5>Source code</h5>
 <pre id=\"code\">
 @{code2}
@@ -132,7 +132,7 @@ ui = fluidPage(
 HTML('<hr /><div style=\"clear:both;\">
 <h3>Information of this Shiny app<h3>
 <h5>Description</h5>
-<pre>@{title}</pre>
+<pre>@{ind[1]}.@{ind[2]} @{title}</pre>
 <h5>Source code</h5>
 <pre id=\"code\">
 @{code_line}

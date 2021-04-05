@@ -29,8 +29,7 @@ download.file("https://jokergoo.github.io/SC3_sce.rds", "SC3_sce.rds")
 sce = readRDS("SC3_sce.rds")
 file.remove("SC3_sce.rds")
 # pheatmap() is internally used in sc3_plot_expression()
-# If you run the following code in an interactive graphics device, you don't need to use `draw()` here.
-draw(sc3_plot_expression(sce, k = 3))
+sc3_plot_expression(sce, k = 3)
 htShiny()
 
 ##########################################################
@@ -52,10 +51,9 @@ BP.5 <- subset_scores(
 	p.val=0.05)
 
 # heatmap.2() is internally used in heatmap_GO()
-# If you run the following code in an interactive graphics device, you don't need to use `draw()` here.
-draw(heatmap_GO(
+heatmap_GO(
 	go_id = "GO:0034142", result = BP.5, eSet=AlvMac, cexRow=0.4,
-	cexCol=1, cex.main=1, main.Lsplit=30))
+	cexCol=1, cex.main=1, main.Lsplit=30)
 htShiny()
 
 
@@ -67,12 +65,12 @@ assignInNamespace("pheatmap", ComplexHeatmap::pheatmap, ns = "pheatmap")
 # We construct two functions p1() and p2() which internally generate heatmaps
 # with pheatmap() but do not return the heatmap objects.
 p1 = function(mat) {
-	draw(pheatmap::pheatmap(mat, col = c("white", "red")))
+	pheatmap::pheatmap(mat, col = c("white", "red"))
 	1
 }
 
 p2= function(mat) {
-	draw(pheatmap::pheatmap(mat, col = c("white", "blue")))
+	pheatmap::pheatmap(mat, col = c("white", "blue"))
 	1
 }
 
