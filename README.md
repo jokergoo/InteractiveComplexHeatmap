@@ -17,6 +17,10 @@ The second example demonstrates a DESeq2 result with integrating the package **s
 <img src="https://user-images.githubusercontent.com/449218/111832925-b16ae280-88f1-11eb-8530-290374f9f2c2.gif" width="100%" border="black" />
 
 
+### Citation
+
+Zuguang Gu, et al., Make Interactive Complex Heatmaps in R, 2021, bioRxiv. doi: https://doi.org/10.1101/2021.03.08.434289
+
 ## Install
 
 **InteractiveComplexHeatmap** is available on

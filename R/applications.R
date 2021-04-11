@@ -396,7 +396,17 @@ fit_2d_density = function(x, y, ...) {
 
     check_pkg("ks")
 
-    data = cbind(x, y)
+    if(missing(y) && identical(dim(x), 2)) {
+        data = x
+    } else {
+        data = cbind(x, y)
+    }
+
+    l = is.na(x) | is.na(y)
+    if(any(l)) {
+        data = data[!l, , drop = FALSE]
+        message_wrap(qq("remove @{sum(l)} data point@{ifelse(sum(l) == 1, '', 's')} that contain NAs."))
+    }
     ks::kde(x = data, ...)
 }
 
