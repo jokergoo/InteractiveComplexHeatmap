@@ -7,7 +7,7 @@ output:
         width: 8
         fig_width: 5
 vignette: >
-  %\VignetteIndexEntry{5. A Shiny app for visualizing DESeq2 results}
+  %\VignetteIndexEntry{6. A Shiny app for visualizing DESeq2 results}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
