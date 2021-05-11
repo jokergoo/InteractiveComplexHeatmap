@@ -8,6 +8,6 @@ repos:
   BioCann: https://bioconductor.org/packages/devel/data/annotation
   BioCexp: https://bioconductor.org/packages/devel/data/experiment
 install:
-  - R -e 'install.packages(c("ComplexHeatmap", "shiny", "GetoptLong", "S4Vectors", "digest", "IRanges", "kableExtra", "svglite", "htmltools", "clisymbols", "jsonlite", "RColorBrewer"))'
+  - R -e 'install.packages("devtools"); devtools::install_github("jokergoo/ComplexHeatmap"); install.packages(c("shiny", "GetoptLong", "S4Vectors", "digest", "IRanges", "kableExtra", "svglite", "htmltools", "clisymbols", "jsonlite", "RColorBrewer"))'
 env:
   - _R_CHECK_FORCE_SUGGESTS_=false
