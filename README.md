@@ -1,6 +1,6 @@
 # Make Interactive Complex Heatmaps
 
-[![Build Status](https://travis-ci.org/jokergoo/InteractiveComplexHeatmap.svg)](https://travis-ci.org/jokergoo/InteractiveComplexHeatmap) 
+[![R-CMD-check](https://github.com/jokergoo/InteractiveComplexHeatmap/workflows/R-CMD-check/badge.svg)](https://github.com/jokergoo/InteractiveComplexHeatmap/actions)
 [![bioc](http://www.bioconductor.org/shields/downloads/devel/InteractiveComplexHeatmap.svg)](https://bioconductor.org/packages/stats/bioc/InteractiveComplexHeatmap/) 
 [![bioc](http://www.bioconductor.org/shields/years-in-bioc/InteractiveComplexHeatmap.svg)](http://bioconductor.org/packages/devel/bioc/html/InteractiveComplexHeatmap.html)
 
