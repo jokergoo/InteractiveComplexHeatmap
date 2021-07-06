@@ -16,6 +16,8 @@
 # -dblclick_action Additional actions at the server side when receiving a dblclick event on the UI.
 # -brush_action Additional actions at the server side when receiving a brush event on the UI.
 # -res Resolution of the plot, pass to `shiny::renderPlot`.
+# -sub_heatmap_cell_fun The ``cell_fun`` specifically defined for sub-heatmap.
+# -sub_heatmap_layer_fun The ``layer_fun`` specifically defined for sub-heatmap.
 #
 # == value
 # No value is returned.
@@ -38,7 +40,8 @@
 makeInteractiveComplexHeatmap = function(input, output, session, ht_list, 
 	heatmap_id = shiny_env$current_heatmap_id,
 	click_action = NULL, hover_action = NULL, 
-	dblclick_action = NULL, brush_action = NULL, res = 72) {
+	dblclick_action = NULL, brush_action = NULL, res = 72,
+	sub_heatmap_cell_fun = NULL, sub_heatmap_layer_fun = NULL) {
 
 	if(shiny_env$heatmap[[heatmap_id]]$action == "hover") {
 		if(!is.null(hover_action)) click_action = hover_action
@@ -167,6 +170,9 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			shiny_env$obs[[heatmap_id]][[nm]]$destroy()
 		}
 	}
+
+	shiny_env$heatmap[[heatmap_id]]$sub_heatmap_cell_fun = sub_heatmap_cell_fun
+	shiny_env$heatmap[[heatmap_id]]$sub_heatmap_layer_fun = sub_heatmap_layer_fun
 
 	# initialize heatmaps
 	ht_list = reactiveVal({
@@ -1083,6 +1089,7 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 
 				if(show_cell_fun) {
 					cell_fun = ht_current_full@matrix_param$cell_fun
+					if(!is.null(shiny_env$heatmap[[heatmap_id]]$sub_heatmap_cell_fun)) cell_fun = shiny_env$heatmap[[heatmap_id]]$sub_heatmap_cell_fun
 					if(!is.null(cell_fun)) {
 						cell_fun2 = cell_fun
 						ri_reverse_map = structure(ri, names = seq_along(ri))
@@ -1094,6 +1101,7 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 						}
 					}
 					layer_fun = ht_current_full@matrix_param$layer_fun
+					if(!is.null(shiny_env$heatmap[[heatmap_id]]$sub_heatmap_layer_fun)) layer_fun = shiny_env$heatmap[[heatmap_id]]$sub_heatmap_layer_fun
 					if(!is.null(layer_fun)) {
 						layer_fun2 = layer_fun
 						ri_reverse_map = structure(ri, names = seq_along(ri))

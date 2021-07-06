@@ -24,6 +24,8 @@
 # -response Pass to `InteractiveComplexHeatmapOutput`.
 # -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
 # -output_ui_float Pass to `InteractiveComplexHeatmapOutput`.
+# -sub_heatmap_cell_fun The ``cell_fun`` specifically defined for sub-heatmap.
+# -sub_heatmap_layer_fun The ``layer_fun`` specifically defined for sub-heatmap.
 #
 # == details
 # With any ``Heatmap``/``HeatmapList`` object, directly send to ``htShiny()`` to create a Shiny app for the heatmap(s):
@@ -107,7 +109,10 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 	layout = ifelse("brush" %in% response, "(1-2)|3", "1-3"), compact = FALSE,
 	action = "click", cursor = TRUE, response = c(action, "brush"),
 	brush_opt = list(stroke = "#f00", opacity = 0.6),
-	output_ui_float = FALSE
+	output_ui_float = FALSE,
+
+	# specific for sub-heatmap
+	sub_heatmap_cell_fun = NULL, sub_heatmap_layer_fun = NULL
 
 	) {
 
@@ -172,7 +177,8 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 	)
 
 	server = function(input, output, session) {
-		makeInteractiveComplexHeatmap(input, output, session, ht_list)
+		makeInteractiveComplexHeatmap(input, output, session, ht_list, 
+			sub_heatmap_cell_fun = sub_heatmap_cell_fun, sub_heatmap_layer_fun = sub_heatmap_layer_fun)
 	}
 
 	shiny::shinyApp(ui, server)
