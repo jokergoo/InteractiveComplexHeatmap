@@ -20,7 +20,10 @@ htShiny(ht_list = get_last_ht(), title = NULL,
     layout = ifelse("brush" \%in\% response, "(1-2)|3", "1-3"), compact = FALSE,
     action = "click", cursor = TRUE, response = c(action, "brush"),
     brush_opt = list(stroke = "#f00", opacity = 0.6),
-    output_ui_float = FALSE
+    output_ui_float = FALSE,
+    
+    # specific for sub-heatmap
+    sub_heatmap_cell_fun = NULL, sub_heatmap_layer_fun = NULL
     )
 }
 \arguments{
@@ -45,6 +48,8 @@ htShiny(ht_list = get_last_ht(), title = NULL,
   \item{response}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{brush_opt}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{output_ui_float}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
+  \item{sub_heatmap_cell_fun}{The \code{cell_fun} specifically defined for sub-heatmap.}
+  \item{sub_heatmap_layer_fun}{The \code{layer_fun} specifically defined for sub-heatmap.}
 
 }
 \details{

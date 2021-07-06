@@ -1,14 +1,28 @@
+Changes in version 1.1.1
+- add new argument `sub_heatmap_cell_fun` and `sub_heatmap_layer_fun` to only set cell_fun
+  or layer_fun for sub-heatmaps.
+
+------------------------------------------------------------------------------------
+
 Changes in version 0.99.10
-+ add `response` argument so that the server can only respond to one event from UI.
+- add `response` argument so that the server can only respond to one event from UI.
+
+------------------------------------------------------------------------------------
 
 Changes in version 0.99.9
-+ output can be floating along with mouse positions.
+- output can be floating along with mouse positions.
+
+------------------------------------------------------------------------------------
 
 Changes in version 0.99.8
-+ click and hover won't conflict with brush.
+- click and hover won't conflict with brush.
+
+------------------------------------------------------------------------------------
 
 Changes in version 0.99.7
-+ In the sub-heatmap, it allows to remove rows and columns from the four sides.
+- In the sub-heatmap, it allows to remove rows and columns from the four sides.
+
+------------------------------------------------------------------------------------
 
 Changes in version 0.99.0
-+ Submit to Bioconductor
+- Submit to Bioconductor
