@@ -314,6 +314,19 @@ htShiny(ht, compact = TRUE)
 document.write('<img src="https://jokergoo.github.io/images/compact.gif" width="80%" />');
 </script>
 
+## Only show cell decorations in sub-heatmaps
+
+The arguments `sub_heatmap_cell_fun` and `sub_heatmap_layer_fun` can be set so that they only apply to the sub-heatmap.
+It is a good way to show more details on the selected sub-heatmaps.
+
+```{r, eval = FALSE}
+htShiny(ht, sub_heatmap_cell_fun = function(j, i, x, y, w, f, fill) ...)
+```
+
+<script>
+document.write('<img src="https://jokergoo.github.io/images/sub_heatmap_cell_fun.gif" width="80%" />');
+</script>
+
 ## Other arguments in `htShiny()`
 
 `htShiny()` is just a simple wrapper on the other two basic functions `InteractiveComplexHeatmapOutput()`
