@@ -4,6 +4,9 @@
 [![bioc](http://www.bioconductor.org/shields/downloads/devel/InteractiveComplexHeatmap.svg)](https://bioconductor.org/packages/stats/bioc/InteractiveComplexHeatmap/) 
 [![bioc](http://www.bioconductor.org/shields/years-in-bioc/InteractiveComplexHeatmap.svg)](http://bioconductor.org/packages/devel/bioc/html/InteractiveComplexHeatmap.html)
 
+<img width="1150" alt="Screenshot 2021-07-19 at 21 31 14" src="https://user-images.githubusercontent.com/449218/126217251-8eee8ce8-7e7f-4251-b844-800dd72481bd.png">
+
+
 **InteractiveComplexHeatmap** is an R package that converts static heatmaps produced from
 [**ComplexHeatmap**](https://github.com/jokergoo/ComplexHeatmap) package into an interactive
 Shiny app only with one extra line of code.
