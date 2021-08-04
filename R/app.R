@@ -26,6 +26,7 @@
 # -output_ui_float Pass to `InteractiveComplexHeatmapOutput`.
 # -sub_heatmap_cell_fun The ``cell_fun`` specifically defined for sub-heatmap.
 # -sub_heatmap_layer_fun The ``layer_fun`` specifically defined for sub-heatmap.
+# -save The value can be set to a folder name so that the shiny app is saved into several files.
 #
 # == details
 # With any ``Heatmap``/``HeatmapList`` object, directly send to ``htShiny()`` to create a Shiny app for the heatmap(s):
@@ -112,8 +113,9 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 	output_ui_float = FALSE,
 
 	# specific for sub-heatmap
-	sub_heatmap_cell_fun = NULL, sub_heatmap_layer_fun = NULL
+	sub_heatmap_cell_fun = NULL, sub_heatmap_layer_fun = NULL,
 
+	save = NULL
 	) {
 
 	if(is.null(ht_list)) {
@@ -124,6 +126,8 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 		}
 	} else if(inherits(ht_list, "InputHeatmap")) {
 		ht_list = show(ht_list)
+	} else if(inherits(ht_list, "matrix")) {
+		stop_wrap("No heatmap is detected. Maybe you forgot to use `Heatmap()`?")
 	} else {
 		if(is.numeric(ht_list) && length(ht_list) == 1) {
 			stop_wrap("Maybe you want to use the function `htShinyExample()`?")
@@ -166,6 +170,21 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 		} 
 	}
 
+	if(!is.null(save)) {
+		if(file.exists(save)) {
+			if(!file.info(save)["isdir"]) {
+				stop_wrap("`save` should be a folder.")
+			}
+		}
+		dir.create(save, showWarnings = FALSE)
+
+		save(list = ls(), file = paste0(save, "/htShiny.RData"))
+		code = "Rscript -e \"load('htShiny.RData');library(shiny);suppressPackageStartupMessages(library(InteractiveComplexHeatmap));suppressPackageStartupMessages(library(ComplexHeatmap));ui = fluidPage(title,description,if(hline) hr() else NULL,InteractiveComplexHeatmapOutput(heatmap_id = heatmap_id, title1 = title1, title2 = title2,width1 = width1, height1 = height1, width2 = width2, height2 = height2, layout = layout, compact = compact,action = action, cursor = cursor, response = response, brush_opt = brush_opt, output_ui_float = output_ui_float), html);server = function(input, output, session) {makeInteractiveComplexHeatmap(input, output, session, ht_list, sub_heatmap_cell_fun = sub_heatmap_cell_fun, sub_heatmap_layer_fun = sub_heatmap_layer_fun)};cat('If the shiny app is not automatically opened in the browser, you can manually copy the following link and paste it to the browser.');print(shinyApp(ui, server))\""
+		writeLines(code, con = paste0(save, "/htShiny.sh"))
+		writeLines(code, con = paste0(save, "/htShiny.bat"))
+		return(invisible(NULL))
+	}
+
 	ui = fluidPage(
 		title,
 		description,
@@ -181,7 +200,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 			sub_heatmap_cell_fun = sub_heatmap_cell_fun, sub_heatmap_layer_fun = sub_heatmap_layer_fun)
 	}
 
-	shiny::shinyApp(ui, server)
+	shinyApp(ui, server)
 }
 
 # == title
