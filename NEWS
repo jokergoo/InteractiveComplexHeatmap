@@ -1,3 +1,8 @@
+Changes in version 1.1.2
+- Add `save` argument in `htShiny()`.
+
+------------------------------------------------------------------------------------
+
 Changes in version 1.1.1
 - add new argument `sub_heatmap_cell_fun` and `sub_heatmap_layer_fun` to only set cell_fun
   or layer_fun for sub-heatmaps.
