@@ -351,9 +351,9 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 
 	fontawesome_dep = htmltools::htmlDependency(
 		name       = "fontawesome",
-		version    = "5.13.0",
-		package    = "shiny",
-		src        = "www/shared/fontawesome/css",
+		version    = "5.15.3",
+		package    = "fontawesome",
+		src        = "fontawesome/css",
 		stylesheet = c("all.min.css", "v4-shims.min.css")
     )
 

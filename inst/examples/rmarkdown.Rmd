@@ -14,15 +14,7 @@ library(InteractiveComplexHeatmap)
 m = matrix(rnorm(100*100), 100)
 ht = Heatmap(m)
 
-ui = fluidPage(
-    InteractiveComplexHeatmapOutput()
-)
-
-server = function(input, output, session) {
-    makeInteractiveComplexHeatmap(input, output, session, ht)
-}
-
-shiny::shinyApp(ui, server, options = list(height = 700))
+htShiny(ht)
 ```
 
 
@@ -45,15 +37,6 @@ library(InteractiveComplexHeatmap)
 m = matrix(rnorm(100*100), 100)
 ht = Heatmap(m)
 
-ui = fluidPage(
-    InteractiveComplexHeatmapOutput()
-)
-
-
-server = function(input, output, session) {
-    makeInteractiveComplexHeatmap(ht, input, output, session)
-}
-
-shiny::shinyApp(ui, server, options = list(height = 700))
+htShiny(ht)
 ```
 ````
