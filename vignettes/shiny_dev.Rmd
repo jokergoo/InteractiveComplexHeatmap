@@ -268,6 +268,31 @@ shiny::shinyApp(ui, server)
 document.write('<img src="https://jokergoo.github.io/images/rmarkdown.png" width="100%" />');
 </script>
 
+
+More simply, you can directly use `htShiny()` in the chunk:
+
+````markdown
+---
+title: "InteractiveComplexHeatmap in an Rmarkdown document"
+author: "Zuguang Gu"
+date: "16/12/2020"
+output: html_document
+runtime: shiny
+---
+
+
+`r ''````{r, echo = FALSE}
+library(InteractiveComplexHeatmap)
+m = matrix(rnorm(100*100), 100)
+ht = Heatmap(m)
+```
+
+
+`r ''````{r, echo = FALSE}
+htShiny(ht)
+```
+````
+
 ## Self-define the output
 
 Both the click and brush actions on the heatmap trigger an output below the
