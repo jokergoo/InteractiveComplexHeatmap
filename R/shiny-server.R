@@ -1227,7 +1227,7 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 					row_names_gp = ht_current_full@row_names_param$gp,
 					show_column_names = show_column_names, 
 					column_names_side = ht_current_full@column_names_param$side,
-					columns_names_gp = ht_current_full@column_names_param$gp,
+					column_names_gp = ht_current_full@column_names_param$gp,
 					top_annotation = top_annotation,
 					bottom_annotation = bottom_annotation,
 					left_annotation = left_annotation,
