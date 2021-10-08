@@ -2,7 +2,7 @@ Package: InteractiveComplexHeatmap
 Type: Package
 Title: Make Interactive Complex Heatmaps
 Version: 1.1.3
-Date: 2021-09-29
+Date: 2021-10-08
 Authors@R: person("Zuguang", "Gu", email = "z.gu@dkfz.de", role = c("aut", "cre"),
                   comment = c('ORCID'="0000-0002-7395-8709"))
 Depends: R (>= 4.0.0), 

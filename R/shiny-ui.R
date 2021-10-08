@@ -736,7 +736,6 @@ HeatmapInfoOutput = function(heatmap_id, title = NULL, width = 400,
 
 add_js_css_dep = function(heatmap_id, js_file, css_file, envir = parent.frame()) {
 
-	td = tempdir()
 	if(identical(topenv(), .GlobalEnv)) {
     	ht_js = paste(readLines(qq("~/project/development/InteractiveComplexHeatmap/inst/template/@{js_file}")), collapse = "\n")
     	version = "0.0.1"
@@ -744,22 +743,23 @@ add_js_css_dep = function(heatmap_id, js_file, css_file, envir = parent.frame())
     	ht_js = paste(readLines(system.file("template", js_file, package = "InteractiveComplexHeatmap")), collapse = "\n")
     	version = packageVersion("InteractiveComplexHeatmap")
     }
-    temp_js = tempfile(pattern = paste0(heatmap_id, "-"), fileext = paste0("-", js_file), tmpdir = td)
-    writeLines(qq(ht_js, envir = envir), con = temp_js)
+    temp_js = qq(ht_js, envir = envir)
+    temp_js = paste0("<script>\n", temp_js, "\n</script>\n")
 
     if(identical(topenv(), .GlobalEnv)) {
     	ht_css = paste(readLines(qq("~/project/development/InteractiveComplexHeatmap/inst/template/@{css_file}")), collapse = "\n")
     } else {
 		ht_css = paste(readLines(system.file("template", css_file, package = "InteractiveComplexHeatmap")), collapse = "\n")
     }
-    temp_css = tempfile(pattern = paste0(heatmap_id, "-"), fileext = paste0("-", css_file), tmpdir = td)
-    writeLines(qq(ht_css, envir = envir), con = temp_css)
+    temp_css = qq(ht_css, envir = envir)
+    temp_css = paste0("<style>\n", temp_css, "\n</style>")
 
     htmltools::htmlDependency(
 		name   = qq("interactive-complex-heatmap-@{heatmap_id}-@{gsub('.(js|css)$', '', basename(js_file))}"),
 		version = version,
-		src = td,
-		stylesheet = basename(temp_css),
-		script = basename(temp_js)
+		package    = "InteractiveComplexHeatmap",
+		src        = "www",
+		script     = "foo.js",
+		head = paste0(temp_js, "\n", temp_css)
     )
 }
