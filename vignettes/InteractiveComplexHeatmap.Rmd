@@ -62,6 +62,9 @@ library(devtools)
 install_github("jokergoo/InteractiveComplexHeatmap")
 ```
 
+A printer-friendly version of the documentation is available at [bioRxiv](https://doi.org/10.1101/2021.03.08.434289).
+
+
 ## Usage
 
 The **InteractiveComplexHeatmap** package is very straightforward to use. For

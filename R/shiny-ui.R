@@ -62,6 +62,18 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		heatmap_id = paste0("ht", get_widget_index())
 	}
 
+	if(layout %in% c("12|3")) {
+		layout = "(1-2)|3"
+	} else if(layout %in% c("(1)|3", "1|(3)")) {
+		layout = "1|3"
+	} else if(layout %in% c("1|23")) {
+		layout = "1|(2-3)"
+	} else if(layout %in% c("123")) {
+		layout = "1-2-3"
+	} else if(layout %in% c("13")) {
+		layout = "1-3"
+	}
+
 	if(is.null(width3)) {
 		if(compact) {
 			width3 = 400
@@ -116,26 +128,25 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	if(layout %in% c("(1-2)|3", "12|3", "1|3", "(1)|3", "1|(3)")) {
 		layout_css = qq("
 			.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
-				float:left;
+				display:table-cell;
 			}
 			.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group {
-				float:left;
+				display:table-cell;
 			}
 		")
 
 		tl = tagList(
 			main_heatmap_ui, 
 			if(has_brush_response) sub_heatmap_ui else NULL,
-			div(style = "clear: both;"),
 			output_ui
 		)
 	} else if(layout %in% c("1|(2-3)", "1|23")) {
 		layout_css = qq("
 			.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group {
-				float:left;
+				display:table-cell;
 			}
 			.@{heatmap_id}_widget #@{heatmap_id}_output_wrapper {
-				float:left;
+				display:table-cell;
 			}
 		")
 
@@ -147,13 +158,13 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	} else if(layout %in% c("1-2-3", "123", "13", "1-3")) {
 		layout_css = qq("
 			.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
-				float:left;
+				display:table-cell;
 			}
 			.@{heatmap_id}_widget #@{heatmap_id}_sub_heatmap_group {
-				float:left;
+				display:table-cell;
 			}
 			.@{heatmap_id}_widget #@{heatmap_id}_output_wrapper {
-				float:left;
+				display:table-cell;
 			}
 		")
 
@@ -172,7 +183,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 	} else if(layout %in% c("1-(2|3)")) {
 		layout_css = qq("
 			.@{heatmap_id}_widget #@{heatmap_id}_heatmap_group {
-				float:left;
+				display:table-cell;
 			}
 		")
 
@@ -181,16 +192,15 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 			div( 
 				if(has_brush_response) sub_heatmap_ui else NULL,
 				output_ui,
-				style = "float:left;"
+				style = "display:table-cell;"
 			)
 		)
 	} else {
-		stop_wrap("Value of `layout` can only be one of '(1|2)-3', '1-(2|3)', '1-2-3', '1|2|3', '1|(2-3)'.")
+		stop_wrap("Value of `layout` can only be one of '(1-2)|3', '1-(2|3)', '1-2-3', '1|2|3', '1|(2-3)'.")
 	}
 
 	fluidPage(class = qq("@{heatmap_id}_widget"),
 		tl,
-		div(style = "clear: both;"),
 		tags$style(HTML(layout_css)),
 		...
 	)
@@ -397,6 +407,9 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 		containment = paste0('"', containment, '"')
 	}
 
+	layout = shiny_env$heatmap[[heatmap_id]]$layout
+	if(is.null(layout)) layout = ""
+
     main_heatmap_ui = div(id = qq("@{heatmap_id}_heatmap_group"),
 
     	list(jqueryui_dep, 
@@ -538,6 +551,9 @@ subHeatmapOutput = function(heatmap_id, title = NULL,
 	} else {
 		containment = paste0('"', containment, '"')
 	}
+
+	layout = shiny_env$heatmap[[heatmap_id]]$layout
+	if(is.null(layout)) layout = ""
 
 	sub_heatmap_ui = div(
 		id = qq("@{heatmap_id}_sub_heatmap_group"),
