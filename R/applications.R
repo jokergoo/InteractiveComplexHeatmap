@@ -55,10 +55,10 @@ interactivate.DESeqDataSet = function(x, res = DESeq2::results(x), seed = 123, .
 
     env = new.env()
 
-    qa = quantile(log10(res$baseMean + 1), 0.99)
+    qa = quantile(log10(res$baseMean + 1), 0.99, na.rm = TRUE)
     baseMean_col_fun = circlize::colorRamp2(c(0, qa/2, qa), c("blue", "white", "red"))
     
-    qa = quantile(abs(abs(res$log2FoldChange)), 0.99)
+    qa = quantile(abs(abs(res$log2FoldChange)), 0.99, na.rm = TRUE)
     log2fc_col_fun = circlize::colorRamp2(c(-qa, 0, qa), c("green", "white", "red"))
 
     # Make the heatmap for differentially expressed genes under certain cutoffs.
@@ -329,7 +329,15 @@ FDR: @{df[1, 'padj']}</pre>
                 shinydashboard::box(title = "Result table of the selected genes", width = NULL, solidHeader = TRUE, status = "primary",
                     DT::DTOutput("res_table")
                 )
-            )
+            ),
+            tags$style("
+                .content-wrapper, .right-side {
+                    overflow-x: auto;
+                }
+                .content {
+                    min-width:1500px;
+                }
+            ")
         )
     )
 

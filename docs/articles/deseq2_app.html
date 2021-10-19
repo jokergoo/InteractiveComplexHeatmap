@@ -285,9 +285,18 @@ img {
             <span class="fu"><a href="https://rdrr.io/pkg/shinydashboard/man/box.html">box</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Result table of the selected genes"</span>, width <span class="op">=</span> <span class="cn">NULL</span>, solidHeader <span class="op">=</span> <span class="cn">TRUE</span>, status <span class="op">=</span> <span class="st">"primary"</span>,
                 <span class="fu">DTOutput</span><span class="op">(</span><span class="st">"res_table"</span><span class="op">)</span>
             <span class="op">)</span>
-        <span class="op">)</span>
+        <span class="op">)</span>,
+        <span class="va">tags</span><span class="op">$</span><span class="fu">style</span><span class="op">(</span><span class="st">"
+            .content-wrapper, .right-side {
+                overflow-x: auto;
+            }
+            .content {
+                min-width:1500px;
+            }
+        "</span><span class="op">)</span>
     <span class="op">)</span>
 <span class="op">)</span></code></pre></div>
+<p>In previous code, we add self-defined CSS code to set the minimal width of the area that contains the boxes.</p>
 <p>We will have several self-defined actions to respond brushing event on heatmap. We put all these actions into one <code>brush_action()</code> call. Note here we use <code>env$row_index[row_index]</code> to get the indices of the selected genes that correspond to the complete gene set.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/rstudio/DT">DT</a></span><span class="op">)</span>
@@ -371,7 +380,7 @@ document.write('<img src="https://user-images.githubusercontent.com/449218/11183
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">airway</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">airway</span><span class="op">)</span>
 
-<span class="va">dds</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/DESeqDataSet.html">DESeqDataSet</a></span><span class="op">(</span><span class="va">sairwaye</span>, design <span class="op">=</span> <span class="op">~</span> <span class="va">dex</span><span class="op">)</span>
+<span class="va">dds</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/DESeqDataSet.html">DESeqDataSet</a></span><span class="op">(</span><span class="va">airway</span>, design <span class="op">=</span> <span class="op">~</span> <span class="va">dex</span><span class="op">)</span>
 <span class="va">dds</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/DESeq2/man/DESeq.html">DESeq</a></span><span class="op">(</span><span class="va">dds</span><span class="op">)</span>
 
 <span class="fu"><a href="../reference/interactivate.html">interactivate</a></span><span class="op">(</span><span class="va">dds</span><span class="op">)</span></code></pre></div>
