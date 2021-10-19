@@ -200,7 +200,7 @@ document.write('<img width="100%" alt="pheatmap" src="https://user-images.github
 ##             list(annotation_col = ann)[add_ann_col]))
 ##     }
 ## }
-## &lt;bytecode: 0x7fb2174db2d0&gt;
+## &lt;bytecode: 0x7fbabd0d1ad0&gt;
 ## &lt;environment: namespace:SC3&gt;
 ## 
 ## Signatures:
@@ -292,7 +292,7 @@ document.write('<img width="500px" src="https://user-images.githubusercontent.co
 ##         trace = trace, RowSideColors = samples.col, col = expr.col, 
 ##         margins = margins, ...)
 ## }
-## &lt;bytecode: 0x7fb226c27500&gt;
+## &lt;bytecode: 0x7fbacc844eb0&gt;
 ## &lt;environment: namespace:GOexpress&gt;</code></pre>
 <p>In this case, since we have already loaded the <strong>GOexpress</strong> namespace, the <strong>GOexpress</strong> namespace should firstly be removed by <code><a href="https://rdrr.io/r/base/detach.html">detach()</a></code>, or else <code><a href="https://rdrr.io/pkg/GOexpress/man/heatmap_GO.html">heatmap_GO()</a></code> will still use <code><a href="https://rdrr.io/pkg/gplots/man/heatmap.2.html">gplots::heatmap.2()</a></code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">

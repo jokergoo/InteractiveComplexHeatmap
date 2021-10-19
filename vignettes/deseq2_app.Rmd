@@ -199,10 +199,20 @@ body = dashboardBody(
             box(title = "Result table of the selected genes", width = NULL, solidHeader = TRUE, status = "primary",
                 DTOutput("res_table")
             )
-        )
+        ),
+        tags$style("
+            .content-wrapper, .right-side {
+                overflow-x: auto;
+            }
+            .content {
+                min-width:1500px;
+            }
+        ")
     )
 )
 ```
+
+In previous code, we add self-defined CSS code to set the minimal width of the area that contains the boxes.
 
 We will have several self-defined actions to respond brushing event on heatmap. We put all these
 actions into one `brush_action()` call. Note here we use `env$row_index[row_index]` to get the indices
@@ -308,7 +318,7 @@ library(DESeq2)
 library(airway)
 data(airway)
 
-dds = DESeqDataSet(sairwaye, design = ~ dex)
+dds = DESeqDataSet(airway, design = ~ dex)
 dds = DESeq(dds)
 
 interactivate(dds)

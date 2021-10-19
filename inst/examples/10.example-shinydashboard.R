@@ -18,7 +18,15 @@ body = dashboardBody(
 		),
 		box(title = "Output", width = 4, solidHeader = TRUE, status = "primary",
 			HeatmapInfoOutput("ht")
-		)
+		),
+        tags$style("
+            .content-wrapper, .right-side {
+                overflow-x: auto;
+            }
+            .content {
+                min-width:1500px;
+            }
+        ")
 	)
 )
 
@@ -55,6 +63,14 @@ body = dashboardBody(
     # use JQuery UI draggable tool
     tags$script("
         $('.box').parent().draggable({handle:'.box-header'});
+    "),
+    tags$style("
+        .content-wrapper, .right-side {
+            overflow-x: auto;
+        }
+        .content {
+            min-width:1500px;
+        }
     ")
 )
 
@@ -98,7 +114,15 @@ single_heatmap_ui = function(heatmap_id) {
 		),
 		box(title = "Output", width = 4, solidHeader = TRUE, status = "primary",
 			HeatmapInfoOutput(heatmap_id)
-		)
+		),
+        tags$style("
+            .content-wrapper, .right-side {
+                overflow-x: auto;
+            }
+            .content {
+                min-width:1500px;
+            }
+        ")
 	)
 }
 
@@ -134,7 +158,7 @@ ht = Heatmap(m)
 body = dashboardBody(
 	fluidRow(
 		box(title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
-			originalHeatmapOutput("ht", response = c("click", "brush-output")),
+			originalHeatmapOutput("ht", response = c("click", "brush-output"), width = 400),
 			HeatmapInfoOutput("ht", output_ui_float = TRUE) # this line can be put anywhere
 		)
 	)
@@ -322,7 +346,15 @@ body = dashboardBody(
             box(title = "Result table of the selected genes", width = NULL, solidHeader = TRUE, status = "primary",
                 DTOutput("res_table")
             )
-        )
+        ),
+        tags$style("
+            .content-wrapper, .right-side {
+                overflow-x: auto;
+            }
+            .content {
+                min-width:1500px;
+            }
+        ")
     )
 )
 

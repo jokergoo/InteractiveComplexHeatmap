@@ -572,6 +572,36 @@ document.write('<img src="https://jokergoo.github.io/images/sub_heatmap_cell_fun
 ## [64] fastmap_1.1.0        yaml_2.2.1           clue_0.3-59         
 ## [67] colorspace_2.0-2     cluster_2.1.2        ComplexHeatmap_2.9.4
 ## [70] rvest_1.0.0          memoise_2.0.0        sass_0.4.0</code></pre>
+<script src="jquery.min.js"></script><script src="jquery.sticky.js"></script><script>
+$(document).ready(function(){
+    $("#TOC").sticky({
+        topSpacing: 0,
+        zIndex:1000    
+    })
+    $("#TOC").on("sticky-start", function() {
+
+        $("<p style='font-size:1.2em; padding-left:4px;'><a id='TOC-click'>Table of Content</a></p>").insertBefore($("#TOC ul:first-child"));
+        $("#TOC-click").hover(function() {
+            $(this).css("color", "#0033dd").css("cursor", "pointer");
+            $("#TOC").children().first().next().show();
+            $("#TOC").hover(function() {
+                $(this).children().first().next().show();
+            }, function() {
+                $(this).children().first().next().hide();
+                $("body").off("hover", "#TOC");
+            })
+        }, function() {
+            $(this).css("color", "#0033dd");
+        })
+        $("#TOC").children().first().next().hide();
+
+    })
+    $("#TOC").on("sticky-end", function() {
+        $("#TOC").children().first().remove();
+        $("#TOC").children().first().show();
+    })
+});
+</script>
 </div>
   </div>
 

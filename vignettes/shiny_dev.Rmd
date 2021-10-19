@@ -6,6 +6,7 @@ output:
     rmarkdown::html_vignette:
         width: 8
         fig_width: 5
+        toc: true
 vignette: >
   %\VignetteIndexEntry{3. Functions for Shiny app development}
   %\VignetteEngine{knitr::rmarkdown}
@@ -226,6 +227,38 @@ as well as the server side, the heatmap ID must be explicitely specified in all 
 More examples on integrating with **shinydashboard** can be found from `htShinyExample(10.1)` to `htShinyExample(10.5)`.
 In vignette ["A Shiny app for visualizing DESeq2 results"](deseq2_app.html), we demonstrate a complex app where
 the three UI components are specified separately to work with **shinydashboard**.
+
+One thing that needs to be noted when integrating with **shinydashboard** is that the width (via `width` argument in `box()`) is actually
+measured as the relative fraction to parent `div` block, thus it is suggested to set the minimal width for parent block by adding
+a self-defined CSS code:
+
+```r
+body = dashboardBody(
+    fluidRow(
+        box(
+            title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
+            originalHeatmapOutput("ht", title = NULL)
+        ),
+        box(
+            title = "Sub-heatmap", width = 4, solidHeader = TRUE, status = "primary",
+            subHeatmapOutput("ht", title = NULL)
+        ),
+        box(
+            title = "Output", width = 4, solidHeader = TRUE, status = "primary",
+            HeatmapInfoOutput("ht", title = NULL)
+        ),
+        tags$style("
+            .content-wrapper, .right-side {
+                overflow-x: auto;
+            }
+            .content {
+                min-width:1500px;
+            }
+        ")
+    )
+)
+
+```
 
 ## Work with R Markdown documents
 
@@ -861,3 +894,38 @@ This method also works for complex heatmaps, e.g. with row or column splitting, 
 <br>
 <br>
 <br>
+
+
+<script src="jquery.min.js"></script>
+<script src="jquery.sticky.js"></script>
+<script>
+$(document).ready(function(){
+    $("#TOC").sticky({
+        topSpacing: 0,
+        zIndex:1000    
+    })
+    $("#TOC").on("sticky-start", function() {
+
+        $("<p style='font-size:1.2em; padding-left:4px;'><a id='TOC-click'>Table of Content</a></p>").insertBefore($("#TOC ul:first-child"));
+        $("#TOC-click").hover(function() {
+            $(this).css("color", "#0033dd").css("cursor", "pointer");
+            $("#TOC").children().first().next().show();
+            $("#TOC").hover(function() {
+                $(this).children().first().next().show();
+            }, function() {
+                $(this).children().first().next().hide();
+                $("body").off("hover", "#TOC");
+            })
+        }, function() {
+            $(this).css("color", "#0033dd");
+        })
+        $("#TOC").children().first().next().hide();
+
+    })
+    $("#TOC").on("sticky-end", function() {
+        $("#TOC").children().first().remove();
+        $("#TOC").children().first().show();
+    })
+});
+</script>
+
