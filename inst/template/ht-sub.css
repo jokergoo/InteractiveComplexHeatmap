@@ -1,9 +1,9 @@
 #@{heatmap_id}_sub_heatmap_group {
-	margin-bottom: 10px;
+	padding-bottom: 10px;
 }
 
 #@{heatmap_id}_sub_heatmap_group {
-	margin-right: 10px;
+	padding-right: 10px;
 }
 #@{heatmap_id}_sub_heatmap_resize {
 	position: relative;

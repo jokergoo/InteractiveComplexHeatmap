@@ -204,7 +204,7 @@ server = function(input, output, session) {
 		sub_heatmap_cell_fun = sub_heatmap_cell_fun, sub_heatmap_layer_fun = sub_heatmap_layer_fun)
 }
 
-cat('If the shiny app is not automatically opened in the browser, you can manually copy the following link and paste it to the browser.');
+cat('If the shiny app is not automatically opened in the browser, you can manually\ncopy the following link and paste it to the browser.');
 print(shinyApp(ui, server))
 "		
 		writeLines(code, con = paste0(save, "/htShiny.R"))
