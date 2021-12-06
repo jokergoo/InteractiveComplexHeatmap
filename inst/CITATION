@@ -4,9 +4,9 @@ citEntry(
    entry = "article",
    title = "Make Interactive Complex Heatmaps in R",
    author = "Zuguang Gu, Daniel Huebschmann",
-   journal = "bioRxiv",
+   journal = "Bioinformatics",
    year = 2021,
-   textVersion = "Gu, Z. (2021) Make Interactive Complex Heatmaps in R. bioRxiv."
+   textVersion = "Gu, Z. (2021) Make Interactive Complex Heatmaps in R. Bioinformatics."
 )
 
 citFooter("This free open-source software implements academic
