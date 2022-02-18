@@ -22,7 +22,7 @@ The second example demonstrates a DESeq2 result with integrating the package **s
 
 ### Citation
 
-Zuguang Gu, et al., Make Interactive Complex Heatmaps in R, 2021, bioRxiv. doi: https://doi.org/10.1101/2021.03.08.434289
+Zuguang Gu, et al., Make Interactive Complex Heatmaps in R, 2021, Bioinformatics, https://doi.org/10.1093/bioinformatics/btab806
 
 ## Install
 
