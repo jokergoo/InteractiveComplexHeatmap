@@ -1021,7 +1021,7 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 				if(show_annotation) {
 					top_annotation = ht_current_full@top_annotation
 					if(!is.null(top_annotation)) {
-						ind_subsettable = which(sapply(top_annotation@anno_list, function(x) x@subsetable))
+						ind_subsettable = which(sapply(top_annotation@anno_list, function(x) x@subsettable))
 						if(length(ind_subsettable)) {
 							top_annotation = top_annotation[ci, ind_subsettable]
 							top_annotation@anno_list = lapply(top_annotation@anno_list, function(x) {
@@ -1034,7 +1034,7 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 					}
 					bottom_annotation = ht_current_full@bottom_annotation
 					if(!is.null(bottom_annotation)) {
-						ind_subsettable = which(sapply(bottom_annotation@anno_list, function(x) x@subsetable))
+						ind_subsettable = which(sapply(bottom_annotation@anno_list, function(x) x@subsettable))
 						if(length(ind_subsettable)) {
 							bottom_annotation = bottom_annotation[ci, ind_subsettable]
 							bottom_annotation@anno_list = lapply(bottom_annotation@anno_list, function(x) {
@@ -1047,7 +1047,7 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 					}
 					left_annotation = ht_current_full@left_annotation
 					if(!is.null(left_annotation)) {
-						ind_subsettable = which(sapply(left_annotation@anno_list, function(x) x@subsetable))
+						ind_subsettable = which(sapply(left_annotation@anno_list, function(x) x@subsettable))
 						if(length(ind_subsettable)) {
 							left_annotation = left_annotation[ri, ind_subsettable]
 							left_annotation@anno_list = lapply(left_annotation@anno_list, function(x) {
@@ -1060,7 +1060,7 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 					}
 					right_annotation = ht_current_full@right_annotation
 					if(!is.null(right_annotation)) {
-						ind_subsettable = which(sapply(right_annotation@anno_list, function(x) x@subsetable))
+						ind_subsettable = which(sapply(right_annotation@anno_list, function(x) x@subsettable))
 						if(length(ind_subsettable)) {
 							right_annotation = right_annotation[ri, ind_subsettable]
 							right_annotation@anno_list = lapply(right_annotation@anno_list, function(x) {
@@ -1240,7 +1240,7 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 			} else {
 				if(show_annotation) {
 					ha = ht_current_full
-					ind_subsettable = which(sapply(ha@anno_list, function(x) x@subsetable && !x@fun@fun_name %in% ignored_anno))
+					ind_subsettable = which(sapply(ha@anno_list, function(x) x@subsettable && !x@fun@fun_name %in% ignored_anno))
 					if(length(ind_subsettable)) {
 						if(ht_list@direction == "horizontal") {
 							selected_ht = selected[selected$heatmap == selected$heatmap[!is.na(selected$slice)][1], ]
