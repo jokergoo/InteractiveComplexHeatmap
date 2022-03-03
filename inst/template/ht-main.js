@@ -160,14 +160,18 @@ $(function() {
 
 	// similar function as "jquery ui tabs"
 	var objs = $('#@{heatmap_id}_heatmap_control li a');
-	if(@{tolower(as.character(has_brush_response))}) {
+	if(!@{tolower(as.character(has_brush_response))} && !@{tolower(as.character(only_brush_output_response))}) {
+		$(objs[0]).attr("title", "Save image");
+		$(objs[1]).attr("title", "Resize heatmap");
+	} else if(!@{tolower(as.character(has_brush_response))} && @{tolower(as.character(only_brush_output_response))}) {
+		$(objs[0]).attr("title", "Configure brush");
+		$(objs[1]).attr("title", "Save image");
+		$(objs[2]).attr("title", "Resize heatmap");
+	} else {
 		$(objs[0]).attr("title", "Search heatmap");
 		$(objs[1]).attr("title", "Configure brush");
 		$(objs[2]).attr("title", "Save image");
 		$(objs[3]).attr("title", "Resize heatmap");
-	} else {
-		$(objs[0]).attr("title", "Save image");
-		$(objs[1]).attr("title", "Resize heatmap");
 	}
 
 	var href = $(objs[0]).attr("href");

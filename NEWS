@@ -1,6 +1,9 @@
 Changes in version 1.3.1
 
 - depends on a more recent version of ComplexHeatmap.
+- fixed the control icons when `compact = TRUE`.
+- add two columns of "row_label" and "column_label" in the output of `selectPosition()`, 
+  `selectArea()`, `selectByLabels()`.
 
 ------------------------------------------------------------------------------------
 

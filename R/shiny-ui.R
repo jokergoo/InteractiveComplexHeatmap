@@ -494,9 +494,9 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 						)
 					)
 				)
-				if(!has_brush_response & !only_brush_output_response) { 
+				if(!has_brush_response & !only_brush_output_response) { # only click
 					tbl = tbl[-(1:2)]
-				} else if(!has_brush_response & only_brush_output_response) {
+				} else if(!has_brush_response & only_brush_output_response) { # no brush (subheatmap) output, only brush (text) output + click output
 					tbl = tbl[-1]
 				}
 				do.call(tabsetPanel, tbl)

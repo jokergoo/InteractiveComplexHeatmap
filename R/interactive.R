@@ -244,12 +244,20 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 				if(verbose) cat("overlap\n")
 
 				overlap_to_heatmap = TRUE
+
+				row_label = rownames(ht@matrix)[row_index]
+				column_label = colnames(ht@matrix)[column_index]
+				if(length(row_label) == 0) row_label = rep(NA_character_, length(row_index))
+				if(length(column_label) == 0) column_label = rep(NA_character_, length(column_index))
+
 				df = rbind(df, S4Vectors::DataFrame(heatmap = ht_name, 
 						           slice = slice_name, 
 						           row_slice = i_slice,
 					               column_slice = j_slice,
 						           row_index = IntegerList(row_index), 
-						           column_index = IntegerList(column_index)))
+						           column_index = IntegerList(column_index),
+						           row_label = CharacterList(row_label),
+						           column_label = CharacterList(column_label)))
 			}
 		} else {
 			if(include_annotation) {
@@ -266,7 +274,10 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 							           row_slice = NA,
 						               column_slice = NA,
 							           row_index = IntegerList(integer(0)), 
-							           column_index = IntegerList(integer(0))))
+							           column_index = IntegerList(integer(0)),
+							           row_label = CharacterList(character(0)),
+							           column_label = CharacterList(character(0))
+							           ))
 					}
 				} else {
 					if( (pos1$y <= vp_min_y && pos2$y >= vp_min_y) ||
@@ -278,7 +289,9 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 							           row_slice = NA,
 						               column_slice = NA,
 							           row_index = IntegerList(integer(0)), 
-							           column_index = IntegerList(integer(0))))
+							           column_index = IntegerList(integer(0)),
+							           row_label = CharacterList(character(0)),
+							           column_label = CharacterList(character(0))))
 					}
 				}
 			}
@@ -495,12 +508,19 @@ selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verb
 		} else {
 			if(verbose) cat("overlap\n")
 
+			row_label = rownames(ht@matrix)[row_index]
+			column_label = colnames(ht@matrix)[column_index]
+			if(is.null(row_label)) row_label = NA_character_
+			if(is.null(column_label)) column_label = NA_character_
+
 			df = S4Vectors::DataFrame(heatmap = ht_name, 
 				           slice = slice_name, 
 				           row_slice = i_slice,
 				           column_slice = j_slice,
 				           row_index = row_index, 
-				           column_index = column_index)
+				           column_index = column_index,
+				           row_label = row_label,
+				           column_label = column_label)
 			return(df)
 		}
 
@@ -908,7 +928,23 @@ selectByLabels = function(ht_list = get_last_ht(), row_keywords = NULL, column_k
 			}
 		}
 	}
-	reformat_df(df, ht_list)
+	df = reformat_df(df, ht_list)
+
+	df$row_label = rep(CharacterList(character(0)), nrow(df))
+	df$column_label = rep(CharacterList(character(0)), nrow(df))
+	for(i in seq_len(nrow(df))) {
+		ht = ht_list@ht_list[[df[i, "heatmap"]]]
+		row_index = df[, "row_index"][[i]]
+		column_index = df[, "column_index"][[i]]
+		row_label = rownames(ht@matrix)[row_index]
+		column_label = colnames(ht@matrix)[column_index]
+		if(is.null(row_label)) row_label = rep(NA_character_, length(row_index))
+		if(is.null(column_label)) column_label = rep(NA_character_, length(column_index))
+
+		df$row_label[[i]] = row_label
+		df$column_label[[i]] = column_label
+	}
+	df
 }
 
 reformat_df = function(df, ht_list) {
