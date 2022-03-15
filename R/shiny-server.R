@@ -18,6 +18,8 @@
 # -res Resolution of the plot, pass to `shiny::renderPlot`.
 # -sub_heatmap_cell_fun The ``cell_fun`` specifically defined for sub-heatmap.
 # -sub_heatmap_layer_fun The ``layer_fun`` specifically defined for sub-heatmap.
+# -show_cell_fun Whether show graphics made by ``cell_fun`` on the main heatmap?
+# -show_layer_fun Whether show graphics made by ``cell_fun`` on the main heatmap?
 #
 # == value
 # No value is returned.
@@ -41,7 +43,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	heatmap_id = shiny_env$current_heatmap_id,
 	click_action = NULL, hover_action = NULL, 
 	dblclick_action = NULL, brush_action = NULL, res = 72,
-	sub_heatmap_cell_fun = NULL, sub_heatmap_layer_fun = NULL) {
+	show_cell_fun = NULL, show_layer_fun = NULL) {
 
 	if(shiny_env$heatmap[[heatmap_id]]$action == "hover") {
 		if(!is.null(hover_action)) click_action = hover_action
@@ -171,8 +173,66 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		}
 	}
 
-	shiny_env$heatmap[[heatmap_id]]$sub_heatmap_cell_fun = sub_heatmap_cell_fun
-	shiny_env$heatmap[[heatmap_id]]$sub_heatmap_layer_fun = sub_heatmap_layer_fun
+	if(is.null(show_cell_fun) && is.null(show_layer_fun)) {
+		if(inherits(ht_list, "Heatmap")) {
+			if(is.null(ht_list@heatmap_param$type)) {
+				if(nrow(ht_list@matrix) > 100 || ncol(ht_list@matrix) > 100) {
+					show_cell_fun = FALSE
+				} else {
+					show_cell_fun = TRUE
+				}
+			} else {
+				show_cell_fun = TRUE
+			}
+		} else {
+			show_cell_fun = FALSE
+			if(any(sapply(ht_list@ht_list, function(x) {
+				if(inherits(x, "Heatmap")) {
+					!is.null(x@heatmap_param$type)
+				} else {
+					FALSE
+				}
+			}))) {
+				show_cell_fun = TRUE
+			} else if(all(sapply(ht_list@ht_list, function(x) {
+				if(inherits(x, "Heatmap")) {
+					nrow(x) < 100 && ncol(x) < 100
+				} else {
+					TRUE
+				}
+			}))) {
+				show_cell_fun = TRUE
+			}
+		}
+	} else {
+		if(is.null(show_cell_fun)) {
+			show_cell_fun = show_layer_fun
+		}
+	}
+
+	sub_heatmap_cell_fun_list = list()
+	sub_heatmap_layer_fun_list = list()
+
+	if(!show_cell_fun) {
+		if(inherits(ht_list, "Heatmap")) {
+			sub_heatmap_cell_fun_list[[ ht_list@name ]] = ht_list@matrix_param$cell_fun
+			sub_heatmap_layer_fun_list[[ ht_list@name ]] = ht_list@matrix_param$layer_fun
+			ht_list@matrix_param$cell_fun = NULL
+			ht_list@matrix_param$layer_fun = NULL
+		} else {
+			for(ht_name in names(ht_list@ht_list)) {
+				if(inherits(ht_list@ht_list[[ht_name]], "Heatmap")) {
+					sub_heatmap_cell_fun_list[[ ht_list@ht_list[[ht_name]]@name ]] = ht_list@ht_list[[ht_name]]@matrix_param$cell_fun
+					sub_heatmap_layer_fun_list[[ ht_list@ht_list[[ht_name]]@name ]] = ht_list@ht_list[[ht_name]]@matrix_param$layer_fun
+					ht_list@ht_list[[ht_name]]@matrix_param$cell_fun = NULL
+					ht_list@ht_list[[ht_name]]@matrix_param$layer_fun = NULL
+				}
+			}
+		}
+	}
+
+	shiny_env$heatmap[[heatmap_id]]$sub_heatmap_cell_fun_list = sub_heatmap_cell_fun_list
+	shiny_env$heatmap[[heatmap_id]]$sub_heatmap_layer_fun_list = sub_heatmap_layer_fun_list
 
 	# initialize heatmaps
 	ht_list = reactiveVal({
@@ -1089,7 +1149,9 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 
 				if(show_cell_fun) {
 					cell_fun = ht_current_full@matrix_param$cell_fun
-					if(!is.null(shiny_env$heatmap[[heatmap_id]]$sub_heatmap_cell_fun)) cell_fun = shiny_env$heatmap[[heatmap_id]]$sub_heatmap_cell_fun
+					if(!is.null(shiny_env$heatmap[[heatmap_id]]$sub_heatmap_cell_fun_list[[ht_name]])) {
+						cell_fun = shiny_env$heatmap[[heatmap_id]]$sub_heatmap_cell_fun_list[[ht_name]]
+					}
 					if(!is.null(cell_fun)) {
 						cell_fun2 = cell_fun
 						ri_reverse_map = structure(ri, names = seq_along(ri))
@@ -1101,7 +1163,9 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 						}
 					}
 					layer_fun = ht_current_full@matrix_param$layer_fun
-					if(!is.null(shiny_env$heatmap[[heatmap_id]]$sub_heatmap_layer_fun)) layer_fun = shiny_env$heatmap[[heatmap_id]]$sub_heatmap_layer_fun
+					if(!is.null(shiny_env$heatmap[[heatmap_id]]$sub_heatmap_layer_fun_list[[ht_name]])) {
+						layer_fun = shiny_env$heatmap[[heatmap_id]]$sub_heatmap_layer_fun_list[[ht_name]]
+					}
 					if(!is.null(layer_fun)) {
 						layer_fun2 = layer_fun
 						ri_reverse_map = structure(ri, names = seq_along(ri))

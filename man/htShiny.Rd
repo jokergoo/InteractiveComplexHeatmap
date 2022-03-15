@@ -23,7 +23,7 @@ htShiny(ht_list = get_last_ht(), title = NULL,
     output_ui_float = FALSE,
     
     # specific for sub-heatmap
-    sub_heatmap_cell_fun = NULL, sub_heatmap_layer_fun = NULL,
+    show_cell_fun = NULL, show_layer_fun = NULL,
     
     save = NULL)
 }
@@ -49,8 +49,8 @@ htShiny(ht_list = get_last_ht(), title = NULL,
   \item{response}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{brush_opt}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
   \item{output_ui_float}{Pass to \code{\link{InteractiveComplexHeatmapOutput}}.}
-  \item{sub_heatmap_cell_fun}{The \code{cell_fun} specifically defined for sub-heatmap.}
-  \item{sub_heatmap_layer_fun}{The \code{layer_fun} specifically defined for sub-heatmap.}
+  \item{show_cell_fun}{Whether show graphics made by \code{cell_fun} on the main heatmap?}
+  \item{show_layer_fun}{Whether show graphics made by \code{cell_fun} on the main heatmap?}
   \item{save}{The value can be set to a folder name so that the shiny app is saved into several files.}
 
 }
