@@ -11,7 +11,7 @@ makeInteractiveComplexHeatmap(input, output, session, ht_list,
     heatmap_id = shiny_env$current_heatmap_id,
     click_action = NULL, hover_action = NULL,
     dblclick_action = NULL, brush_action = NULL, res = 72,
-    sub_heatmap_cell_fun = NULL, sub_heatmap_layer_fun = NULL)
+    show_cell_fun = NULL, show_layer_fun = NULL)
 }
 \arguments{
 
@@ -27,6 +27,8 @@ makeInteractiveComplexHeatmap(input, output, session, ht_list,
   \item{res}{Resolution of the plot, pass to \code{\link[shiny]{renderPlot}}.}
   \item{sub_heatmap_cell_fun}{The \code{cell_fun} specifically defined for sub-heatmap.}
   \item{sub_heatmap_layer_fun}{The \code{layer_fun} specifically defined for sub-heatmap.}
+  \item{show_cell_fun}{Whether show graphics made by \code{cell_fun} on the main heatmap?}
+  \item{show_layer_fun}{Whether show graphics made by \code{cell_fun} on the main heatmap?}
 
 }
 \value{

@@ -4,6 +4,8 @@ Changes in version 1.3.1
 - fixed the control icons when `compact = TRUE`.
 - add two columns of "row_label" and "column_label" in the output of `selectPosition()`, 
   `selectArea()`, `selectByLabels()`.
+- `makeInteractiveComplexHeatmap()`: add two new arguments: `show_cell_fun`/`show_layer_fun`
+  which controls whether show graphics made by cell_fun/layer_fun on the main heatmap.
 
 ------------------------------------------------------------------------------------
 

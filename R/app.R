@@ -24,8 +24,8 @@
 # -response Pass to `InteractiveComplexHeatmapOutput`.
 # -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
 # -output_ui_float Pass to `InteractiveComplexHeatmapOutput`.
-# -sub_heatmap_cell_fun The ``cell_fun`` specifically defined for sub-heatmap.
-# -sub_heatmap_layer_fun The ``layer_fun`` specifically defined for sub-heatmap.
+# -show_cell_fun Whether show graphics made by ``cell_fun`` on the main heatmap?
+# -show_layer_fun Whether show graphics made by ``cell_fun`` on the main heatmap?
 # -save The value can be set to a folder name so that the shiny app is saved into several files.
 #
 # == details
@@ -113,7 +113,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 	output_ui_float = FALSE,
 
 	# specific for sub-heatmap
-	sub_heatmap_cell_fun = NULL, sub_heatmap_layer_fun = NULL,
+	show_cell_fun = NULL, show_layer_fun = NULL,
 
 	save = NULL
 	) {
@@ -225,7 +225,7 @@ print(shinyApp(ui, server))
 
 	server = function(input, output, session) {
 		makeInteractiveComplexHeatmap(input, output, session, ht_list, 
-			sub_heatmap_cell_fun = sub_heatmap_cell_fun, sub_heatmap_layer_fun = sub_heatmap_layer_fun)
+			show_cell_fun = show_cell_fun, show_layer_fun = show_layer_fun)
 	}
 
 	shinyApp(ui, server)
