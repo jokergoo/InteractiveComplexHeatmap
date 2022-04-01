@@ -25,7 +25,7 @@ htShiny(ht_list = get_last_ht(), title = NULL,
     # specific for sub-heatmap
     show_cell_fun = NULL, show_layer_fun = NULL,
     
-    save = NULL)
+    save = NULL, app_options = list())
 }
 \arguments{
 
@@ -52,6 +52,7 @@ htShiny(ht_list = get_last_ht(), title = NULL,
   \item{show_cell_fun}{Whether show graphics made by \code{cell_fun} on the main heatmap?}
   \item{show_layer_fun}{Whether show graphics made by \code{cell_fun} on the main heatmap?}
   \item{save}{The value can be set to a folder name so that the shiny app is saved into several files.}
+  \item{app_options}{All pass to the \code{options} argument in \code{\link[shiny]{shinyApp}}.}
 
 }
 \details{

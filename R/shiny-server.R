@@ -16,8 +16,6 @@
 # -dblclick_action Additional actions at the server side when receiving a dblclick event on the UI.
 # -brush_action Additional actions at the server side when receiving a brush event on the UI.
 # -res Resolution of the plot, pass to `shiny::renderPlot`.
-# -sub_heatmap_cell_fun The ``cell_fun`` specifically defined for sub-heatmap.
-# -sub_heatmap_layer_fun The ``layer_fun`` specifically defined for sub-heatmap.
 # -show_cell_fun Whether show graphics made by ``cell_fun`` on the main heatmap?
 # -show_layer_fun Whether show graphics made by ``cell_fun`` on the main heatmap?
 #
@@ -1710,10 +1708,31 @@ default_click_action = function(input, output, session, heatmap_id, selected = N
 			    m = ht@matrix
 			    v = m[row_index, column_index]
 
-			    if(is.null(ht@heatmap_param$oncoprint_env)) {
+			    v_chr = v
+			    if(is.numeric(v)) {
+			    	if(abs(v) >= 1) {
+			    		if(abs(v) - abs(round(v)) == 0) {
+			    			v_chr = round(v)
+			    		} else {
+			    			v_chr = sprintf("%.2f", v)
+			    		}
+			    	} else {
+			    		v_chr = 0
+			    		for(i in 1:20) {
+			    			if(abs(v)* 10^i > 1) {
+			    				v_chr = round(v, digits = i+1)
+			    				break
+			    			}
+			    		}
+			    	}
+			    }
+
+			    if(identical(ht@matrix_param$gp$type, "none")){
+			    	col = "transparent"
+			    } else if(is.null(ht@heatmap_param$oncoprint_env)) {
 			    	col = map_to_colors(ht@matrix_color_mapping, v)
 			    } else {
-			    	col = "#FFFFFF00"
+			    	col = "transparent"
 			    }
 			    if(is.na(v)) v = "NA"
 			    row_label = rownames(m)[row_index]
@@ -1741,7 +1760,7 @@ row index:     @{row_index}
 row label:     @{row_label}
 column index:  @{column_index}
 column_label:  @{column_label}
-value:         @{v} <span style='background-color:@{col};width=10px;'>    </span></pre>")
+value:         @{v_chr} <span style='background-color:@{col};width=10px;'>    </span></pre>")
 
 				value_txt = NULL
 				if(!is.null(ht@top_annotation)) {

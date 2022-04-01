@@ -27,6 +27,7 @@
 # -show_cell_fun Whether show graphics made by ``cell_fun`` on the main heatmap?
 # -show_layer_fun Whether show graphics made by ``cell_fun`` on the main heatmap?
 # -save The value can be set to a folder name so that the shiny app is saved into several files.
+# -app_options All pass to the ``options`` argument in `shiny::shinyApp`.
 #
 # == details
 # With any ``Heatmap``/``HeatmapList`` object, directly send to ``htShiny()`` to create a Shiny app for the heatmap(s):
@@ -115,7 +116,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 	# specific for sub-heatmap
 	show_cell_fun = NULL, show_layer_fun = NULL,
 
-	save = NULL
+	save = NULL, app_options = list()
 	) {
 
 	if(is.null(ht_list)) {
@@ -201,11 +202,11 @@ ui = fluidPage(
 
 server = function(input, output, session) {
 	makeInteractiveComplexHeatmap(input, output, session, ht_list, 
-		sub_heatmap_cell_fun = sub_heatmap_cell_fun, sub_heatmap_layer_fun = sub_heatmap_layer_fun)
+		show_cell_fun = show_cell_fun, show_layer_fun = show_layer_fun)
 }
 
 cat('If the shiny app is not automatically opened in the browser, you can manually\ncopy the following link and paste it to the browser.');
-print(shinyApp(ui, server))
+print(shinyApp(ui, server, options = app_options))
 "		
 		writeLines(code, con = paste0(save, "/htShiny.R"))
 		writeLines("Rscript htShiny.R", con = paste0(save, "/htShiny.sh"))
@@ -228,7 +229,7 @@ print(shinyApp(ui, server))
 			show_cell_fun = show_cell_fun, show_layer_fun = show_layer_fun)
 	}
 
-	shinyApp(ui, server)
+	shinyApp(ui, server, options = app_options)
 }
 
 # == title
