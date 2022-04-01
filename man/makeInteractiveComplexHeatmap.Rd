@@ -25,8 +25,6 @@ makeInteractiveComplexHeatmap(input, output, session, ht_list,
   \item{dblclick_action}{Additional actions at the server side when receiving a dblclick event on the UI.}
   \item{brush_action}{Additional actions at the server side when receiving a brush event on the UI.}
   \item{res}{Resolution of the plot, pass to \code{\link[shiny]{renderPlot}}.}
-  \item{sub_heatmap_cell_fun}{The \code{cell_fun} specifically defined for sub-heatmap.}
-  \item{sub_heatmap_layer_fun}{The \code{layer_fun} specifically defined for sub-heatmap.}
   \item{show_cell_fun}{Whether show graphics made by \code{cell_fun} on the main heatmap?}
   \item{show_layer_fun}{Whether show graphics made by \code{cell_fun} on the main heatmap?}
 
