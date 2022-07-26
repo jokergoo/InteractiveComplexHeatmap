@@ -122,7 +122,7 @@ $(function() {
 			});
 		});
 
-		@{heatmap_id}_create_color_picker();
+		@{heatmap_hash}_create_color_picker();
 	}
 	
 	Shiny.addCustomMessageHandler('@{heatmap_id}_initialized', function(message) {
@@ -225,35 +225,35 @@ $(function() {
 
 
 	if('@{action}' == 'click') {
-		var @{heatmap_id}_brush_x1;
-		var @{heatmap_id}_brush_x2;
-		var @{heatmap_id}_brush_y1;
-		var @{heatmap_id}_brush_y2;
+		var @{heatmap_hash}_brush_x1;
+		var @{heatmap_hash}_brush_x2;
+		var @{heatmap_hash}_brush_y1;
+		var @{heatmap_hash}_brush_y2;
 		$('#@{heatmap_id}_heatmap').mousedown(function(e) {
 			var parentOffset = $(this).offset();
-			@{heatmap_id}_brush_x1 = e.pageX - parentOffset.left;
-			@{heatmap_id}_brush_y1 = e.pageY - parentOffset.top;
+			@{heatmap_hash}_brush_x1 = e.pageX - parentOffset.left;
+			@{heatmap_hash}_brush_y1 = e.pageY - parentOffset.top;
 		}).mouseup(function(e) {
 			var parentOffset = $(this).offset();
-			@{heatmap_id}_brush_x2 = e.pageX - parentOffset.left;
-			@{heatmap_id}_brush_y2 = e.pageY - parentOffset.top;
-			if(@{heatmap_id}_brush_x1 == @{heatmap_id}_brush_x2 && @{heatmap_id}_brush_y1 == @{heatmap_id}_brush_y2) {
+			@{heatmap_hash}_brush_x2 = e.pageX - parentOffset.left;
+			@{heatmap_hash}_brush_y2 = e.pageY - parentOffset.top;
+			if(@{heatmap_hash}_brush_x1 == @{heatmap_hash}_brush_x2 && @{heatmap_hash}_brush_y1 == @{heatmap_hash}_brush_y2) {
 				Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_action', Math.random());
 			}
 		});
 	}
 
 	if('@{action}' == 'hover') {
-		var @{heatmap_id}_x;
-        var @{heatmap_id}_y;
+		var @{heatmap_hash}_x;
+        var @{heatmap_hash}_y;
         $('#@{heatmap_id}_heatmap').mousemove(function(e) {
             var parentOffset = $(this).offset();
-            @{heatmap_id}_x = e.pageX - parentOffset.left;
-            @{heatmap_id}_y = e.pageY - parentOffset.top;
+            @{heatmap_hash}_x = e.pageX - parentOffset.left;
+            @{heatmap_hash}_y = e.pageY - parentOffset.top;
         }).mousestop(function() {
         	var h = $(this).height();
             if($('#@{heatmap_id}_heatmap_brush').length == 0) {
-                Shiny.setInputValue('@{heatmap_id}_heatmap_hover', {x: @{heatmap_id}_x, y: h - @{heatmap_id}_y});
+                Shiny.setInputValue('@{heatmap_id}_heatmap_hover', {x: @{heatmap_hash}_x, y: h - @{heatmap_hash}_y});
                 Shiny.setInputValue('@{heatmap_id}_heatmap_mouse_action', Math.random());
             } 
         })
@@ -262,38 +262,38 @@ $(function() {
 	if(@{cursor}) {
 		$('#@{heatmap_id}_heatmap').mouseover(function(e) {
 			var parentOffset = $(this).offset();
-	        @{heatmap_id}_x = e.pageX - parentOffset.left;
-	        @{heatmap_id}_y = e.pageY - parentOffset.top;
+	        @{heatmap_hash}_x = e.pageX - parentOffset.left;
+	        @{heatmap_hash}_y = e.pageY - parentOffset.top;
 
 			var right_curser = document.createElement("div");
 			right_curser.setAttribute("id", "@{heatmap_id}_right_curser");
 			$("#@{heatmap_id}_heatmap").append(right_curser);
-			$('#@{heatmap_id}_right_curser').css({'position': 'absolute', 'right': '0px', 'top': @{heatmap_id}_y, 'width': Math.max(0, Math.min(10, $(this).width() - @{heatmap_id}_x - 10)), 'height': '1px', 'background-color': 'black'});
+			$('#@{heatmap_id}_right_curser').css({'position': 'absolute', 'right': '0px', 'top': @{heatmap_hash}_y, 'width': Math.max(0, Math.min(10, $(this).width() - @{heatmap_hash}_x - 10)), 'height': '1px', 'background-color': 'black'});
 
 			var left_curser = document.createElement("div");
 			left_curser.setAttribute("id", "@{heatmap_id}_left_curser");
 			$("#@{heatmap_id}_heatmap").append(left_curser);
-			$('#@{heatmap_id}_left_curser').css({'position': 'absolute', 'left': '0px', 'top': @{heatmap_id}_y, 'width': Math.max(0, Math.min(10, @{heatmap_id}_x - 10)), 'height': '1px', 'background-color': 'black'});
+			$('#@{heatmap_id}_left_curser').css({'position': 'absolute', 'left': '0px', 'top': @{heatmap_hash}_y, 'width': Math.max(0, Math.min(10, @{heatmap_hash}_x - 10)), 'height': '1px', 'background-color': 'black'});
 
 			var top_curser = document.createElement("div");
 			top_curser.setAttribute("id", "@{heatmap_id}_top_curser");
 			$("#@{heatmap_id}_heatmap").append(top_curser);
-			$('#@{heatmap_id}_top_curser').css({'position': 'absolute', 'left': @{heatmap_id}_x, 'top': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, @{heatmap_id}_y - 10)), 'background-color': 'black'});
+			$('#@{heatmap_id}_top_curser').css({'position': 'absolute', 'left': @{heatmap_hash}_x, 'top': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, @{heatmap_hash}_y - 10)), 'background-color': 'black'});
 
 			var bottom_curser = document.createElement("div");
 			bottom_curser.setAttribute("id", "@{heatmap_id}_bottom_curser");
 			$("#@{heatmap_id}_heatmap").append(bottom_curser);
-			$('#@{heatmap_id}_bottom_curser').css({'position': 'absolute', 'left': @{heatmap_id}_x, 'bottom': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, $(this).height() - @{heatmap_id}_y - 10)), 'background-color': 'black'});
+			$('#@{heatmap_id}_bottom_curser').css({'position': 'absolute', 'left': @{heatmap_hash}_x, 'bottom': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, $(this).height() - @{heatmap_hash}_y - 10)), 'background-color': 'black'});
 
 		}).mousemove(function(e) {
 			var parentOffset = $(this).offset();
-	        @{heatmap_id}_x = e.pageX - parentOffset.left;
-	        @{heatmap_id}_y = e.pageY - parentOffset.top;
+	        @{heatmap_hash}_x = e.pageX - parentOffset.left;
+	        @{heatmap_hash}_y = e.pageY - parentOffset.top;
 
-			$('#@{heatmap_id}_right_curser').css({'right': '0px', 'top': @{heatmap_id}_y, 'width': Math.max(0, Math.min(10, $(this).width() - @{heatmap_id}_x - 10)), 'height': '1px'});
-			$('#@{heatmap_id}_left_curser').css({'left': '0px', 'top': @{heatmap_id}_y, 'width': Math.max(0, Math.min(10, @{heatmap_id}_x - 10)), 'height': '1px'});
-			$('#@{heatmap_id}_top_curser').css({'left': @{heatmap_id}_x, 'top': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, @{heatmap_id}_y - 10))});
-			$('#@{heatmap_id}_bottom_curser').css({'left': @{heatmap_id}_x, 'bottom': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, $(this).height() - @{heatmap_id}_y - 10))});
+			$('#@{heatmap_id}_right_curser').css({'right': '0px', 'top': @{heatmap_hash}_y, 'width': Math.max(0, Math.min(10, $(this).width() - @{heatmap_hash}_x - 10)), 'height': '1px'});
+			$('#@{heatmap_id}_left_curser').css({'left': '0px', 'top': @{heatmap_hash}_y, 'width': Math.max(0, Math.min(10, @{heatmap_hash}_x - 10)), 'height': '1px'});
+			$('#@{heatmap_id}_top_curser').css({'left': @{heatmap_hash}_x, 'top': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, @{heatmap_hash}_y - 10))});
+			$('#@{heatmap_id}_bottom_curser').css({'left': @{heatmap_hash}_x, 'bottom': '0px', 'width':'1px', 'height': Math.max(0, Math.min(10, $(this).height() - @{heatmap_hash}_y - 10))});
 
 		}).mouseout(function(e) {
 			$('#@{heatmap_id}_right_curser').remove();
@@ -304,9 +304,9 @@ $(function() {
 	}
 });
 
-function @{heatmap_id}_create_color_picker() {
+function @{heatmap_hash}_create_color_picker() {
 	
-	var @{heatmap_id}_pickr1 = Pickr.create({
+	var @{heatmap_hash}_pickr1 = Pickr.create({
 	    el: '#@{heatmap_id}_color_pickers_border',
 	    default: '@{pickr_fill}',
 	    theme: 'nano',
@@ -320,7 +320,7 @@ function @{heatmap_id}_create_color_picker() {
 	    }
 	});	
 
-	@{heatmap_id}_pickr1.on('change', (color, source, instance) => {
+	@{heatmap_hash}_pickr1.on('change', (color, source, instance) => {
 		$('#@{heatmap_id}_heatmap_brush').css('border-color', color.toRGBA().toString());
 		$('#@{heatmap_id}_heatmap').mousedown(function() {
 			if($('#@{heatmap_id}_heatmap_brush').length > 0) {
@@ -329,7 +329,7 @@ function @{heatmap_id}_create_color_picker() {
 		});
 	});
 
-	var @{heatmap_id}_pickr2 = Pickr.create({
+	var @{heatmap_hash}_pickr2 = Pickr.create({
 	    el: '#@{heatmap_id}_color_pickers_fill',
 	    default: '@{pickr_border}',
 	    theme: 'nano',
@@ -343,7 +343,7 @@ function @{heatmap_id}_create_color_picker() {
 	    }
 	});	
 
-	@{heatmap_id}_pickr2.on('change', (color, source, instance) => {
+	@{heatmap_hash}_pickr2.on('change', (color, source, instance) => {
 		$('#@{heatmap_id}_heatmap_brush').css('background-color', color.toRGBA().toString());
 		$('#@{heatmap_id}_heatmap').mousedown(function() {
 			if($('#@{heatmap_id}_heatmap_brush').length > 0) {

@@ -1,3 +1,10 @@
+Changes in version 1.5.1
+
+- `do_default_click_action` and `do_default_bruch_action` are reset to `FALSE` 
+  if `subHeatmapOutput()` is not used.
+
+----------------------------------------------------------------------------------
+
 Changes in version 1.3.1
 
 - depends on a more recent version of ComplexHeatmap.
@@ -8,6 +15,7 @@ Changes in version 1.3.1
   which controls whether show graphics made by cell_fun/layer_fun on the main heatmap.
 - `default_click_action()`: numbers show three non-zero digits.
 - `htShiny()`: add `app_options` argument.
+- add `is_in_sub_heatmap()`.
 
 ------------------------------------------------------------------------------------
 
