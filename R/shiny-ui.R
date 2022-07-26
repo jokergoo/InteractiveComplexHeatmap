@@ -410,6 +410,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 	layout = shiny_env$heatmap[[heatmap_id]]$layout
 	if(is.null(layout)) layout = ""
 
+	heatmap_hash = paste0("c", digest(heatmap_id, "crc32"))
     main_heatmap_ui = div(id = qq("@{heatmap_id}_heatmap_group"),
 
     	list(jqueryui_dep, 
@@ -555,6 +556,7 @@ subHeatmapOutput = function(heatmap_id, title = NULL,
 	layout = shiny_env$heatmap[[heatmap_id]]$layout
 	if(is.null(layout)) layout = ""
 
+	heatmap_hash = paste0("c", digest(heatmap_id, "crc32"))
 	sub_heatmap_ui = div(
 		id = qq("@{heatmap_id}_sub_heatmap_group"),
 		
@@ -740,6 +742,7 @@ HeatmapInfoOutput = function(heatmap_id, title = NULL, width = 400,
 		}
 	}
 
+	heatmap_hash = paste0("c", digest(heatmap_id, "crc32"))
     div(
 		id = qq("@{heatmap_id}_output_wrapper"),
 		add_js_css_dep(heatmap_id, js_file = "ht-output.js", css_file = "ht-output.css"),

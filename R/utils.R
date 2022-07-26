@@ -159,3 +159,23 @@ knee_finder = function(x, y) {
 }
 
 
+shiny_env$is_in_sub_heatmap = FALSE
+
+# == title
+# Test whether it is in sub heatmap
+#
+# == details
+# Normally, it is used in ``cell_fun``/``layer_fun``.
+#
+is_in_sub_heatmap = function() {
+	shiny_env$is_in_sub_heatmap
+}
+
+
+validate_heatmap_id = function(id) {
+	if(!is.null(id)) {
+		gsub("\\W+", "_", id)
+	} else {
+		id
+	}
+}

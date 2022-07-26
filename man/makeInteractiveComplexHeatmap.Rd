@@ -11,7 +11,7 @@ makeInteractiveComplexHeatmap(input, output, session, ht_list,
     heatmap_id = shiny_env$current_heatmap_id,
     click_action = NULL, hover_action = NULL,
     dblclick_action = NULL, brush_action = NULL, res = 72,
-    show_cell_fun = NULL, show_layer_fun = NULL)
+    show_cell_fun = TRUE, show_layer_fun = TRUE)
 }
 \arguments{
 

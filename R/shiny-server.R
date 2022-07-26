@@ -41,7 +41,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	heatmap_id = shiny_env$current_heatmap_id,
 	click_action = NULL, hover_action = NULL, 
 	dblclick_action = NULL, brush_action = NULL, res = 72,
-	show_cell_fun = NULL, show_layer_fun = NULL) {
+	show_cell_fun = TRUE, show_layer_fun = TRUE) {
 
 	if(shiny_env$heatmap[[heatmap_id]]$action == "hover") {
 		if(!is.null(hover_action)) click_action = hover_action
@@ -49,8 +49,8 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	if(shiny_env$heatmap[[heatmap_id]]$action == "dblclick") {
 		if(!is.null(dblclick_action)) click_action = dblclick_action
 	}
-	do_default_click_action = shiny_env$heatmap[[heatmap_id]]$default_output_ui
-	do_default_brush_action = shiny_env$heatmap[[heatmap_id]]$default_output_ui
+	do_default_click_action = shiny_env$heatmap[[heatmap_id]]$default_output_ui; if(is.null(do_default_click_action)) do_default_click_action = FALSE
+	do_default_brush_action = shiny_env$heatmap[[heatmap_id]]$default_output_ui; if(is.null(do_default_brush_action)) do_default_brush_action = FALSE
 
 	response = shiny_env$heatmap[[heatmap_id]]$response
 	has_click_reponse = "click" %in% response
@@ -1030,6 +1030,9 @@ getPositionFromDblclick = function(dblclick, ratio = 1) {
 make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TRUE, 
 	selected = NULL, ht_list = NULL, ...) {
 	showNotification("Making the selected sub-heatmap.", duration = 2, type = "message")
+
+	shiny_env$is_in_sub_heatmap = TRUE
+	on.exit(shiny_env$is_in_sub_heatmap <- FALSE)
 
 	width = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_width")]]
     height = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_height")]]

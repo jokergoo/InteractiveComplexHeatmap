@@ -114,7 +114,7 @@ htShiny = function(ht_list = get_last_ht(), title = NULL,
 	output_ui_float = FALSE,
 
 	# specific for sub-heatmap
-	show_cell_fun = NULL, show_layer_fun = NULL,
+	show_cell_fun = TRUE, show_layer_fun = TRUE,
 
 	save = NULL, app_options = list()
 	) {

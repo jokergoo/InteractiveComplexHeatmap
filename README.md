@@ -27,7 +27,7 @@ Zuguang Gu, et al., Make Interactive Complex Heatmaps in R, 2021, Bioinformatics
 ## Install
 
 **InteractiveComplexHeatmap** is available on
-[Bioconductor](https://bioconductor.org/packages/InteractiveComplexHeatmap/),
+[Bioconductor](http://bioconductor.org/packages/devel/bioc/html/InteractiveComplexHeatmap.html),
 you can install it by:
 
 ```r
