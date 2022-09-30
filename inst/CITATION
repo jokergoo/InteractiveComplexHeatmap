@@ -6,7 +6,8 @@ citEntry(
    author = "Zuguang Gu, Daniel Huebschmann",
    journal = "Bioinformatics",
    year = 2021,
-   textVersion = "Gu, Z. (2021) Make Interactive Complex Heatmaps in R. Bioinformatics, https://doi.org/10.1093/bioinformatics/btab806."
+   doi = "10.1093/bioinformatics/btab806",
+   textVersion = "Gu, Z. (2021) Make Interactive Complex Heatmaps in R. Bioinformatics."
 )
 
 citFooter("This free open-source software implements academic
