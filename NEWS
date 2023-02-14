@@ -1,3 +1,9 @@
+Changes in version 1.7.1
+
+-  `row_names_max_width` and `column_names_max_height` are all passed to sub-heatmaps.
+
+----------------------------------------------------------------------------------
+
 Changes in version 1.5.1
 
 - `do_default_click_action` and `do_default_bruch_action` are reset to `FALSE` 
