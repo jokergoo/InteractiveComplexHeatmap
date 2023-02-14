@@ -266,9 +266,9 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
 
 			dvl = dev.list()
-			if(!grepl("off_screen", names(dvl)[length(dvl)])) {
-				warning_wrap(qq("Detect there is already an off-screen device opened: '@{names(dvl)[length(dvl)]}', please close it by dev.off() and reopen the application."))
-			}
+			# if(!grepl("off_screen", names(dvl)[length(dvl)])) {
+			# 	warning_wrap(qq("Detect there is already an off-screen device opened: '@{names(dvl)[length(dvl)]}', please close it by dev.off() and reopen the application."))
+			# }
 
 	    	showNotification("Initialize the original heatmap.", duration = 2, type = "message")
 
@@ -1290,9 +1290,11 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 					show_row_names = show_row_names, 
 					row_names_side = ht_current_full@row_names_param$side,
 					row_names_gp = ht_current_full@row_names_param$gp,
+					row_names_max_width = if(is.null(ht_current_full@row_names_param$max_width)) unit(6, "cm") else ht_current_full@row_names_param$max_width,
 					show_column_names = show_column_names, 
 					column_names_side = ht_current_full@column_names_param$side,
 					column_names_gp = ht_current_full@column_names_param$gp,
+					column_names_max_height = if(is.null(ht_current_full@column_names_param$max_width)) unit(6, "cm") else ht_current_full@column_names_param$max_width,
 					top_annotation = top_annotation,
 					bottom_annotation = bottom_annotation,
 					left_annotation = left_annotation,
@@ -1301,7 +1303,6 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 					heatmap_width = heatmap_width, width = body_width,
 					heatmap_height = heatmap_height, height = body_height
 				)
-				
 			} else {
 				if(show_annotation) {
 					ha = ht_current_full
