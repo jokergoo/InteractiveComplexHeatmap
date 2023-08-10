@@ -174,7 +174,11 @@ is_in_sub_heatmap = function() {
 
 validate_heatmap_id = function(id) {
 	if(!is.null(id)) {
-		gsub("\\W+", "_", id)
+		id = gsub("\\W+", "_", id)
+		if(!grepl("^[a-zA-Z]", id)) {
+			id = paste0("v_", id)
+		}
+		id
 	} else {
 		id
 	}

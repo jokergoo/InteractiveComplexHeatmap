@@ -43,6 +43,8 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	dblclick_action = NULL, brush_action = NULL, res = 72,
 	show_cell_fun = TRUE, show_layer_fun = TRUE) {
 
+	heatmap_id = validate_heatmap_id(heatmap_id)
+
 	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
 		stop_wrap(qq("Cannot find heatmap '@{heatmap_id}'. Make sure 'ui' is generated in the same session as 'server'. If 'ui' is generated in a package, please generate it dynamically by wrapping into a function, while not do it statically."))
 	}
