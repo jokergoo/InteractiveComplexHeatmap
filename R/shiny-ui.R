@@ -350,7 +350,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 		stylesheet = "jquery-ui.min.css"
     )
 
-    pickr_dep = htmltools::htmlDependency(
+  pickr_dep = htmltools::htmlDependency(
 		name       = "pickr",
 		version    = "1.8.0",
 		package    = "InteractiveComplexHeatmap",
@@ -367,7 +367,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 		stylesheet = c("all.min.css", "v4-shims.min.css")
     )
 
-    clipboard_dep = htmltools::htmlDependency(
+  clipboard_dep = htmltools::htmlDependency(
 		name       = "clipboard",
 		version    = "2.0.7",
 		package    = "InteractiveComplexHeatmap",
@@ -375,7 +375,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 		script     = c("clipboard.min.js")
     )
 
-    mousestop_dep = htmltools::htmlDependency(
+  mousestop_dep = htmltools::htmlDependency(
 		name       = "mousestop",
 		version    = "3.0.1",
 		package    = "InteractiveComplexHeatmap",
@@ -399,7 +399,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
     	pickr_opacity = brush_opt$opacity
     }
 
-    if(identical(containment, FALSE)) {
+  if(identical(containment, FALSE)) {
 		containment = "false"
 	} else if(identical(containment, TRUE)) {
 		containment = qq("$('#@{heatmap_id}_heatmap_group').parent()")

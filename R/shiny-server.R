@@ -45,6 +45,9 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 	assert_starts_with_digits(heatmap_id)
 
+  
+  non_prefix_heatmap_id = remove_module_prefix(heatmap_id, session)
+  
 	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
 		stop_wrap(qq("Cannot find heatmap '@{heatmap_id}'. Make sure 'ui' is generated in the same session as 'server'. If 'ui' is generated in a package, please generate it dynamically by wrapping into a function, while not do it statically."))
 	}
@@ -55,6 +58,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	if(shiny_env$heatmap[[heatmap_id]]$action == "dblclick") {
 		if(!is.null(dblclick_action)) click_action = dblclick_action
 	}
+  
 	do_default_click_action = shiny_env$heatmap[[heatmap_id]]$default_output_ui; if(is.null(do_default_click_action)) do_default_click_action = FALSE
 	do_default_brush_action = shiny_env$heatmap[[heatmap_id]]$default_output_ui; if(is.null(do_default_brush_action)) do_default_brush_action = FALSE
 
@@ -267,9 +271,9 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	###############################################################
 	##                 The default actions
 	###############################################################
-	shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_initialize")]] = observeEvent(input[[qq("@{heatmap_id}_reset_ui_done")]], {
+	shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_initialize")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_reset_ui_done")]], {
 
-		output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
+		output[[qq("@{non_prefix_heatmap_id}_heatmap")]] = renderPlot({
 
 			dvl = dev.list()
 			# if(!grepl("off_screen", names(dvl)[length(dvl)])) {
@@ -286,7 +290,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			ht_pos(ht_pos)
 
 			if(do_default_click_action || do_default_brush_action) {
-				output[[qq("@{heatmap_id}_info")]] = renderUI({
+				output[[qq("@{non_prefix_heatmap_id}_info")]] = renderUI({
 					HTML("<p>No position is selected.</p>")
 				})
 			}
@@ -297,8 +301,8 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			if(is.null(lt)) {
 				session$sendCustomMessage(qq("@{heatmap_id}_empty_search"), "")
 			} else {
-				updateRadioButtons(session, qq("@{heatmap_id}_search_where"), label = "Which dimension to search?", choices = lt[[1]], selected = lt[[1]][[1]], inline = TRUE)
-				updateCheckboxGroupInput(session, qq("@{heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = lt[[2]], choiceValues = lt[[2]], selected = lt[[2]])
+				updateRadioButtons(session, qq("@{non_prefix_heatmap_id}_search_where"), label = "Which dimension to search?", choices = lt[[1]], selected = lt[[1]][[1]], inline = TRUE)
+				updateCheckboxGroupInput(session, qq("@{non_prefix_heatmap_id}_search_heatmaps"), label = "Which heatmaps to search?", choiceNames = lt[[2]], choiceValues = lt[[2]], selected = lt[[2]])
 			}
 			session$sendCustomMessage(qq("@{heatmap_id}_initialized"), "")
 
@@ -353,7 +357,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		    heatmap_initialized(TRUE)
 		}, res = res)
 
-		output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+		output[[qq("@{non_prefix_heatmap_id}_sub_heatmap")]] = renderPlot({
 			grid.newpage()
 			grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
 
@@ -361,7 +365,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		}, res = res)
 
 		if(do_default_click_action || do_default_brush_action) {
-			output[[qq("@{heatmap_id}_info")]] = renderUI({
+			output[[qq("@{non_prefix_heatmap_id}_info")]] = renderUI({
 				HTML("<p>No position is selected.</p>")
 			})
 		}
@@ -370,14 +374,14 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	###############################################################
 	##                 resizing
 	###############################################################
-	shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_do_resize")]] = observeEvent(input[[qq("@{heatmap_id}_heatmap_do_resize")]], {
+	shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_do_resize")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_heatmap_do_resize")]] |> debounce(700), {
 
 		req(heatmap_initialized())
 
-		width = input[[qq("@{heatmap_id}_heatmap_resize_width")]]
-	    height = input[[qq("@{heatmap_id}_heatmap_resize_height")]]
+		width = input[[qq("@{non_prefix_heatmap_id}_heatmap_resize_width")]]
+	    height = input[[qq("@{non_prefix_heatmap_id}_heatmap_resize_height")]]
 
-		output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
+		output[[qq("@{non_prefix_heatmap_id}_heatmap")]] = renderPlot({
 
 			showNotification("Making the original heatmap.", duration = 2, type = "message")
 
@@ -395,7 +399,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	###############################################################
 	##                 The original heatmap
 	###############################################################
-	output[[qq("@{heatmap_id}_heatmap_download_button")]] = downloadHandler(
+	output[[qq("@{non_prefix_heatmap_id}_heatmap_download_button")]] = downloadHandler(
 
 		filename = function() {
 			format = as.numeric(input[[qq("@{heatmap_id}_heatmap_download_format")]])
@@ -404,7 +408,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		},
 		content = function(file) {
 			
-			format = as.numeric(input[[qq("@{heatmap_id}_heatmap_download_format")]])
+			format = as.numeric(input[[qq("@{non_prefix_heatmap_id}_heatmap_download_format")]])
 			fm = c("png", "pdf", "svg")[format]
 			dev = list(png, pdf, svglite::svglite)[[format]]
 
@@ -412,8 +416,8 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			message(qq("[@{Sys.time()}] Download heatmap in @{fm}."))
 
 			temp = tempfile()
-			width = input[[qq("@{heatmap_id}_heatmap_download_image_width")]]
-			height = input[[qq("@{heatmap_id}_heatmap_download_image_height")]]
+			width = input[[qq("@{non_prefix_heatmap_id}_heatmap_download_image_width")]]
+			height = input[[qq("@{non_prefix_heatmap_id}_heatmap_download_image_height")]]
 			
 			if(fm == "png") {
 				dev(temp, width = width*2, height = height*2, res = 72*2)
@@ -434,14 +438,14 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		}
 	)
 	
-	shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_resize_button")]] = observeEvent(input[[qq("@{heatmap_id}_heatmap_resize_button")]], {
+	shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_resize_button")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_heatmap_resize_button")]], {
 
 		req(heatmap_initialized())
 
-		width = input[[qq("@{heatmap_id}_heatmap_input_width")]]
-	    height = input[[qq("@{heatmap_id}_heatmap_input_height")]]
+		width = input[[qq("@{non_prefix_heatmap_id}_heatmap_input_width")]]
+	    height = input[[qq("@{non_prefix_heatmap_id}_heatmap_input_height")]]
 
-		output[[qq("@{heatmap_id}_heatmap")]] = renderPlot({
+		output[[qq("@{non_prefix_heatmap_id}_heatmap")]] = renderPlot({
 			
 	    	draw( ht_list() )
 
@@ -461,16 +465,16 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 	##      sub-heatmap by selecting or searching
 	###############################################################
 	if(has_brush_response) {
-		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_brush")]] = observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_brush")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_heatmap_brush")]], {
 
 			req(heatmap_initialized())
 
-			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
-			if(is.null(input[[qq("@{heatmap_id}_heatmap_brush")]])) {
+			updateCheckboxInput(session, qq("@{non_prefix_heatmap_id}_remove_empty_checkbox"), value = FALSE)
+			if(is.null(input[[qq("@{non_prefix_heatmap_id}_heatmap_brush")]])) {
 				selected( NULL )
 				selected_copy( selected() )
 			} else {
-				lt = get_pos_from_brush(input[[qq("@{heatmap_id}_heatmap_brush")]], res/72)
+				lt = get_pos_from_brush(input[[qq("@{non_prefix_heatmap_id}_heatmap_brush")]], res/72)
 			  	pos1 = lt[[1]]
 			  	pos2 = lt[[2]]
 			    
@@ -480,9 +484,9 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			    dev.off2()
 			}
 
-			updateTextInput(session, qq("@{heatmap_id}_keyword"), value = "")
+			updateTextInput(session, qq("@{non_prefix_heatmap_id}_keyword"), value = "")
 
-			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+			output[[qq("@{non_prefix_heatmap_id}_sub_heatmap")]] = renderPlot({
 				
 	    		if(is.null( selected() )) {
 	    			grid.newpage()
@@ -507,18 +511,18 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 		})
 
-		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_post_remove_submit")]] = observeEvent(input[[qq("@{heatmap_id}_post_remove_submit")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_post_remove_submit")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_post_remove_submit")]], {
 
 			req(heatmap_initialized())
-			req(input[[qq("@{heatmap_id}_post_remove")]])
+			req(input[[qq("@{non_prefix_heatmap_id}_post_remove")]])
 
-			where = input[[qq("@{heatmap_id}_post_remove_dimension")]]
-			new_selected = adjust_df(selected(), n_remove = input[[qq("@{heatmap_id}_post_remove")]], 
+			where = input[[qq("@{non_prefix_heatmap_id}_post_remove_dimension")]]
+			new_selected = adjust_df(selected(), n_remove = input[[qq("@{non_prefix_heatmap_id}_post_remove")]], 
 				where = where, ht_direction = ht_list()@direction)
 
 			selected(new_selected)
 
-			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+			output[[qq("@{non_prefix_heatmap_id}_sub_heatmap")]] = renderPlot({
 				
 	    		if(nrow( selected() ) == 0) {
 	    			grid.newpage()
@@ -546,18 +550,18 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 		})
 
-		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_remove_empty_checkbox")]] = observeEvent(input[[qq("@{heatmap_id}_remove_empty_checkbox")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_remove_empty_checkbox")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_remove_empty_checkbox")]], {
 			
 			req(heatmap_initialized())
 
-			if(input[[qq("@{heatmap_id}_remove_empty_checkbox")]]) {
+			if(input[[qq("@{non_prefix_heatmap_id}_remove_empty_checkbox")]]) {
 				new_selected = adjust_df_remove_empty(selected(), ht_list())
 				selected(new_selected)
 			} else {
 				selected( selected_copy() )
 			}
 			
-			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+			output[[qq("@{non_prefix_heatmap_id}_sub_heatmap")]] = renderPlot({
 				
 	    		if(nrow( selected() ) == 0) {
 	    			grid.newpage()
@@ -585,13 +589,13 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			session$sendCustomMessage(qq("@{heatmap_id}_sub_initialized"), "on")
 		}, ignoreInit = TRUE)
 
-		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_post_remove_reset")]] = observeEvent(input[[qq("@{heatmap_id}_post_remove_reset")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_post_remove_reset")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_post_remove_reset")]], {
 
 			req(heatmap_initialized())
 
 			selected( selected_copy() )
 
-			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+			output[[qq("@{non_prefix_heatmap_id}_sub_heatmap")]] = renderPlot({
 				
 	    		if(is.null( selected() )) {
 	    			grid.newpage()
@@ -613,7 +617,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				}
 			}
 
-			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
+			updateCheckboxInput(session, qq("@{non_prefix_heatmap_id}_remove_empty_checkbox"), value = FALSE)
 
 			showNotification(qq("reset sub-heatmap."), duration = 2, type = "message")
 	    	message(qq("[@{Sys.time()}] reset sub-heatmap."))
@@ -622,14 +626,14 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 		})
 
 
-		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_search_action")]] = observeEvent(input[[qq("@{heatmap_id}_search_action")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_search_action")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_search_action")]], {
 
 			req(heatmap_initialized())
 
-			updateCheckboxInput(session, qq("@{heatmap_id}_remove_empty_checkbox"), value = FALSE)
+			updateCheckboxInput(session, qq("@{non_prefix_heatmap_id}_remove_empty_checkbox"), value = FALSE)
 			
-			if(input[[qq("@{heatmap_id}_keyword")]] == "") {
-				output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+			if(input[[qq("@{non_prefix_heatmap_id}_keyword")]] == "") {
+				output[[qq("@{non_prefix_heatmap_id}_sub_heatmap")]] = renderPlot({
 					grid.newpage()
 					grid.text("Query keyword is empty.", 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
 				}, res = res)
@@ -651,15 +655,15 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				return(invisible(NULL))
 			}
 
-			keywords2 = keywords = input[[qq("@{heatmap_id}_keyword")]]
+			keywords2 = keywords = input[[qq("@{non_prefix_heatmap_id}_keyword")]]
 
-			where = input[[qq("@{heatmap_id}_search_where")]]
-			is_regexpr = input[[qq("@{heatmap_id}_search_regexpr")]]
-			sht = input[[qq("@{heatmap_id}_search_heatmaps")]]
-			extend = input[[qq("@{heatmap_id}_search_extend")]]
+			where = input[[qq("@{non_prefix_heatmap_id}_search_where")]]
+			is_regexpr = input[[qq("@{non_prefix_heatmap_id}_search_regexpr")]]
+			sht = input[[qq("@{non_prefix_heatmap_id}_search_heatmaps")]]
+			extend = input[[qq("@{non_prefix_heatmap_id}_search_extend")]]
 
 			if(length(sht) == 0) {
-				output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+				output[[qq("@{non_prefix_heatmap_id}_sub_heatmap")]] = renderPlot({
 					grid.newpage()
 					grid.text("No heatmap is selected for searching.", 0.5, 0.5, gp = gpar(fontsize = 14, col = "red"))
 				}, res = res)
@@ -701,7 +705,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}
 			selected_copy( selected() )
 
-			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+			output[[qq("@{non_prefix_heatmap_id}_sub_heatmap")]] = renderPlot({
 				
 	    		if(is.null(selected())) {
 	    			grid.newpage()
@@ -737,16 +741,16 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 		})
 
-		output[[qq("@{heatmap_id}_sub_heatmap_download_button")]] = downloadHandler(
+		output[[qq("@{non_prefix_heatmap_id}_sub_heatmap_download_button")]] = downloadHandler(
 
 			filename = function() {
-				format = as.numeric(input[[qq("@{heatmap_id}_sub_heatmap_download_format")]])
+				format = as.numeric(input[[qq("@{non_prefix_heatmap_id}_sub_heatmap_download_format")]])
 				fm = c("png", "pdf", "svg")[format]
 				qq("@{heatmap_id}_sub_heatmap.@{fm}")
 			},
 			content = function(file) {
 				
-				format = as.numeric(input[[qq("@{heatmap_id}_sub_heatmap_download_format")]])
+				format = as.numeric(input[[qq("@{non_prefix_heatmap_id}_sub_heatmap_download_format")]])
 				fm = c("png", "pdf", "svg")[format]
 				dev = list(png, pdf, svglite::svglite)[[format]]
 
@@ -754,8 +758,8 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				message(qq("[@{Sys.time()}] Download sub-heatmap in @{fm}."))
 
 				temp = tempfile()
-				width = input[[qq("@{heatmap_id}_sub_heatmap_download_image_width")]]
-				height = input[[qq("@{heatmap_id}_sub_heatmap_download_image_height")]]
+				width = input[[qq("@{non_prefix_heatmap_id}_sub_heatmap_download_image_width")]]
+				height = input[[qq("@{non_prefix_heatmap_id}_sub_heatmap_download_image_height")]]
 				
 				if(fm == "png") {
 					dev(temp, width = width*2, height = height*2, res = 72*2)
@@ -776,11 +780,11 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}
 		)
 		
-		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_sub_heatmap_input_size_button")]] = observeEvent(input[[qq("@{heatmap_id}_sub_heatmap_input_size_button")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_sub_heatmap_input_size_button")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_sub_heatmap_input_size_button")]], {
 			
 			req(heatmap_initialized())
 
-			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+			output[[qq("@{non_prefix_heatmap_id}_sub_heatmap")]] = renderPlot({
 				if(is.null(selected())) {
 	    			grid.newpage()
 					grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
@@ -790,7 +794,7 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}, res = res)
 		})
 
-		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_open_table")]] = observeEvent(input[[qq("@{heatmap_id}_open_table")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_open_table")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_open_table")]], {
 
 			req(heatmap_initialized())
 
@@ -828,25 +832,25 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 		})
 
-		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_selected_table_create")]] = observeEvent(input[[qq("@{heatmap_id}_selected_table_create")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_selected_table_create")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_selected_table_create")]], {
 			
 			req(heatmap_initialized())
 
-			output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
+			output[[qq("@{non_prefix_heatmap_id}_selected_table")]] = renderUI({
 				HTML(format_html_table(heatmap_id, selected = selected(), ht_list = ht_list()))
 			})
 		})
 
-		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_digits")]] = observeEvent(input[[qq("@{heatmap_id}_digits")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_digits")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_digits")]], {
 
 			req(heatmap_initialized())
 
-			output[[qq("@{heatmap_id}_selected_table")]] = renderUI({
-				HTML(format_html_table(heatmap_id, input[[qq("@{heatmap_id}_digits")]], selected = selected(), ht_list = ht_list()))
+			output[[qq("@{non_prefix_heatmap_id}_selected_table")]] = renderUI({
+				HTML(format_html_table(heatmap_id, digits = input[[qq("@{non_prefix_heatmap_id}_digits")]], selected = selected(), ht_list = ht_list()))
 			})
 		})
 
-		output[[qq("@{heatmap_id}_download_table")]] = downloadHandler(
+		output[[qq("@{non_prefix_heatmap_id}_download_table")]] = downloadHandler(
 			filename = function() {
 				qq("@{heatmap_id}_download_table.csv")
 			},
@@ -856,23 +860,22 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 			}
 		)
 
-		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_open_modal")]] = observeEvent(input[[qq("@{heatmap_id}_open_modal")]], {
-			
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_open_modal")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_open_modal")]], {
 			req(heatmap_initialized())
-
-			InteractiveComplexHeatmapModal(input, output, session, sub_ht_list(), close_button = TRUE)
+		  
+			InteractiveComplexHeatmapModal(input, output, session, sub_ht_list(), heatmap_id = heatmap_id, close_button = TRUE)
 		})
 
 	} else if(only_brush_output_response) {
-		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_brush")]] = observeEvent(input[[qq("@{heatmap_id}_heatmap_brush")]], {
+		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_brush")]] = observeEvent(input[[qq("@{non_prefix_heatmap_id}_heatmap_brush")]], {
 
 			req(heatmap_initialized())
 			
-			if(is.null(input[[qq("@{heatmap_id}_heatmap_brush")]])) {
+			if(is.null(input[[qq("@{non_prefix_heatmap_id}_heatmap_brush")]])) {
 				selected( NULL )
 				selected_copy( selected() )
 			} else {
-				lt = get_pos_from_brush(input[[qq("@{heatmap_id}_heatmap_brush")]], res/72)
+				lt = get_pos_from_brush(input[[qq("@{non_prefix_heatmap_id}_heatmap_brush")]], res/72)
 			  	pos1 = lt[[1]]
 			  	pos2 = lt[[2]]
 			    
@@ -904,15 +907,15 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 
 	if(has_click_reponse) {
 		shiny_env$obs[[heatmap_id]][[qq("@{heatmap_id}_heatmap_click")]] = observeEvent(input[[ifelse(action %in% c("click", "hover"), 
-			                       qq("@{heatmap_id}_heatmap_mouse_action"), 
-			                       qq("@{heatmap_id}_heatmap_click"))]], {
+			                       qq("@{non_prefix_heatmap_id}_heatmap_mouse_action"), 
+			                       qq("@{non_prefix_heatmap_id}_heatmap_click"))]], {
 
 			req(heatmap_initialized())
 
 			if(action == "hover") {
-				pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_hover")]], res/72)
+				pos1 = get_pos_from_click(input[[qq("@{non_prefix_heatmap_id}_heatmap_hover")]], res/72)
 			} else {
-				pos1 = get_pos_from_click(input[[qq("@{heatmap_id}_heatmap_click")]], res/72)
+				pos1 = get_pos_from_click(input[[qq("@{non_prefix_heatmap_id}_heatmap_click")]], res/72)
 			}
 			  
 			if(is.null(pos1)) {
@@ -935,12 +938,12 @@ makeInteractiveComplexHeatmap = function(input, output, session, ht_list,
 				}
 			}
 
-			output[[qq("@{heatmap_id}_sub_heatmap")]] = renderPlot({
+			output[[qq("@{non_prefix_heatmap_id}_sub_heatmap")]] = renderPlot({
 				grid.newpage()
 				grid.text("No area on the heatmap is selected.", 0.5, 0.5, gp = gpar(fontsize = 14))
 			}, res = res)
 
-			output[[qq("@{heatmap_id}_sub_heatmap_control")]] = renderUI({
+			output[[qq("@{non_prefix_heatmap_id}_sub_heatmap_control")]] = renderUI({
 				NULL
 			})
 
@@ -1036,18 +1039,20 @@ getPositionFromDblclick = function(dblclick, ratio = 1) {
 make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TRUE, 
 	selected = NULL, ht_list = NULL, ...) {
 	showNotification("Making the selected sub-heatmap.", duration = 2, type = "message")
-
+  
+  non_prefix_heatmap_id = remove_module_prefix(heatmap_id, session)
+  
 	shiny_env$is_in_sub_heatmap = TRUE
 	on.exit(shiny_env$is_in_sub_heatmap <- FALSE)
 
 	width = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_width")]]
     height = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_height")]]
 
-	show_row_names = input[[qq("@{heatmap_id}_show_row_names_checkbox")]]
-	show_column_names = input[[qq("@{heatmap_id}_show_column_names_checkbox")]]
-	show_annotation = input[[qq("@{heatmap_id}_show_annotation_checkbox")]]
-	show_cell_fun = input[[qq("@{heatmap_id}_show_cell_fun_checkbox")]]
-	fill_figure = input[[qq("@{heatmap_id}_fill_figure_checkbox")]]
+	show_row_names = input[[qq("@{non_prefix_heatmap_id}_show_row_names_checkbox")]]
+	show_column_names = input[[qq("@{non_prefix_heatmap_id}_show_column_names_checkbox")]]
+	show_annotation = input[[qq("@{non_prefix_heatmap_id}_show_annotation_checkbox")]]
+	show_cell_fun = input[[qq("@{non_prefix_heatmap_id}_show_cell_fun_checkbox")]]
+	fill_figure = input[[qq("@{non_prefix_heatmap_id}_fill_figure_checkbox")]]
 
 	if(is.null(show_row_names)) show_row_names = TRUE
 	if(is.null(show_column_names)) show_column_names = TRUE
@@ -1355,14 +1360,15 @@ make_sub_heatmap = function(input, output, session, heatmap_id, update_size = TR
 	}
 
 	if(update_size) {
-		updateNumericInput(session, qq("@{heatmap_id}_sub_heatmap_input_width"), value = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_width")]])
-		updateNumericInput(session, qq("@{heatmap_id}_sub_heatmap_input_height"), value = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_height")]])
+		updateNumericInput(session, qq("@{non_prefix_heatmap_id}_sub_heatmap_input_width"), value = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_width")]])
+		updateNumericInput(session, qq("@{non_prefix_heatmap_id}_sub_heatmap_input_height"), value = session$clientData[[qq("output_@{heatmap_id}_sub_heatmap_height")]])
 	}
 
 	return(ht_select)
 }
 
 # if annotation is included, top/bottom annotation are all put at the bottom of the matrix
+
 get_sub_matrix = function(heatmap_id, digits = 2, include_annotation = TRUE, selected = NULL, ht_list = NULL) {
 
 	dev.null()
@@ -1627,8 +1633,10 @@ collect_data_frame_from_anno = function(ha, digits, direction) {
 default_brush_action = function(input, output, session, heatmap_id,
 	default_text = "Selected area should overlap to heatmap bodies.",
 	selected = NULL, ht_list = NULL) {
+  
+  non_prefix_heatmap_id = remove_module_prefix(heatmap_id, session)
 
-	output[[qq("@{heatmap_id}_info")]] = renderUI({
+	output[[qq("@{non_prefix_heatmap_id}_info")]] = renderUI({
 
 		if(is.null(selected)) {
 			HTML(qq("<p>@{default_text}</p>"))
@@ -1697,7 +1705,9 @@ default_brush_action = function(input, output, session, heatmap_id,
 }
 
 default_click_action = function(input, output, session, heatmap_id, selected = NULL, ht_list = NULL, action = "click") {
-	output[[qq("@{heatmap_id}_info")]] = renderUI({
+  non_prefix_heatmap_id = remove_module_prefix(heatmap_id, session)
+
+	output[[qq("@{non_prefix_heatmap_id}_info")]] = renderUI({
 
 	    if(is.null(selected)) {
 	    	HTML("<p>No cell is selected.</p>")
