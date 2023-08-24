@@ -195,20 +195,20 @@ InteractiveComplexHeatmapModal = function(
 				// when parent element has 'position:fixed', the color picker is not correctly positioned
 				// following code manually adjust the positions of the color picker
 				$($('#@{heatmap_id}_heatmap_control ul li')[1]).click(function() {
-					var @{heatmap_id}_color_picker_buttons = $('#@{heatmap_id}_tabs-brush button.pcr-button');
+					var color_picker_buttons = $('#@{heatmap_id}_tabs-brush button.pcr-button');
 						
-					$(@{heatmap_id}_color_picker_buttons[0]).click(function() {
-						var offset = $(@{heatmap_id}_color_picker_buttons[0]).offset();
-						var w = $(@{heatmap_id}_color_picker_buttons[0]).outerWidth();
-						var h = $(@{heatmap_id}_color_picker_buttons[0]).outerHeight();
+					$(color_picker_buttons[0]).click(function() {
+						var offset = $(color_picker_buttons[0]).offset();
+						var w = $(color_picker_buttons[0]).outerWidth();
+						var h = $(color_picker_buttons[0]).outerHeight();
 						$('#@{heatmap_id}_tabs-brush .pcr-app.visible').css('top', offset.top + h + 5).
 						                                                css('left', offset.left);
 					})
 
-					$(@{heatmap_id}_color_picker_buttons[1]).click(function() {
-						var offset = $(@{heatmap_id}_color_picker_buttons[1]).offset();
-						var w = $(@{heatmap_id}_color_picker_buttons[1]).outerWidth();
-						var h = $(@{heatmap_id}_color_picker_buttons[1]).outerHeight();
+					$(color_picker_buttons[1]).click(function() {
+						var offset = $(color_picker_buttons[1]).offset();
+						var w = $(color_picker_buttons[1]).outerWidth();
+						var h = $(color_picker_buttons[1]).outerHeight();
 						$('#@{heatmap_id}_tabs-brush .pcr-app.visible').css('top', offset.top + h + 5).
 						                                                css('left', offset.left);
 					})
