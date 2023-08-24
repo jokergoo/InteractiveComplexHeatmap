@@ -417,8 +417,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
     		 pickr_dep, 
     		 clipboard_dep, 
     		 fontawesome_dep, 
-    		 mousestop_dep,
-    		 add_js_css_dep(heatmap_id, js_file = "ht-main.js", css_file = "ht-main.css")
+    		 mousestop_dep
     	),
 
     	# htmlOutput(qq("@{heatmap_id}_warning")),
@@ -443,7 +442,8 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 			{
 				tbl = list(
 					tabPanel(HTML("<i class='fa fa-search'></i>"),
-						div(id = qq('@{heatmap_id}_tabs-search'), 
+						div(id = qq('@{heatmap_id}_tabs-search'),
+					    add_js_css_dep(heatmap_id, js_file = "ht-main.js", css_file = "ht-main.css"),
 							div(textInput(qq("@{heatmap_id}_keyword"), placeholder = "Multiple keywords separated by ','", label = "Keywords"), style = "width:250px;float:left;"),
 							div(checkboxInput(qq("@{heatmap_id}_search_regexpr"), label = "Regular expression", value = FALSE), style = "width:150px;float:left;padding-top:20px;padding-left:4px;"),
 							div(style = "clear: both;"),
@@ -768,7 +768,7 @@ add_js_css_dep = function(heatmap_id, js_file, css_file, envir = parent.frame())
     	version = packageVersion("InteractiveComplexHeatmap")
     }
     temp_js = qq(ht_js, envir = envir)
-    temp_js = paste0("<script>\n", temp_js, "\n</script>\n")
+
 
     if(identical(topenv(), .GlobalEnv)) {
     	ht_css = paste(readLines(qq("~/project/development/InteractiveComplexHeatmap/inst/template/@{css_file}")), collapse = "\n")
@@ -776,14 +776,9 @@ add_js_css_dep = function(heatmap_id, js_file, css_file, envir = parent.frame())
 		ht_css = paste(readLines(system.file("template", css_file, package = "InteractiveComplexHeatmap")), collapse = "\n")
     }
     temp_css = qq(ht_css, envir = envir)
-    temp_css = paste0("<style>\n", temp_css, "\n</style>")
-
-    htmltools::htmlDependency(
-		name   = qq("interactive-complex-heatmap-@{heatmap_id}-@{gsub('.(js|css)$', '', basename(js_file))}"),
-		version = version,
-		package    = "InteractiveComplexHeatmap",
-		src        = "www",
-		script     = "foo.js",
-		head = paste0(temp_js, "\n", temp_css)
+    
+    tagList(
+      tags$script(HTML(temp_js)),
+      tags$style(HTML(temp_css))
     )
 }
