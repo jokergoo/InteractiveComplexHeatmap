@@ -62,7 +62,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		heatmap_id = paste0("ht", get_widget_index())
 	}
 
-	heatmap_id = validate_heatmap_id(heatmap_id)
+	assert_starts_with_digits(heatmap_id)
 
 	if(layout %in% c("12|3")) {
 		layout = "(1-2)|3"
@@ -273,7 +273,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 		}
 	}
 
-	heatmap_id = validate_heatmap_id(heatmap_id)
+	assert_starts_with_digits(heatmap_id)
 
 	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
 		shiny_env$heatmap[[heatmap_id]] = list()
@@ -541,7 +541,7 @@ subHeatmapOutput = function(heatmap_id, title = NULL,
 		}
 	}
 
-	heatmap_id = validate_heatmap_id(heatmap_id)
+	assert_starts_with_digits(heatmap_id)
 
 	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
 		shiny_env$heatmap[[heatmap_id]] = list()
@@ -692,7 +692,7 @@ HeatmapInfoOutput = function(heatmap_id, title = NULL, width = 400,
 		}
 	}
 
-	heatmap_id = validate_heatmap_id(heatmap_id)
+	assert_starts_with_digits(heatmap_id)
 
 	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
 		shiny_env$heatmap[[heatmap_id]] = list()

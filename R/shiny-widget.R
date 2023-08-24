@@ -84,7 +84,7 @@ InteractiveComplexHeatmapModal = function(
 		heatmap_id = paste0("ht", get_widget_index())
 	}
 
-	heatmap_id = validate_heatmap_id(heatmap_id)
+	assert_starts_with_digits(heatmap_id)
 
 	insertUI(selector = qq("body"), 
 		where = "beforeEnd",
@@ -314,7 +314,7 @@ InteractiveComplexHeatmapWidget = function(
 		heatmap_id = paste0("ht", get_widget_index())
 	}
 
-	heatmap_id = validate_heatmap_id(heatmap_id)
+	assert_starts_with_digits(heatmap_id)
 
 	if(is.function(js_code)) js_code = js_code(heatmap_id)
 	js_code = paste(js_code, collapse = "\n")
