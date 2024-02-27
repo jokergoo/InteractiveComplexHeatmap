@@ -14,3 +14,14 @@ revdep/
 build_pkg_site.R
 .DS_Store
 ^\.github$
+vignettes/InteractiveComplexHeatmap_intro.Rmd
+vignettes/decoration.Rmd
+vignettes/deseq2_app.Rmd
+vignettes/from_scratch.Rmd
+vignettes/implementation.Rmd
+vignettes/interactivate_indirect.Rmd
+vignettes/jquery.min.js
+vignettes/jquery.sticky.js
+vignettes/model.R
+vignettes/share.Rmd
+vignettes/shiny_dev.Rmd

@@ -1668,6 +1668,8 @@ default_brush_action = function(input, output, session, heatmap_id,
 				x =  gsub('"column_slice":', '\n  "column_slice":', x)
 				x =  gsub('"row_index":', '\n  "row_index":', x)
 				x =  gsub('"column_index":', '\n  "column_index":', x)
+				x =  gsub('"row_label":', '\n  "row_label":', x)
+				x =  gsub('"column_label":', '\n  "column_label":', x)
 				x
 			})
 			json_txt = paste0("[", paste(json_list, collapse = ",\n"), "]")
