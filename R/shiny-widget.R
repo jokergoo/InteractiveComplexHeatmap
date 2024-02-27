@@ -81,10 +81,16 @@ InteractiveComplexHeatmapModal = function(
 	
 	if(is.null(heatmap_id)) {
 		increase_widget_index()
-		heatmap_id = paste0("ht", get_widget_index())
+		heatmap_id = session$ns(paste0("ht", get_widget_index()))
+	} else {
+	  increase_widget_index()
+	  heatmap_id = paste0(heatmap_id, get_widget_index())
 	}
+  
+  non_prefix_heatmap_id = remove_module_prefix(heatmap_id, session)
+  
 
-	heatmap_id = validate_heatmap_id(heatmap_id)
+	assert_starts_with_digits(heatmap_id)
 
 	insertUI(selector = qq("body"), 
 		where = "beforeEnd",
@@ -95,7 +101,7 @@ InteractiveComplexHeatmapModal = function(
 
 	cancel_action = match.arg(cancel_action)[1]
 
-	output[[qq("@{heatmap_id}_heatmap_modal_ui")]] = renderUI({
+	output[[qq("@{non_prefix_heatmap_id}_heatmap_modal_ui")]] = renderUI({
 		div(id = qq("@{heatmap_id}_heatmap_modal_background"),
 			div(id = qq("@{heatmap_id}_heatmap_modal"),
 				class = "heatmap_modal",
@@ -155,6 +161,7 @@ InteractiveComplexHeatmapModal = function(
 			if(close_button) {
 				tags$script(HTML(qq("
 					$('#@{heatmap_id}_heatmap_modal_close').click(function() {
+
 				        if('@{cancel_action}' == 'remove') {
 				        	Shiny.setInputValue('@{heatmap_id}_heatmap_modal_remove', Math.random());
 				        	$('#@{heatmap_id}_heatmap_modal_ui').remove();
@@ -183,6 +190,7 @@ InteractiveComplexHeatmapModal = function(
 			},
 			tags$script(HTML(qq("
 				$('#@{heatmap_id}_heatmap_modal_close_icon').click(function() {
+
 			        if('@{cancel_action}' == 'remove') {
 			        	Shiny.setInputValue('@{heatmap_id}_heatmap_modal_remove', Math.random());
 			        	$('#@{heatmap_id}_heatmap_modal_ui').remove();
@@ -195,20 +203,20 @@ InteractiveComplexHeatmapModal = function(
 				// when parent element has 'position:fixed', the color picker is not correctly positioned
 				// following code manually adjust the positions of the color picker
 				$($('#@{heatmap_id}_heatmap_control ul li')[1]).click(function() {
-					var @{heatmap_id}_color_picker_buttons = $('#@{heatmap_id}_tabs-brush button.pcr-button');
+					var color_picker_buttons = $('#@{heatmap_id}_tabs-brush button.pcr-button');
 						
-					$(@{heatmap_id}_color_picker_buttons[0]).click(function() {
-						var offset = $(@{heatmap_id}_color_picker_buttons[0]).offset();
-						var w = $(@{heatmap_id}_color_picker_buttons[0]).outerWidth();
-						var h = $(@{heatmap_id}_color_picker_buttons[0]).outerHeight();
+					$(color_picker_buttons[0]).click(function() {
+						var offset = $(color_picker_buttons[0]).offset();
+						var w = $(color_picker_buttons[0]).outerWidth();
+						var h = $(color_picker_buttons[0]).outerHeight();
 						$('#@{heatmap_id}_tabs-brush .pcr-app.visible').css('top', offset.top + h + 5).
 						                                                css('left', offset.left);
 					})
 
-					$(@{heatmap_id}_color_picker_buttons[1]).click(function() {
-						var offset = $(@{heatmap_id}_color_picker_buttons[1]).offset();
-						var w = $(@{heatmap_id}_color_picker_buttons[1]).outerWidth();
-						var h = $(@{heatmap_id}_color_picker_buttons[1]).outerHeight();
+					$(color_picker_buttons[1]).click(function() {
+						var offset = $(color_picker_buttons[1]).offset();
+						var w = $(color_picker_buttons[1]).outerWidth();
+						var h = $(color_picker_buttons[1]).outerHeight();
 						$('#@{heatmap_id}_tabs-brush .pcr-app.visible').css('top', offset.top + h + 5).
 						                                                css('left', offset.left);
 					})
@@ -217,12 +225,12 @@ InteractiveComplexHeatmapModal = function(
 		)
 	})
 
-	observeEvent(input[[qq("@{heatmap_id}_heatmap_modal_open")]], {
+	observeEvent(input[[qq("@{non_prefix_heatmap_id}_heatmap_modal_open")]], {
 		makeInteractiveComplexHeatmap(input, output, session, ht_list, heatmap_id = heatmap_id,
 			click_action = click_action, brush_action = brush_action)
 	}, once = TRUE)
 
-	observeEvent(input[[qq("@{heatmap_id}_heatmap_modal_remove")]], {
+	observeEvent(input[[qq("@{non_prefix_heatmap_id}_heatmap_modal_remove")]], {
 		removeUI(qq("#@{heatmap_id}_heatmap_modal_background"))
 	})
 }
@@ -314,7 +322,7 @@ InteractiveComplexHeatmapWidget = function(
 		heatmap_id = paste0("ht", get_widget_index())
 	}
 
-	heatmap_id = validate_heatmap_id(heatmap_id)
+	assert_starts_with_digits(heatmap_id)
 
 	if(is.function(js_code)) js_code = js_code(heatmap_id)
 	js_code = paste(js_code, collapse = "\n")
