@@ -62,7 +62,7 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 		heatmap_id = paste0("ht", get_widget_index())
 	}
 
-	heatmap_id = validate_heatmap_id(heatmap_id)
+	assert_starts_with_digits(heatmap_id)
 
 	if(layout %in% c("12|3")) {
 		layout = "(1-2)|3"
@@ -273,7 +273,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 		}
 	}
 
-	heatmap_id = validate_heatmap_id(heatmap_id)
+	assert_starts_with_digits(heatmap_id)
 
 	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
 		shiny_env$heatmap[[heatmap_id]] = list()
@@ -350,7 +350,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 		stylesheet = "jquery-ui.min.css"
     )
 
-    pickr_dep = htmltools::htmlDependency(
+  pickr_dep = htmltools::htmlDependency(
 		name       = "pickr",
 		version    = "1.8.0",
 		package    = "InteractiveComplexHeatmap",
@@ -367,7 +367,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 		stylesheet = c("all.min.css", "v4-shims.min.css")
     )
 
-    clipboard_dep = htmltools::htmlDependency(
+  clipboard_dep = htmltools::htmlDependency(
 		name       = "clipboard",
 		version    = "2.0.7",
 		package    = "InteractiveComplexHeatmap",
@@ -375,7 +375,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 		script     = c("clipboard.min.js")
     )
 
-    mousestop_dep = htmltools::htmlDependency(
+  mousestop_dep = htmltools::htmlDependency(
 		name       = "mousestop",
 		version    = "3.0.1",
 		package    = "InteractiveComplexHeatmap",
@@ -399,7 +399,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
     	pickr_opacity = brush_opt$opacity
     }
 
-    if(identical(containment, FALSE)) {
+  if(identical(containment, FALSE)) {
 		containment = "false"
 	} else if(identical(containment, TRUE)) {
 		containment = qq("$('#@{heatmap_id}_heatmap_group').parent()")
@@ -417,8 +417,7 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
     		 pickr_dep, 
     		 clipboard_dep, 
     		 fontawesome_dep, 
-    		 mousestop_dep,
-    		 add_js_css_dep(heatmap_id, js_file = "ht-main.js", css_file = "ht-main.css")
+    		 mousestop_dep
     	),
 
     	# htmlOutput(qq("@{heatmap_id}_warning")),
@@ -443,7 +442,8 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 			{
 				tbl = list(
 					tabPanel(HTML("<i class='fa fa-search'></i>"),
-						div(id = qq('@{heatmap_id}_tabs-search'), 
+						div(id = qq('@{heatmap_id}_tabs-search'),
+					    add_js_css_dep(heatmap_id, js_file = "ht-main.js", css_file = "ht-main.css"),
 							div(textInput(qq("@{heatmap_id}_keyword"), placeholder = "Multiple keywords separated by ','", label = "Keywords"), style = "width:250px;float:left;"),
 							div(checkboxInput(qq("@{heatmap_id}_search_regexpr"), label = "Regular expression", value = FALSE), style = "width:150px;float:left;padding-top:20px;padding-left:4px;"),
 							div(style = "clear: both;"),
@@ -541,7 +541,7 @@ subHeatmapOutput = function(heatmap_id, title = NULL,
 		}
 	}
 
-	heatmap_id = validate_heatmap_id(heatmap_id)
+	assert_starts_with_digits(heatmap_id)
 
 	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
 		shiny_env$heatmap[[heatmap_id]] = list()
@@ -692,7 +692,7 @@ HeatmapInfoOutput = function(heatmap_id, title = NULL, width = 400,
 		}
 	}
 
-	heatmap_id = validate_heatmap_id(heatmap_id)
+	assert_starts_with_digits(heatmap_id)
 
 	if(is.null(shiny_env$heatmap[[heatmap_id]])) {
 		shiny_env$heatmap[[heatmap_id]] = list()
@@ -768,7 +768,7 @@ add_js_css_dep = function(heatmap_id, js_file, css_file, envir = parent.frame())
     	version = packageVersion("InteractiveComplexHeatmap")
     }
     temp_js = qq(ht_js, envir = envir)
-    temp_js = paste0("<script>\n", temp_js, "\n</script>\n")
+
 
     if(identical(topenv(), .GlobalEnv)) {
     	ht_css = paste(readLines(qq("~/project/development/InteractiveComplexHeatmap/inst/template/@{css_file}")), collapse = "\n")
@@ -776,14 +776,9 @@ add_js_css_dep = function(heatmap_id, js_file, css_file, envir = parent.frame())
 		ht_css = paste(readLines(system.file("template", css_file, package = "InteractiveComplexHeatmap")), collapse = "\n")
     }
     temp_css = qq(ht_css, envir = envir)
-    temp_css = paste0("<style>\n", temp_css, "\n</style>")
-
-    htmltools::htmlDependency(
-		name   = qq("interactive-complex-heatmap-@{heatmap_id}-@{gsub('.(js|css)$', '', basename(js_file))}"),
-		version = version,
-		package    = "InteractiveComplexHeatmap",
-		src        = "www",
-		script     = "foo.js",
-		head = paste0(temp_js, "\n", temp_css)
+    
+    tagList(
+      tags$script(HTML(temp_js)),
+      tags$style(HTML(temp_css))
     )
 }

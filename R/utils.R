@@ -183,3 +183,20 @@ validate_heatmap_id = function(id) {
 		id
 	}
 }
+
+remove_module_prefix = function(heatmap_id, session) {
+  prefix = session$ns("")
+
+  if(nchar(prefix) == 0) {
+    heatmap_id
+  } else {
+    substring(heatmap_id, nchar(session$ns("")) + 1)
+  }
+}
+
+assert_starts_with_digits = function(heatmap_id) {
+  if(grepl("^\\d", heatmap_id)) {
+    stop_wrap("heatmap_id cannot start with digits.")
+  }
+}
+
