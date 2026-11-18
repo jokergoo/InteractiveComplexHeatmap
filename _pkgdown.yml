@@ -30,3 +30,4 @@ navbar:
 template:
   includes:
     after_body: "<style>nav[data-toggle='toc'] .nav .nav {display: block;}</style>"
+  bootstrap: 5

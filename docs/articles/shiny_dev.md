@@ -1,0 +1,908 @@
+# Functions for Shiny app development
+
+    ## Warning: package 'knitr' was built under R version 4.6.1
+
+## Usage
+
+[`htShiny()`](../reference/htShiny.md) can export heatmaps as a
+stand-alone Shiny app. **InteractiveComplexHeatmap** also provides two
+functions for integrating the interactive heatmap widgets into other
+Shiny apps. The two functions are:
+
+- [`InteractiveComplexHeatmapOutput()`](../reference/InteractiveComplexHeatmapOutput.md):
+  for building UI on the client side.
+- [`makeInteractiveComplexHeatmap()`](../reference/makeInteractiveComplexHeatmap.md):
+  for processing on the sever side.
+
+### With one interactive heatmap widget
+
+The usage is simple. Following is an example that you can directly copy
+and paste to your R session.
+
+``` r
+
+library(ComplexHeatmap)
+library(InteractiveComplexHeatmap)
+library(shiny)
+
+data(rand_mat) # simply a random matrix
+ht1 = Heatmap(rand_mat, name = "mat",
+    show_row_names = FALSE, show_column_names = FALSE)
+ht1 = draw(ht1)
+
+ui = fluidPage(
+    h3("My first interactive ComplexHeatmap Shiny app"),
+    p("This is an interactive heatmap visualization on a random matrix."),
+    InteractiveComplexHeatmapOutput()
+)
+
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht1)
+}
+
+shinyApp(ui, server)
+```
+
+### With multiple interactive heatmap widgets
+
+You can also put multiple interactive heatmaps widgets in a single Shiny
+app, but this time you must assign a “**heatmap ID**” for each one, so
+that
+[`makeInteractiveComplexHeatmap()`](../reference/makeInteractiveComplexHeatmap.md)
+can find the correct heatmap to respond. The heatmap ID should start
+with letters.
+
+``` r
+
+mat2 = matrix(sample(letters[1:10], 100, replace = TRUE), 10)
+ht2 = draw(Heatmap(mat2, name = "mat2"))
+
+ui = fluidPage(
+    h3("The first heatmap"),
+    InteractiveComplexHeatmapOutput("heatmap_1"),
+    hr(),
+    h3("The second heatmap"),
+    InteractiveComplexHeatmapOutput("heatmap_2")
+)
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht1, "heatmap_1")
+    makeInteractiveComplexHeatmap(input, output, session, ht2, "heatmap_2")
+}
+shinyApp(ui, server)
+```
+
+Similarly, multiple interactive heatmap widgets can be arranged by a
+list of tabs:
+
+``` r
+
+ui = tabsetPanel(
+    tabPanel("Numeric", InteractiveComplexHeatmapOutput("heatmap_1")),
+    tabPanel("character", InteractiveComplexHeatmapOutput("heatmap_2"))
+)
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht1, "heatmap_1")
+    makeInteractiveComplexHeatmap(input, output, session, ht2, "heatmap_2")
+}
+shinyApp(ui, server)
+```
+
+## Customize the widgets
+
+There are three main components in the interactive heatmap UI, *i.e.*,
+the orignal heatmap, the sub-heatmap and an output that shows
+information of the clicked cell or the selected sub-heatmap. The
+original heatmap and sub-heatmap components can be resized by dragging
+the two boxes, but still,
+[`InteractiveComplexHeatmapOutput()`](../reference/InteractiveComplexHeatmapOutput.md)
+provides arguments of `width1`, `width2`, `height1` and `height2` to
+control the initial sizes of the two components. They can be manually
+set to make sure the heatmap is well aligned, e.g. in
+`htShinyExample(2.2)`.
+
+The initial style of the brush can be specified by `brush_opt` argument.
+The value should be a list and the value will be sent to
+[`shiny::brushOpts()`](https://rdrr.io/pkg/shiny/man/brushOpts.html).
+Note, the style of the brush can also be manually adjusted in the Shiny
+app.
+
+### The layout
+
+The layout of the three components are controlled by argument `layout`.
+It supports following values:
+
+- `"(1-2)|3"`: Original heatmap and sub-heatmap are in the same row, and
+  output is in a second row. This is the default layout.
+- `"1|(2-3)"`: Original heatmap is in a single row, while sub-heatmap
+  and output are in a second row.
+- `"1-2-3"`: All three components are in the same row.
+- `"1|2|3"`: Each component is in a single row.
+- `"1-(2|3)"`: Being different from the other four layouts, this is a
+  two-column layout. Original heatmap is in a single column. Sub-heatmap
+  and output are vertically aligned and the two are in the second
+  column. An example can be found at `htShinyExample(4.1)`.
+
+Note the values for `layout` are in a special format to help to
+understand the layout, where the three code `1`, `2` and `3` correspond
+to original heatmap, sub-heatmap and output respectively, symbol `"-"`
+corresponds to horizontal alignment and `"|"` corresponds to vertical
+alignment. With different layouts, different default values are assigned
+to widths and heights of the three components to make sure they are well
+aligned.
+
+### Action on single heatmap cells
+
+By default, to get the information of a single cell in the heatmap, a
+`"click"` action is used. In
+[`InteractiveComplexHeatmapOutput()`](../reference/InteractiveComplexHeatmapOutput.md),
+the action can also be set to `"hover"` or `"dblclick"`, then hovering
+or double clicking will trigger the response on the sever side. The
+example in `htShinyExample(1.9)` demonstrates usages of these three
+actions.
+
+### Which action to respond
+
+The argument `response` can be set as a vector with values in `"click"`,
+`"hover"`, `"dblclick"`, `"brush"` and `"brush-output"` to only respond
+to one or multiple events on heatmap. E.g. if `response` is only set to
+`"click"`, there will be no response for the “brush event” in the
+interactive heatmap, also the sub-heatmap component is removed from the
+app. Please go to Section [“Only respond to one
+event”](InteractiveComplexHeatmap.html#only-respond-to-one-event) for
+examples.
+
+A brush on heatmap by default triggers two responses, one in the
+sub-heatmap and one in the output. If `"brush-output"` is included in
+`response` instead of `"brush"`, you can still brush on the heatmap, but
+there is only response in the output, and the sub-heatmap component is
+removed from the app.
+
+### Separately specify the three UI components
+
+[`InteractiveComplexHeatmapOutput()`](../reference/InteractiveComplexHeatmapOutput.md)
+contains all three UI components. The three components can be separately
+specified as three individual functions:
+[`originalHeatmapOutput()`](../reference/originalHeatmapOutput.md),
+[`subHeatmapOutput()`](../reference/subHeatmapOutput.md) and
+[`HeatmapInfoOutput()`](../reference/HeatmapInfoOutput.md). This
+provides flexibility for the UI arrangement, e.g. to integrate with
+package **shinydashboard** where each UI component is wrapped within an
+individual box.
+
+``` r
+
+body = dashboardBody(
+    fluidRow(
+        box(
+            title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
+            originalHeatmapOutput("ht", title = NULL)
+        ),
+        box(
+            title = "Sub-heatmap", width = 4, solidHeader = TRUE, status = "primary",
+            subHeatmapOutput("ht", title = NULL)
+        ),
+        box(
+            title = "Output", width = 4, solidHeader = TRUE, status = "primary",
+            HeatmapInfoOutput("ht", title = NULL)
+        )
+    )
+)
+
+ui = dashboardPage(
+    dashboardHeader(),
+    dashboardSidebar(),
+    body
+)
+
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht, "ht")
+}
+
+shinyApp(ui, server)
+```
+
+Please note, since now the three components are generated independently,
+to correctly connect the three components as well as the server side,
+the heatmap ID must be explicitely specified in all functions. More
+examples on integrating with **shinydashboard** can be found from
+`htShinyExample(10.1)` to `htShinyExample(10.5)`. In vignette [“A Shiny
+app for visualizing DESeq2 results”](deseq2_app.md), we demonstrate a
+complex app where the three UI components are specified separately to
+work with **shinydashboard**.
+
+One thing that needs to be noted when integrating with
+**shinydashboard** is that the width (via `width` argument in
+[`box()`](https://rdrr.io/r/graphics/box.html)) is actually measured as
+the relative fraction to parent `div` block, thus it is suggested to set
+the minimal width for parent block by adding a self-defined CSS code:
+
+``` r
+
+body = dashboardBody(
+    fluidRow(
+        box(
+            title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
+            originalHeatmapOutput("ht", title = NULL)
+        ),
+        box(
+            title = "Sub-heatmap", width = 4, solidHeader = TRUE, status = "primary",
+            subHeatmapOutput("ht", title = NULL)
+        ),
+        box(
+            title = "Output", width = 4, solidHeader = TRUE, status = "primary",
+            HeatmapInfoOutput("ht", title = NULL)
+        ),
+        tags$style("
+            .content-wrapper, .right-side {
+                overflow-x: auto;
+            }
+            .content {
+                min-width:1500px;
+            }
+        ")
+    )
+)
+```
+
+## Work with R Markdown documents
+
+It is very straightforward to integrate **InteractiveComplexHeatmap** in
+an interactive R Markdown document, just in the same way of integrating
+normal Shiny widgets. Following is an example and you can run a real
+interactive document with heatmaps by `htShinyExample(7.1)`.
+
+```` markdown
+---
+title: "InteractiveComplexHeatmap in an Rmarkdown document"
+author: "Zuguang Gu"
+date: "16/12/2020"
+output: html_document
+runtime: shiny
+---
+
+
+```{r, echo = FALSE}
+library(InteractiveComplexHeatmap)
+m = matrix(rnorm(100*100), 100)
+ht = Heatmap(m)
+```
+
+
+```{r, echo = FALSE}
+ui = fluidPage(
+    InteractiveComplexHeatmapOutput()
+)
+
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht)
+}
+
+shiny::shinyApp(ui, server)
+```
+````
+
+More simply, you can directly use [`htShiny()`](../reference/htShiny.md)
+in the chunk:
+
+```` markdown
+---
+title: "InteractiveComplexHeatmap in an Rmarkdown document"
+author: "Zuguang Gu"
+date: "16/12/2020"
+output: html_document
+runtime: shiny
+---
+
+
+```{r, echo = FALSE}
+library(InteractiveComplexHeatmap)
+m = matrix(rnorm(100*100), 100)
+ht = Heatmap(m)
+```
+
+
+```{r, echo = FALSE}
+htShiny(ht)
+```
+````
+
+## Self-define the output
+
+Both the click and brush actions on the heatmap trigger an output below
+the heatmaps. The output gives the information of which row(s) and
+columns(s) are selected by users. The reponse for the two actions can be
+self-defined.
+
+In
+[`makeInteractiveComplexHeatmap()`](../reference/makeInteractiveComplexHeatmap.md),
+there are two arguments `click_action` and `brush_action` which accept
+self-defined functions and define how to respond after the heatmap is
+clicked or brushed. The input for the two functions should accept two
+arguments, one is a `DataFrame` object which contains the information of
+which row(s) and columns(s) selected by users, and the second argument
+should always be `output` which is used in the Shiny app. `click_action`
+and `brush_action` can also be functions with four arguments which also
+includes `input` and `session`, in a form of
+`function(df, input, output, session) {...}`.
+
+To use `click_action` or `brush_action`, a `htmlOutput` (or other
+similar `*Output`) should be first set up in the UI, then the Shiny
+application knows where to update the output. The output UI can replace
+the default output by directly assigning to argument `output_ui` in
+[`InteractiveComplexHeatmapOutput()`](../reference/InteractiveComplexHeatmapOutput.md).
+
+``` r
+
+ui = fluidPage(
+    InteractiveComplexHeatmapOutput(output_ui = htmlOutput("info"))
+)
+```
+
+Or to create a new output UI independent to the interactive heatmap
+widget:
+
+``` r
+
+ui = fluidPage(
+    InteractiveComplexHeatmapOutput(),
+    htmlOutput("info")
+)
+```
+
+The `click_action` or `brush_action` is basically defined as follows
+(assume the ID set in
+[`htmlOutput()`](https://rdrr.io/pkg/shiny/man/htmlOutput.html) is
+`"info"`):
+
+``` r
+
+function(df, output) {
+    output[["info"]] = renderUI({  # or output$info = ...
+        if(is.null(df)) { # have not clicked or brushed into the heatmap body
+            ...
+        } else {
+            ...
+        }
+    })
+}
+```
+
+If users didn’t click or brush inside the heatmap body (e.g. clicked in
+the dendrograms), `df` that is passed to the functions will be `NULL`.
+Users might need to perform a sanity check here and print specific
+output when the heatmap was not selected.
+
+The format of `df` is slightly different between click and brush. If it
+is a click action, `df` has the same format as the returned object of
+[`selectPosition()`](../reference/selectPosition.md) function, which
+looks like follows. It always has one row.
+
+    ## DataFrame with 1 row and 6 columns
+    ##       heatmap                  slice row_slice column_slice row_index
+    ##   <character>            <character> <numeric>    <numeric> <integer>
+    ## 1       mat_a mat_a_heatmap_body_1_2         1            2         9
+    ##   column_index
+    ##      <integer>
+    ## 1            1
+
+If it is a brush action, `df` has the same format as the returned object
+of [`selectArea()`](../reference/selectArea.md) function, which looks
+like in the following chunk. Each line contains row and column indices
+of the selected sub-matrix in a specific heatmap slice of a specific
+heatmap.
+
+    ## DataFrame with 4 rows and 6 columns
+    ##       heatmap                  slice row_slice column_slice     row_index
+    ##   <character>            <character> <numeric>    <numeric> <IntegerList>
+    ## 1       mat_a mat_a_heatmap_body_1_2         1            2     7,5,2,...
+    ## 2       mat_a mat_a_heatmap_body_2_2         2            2           6,3
+    ## 3       mat_b mat_b_heatmap_body_1_1         1            1     7,5,2,...
+    ## 4       mat_b mat_b_heatmap_body_2_1         2            1           6,3
+    ##    column_index
+    ##   <IntegerList>
+    ## 1     2,4,1,...
+    ## 2     2,4,1,...
+    ## 3     1,2,3,...
+    ## 4     1,2,3,...
+
+Note as demonstrated above, the values in column `row_index` and
+`column_index` might be duplicated due to that the selected heatmap
+slices are in a same row slice or column slice, *e.g.*, in previous
+example, the first and the third rows correspond to selection in the
+first row slice, but in the two column slices respectively, so they have
+the same value for `row_index`. thus, to safely get the row indices and
+column indices of the selected heatmap, users might need to perform:
+
+``` r
+
+unique(unlist(df$row_index))
+unique(unlist(df$column_index))
+```
+
+Note again, if users want to use the values in `input` or `session`,
+`click_action` and `brush_action` can also be specified as functions
+with four arguments:
+
+``` r
+
+function(df, input, output, session) {
+    output[["info"]] = renderUI({  # or output$info = ...
+        if(is.null(df)) { # have not clicked into the heatmap body
+            ...
+        } else {
+            ...
+        }
+    })
+}
+```
+
+If `action` in
+[`InteractiveComplexHeatmapOutput()`](../reference/InteractiveComplexHeatmapOutput.md)
+is set to `"hover"` or `"dblclick"`, the corresponding argument for
+action is `hover_action` or `dblclick_action`. The usage is exactly the
+same as `click_action`.
+
+### Examples of self-defining output
+
+In this section, I will demonstrate several examples of implementing
+self-defined output.
+
+In the first example, I replace the default ui with a new
+`htmlOutput("info")`. On the sever side, I define a `click_action` to
+print a styled text and a `brush_action` to print the table of the
+selected rows and columns from the heatmap. This following example can
+be run by `htShinyExample(5.2)`.
+
+``` r
+
+library(GetoptLong)  # for the qq() function which does variable intepolation
+data(rand_mat)
+ht = Heatmap(rand_mat, show_row_names = FALSE, show_column_names = FALSE)
+ht = draw(ht)
+
+ui = fluidPage(
+    InteractiveComplexHeatmapOutput(output_ui = htmlOutput("info")),
+)
+
+click_action = function(df, output) {
+    output[["info"]] = renderUI({
+        if(!is.null(df)) {
+            HTML(qq("<p style='background-color:#FF8080;color:white;padding:5px;'>You have clicked on heatmap @{df$heatmap}, row @{df$row_index}, column @{df$column_index}</p>"))
+        }
+    })
+}
+
+suppressPackageStartupMessages(library(kableExtra))
+brush_action = function(df, output) {
+    row_index = unique(unlist(df$row_index))
+    column_index = unique(unlist(df$column_index))
+    output[["info"]] = renderUI({
+        if(!is.null(df)) {
+            HTML(kable_styling(kbl(m[row_index, column_index, drop = FALSE], digits = 2, format = "html"), full_width = FALSE, position = "left"))
+        }
+    })
+}
+
+server = function(input, output, session) {
+    makeInteractiveComplexHeatmap(input, output, session, ht,
+        click_action = click_action, brush_action = brush_action)
+}
+
+shinyApp(ui, server)
+```
+
+The second example gives another scenario where the output needs to be
+self-defined. In this example, an gene expression matrix is visualized
+and clicking on the heatmap will print the corresponding gene and some
+other annotations related to this gene (e.g. the corresponding gene
+symbol, RefSeq IDs and UniProt IDs). Run `htShinyExample(5.3)` to see
+how this is implemented.
+
+`htShinyExample(5.4)` gives an example where the heatmap visualizes
+correlations of a list of Gene Ontology terms (The plot is generated by
+[the **simplifyEnrichment**
+package](https://bioconductor.org/packages/simplifyEnrichment/)). In
+this example, the click and brush actions are self-defined so that the
+selected GO IDs as well as their detailed descriptions are printed.
+
+`htShinyExample(5.5)` visualizes an correlation heatmap where clicking
+on the cell generates a scatter plot of the two corresponding variables.
+In this example, I set `response = "click"` in
+[`InteractiveComplexHeatmapOutput()`](../reference/InteractiveComplexHeatmapOutput.md),
+so that the sub-heatmap is removed from the app and the scatterplot (the
+output) is directly placed on the right of the original correlation
+heatmap.
+
+`htShinyExample(5.6)` visualizes an a heatmap of pairwise Jaccard
+coefficients for multiple lists of genomic regions. Clicking on the
+heatmap cell draws a Hilbert curve (draw by [the **HilbertCurve**
+package](https://bioconductor.org/packages/HilbertCurve/)) which shows
+how the two corresponding sets of genomic regions overlap.
+
+Instead of occupying static space, the output component can be floated
+to the mouse positions by setting `output_ui_float = TRUE` in
+[`InteractiveComplexHeatmapOutput()`](../reference/InteractiveComplexHeatmapOutput.md)
+so that clicking, hovering or brushing from the heatmap opens a frame
+that contains the output. There are two examples: `htShinyExample(9.1)`
+and `htShinyExample(9.2)`. The demonstration is as follows:
+
+The self-defined output can also be floated if the self-defined UI
+replaces the default UI by setting
+`InteractiveComplexHeatmapOutput(..., output_ui = new_output_ui)`:
+
+## Compact mode
+
+In
+[`InteractiveComplexHeatmapOutput()`](../reference/InteractiveComplexHeatmapOutput.md),
+argument `compact` can be set to `TRUE`, so there is only the original
+heatmap and the output is floating at the mouse positions if
+hovering/clicking on heatmap. The calling
+
+``` r
+
+InteractiveComplexHeatmapOutput(..., compact = TRUE)
+```
+
+is actually identical to
+
+``` r
+
+InteractiveComplexHeatmap(..., response = c(action, "brush-output"), output_ui_float = TRUE)
+```
+
+Self-defined output can still be used here, e.g.
+
+``` r
+
+new_output_ui = ...
+InteractiveComplexHeatmap(..., compact = TRUE, output_ui = new_output_ui)
+```
+
+See examples with `htShinyExample(1.11)`.
+
+## Dynamically generate interactive heatmap widget
+
+In previous examples, the heatmaps are already generated before making
+the interactive app. There are also scenarios where the heatmaps are
+generated on the fly, e.g. when the matrix is dynamically generated in
+the middle of an analysis. There might be following scenarios:
+
+- The heatmap is based on a subset of matrix which is filtered by users,
+  *e.g.*, the expression matrix for differentially expressed genes
+  filtered by different cutoffs.
+- The annotations are dynamically provided by users.
+- The heatmap parameters are changed by users, *e.g.*, the clustering
+  method or the splitting variable.
+- If there are multiple heatmaps, which heatmaps are going to be drawn
+  is dynamically selected.
+
+In **InteractiveComplexHeatmap**, there are three ways to dynamically
+generate the interactive heatmap widgets which I will explain one by
+one.
+
+### Directly use `makeInteractiveComplexHeatmap()`
+
+I first demonstrate use of
+[`makeInteractiveComplexHeatmap()`](../reference/makeInteractiveComplexHeatmap.md).
+In the following example, the matrix is reordered by a user-selected
+column:
+
+``` r
+
+ui = fluidPage(
+    sliderInput("column", label = "Which column to order?", 
+        value = 1, min = 1, max = 10),
+    InteractiveComplexHeatmapOutput()
+)
+
+server = function(input, output, session) {
+    m = matrix(rnorm(100), 10)
+    rownames(m) = 1:10
+    colnames(m) = 1:10
+
+    observeEvent(input$column, {
+        order = order(m[, input$column])
+        ht = Heatmap(m[order, , drop = FALSE], 
+            cluster_rows = FALSE, cluster_columns = FALSE)
+        makeInteractiveComplexHeatmap(input, output, session, ht)
+    })
+}
+shiny::shinyApp(ui, server)
+```
+
+A similar but slightly complex example is as follows. It can be run by
+`htShinyExample(6.2)`.
+
+The use is very natural.
+[`makeInteractiveComplexHeatmap()`](../reference/makeInteractiveComplexHeatmap.md)
+is put inside an
+[`observeEvent()`](https://rdrr.io/pkg/shiny/man/observeEvent.html) or
+an [`observe()`](https://rdrr.io/pkg/shiny/man/observe.html) so that
+every time `input$column` changes, it triggers an update of the
+interactive heatmap widgets.
+
+In the following code block defined in `server` function:
+
+``` r
+
+    ...
+    observeEvent(input$column, {
+        order = order(m[, input$column])
+        ht = Heatmap(m[order, , drop = FALSE], 
+            cluster_rows = FALSE, cluster_columns = FALSE)
+        makeInteractiveComplexHeatmap(input, output, session, ht)
+    })
+    ...
+```
+
+[`makeInteractiveComplexHeatmap()`](../reference/makeInteractiveComplexHeatmap.md)
+internally creates a list of responses by
+[`observeEvent()`](https://rdrr.io/pkg/shiny/man/observeEvent.html).
+Every time when `input$column` triggers the update of
+[`makeInteractiveComplexHeatmap()`](../reference/makeInteractiveComplexHeatmap.md),
+all the calls of
+[`observeEvent()`](https://rdrr.io/pkg/shiny/man/observeEvent.html) will
+be re-executed. Re-executing
+[`observeEvent()`](https://rdrr.io/pkg/shiny/man/observeEvent.html) only
+adds the observations to the current observation list while not
+overwrites them, thus, repeatedly executing
+[`makeInteractiveComplexHeatmap()`](../reference/makeInteractiveComplexHeatmap.md)
+will make a same observatin running multiple times. To solve this issue,
+[`makeInteractiveComplexHeatmap()`](../reference/makeInteractiveComplexHeatmap.md)
+saves all the observations returned by
+[`observeEvent()`](https://rdrr.io/pkg/shiny/man/observeEvent.html) and
+it tries to first destroies all the avaiable observations that have been
+created. However, if user-defined reponses via `click_action` and
+`brush_action` use
+[`observe()`](https://rdrr.io/pkg/shiny/man/observe.html) or
+[`observeEvent()`](https://rdrr.io/pkg/shiny/man/observeEvent.html),
+they must manually recorded so that they can also be destroied when
+updating
+[`makeInteractiveComplexHeatmap()`](../reference/makeInteractiveComplexHeatmap.md).
+See the following example:
+
+``` r
+
+click_action = function(df, input, output, session) {
+    obs = observeEvent(input$foo, {
+        ...
+    })
+    record_observation(obs)
+}
+```
+
+### Use `InteractiveComplexHeatmapModal()` and `InteractiveComplexHeatmapWidget()`
+
+In the first example, the interactive heatmap is already generated when
+the Shiny app is loaded. There is a second scenario where the complete
+interactive heatmap widget is dynamically generated and inserted into
+the HTML document. There are two other functions
+[`InteractiveComplexHeatmapModal()`](../reference/InteractiveComplexHeatmapModal.md)
+and
+[`InteractiveComplexHeatmapWidget()`](../reference/InteractiveComplexHeatmapWidget.md)
+which have very similar behaviors. These two functions are normally put
+inside
+e.g. [`shiny::observeEvent()`](https://rdrr.io/pkg/shiny/man/observeEvent.html)
+or [`shiny::observe()`](https://rdrr.io/pkg/shiny/man/observe.html) and
+they generate UI as well as render the interactive heatmaps.
+
+First I will introduce the usage of
+[`InteractiveComplexHeatmapModal()`](../reference/InteractiveComplexHeatmapModal.md).
+In the following example, there is only an action button in the UI, and
+in the server function,
+[`InteractiveComplexHeatmapModal()`](../reference/InteractiveComplexHeatmapModal.md)
+is called when receiving an `input$show_heatmap` signal. This example
+can also be run by `htShinyExample(6.3)`.
+
+``` r
+
+ui = fluidPage(
+    actionButton("show_heatmap", "Generate_heatmap"),
+)
+
+server = function(input, output, session) {
+    m = matrix(rnorm(100), 10)
+    ht = Heatmap(m)
+
+    observeEvent(input$show_heatmap, {
+        InteractiveComplexHeatmapModal(input, output, session, ht)
+    })
+}
+shiny::shinyApp(ui, server)
+```
+
+As shown in the following figure,
+[`InteractiveComplexHeatmapModal()`](../reference/InteractiveComplexHeatmapModal.md)
+will open an “modal frame” which includes the interactive heatmap.
+
+In the next example which is also available in `htShinyExample(6.4)`, a
+different heatmap is generated according to user’s selection.
+
+``` r
+
+ui = fluidPage(
+    radioButtons("select", "Select", c("Numeric" = 1, "Character" = 2)),
+    actionButton("show_heatmap", "Generate_heatmap"),
+)
+
+get_heatmap_fun = function(i) {
+    mat_list = list(
+        matrix(rnorm(100), 10),
+        matrix(sample(letters[1:10], 100, replace = TRUE), 10)
+    )
+    Heatmap(mat_list[[i]])
+}
+
+server = function(input, output, session) {
+    observeEvent(input$show_heatmap, {
+        i = as.numeric(input$select)
+        InteractiveComplexHeatmapModal(input, output, session, 
+            get_heatmap = get_heatmap_fun(i))
+    })
+}
+shiny::shinyApp(ui, server)
+```
+
+The usage of
+[`InteractiveComplexHeatmapWidget()`](../reference/InteractiveComplexHeatmapWidget.md)
+is very similar as
+[`InteractiveComplexHeatmapModal()`](../reference/InteractiveComplexHeatmapModal.md),
+except that now for
+[`InteractiveComplexHeatmapWidget()`](../reference/InteractiveComplexHeatmapWidget.md),
+user needs to allocate a place defined by
+[`shiny::htmlOutput()`](https://rdrr.io/pkg/shiny/man/htmlOutput.html)
+in UI, and later the interactive heatmap widget is put there.
+
+I modify the previous example with
+[`InteractiveComplexHeatmapWidget()`](../reference/InteractiveComplexHeatmapWidget.md).
+Now in the UI, I add one line where I specify
+[`htmlOutput()`](https://rdrr.io/pkg/shiny/man/htmlOutput.html) with ID
+`"heatmap_output"`, and this ID is set in
+[`InteractiveComplexHeatmapWidget()`](../reference/InteractiveComplexHeatmapWidget.md)
+correspondingly.
+
+``` r
+
+ui = fluidPage(
+    actionButton("show_heatmap", "Generate_heatmap"),
+    htmlOutput("heatmap_output")
+)
+
+server = function(input, output, session) {
+    m = matrix(rnorm(100), 10)
+    ht = Heatmap(m)
+    
+    observeEvent(input$show_heatmap, {
+        InteractiveComplexHeatmapWidget(input, output, session, ht, output_id = "heatmap_output")
+    })
+}
+shiny::shinyApp(ui, server)
+```
+
+The app looks like follows:
+
+[`InteractiveComplexHeatmapModal()`](../reference/InteractiveComplexHeatmapModal.md)
+and
+[`InteractiveComplexHeatmapWidget()`](../reference/InteractiveComplexHeatmapWidget.md)
+all accept an argument `js_code` where customized JavaScript code can be
+inserted after the interactive UI. This is sometimes useful. In previous
+example where the heatmap widget is triggered by clicking on the action
+button, every time when clicking on the button, the widget is
+regenerated although the heatmaps are actually the same. Actually we can
+change the behavior of the button that from the second click it just
+switches the visibility of the heatmap widget. See more examples in
+`htShinyExample(6.5)` and `htShinyExample(6.7)`.
+
+``` r
+
+ui = fluidPage(
+    actionButton("show_heatmap", "Generate_heatmap"),
+    htmlOutput("heatmap_output")
+)
+
+server = function(input, output, session) {
+    m = matrix(rnorm(100), 10)
+    ht = Heatmap(m)
+    
+    observeEvent(input$show_heatmap1, {
+        InteractiveComplexHeatmapWidget(input, output, session, ht, 
+            output_id = "heatmap_output", close_button = FALSE,
+            
+            js_code = "
+                $('#show_heatmap').click(function() {
+                    $('#heatmap_output').toggle('slow');
+                }).text('Show/hide heatmap').
+                   attr('id', 'show_heatmap_toggle');
+            "
+        )
+    })
+}
+shiny::shinyApp(ui, server)
+```
+
+## Implement interactivity from scratch
+
+**InteractiveComplexHeatmap** provides rich tools for interactively
+working with heatmaps. However, some people might want to develop their
+own tools while they only need the information of which cells are
+selected. Next I demonstrate it with a simple example. The following
+example is runnable.
+
+``` r
+
+ui = fluidPage(
+    actionButton("action", "Generate heatmap"),
+    plotOutput("heatmap", width = 500, height = 500, click = "heatmap_click", 
+        brush = "heatmap_brush"),
+    verbatimTextOutput("output")
+)
+server = function(input, output, session) {
+
+    ht_obj = reactiveVal(NULL)
+    ht_pos_obj = reactiveVal(NULL)
+
+    observeEvent(input$action, {
+        m = matrix(rnorm(100), 10)
+        rownames(m) = 1:10
+        colnames(m) = 1:10
+
+        output$heatmap = renderPlot({
+            ht = draw(Heatmap(m))
+            ht_pos = htPositionsOnDevice(ht)
+
+            ht_obj(ht)
+            ht_pos_obj(ht_pos)
+        })
+    })
+
+    observeEvent(input$heatmap_click, {
+        pos = getPositionFromClick(input$heatmap_click)
+
+        selection = selectPosition(ht_obj(), pos, mark = FALSE, ht_pos = ht_pos_obj(), 
+            verbose = FALSE)
+        output$output = renderPrint({
+            print(selection)
+        })
+    })
+
+    observeEvent(input$heatmap_brush, {
+        lt = getPositionFromBrush(input$heatmap_brush)
+
+        selection = selectArea(ht_obj(), lt[[1]], lt[[2]], mark = FALSE, ht_pos = ht_pos_obj(), 
+            verbose = FALSE)
+        output$output = renderPrint({
+            print(selection)
+        })
+    })
+}
+shinyApp(ui, server)
+```
+
+In this simple Shiny app, a click or a brush on heatmap prints the
+corresponding data frame that contains the information of the selected
+cells.
+
+There are several points that need to be noticed:
+
+1.  [`draw()`](https://rdrr.io/pkg/ComplexHeatmap/man/draw-dispatch.html)
+    and [`htPositionsOnDevice()`](../reference/htPositionsOnDevice.md)
+    need to be put inside the
+    [`renderPlot()`](https://rdrr.io/pkg/shiny/man/renderPlot.html).
+2.  To get the position of the click on heatmap,
+    [`getPositionFromClick()`](../reference/getPositionFromClick.md)
+    should be used. With knowing the position of the click, it can be
+    sent to [`selectPosition()`](../reference/selectPosition.md) to
+    correspond to the original matrix.
+3.  Similarly, to get the positions of the area that was brushed on
+    heatmap,
+    [`getPositionFromBrush()`](../reference/getPositionFromBrush.md)
+    should be used.
+
+This method also works for complex heatmaps, e.g. with row or column
+splitting, or with multiple heatmaps.
+
+\
+\
+\
+\
+\

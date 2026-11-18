@@ -90,5 +90,5 @@ visualizes a 2D density distribution, and brushing on heatmap triggers a new
 that generates this example is also includes in this web application.
 
 
-<img src="https://user-images.githubusercontent.com/449218/113612404-1479aa80-9650-11eb-8647-0f06cd1b7779.gif" width="100%" />
+<img src="https://user-images.githubusercontent.com/449218/113612404-1479aa80-9650-11eb-8647-0f06cd1b7779.gif" width="100%" alt="" />
 
