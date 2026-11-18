@@ -1,42 +1,40 @@
 
-# == title
-# Process heatmaps on the sever side
-#
-# == param
-# -input Passed from the Shiny server function.
-# -output Passed from the Shiny server function.
-# -session Passed from the Shiny server function.
-# -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object.
-# -heatmap_id The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app, 
-#     this argument does not need to be specified and it will use the current one used in `InteractiveComplexHeatmapOutput`.
-# -click_action Additional actions on the server side when receiving a click event on the UI. This self-defined function
-#     should accept two or four arguments. If it is two arguments, they should be ``df`` and ``output`` and if it is four arguments,
-#     they should be ``df``, ``input``, ``output`` and ``session``.
-# -hover_action Additional actions at the server side when receiving a hover event on the UI.
-# -dblclick_action Additional actions at the server side when receiving a dblclick event on the UI.
-# -brush_action Additional actions at the server side when receiving a brush event on the UI.
-# -res Resolution of the plot, pass to `shiny::renderPlot`.
-# -show_cell_fun Whether show graphics made by ``cell_fun`` on the main heatmap?
-# -show_layer_fun Whether show graphics made by ``cell_fun`` on the main heatmap?
-#
-# == value
-# No value is returned.
-#
-# == examples
-# if(interactive()) {
-#     ht = Heatmap(m)
-#     ht = draw(ht)
-#     
-#     ui = fluidPage(
-#         InteractiveComplexHeatmapOutput()
-#     )
-#     
-#     server = function(input, output, session) {
-#         makeInteractiveComplexHeatmap(input, output, session, ht)
-#     }
-#     
-#     shiny::shinyApp(ui, server)
-# }
+#' Process heatmaps on the sever side
+#'
+#' @param input Passed from the Shiny server function.
+#' @param output Passed from the Shiny server function.
+#' @param session Passed from the Shiny server function.
+#' @param ht_list A [`ComplexHeatmap::Heatmap-class`] or a [`ComplexHeatmap::HeatmapList-class`] object.
+#' @param heatmap_id The corresponding heatmap ID from the UI. If there is only one interactive heatmap in the app, 
+#'     this argument does not need to be specified and it will use the current one used in [`InteractiveComplexHeatmapOutput()`].
+#' @param click_action Additional actions on the server side when receiving a click event on the UI. This self-defined function
+#'     should accept two or four arguments. If it is two arguments, they should be `df` and `output` and if it is four arguments,
+#'     they should be `df`, `input`, `output` and `session`.
+#' @param hover_action Additional actions at the server side when receiving a hover event on the UI.
+#' @param dblclick_action Additional actions at the server side when receiving a dblclick event on the UI.
+#' @param brush_action Additional actions at the server side when receiving a brush event on the UI.
+#' @param res Resolution of the plot, pass to [`shiny::renderPlot()`].
+#' @param show_cell_fun Whether show graphics made by `cell_fun` on the main heatmap?
+#' @param show_layer_fun Whether show graphics made by `cell_fun` on the main heatmap?
+#' @export
+#' @return
+#' No value is returned.
+#'
+#' @examples
+#' if(interactive()) {
+#'     ht = Heatmap(m)
+#'     ht = draw(ht)
+#'     
+#'     ui = fluidPage(
+#'         InteractiveComplexHeatmapOutput()
+#'     )
+#'     
+#'     server = function(input, output, session) {
+#'         makeInteractiveComplexHeatmap(input, output, session, ht)
+#'     }
+#'     
+#'     shiny::shinyApp(ui, server)
+#' }
 makeInteractiveComplexHeatmap = function(input, output, session, ht_list, 
 	heatmap_id = shiny_env$current_heatmap_id,
 	click_action = NULL, hover_action = NULL, 
@@ -961,18 +959,16 @@ get_pos_from_brush = function(brush, ratio = 1) {
     list(pos1, pos2)
 }
 
-# == title
-# Get the position of the brushed area on the heatmap image
-#
-# == param
-# -brush The input brush object. Assume ``heatmap_brush`` is the ID set to argument ``brush`` in `shiny::plotOutput`, then the value here is ``input$heatmap_brush``.
-# -ratio The relative resolution. The value should the ratio between ``res`` set in `makeInteractiveComplexHeatmap` and 72 (``res/72``).
-#
-# == value
-# A list of length two. The two elements correspons to the coordinates of the two diagonal points.
-#
-# == seealso
-# `getPositionFromClick`, `getPositionFromHover`, `getPositionFromDblclick`.
+#' Get the position of the brushed area on the heatmap image
+#'
+#' @param brush The input brush object. Assume `heatmap_brush` is the ID set to argument `brush` in [`shiny::plotOutput()`], then the value here is `input$heatmap_brush`.
+#' @param ratio The relative resolution. The value should the ratio between `res` set in [`makeInteractiveComplexHeatmap()`] and 72 (`res/72`).
+#'
+#' @return
+#' A list of length two. The two elements correspons to the coordinates of the two diagonal points.
+#' @export
+#' @seealso
+#' [`getPositionFromClick()`], [`getPositionFromHover()`], [`getPositionFromDblclick()`].
 getPositionFromBrush = function(brush, ratio = 1) {
 	get_pos_from_brush(brush, ratio)
 }
@@ -991,44 +987,38 @@ get_pos_from_click = function(click, ratio = 1) {
     pos1
 }
 
-# == title
-# Get the position of clicked point on the heatmap image
-#
-# == param
-# -click The input click object. Assume ``heatmap_click`` is the ID set to argument ``click`` in `shiny::plotOutput`, then the value here is ``input$heatmap_click``.
-# -ratio The relative resolution. The value should the ratio between ``res`` set in `makeInteractiveComplexHeatmap` and 72 (``res/72``).
-#
-# == value
-# A `grid::unit` object of length two which are the coordinates of the clicked points.
-#
-# == seealso
-# `getPositionFromBrush`, `getPositionFromHover`, `getPositionFromDblclick`.
+#' Get the position of clicked point on the heatmap image
+#'
+#' @param click The input click object. Assume `heatmap_click` is the ID set to argument `click` in [`shiny::plotOutput()`], then the value here is `input$heatmap_click`.
+#' @param ratio The relative resolution. The value should the ratio between `res` set in `makeInteractiveComplexHeatmap` and 72 (`res/72`).
+#'
+#' @return
+#' A [`grid::unit`] object of length two which are the coordinates of the clicked points.
+#' @export
+#' @seealso
+#' [`getPositionFromBrush()`], [`getPositionFromHover()`], [`getPositionFromDblclick()`].
 getPositionFromClick = function(click, ratio = 1) {
 	get_pos_from_click(click, ratio)
 }
 
-# == title
-# Get the position of hovered point on the heatmap image
-#
-# == param
-# -hover The input hover object. Assume ``heatmap_hover`` is the ID set to argument ``hover`` in `shiny::plotOutput`, then the value here is ``input$heatmap_hover``.
-# -ratio The relative resolution. The value should the ratio between ``res`` set in `makeInteractiveComplexHeatmap` and 72 (``res/72``).
-#
-# == value
-# A `grid::unit` object of length two which are the coordinates of the hover points.
+#' Get the position of hovered point on the heatmap image
+#'
+#' @param hover The input hover object. Assume `heatmap_hover` is the ID set to argument `hover` in [`shiny::plotOutput()`], then the value here is `input$heatmap_hover`.
+#' @param ratio The relative resolution. The value should the ratio between `res` set in [`makeInteractiveComplexHeatmap()`] and 72 (`res/72`).
+#' @export
+#' @return
+#' A [`grid::unit`] object of length two which are the coordinates of the hover points.
 getPositionFromHover = function(hover, ratio = 1) {
 	get_pos_from_click(hover, ratio)
 }
 
-# == title
-# Get the position of double clicked point on the heatmap image
-#
-# == param
-# -dblclick The input dblclick object. Assume ``heatmap_dblclick`` is the ID set to argument ``dblclick`` in `shiny::plotOutput`, then the value here is ``input$heatmap_dblclick``.
-# -ratio The relative resolution. The value should the ratio between ``res`` set in `makeInteractiveComplexHeatmap` and 72 (``res/72``).
-#
-# == value
-# A `grid::unit` object of length two which are the coordinates of the double clicked points.
+#' Get the position of double clicked point on the heatmap image
+#'
+#' @param dblclick The input dblclick object. Assume `heatmap_dblclick` is the ID set to argument `dblclick` in [`shiny::plotOutput()`], then the value here is `input$heatmap_dblclick`.
+#' @param ratio The relative resolution. The value should the ratio between `res` set in [`makeInteractiveComplexHeatmap()`] and 72 (`res/72`).
+#' @export
+#' @return
+#' A [`grid::unit`] object of length two which are the coordinates of the double clicked points.
 getPositionFromDblclick = function(dblclick, ratio = 1) {
 	get_pos_from_click(dblclick, ratio)
 }
@@ -1920,13 +1910,11 @@ format_html_table = function(heatmap_id, digits = 2, selected = NULL, ht_list = 
 	kb
 }
 
-# == title
-# Record the observation object
-# 
-# == param
-# -obs Observation object returned by `shiny::observe` or `shiny::observeEvent`.
-# -heatmap_id The Heatmap ID.
-#
+#' Record the observation object
+#' 
+#' @param obs Observation object returned by [`shiny::observe()`] or [`shiny::observeEvent()`].
+#' @param heatmap_id The Heatmap ID.
+#' @export
 record_observation = function(obs, heatmap_id = shiny_env$current_heatmap_id) {
 	obs_id = shiny_env$i_obs + 1
 	shiny_env$i_obs = obs_id

@@ -1,103 +1,124 @@
 
-# == title
-# Interactive heatmaps as a Shiny app
-#
-# == param
-# -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object. If it is not specified, the last generated heatmap is used.
-#     The heatmap object should better be already updated by ``draw()`` function.
-# -title Title of the app.
-# -description Description of the app. The content will be wrapped by a ``p`` tag and inserted before the interactive heatmap widget.
-# -hline Whether to add the horizontal line (by ``hr`` tag) after ``description``.
-# -html HTML fragment inserted below the heatmap. The value can be a string or be wrapped by `shiny::HTML`.
-# -heatmap_id Pass to `InteractiveComplexHeatmapOutput`.
-# -title1 Pass to `InteractiveComplexHeatmapOutput`.
-# -title2 Pass to `InteractiveComplexHeatmapOutput`.
-# -width1 Pass to `InteractiveComplexHeatmapOutput`.
-# -height1 Pass to `InteractiveComplexHeatmapOutput`.
-# -width2 Pass to `InteractiveComplexHeatmapOutput`.
-# -height2 Pass to `InteractiveComplexHeatmapOutput`.
-# -width3 Pass to `InteractiveComplexHeatmapOutput`.
-# -layout Pass to `InteractiveComplexHeatmapOutput`.
-# -compact Pass to `InteractiveComplexHeatmapOutput`.
-# -action Pass to `InteractiveComplexHeatmapOutput`.
-# -cursor Pass to `InteractiveComplexHeatmapOutput`.
-# -response Pass to `InteractiveComplexHeatmapOutput`.
-# -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
-# -output_ui_float Pass to `InteractiveComplexHeatmapOutput`.
-# -show_cell_fun Whether show graphics made by ``cell_fun`` on the main heatmap?
-# -show_layer_fun Whether show graphics made by ``cell_fun`` on the main heatmap?
-# -save The value can be set to a folder name so that the shiny app is saved into several files.
-# -app_options All pass to the ``options`` argument in `shiny::shinyApp`.
-#
-# == details
-# With any ``Heatmap``/``HeatmapList`` object, directly send to ``htShiny()`` to create a Shiny app for the heatmap(s):
-#
-#     htShiny(ht_list)
-#
-# If the heatmaps are already drawn, ``ht_list`` can be omitted and the last heatmap object is retrieved automatically:
-#
-#     Heatmap(...) + other_heatmaps_or_annotations # or other functions that internally use Heatmap()
-#     htShiny()
-#
-# == seealso
-# - https://jokergoo.shinyapps.io/interactive_complexheatmap/
-# - https://jokergoo.shinyapps.io/interactive_complexheatmap_vertical/
-# - https://jokergoo.shinyapps.io/interactive_densityheatmap/
-# - https://jokergoo.shinyapps.io/interactive_oncoprint/
-# - https://jokergoo.shinyapps.io/interactive_enrichedheatmap/
-# - https://jokergooo.shinyapps.io/interactive_upsetp/
-# - https://jokergooo.shinyapps.io/interactive_pheatmap/
-# - https://jokergooo.shinyapps.io/interactive_heatmap/
-# - https://jokergooo.shinyapps.io/interactive_heatmap_2/
-# - https://jokergooo.shinyapps.io/interactive_tidyheatmap/
-#
-# There are also many examples that can be get with `htShinyExample`.
-#
-# == value
-# A Shiny app object.
-#
-# == example
-# # use last generated heatmap
-# if(interactive() && dev.interactive()) {
-#     m = matrix(rnorm(100), 10)
-#     Heatmap(m)
-#     htShiny()
-# }
-#
-# # by providing a heatmap/heatmap list
-# if(interactive()) {
-#     m = matrix(rnorm(100), 10)
-#     rownames(m) = 1:10
-#     colnames(m) = 1:10
-#     
-#     ht = Heatmap(m)
-#     ht = draw(ht)
-#     htShiny(ht)
-# }
-#
-# # vertical heatmap list
-# if(interactive()) {
-#     m1 = matrix(rnorm(100), 10)
-#     rownames(m1) = 1:10
-#     colnames(m1) = 1:10
-#     ht1 = Heatmap(m1, row_km = 2, column_km = 2)
-#     
-#     m2 = matrix(sample(letters[1:10], 100, replace = TRUE), 10)
-#     ht2 = Heatmap(m2)
-#     
-#     ht_list = draw(ht1 + ht2)
-#     htShiny(ht_list)
-#     
-#     ht_list = ht1 \%v\% ht2
-#     htShiny(ht_list)
-# }
-#
-# # compact mode
-# if(interactive()) {
-#     m = matrix(rnorm(100), 10)
-#     Heatmap(m)
-#     htShiny(compact = TRUE)
-# }
+#' Interactive heatmaps as a Shiny app
+#'
+#' @param ht_list A [`ComplexHeatmap::Heatmap-class`] or a [`ComplexHeatmap::HeatmapList-class`] object. If it is not specified, the last generated heatmap is used.
+#'     The heatmap object should better be already updated by [`ComplexHeatmap::draw()`] function.
+#' @param title Title of the app.
+#' @param description Description of the app. The content will be wrapped by a `<p>` tag and inserted before the interactive heatmap widget.
+#' @param hline Whether to add the horizontal line (by `<hr>` tag) after `<description>`.
+#' @param html HTML fragment inserted below the heatmap. The value can be a string or be wrapped by [`shiny::HTML()`].
+#' @param heatmap_id Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param title1 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param title2 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param width1 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param height1 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param width2 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param height2 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param width3 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param layout Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param compact Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param action Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param cursor Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param response Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param brush_opt Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param output_ui_float Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param show_cell_fun Whether show graphics made by `cell_fun` on the main heatmap?
+#' @param show_layer_fun Whether show graphics made by `cell_fun` on the main heatmap?
+#' @param save The value can be set to a folder name so that the shiny app is saved into several files.
+#' @param app_options All pass to the `options` argument in [`shiny::shinyApp()`].
+#'
+#' @export
+#' @import shiny
+#' @import ComplexHeatmap
+#' @import grid
+#' @import GetoptLong
+#' @import IRanges
+#' @import RColorBrewer
+#' @import S4Vectors
+#' @import clisymbols
+#' @import digest
+#' @import fontawesome
+#' @import svglite
+#' @importFrom grDevices dev.copy dev.interactive dev.new dev.off dev.size png dev.list pdf
+#' @importFrom graphics par
+#' @importFrom htmltools htmlDependency
+#' @importFrom jsonlite fromJSON toJSON
+#' @importFrom kableExtra scroll_box kable_styling kbl column_spec row_spec
+#' @importFrom stats coef kmeans lm rnorm
+#' @importFrom utils install.packages packageDescription packageVersion write.csv write.table
+#' @details
+#' With any `Heatmap`/`HeatmapList` object, directly send to [`htShiny()`] to create a Shiny app for the heatmap(s):
+#'
+#' ```
+#' htShiny(ht_list)
+#' ```
+#'
+#' If the heatmaps are already drawn, `ht_list` can be omitted and the last heatmap object is retrieved automatically:
+#'
+#' ```
+#' Heatmap(...) + other_heatmaps_or_annotations # or other functions that internally use Heatmap()
+#' htShiny()
+#' ```
+#'
+#' @seealso
+#' - https://jokergoo.shinyapps.io/interactive_complexheatmap/
+#' - https://jokergoo.shinyapps.io/interactive_complexheatmap_vertical/
+#' - https://jokergoo.shinyapps.io/interactive_densityheatmap/
+#' - https://jokergoo.shinyapps.io/interactive_oncoprint/
+#' - https://jokergoo.shinyapps.io/interactive_enrichedheatmap/
+#' - https://jokergooo.shinyapps.io/interactive_upsetp/
+#' - https://jokergooo.shinyapps.io/interactive_pheatmap/
+#' - https://jokergooo.shinyapps.io/interactive_heatmap/
+#' - https://jokergooo.shinyapps.io/interactive_heatmap_2/
+#' - https://jokergooo.shinyapps.io/interactive_tidyheatmap/
+#'
+#' There are also many examples that can be get with [`htShinyExample()`].
+#'
+#' @return
+#' A Shiny app object.
+#'
+#' @examples
+#' # use last generated heatmap
+#' if(interactive() && dev.interactive()) {
+#'     m = matrix(rnorm(100), 10)
+#'     Heatmap(m)
+#'     htShiny()
+#' }
+#'
+#' # by providing a heatmap/heatmap list
+#' if(interactive()) {
+#'     m = matrix(rnorm(100), 10)
+#'     rownames(m) = 1:10
+#'     colnames(m) = 1:10
+#'     
+#'     ht = Heatmap(m)
+#'     ht = draw(ht)
+#'     htShiny(ht)
+#' }
+#'
+#' # vertical heatmap list
+#' if(interactive()) {
+#'     m1 = matrix(rnorm(100), 10)
+#'     rownames(m1) = 1:10
+#'     colnames(m1) = 1:10
+#'     ht1 = Heatmap(m1, row_km = 2, column_km = 2)
+#'     
+#'     m2 = matrix(sample(letters[1:10], 100, replace = TRUE), 10)
+#'     ht2 = Heatmap(m2)
+#'     
+#'     ht_list = draw(ht1 + ht2)
+#'     htShiny(ht_list)
+#'     
+#'     ht_list = ht1 %v% ht2
+#'     htShiny(ht_list)
+#' }
+#'
+#' # compact mode
+#' if(interactive()) {
+#'     m = matrix(rnorm(100), 10)
+#'     Heatmap(m)
+#'     htShiny(compact = TRUE)
+#' }
 htShiny = function(ht_list = get_last_ht(), title = NULL, 
 	description = NULL, hline = TRUE, html = NULL, 
 
@@ -232,15 +253,9 @@ print(shinyApp(ui, server, options = app_options))
 	shinyApp(ui, server, options = app_options)
 }
 
-# == title
-# Interactive heatmaps as a Shiny app
-#
-# == param
-# -... All goes to `htShiny`.
-#
-# == value
-# A Shiny app object.
-#
+#' Interactive heatmaps as a Shiny app
+#' @param ... All goes to [`htShiny()`].
+#' @export
 ht_shiny = function(...) {
 	htShiny(...)
 }

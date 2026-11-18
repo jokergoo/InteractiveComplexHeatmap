@@ -1,62 +1,60 @@
 
-# == title
-# Interactive complex heatmap modal dialog
-#
-# == param
-# -input Passed from the Shiny server function.
-# -output Passed from the Shiny server function.
-# -session Passed from the Shiny server function.
-# -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object.
-# -heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
-# -title1 Pass to `InteractiveComplexHeatmapOutput`.
-# -title2 Pass to `InteractiveComplexHeatmapOutput`.
-# -width1 Pass to `InteractiveComplexHeatmapOutput`.
-# -height1 Pass to `InteractiveComplexHeatmapOutput`.
-# -width2 Pass to `InteractiveComplexHeatmapOutput`.
-# -height2 Pass to `InteractiveComplexHeatmapOutput`.
-# -width3 Pass to `InteractiveComplexHeatmapOutput`.
-# -layout Pass to `InteractiveComplexHeatmapOutput`.
-# -compact Pass to `InteractiveComplexHeatmapOutput`.
-# -action Pass to `InteractiveComplexHeatmapOutput`.
-# -cursor Pass to `InteractiveComplexHeatmapOutput`.
-# -response Pass to `InteractiveComplexHeatmapOutput`.
-# -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
-# -output_ui Pass to `InteractiveComplexHeatmapOutput`.
-# -output_ui_float Pass to `InteractiveComplexHeatmapOutput`.
-# -click_action Pass to `makeInteractiveComplexHeatmap`.
-# -brush_action Pass to `makeInteractiveComplexHeatmap`.
-# -js_code Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function
-#       that takes "heatmap ID" as the argument and returns the formatted JavaScript code.
-# -close_button Whether to add a close button at the end of the widget. If it is ``FALSE``, the widget
-#      can be closed by clicking outside of the widget.
-# -cancel_action Whether to remove the UI from HTML or just hide it when the UI is closed.
-#
-# == details
-# It creates an interactive heatmap "modal dialog" according to a certain action.
-#
-# The function is normally put inside `shiny::observe` or `shiny::observeEvent`.
-#
-# == value
-# No value is returned.
-#
-# == example
-# if(interactive()) {
-#     require(ComplexHeatmap)
-#     
-#     ui = fluidPage(
-#         actionButton("show_heatmap", "Generate_heatmap"),
-#     )
-#     
-#     server = function(input, output, session) {
-#         m = matrix(rnorm(100), 10)
-#         ht = Heatmap(m)
-#         
-#         observeEvent(input$show_heatmap, {
-#             InteractiveComplexHeatmapModal(input, output, session, ht)
-#         })
-#     }
-#     shiny::shinyApp(ui, server)
-# }
+#' Interactive complex heatmap modal dialog
+#'
+#' @param input Passed from the Shiny server function.
+#' @param output Passed from the Shiny server function.
+#' @param session Passed from the Shiny server function.
+#' @param ht_list A [`ComplexHeatmap::Heatmap-class`] or a [`ComplexHeatmap::HeatmapList-class`] object.
+#' @param heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
+#' @param title1 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param title2 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param width1 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param height1 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param width2 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param height2 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param width3 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param layout Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param compact Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param action Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param cursor Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param response Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param brush_opt Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param output_ui Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param output_ui_float Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param click_action Pass to [`makeInteractiveComplexHeatmap()`].
+#' @param brush_action Pass to [`makeInteractiveComplexHeatmap()`].
+#' @param js_code Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function
+#'       that takes "heatmap ID" as the argument and returns the formatted JavaScript code.
+#' @param close_button Whether to add a close button at the end of the widget. If it is `FALSE`, the widget
+#'      can be closed by clicking outside of the widget.
+#' @param cancel_action Whether to remove the UI from HTML or just hide it when the UI is closed.
+#' @export
+#' @details
+#' It creates an interactive heatmap "modal dialog" according to a certain action.
+#'
+#' The function is normally put inside [`shiny::observe()`] or [`shiny::observeEvent()`].
+#'
+#' @return
+#' No value is returned.
+#'
+#' @examples
+#' if(interactive()) {
+#'     require(ComplexHeatmap)
+#'     
+#'     ui = fluidPage(
+#'         actionButton("show_heatmap", "Generate_heatmap"),
+#'     )
+#'     
+#'     server = function(input, output, session) {
+#'         m = matrix(rnorm(100), 10)
+#'         ht = Heatmap(m)
+#'         
+#'         observeEvent(input$show_heatmap, {
+#'             InteractiveComplexHeatmapModal(input, output, session, ht)
+#'         })
+#'     }
+#'     shiny::shinyApp(ui, server)
+#' }
 InteractiveComplexHeatmapModal = function(
 	input, output, session, ht_list, heatmap_id = NULL,
 
@@ -227,66 +225,64 @@ InteractiveComplexHeatmapModal = function(
 	})
 }
 
-# == title
-# Interactive complex heatmap widget
-#
-# == param
-# -input Passed from the Shiny server function.
-# -output Passed from the Shiny server function.
-# -session Passed from the Shiny server function.
-# -ht_list A `ComplexHeatmap::Heatmap-class` or a `ComplexHeatmap::HeatmapList-class` object.
-# -heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
-# -output_id Where the heatmap is put.
-# -title1 Pass to `InteractiveComplexHeatmapOutput`.
-# -title2 Pass to `InteractiveComplexHeatmapOutput`.
-# -width1 Pass to `InteractiveComplexHeatmapOutput`.
-# -height1 Pass to `InteractiveComplexHeatmapOutput`.
-# -width2 Pass to `InteractiveComplexHeatmapOutput`.
-# -height2 Pass to `InteractiveComplexHeatmapOutput`.
-# -width3 Pass to `InteractiveComplexHeatmapOutput`.
-# -layout Pass to `InteractiveComplexHeatmapOutput`.
-# -compact Pass to `InteractiveComplexHeatmapOutput`.
-# -action Pass to `InteractiveComplexHeatmapOutput`.
-# -cursor Pass to `InteractiveComplexHeatmapOutput`.
-# -response Pass to `InteractiveComplexHeatmapOutput`.
-# -brush_opt Pass to `InteractiveComplexHeatmapOutput`.
-# -output_ui Pass to `InteractiveComplexHeatmapOutput`.
-# -output_ui_float Pass to `InteractiveComplexHeatmapOutput`.
-# -click_action Pass to `makeInteractiveComplexHeatmap`.
-# -brush_action Pass to `makeInteractiveComplexHeatmap`.
-# -js_code Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function
-#       that takes "heatmap ID" as the argument and returns the formatted JavaScript code.
-# -close_button Whether to add a close button at the end of the widget.
-# -cancel_action Whether to remove the UI from HTML or just hide it when the UI is closed.
-#
-# == details
-# It creates an interactive heatmap widget according to a certain action. The UI is placed to the output ID that user defined.
-#
-# The function is normally put inside `shiny::observe` or `shiny::observeEvent`.
-#
-# == value
-# No value is returned.
-#
-# == example
-# if(interactive()) {
-#     require(ComplexHeatmap)
-#     
-#     ui = fluidPage(
-#         actionButton("show_heatmap", "Generate_heatmap"),
-#         htmlOutput("heatmap_output")
-#     )
-#     
-#     server = function(input, output, session) {
-#         m = matrix(rnorm(100), 10)
-#         ht = Heatmap(m)
-#         
-#         observeEvent(input$show_heatmap, {
-#             InteractiveComplexHeatmapWidget(input, output, session, ht, 
-#                 output_id = "heatmap_output")
-#         })
-#     }
-#     shiny::shinyApp(ui, server)
-# }
+#' Interactive complex heatmap widget
+#'
+#' @param input Passed from the Shiny server function.
+#' @param output Passed from the Shiny server function.
+#' @param session Passed from the Shiny server function.
+#' @param ht_list A [`ComplexHeatmap::Heatmap-class`] or a [`ComplexHeatmap::HeatmapList-class`] object.
+#' @param heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
+#' @param output_id Where the heatmap is put.
+#' @param title1 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param title2 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param width1 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param height1 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param width2 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param height2 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param width3 Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param layout Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param compact Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param action Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param cursor Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param response Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param brush_opt Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param output_ui Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param output_ui_float Pass to [`InteractiveComplexHeatmapOutput()`].
+#' @param click_action Pass to [`makeInteractiveComplexHeatmap()`].
+#' @param brush_action Pass to [`makeInteractiveComplexHeatmap()`].
+#' @param js_code Additional JavaScript code that is put after the interactive heatmap UI. The value can be a text or a function
+#'       that takes "heatmap ID" as the argument and returns the formatted JavaScript code.
+#' @param close_button Whether to add a close button at the end of the widget.
+#' @param cancel_action Whether to remove the UI from HTML or just hide it when the UI is closed.
+#' @export
+#' @details
+#' It creates an interactive heatmap widget according to a certain action. The UI is placed to the output ID that user defined.
+#'
+#' The function is normally put inside [`shiny::observe()`] or [`shiny::observeEvent()`].
+#'
+#' @return
+#' No value is returned.
+#'
+#' @examples
+#' if(interactive()) {
+#'     require(ComplexHeatmap)
+#'     
+#'     ui = fluidPage(
+#'         actionButton("show_heatmap", "Generate_heatmap"),
+#'         htmlOutput("heatmap_output")
+#'     )
+#'     
+#'     server = function(input, output, session) {
+#'         m = matrix(rnorm(100), 10)
+#'         ht = Heatmap(m)
+#'         
+#'         observeEvent(input$show_heatmap, {
+#'             InteractiveComplexHeatmapWidget(input, output, session, ht, 
+#'                 output_id = "heatmap_output")
+#'         })
+#'     }
+#'     shiny::shinyApp(ui, server)
+#' }
 InteractiveComplexHeatmapWidget = function(
 	input, output, session, ht_list, heatmap_id = NULL, output_id,
 

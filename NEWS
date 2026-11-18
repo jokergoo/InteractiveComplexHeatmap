@@ -1,3 +1,9 @@
+Changes in version 1.21.1
+
+- `add_js_css_dep()`: directly paste JS code by `HTML()` instead of specifying `htmlDependency()`.
+
+---------------------------------------------------------------------------------
+
 Changes in version 1.7.1
 
 -  `row_names_max_width` and `column_names_max_height` are all passed to sub-heatmaps.

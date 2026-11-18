@@ -1,42 +1,40 @@
 .ENV = new.env()
 
-# == title
-# Select an area in the heatmap
-#
-# == param
-# -ht_list A `ComplexHeatmap::HeatmapList-class` object returned by `ComplexHeatmap::draw,Heatmap-method` or `ComplexHeatmap::draw,HeatmapList-method`.
-#         If it is omitted, it uses the last generated heatmap.
-# -mark Whether to mark the selected area as a rectangle.
-# -pos1 If the value is ``NULL``, it can be selected by click on the heatmap (of cource, the heatmap should be on
-#       the interactive graphics device). If it is set, it must be a `grid::unit` object with length two which
-#       corresponds to the x and y position of the point.
-# -pos2 Another point as ``pos1``, together with ``pos1`` defines the selected region.
-# -verbose Whether to print messages.
-# -ht_pos A value returned by `htPositionsOnDevice`.
-# -include_annotation Internally used.
-# -calibrate Internally used. Mainly works for Rstudio desktop IDE.
-#
-# == details
-# The regions can be selected interactively or selected manually by setting ``pos1`` and ``pos2``.
-#
-# == value
-# A `S4Vectors::DataFrame` object with row indices and column indices corresponding to the selected region.
-#
-# == example
-# if(dev.interactive()) {
-#     m = matrix(rnorm(100), 10)
-#     rownames(m) = 1:10
-#     colnames(m) = 1:10
-#     
-#     ht = Heatmap(m)
-#     ht = draw(ht)
-#     selectArea(ht)
-#     
-#     set.seed(123)
-#     ht = Heatmap(m, row_km = 2, column_km = 2)
-#     ht = draw(ht)
-#     selectArea(ht)
-# }
+#' Select an area in the heatmap
+#'
+#' @param ht_list A [`ComplexHeatmap::HeatmapList-class`] object returned by [`ComplexHeatmap::draw,Heatmap-method`] or [`ComplexHeatmap::draw,HeatmapList-method`].
+#'         If it is omitted, it uses the last generated heatmap.
+#' @param mark Whether to mark the selected area as a rectangle.
+#' @param pos1 If the value is `NULL`, it can be selected by click on the heatmap (of cource, the heatmap should be on
+#'       the interactive graphics device). If it is set, it must be a [`grid::unit`] object with length two which
+#'       corresponds to the x and y position of the point.
+#' @param pos2 Another point as `pos1`, together with `pos1` defines the selected region.
+#' @param verbose Whether to print messages.
+#' @param ht_pos A value returned by [`htPositionsOnDevice()`].
+#' @param include_annotation Internally used.
+#' @param calibrate Internally used. Mainly works for Rstudio desktop IDE.
+#' @export
+#' @details
+#' The regions can be selected interactively or selected manually by setting `pos1` and `pos2`.
+#'
+#' @return
+#' A [`S4Vectors::DataFrame`] object with row indices and column indices corresponding to the selected region.
+#'
+#' @examples
+#' if(dev.interactive()) {
+#'     m = matrix(rnorm(100), 10)
+#'     rownames(m) = 1:10
+#'     colnames(m) = 1:10
+#'     
+#'     ht = Heatmap(m)
+#'     ht = draw(ht)
+#'     selectArea(ht)
+#'     
+#'     set.seed(123)
+#'     ht = Heatmap(m, row_km = 2, column_km = 2)
+#'     ht = draw(ht)
+#'     selectArea(ht)
+#' }
 selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = TRUE, verbose = TRUE,
 	ht_pos = NULL, include_annotation = FALSE, calibrate = TRUE) {
 
@@ -322,36 +320,34 @@ selectArea = function(ht_list = get_last_ht(), pos1 = NULL, pos2 = NULL, mark = 
 	} 
 }
 
-# == title
-# Select a position in the heatmap
-#
-# == param
-# -ht_list A `ComplexHeatmap::HeatmapList-class` object returned by `ComplexHeatmap::draw,Heatmap-method` or `ComplexHeatmap::draw,HeatmapList-method`.
-#       If it is omitted, it uses the last generated heatmap.
-# -mark Whether to mark the selected position as a point.
-# -pos If the value is ``NULL``, it can be selected by click on the heatmap (of cource, the heatmap should be on
-#       the interactive graphics device). If it is set, it must be a `grid::unit` object with length two which
-#       corresponds to the x and y position of the point.
-# -verbose Whether to print messages.
-# -ht_pos A value returned by `htPositionsOnDevice`.
-# -calibrate Internally used. Mainly works for Rstudio desktop IDE.
-#
-# == details
-# The regions can be selected interactively or selected manually by setting ``pos``.
-#
-# == value
-# A `S4Vectors::DataFrame` object with row indices and column indices corresponding to the selected position.
-#
-# == example
-# if(dev.interactive()) {
-#     m = matrix(rnorm(100), 10)
-#     rownames(m) = 1:10
-#     colnames(m) = 1:10
-#     
-#     ht = Heatmap(m)
-#     ht = draw(ht)
-#     selectPosition(ht)
-# }
+#' Select a position in the heatmap
+#'
+#' @param ht_list A [`ComplexHeatmap::HeatmapList-class`] object returned by [`ComplexHeatmap::draw,Heatmap-method`] or [`ComplexHeatmap::draw,HeatmapList-method`].
+#'       If it is omitted, it uses the last generated heatmap.
+#' @param mark Whether to mark the selected position as a point.
+#' @param pos If the value is `NULL`, it can be selected by click on the heatmap (of cource, the heatmap should be on
+#'       the interactive graphics device). If it is set, it must be a [`grid::unit`] object with length two which
+#'       corresponds to the x and y position of the point.
+#' @param verbose Whether to print messages.
+#' @param ht_pos A value returned by [`htPositionsOnDevice()`].
+#' @param calibrate Internally used. Mainly works for Rstudio desktop IDE.
+#' @export
+#' @details
+#' The regions can be selected interactively or selected manually by setting `pos`.
+#'
+#' @return
+#' A [`S4Vectors::DataFrame`] object with row indices and column indices corresponding to the selected position.
+#'
+#' @examples
+#' if(dev.interactive()) {
+#'     m = matrix(rnorm(100), 10)
+#'     rownames(m) = 1:10
+#'     colnames(m) = 1:10
+#'     
+#'     ht = Heatmap(m)
+#'     ht = draw(ht)
+#'     selectPosition(ht)
+#' }
 selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verbose = TRUE,
 	ht_pos = NULL, calibrate = TRUE) {
 
@@ -531,32 +527,31 @@ selectPosition = function(ht_list = get_last_ht(), pos = NULL, mark = TRUE, verb
 }
 
 
-# == title
-# Get heatmap positions on the graphics device
-#
-# == param
-# -ht_list A `ComplexHeatmap::HeatmapList-class` object returned by `ComplexHeatmap::draw,Heatmap-method` or `ComplexHeatmap::draw,HeatmapList-method`.
-#          If it is omitted, it uses the last generated heatmap.
-# -unit The unit.
-# -valueOnly Whether only return the numeric values.
-# -include_annotation Internally used.
-# -calibrate Internally used.
-#
-# == details
-# ``ht_list`` must have been already updated by ``draw()`` function. The function needs to be executed under a graphics device where the heatmap is written.
-#
-# == value
-# It returns a `S4Vectors::DataFrame` object of the position of every heatmap slice.
-#
-# == example
-# if(dev.interactive()) {
-#     m = matrix(rnorm(100), 10)
-#     ht = Heatmap(m, row_km = 2, column_km = 2)
-#     ht = draw(ht)
-#     pos = htPositionsOnDevice(ht)
-#     
-#     InteractiveComplexHeatmap:::redraw_ht_vp(pos)
-# }
+#' Get heatmap positions on the graphics device
+#'
+#' @param ht_list A [`ComplexHeatmap::HeatmapList-class`] object returned by [`ComplexHeatmap::draw,Heatmap-method`] or [`ComplexHeatmap::draw,HeatmapList-method`].
+#'          If it is omitted, it uses the last generated heatmap.
+#' @param unit The unit.
+#' @param valueOnly Whether only return the numeric values.
+#' @param include_annotation Internally used.
+#' @param calibrate Internally used.
+#' @export
+#' @import S4Vectors
+#' @details
+#' `ht_list` must have been already updated by [`ComplexHeatmap::draw()`] function. The function needs to be executed under a graphics device where the heatmap is written.
+#'
+#' @return
+#' It returns a [`S4Vectors::DataFrame`] object of the position of every heatmap slice.
+#'
+#' @examples
+#' if(dev.interactive()) {
+#'     m = matrix(rnorm(100), 10)
+#'     ht = Heatmap(m, row_km = 2, column_km = 2)
+#'     ht = draw(ht)
+#'     pos = htPositionsOnDevice(ht)
+#'     
+#'     InteractiveComplexHeatmap:::redraw_ht_vp(pos)
+#' }
 htPositionsOnDevice = function(ht_list = get_last_ht(), unit = "inch", valueOnly = FALSE, 
 	include_annotation = FALSE, calibrate = TRUE) {
 	
@@ -947,6 +942,7 @@ selectByLabels = function(ht_list = get_last_ht(), row_keywords = NULL, column_k
 	df
 }
 
+#' @import IRanges
 reformat_df = function(df, ht_list) {
 	
 	if(is.null(df)) return(df)

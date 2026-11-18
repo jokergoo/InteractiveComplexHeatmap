@@ -6,25 +6,24 @@ create_clipboard = paste(lines[i:length(lines)], collapse = "\n")
 
 create_clipboard = gsub("'", "\\\\'", create_clipboard)
 create_clipboard = gsub('"', '\\\\"', create_clipboard)
-# == title
-# Examples of interactive complex heatmaps
-#
-# == param
-# -which An index of which example to use. The list of all examples can be obtained by executing `htShinyExample` with no argument.
-#
-# == details
-# In every example, there is a Shiny app opened, which also includes source code that generates this app.
-#
-# == value
-# A Shiny app object.
-#
-# == example
-# # list all examples
-# htShinyExample()
-#
-# if(interactive()) {
-#     htShinyExample(4.2)
-# }
+
+#' Examples of interactive complex heatmaps
+#'
+#' @param which An index of which example to use. The list of all examples can be obtained by executing [`htShinyExample()`] with no argument.
+#' @export
+#' @details
+#' In every example, there is a Shiny app opened, which also includes source code that generates this app.
+#'
+#' @return
+#' A Shiny app object.
+#'
+#' @examples
+#' # list all examples
+#' htShinyExample()
+#'
+#' if(interactive()) {
+#'     htShinyExample(4.2)
+#' }
 htShinyExample = function(which) {
 	if(missing(which)) {
 		cat("There are following examples. Individual example can be run by e.g. htShinyExample(1.1).\n\n")
@@ -98,7 +97,7 @@ htShinyExample = function(which) {
 
 			original_htShiny = htShiny
 
-			htShiny = function(ht = InteractiveComplexHeatmap:::get_last_ht(), ...) {
+			htShiny = function(ht = InteractiveComplexHeatmap::get_last_ht(), ...) {
 				html = qq("
 <hr />
 <div>
@@ -223,6 +222,5 @@ get_examples = function() {
 
 	examples
 }
-
 
 examples = get_examples()

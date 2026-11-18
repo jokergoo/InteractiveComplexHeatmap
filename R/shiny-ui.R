@@ -1,45 +1,44 @@
 
-# == title
-# UI for the interactive complex heatmaps
-#
-# == param
-# -heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
-# -title1 Title of the original heatmap.
-# -title2 Title of the sub-heatmap.
-# -title3 Title of the output.
-# -width1 Width of the original heatmap.
-# -height1 Height of the original heatmap.
-# -width2 Width of the sub-heatmap.
-# -height2 Height of the sub-heatmap.
-# -width3 Width of the output div.
-# -layout One of ``"(1|2)-3"``, ``"1-(2|3)"``, ``"1-2-3"``, ``"1|2|3"``, ``"1|(2-3)"``. If ``brush`` is not set with the argument ``response``, which means there is no sub-heatmap panel, the code ``2`` can be omitted.
-# -compact If the value is ``TRUE``, there will be no sub-heatmap, and output floats at the mouse position when click/hover on the original heatmap.
-# -action Which action for selecting single cells on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
-# -cursor When moving mouse on heatmap, whether to show the cursors on the four sides?
-# -response Which action needs to be responded on the server side? Value should be in ``click``/``hover``/``dblclick``, ``brush`` and ``brush-output``.
-#          ``brush`` responds in two places which are the sub-heatmap and the output components and ``brush-output`` only responds in the output component.
-# -brush_opt A list of parameters passed to `shiny::brushOpts`. Do not set an ID for the brush. An internal brush ID is automatically set.
-# -output_ui A `shiny::htmlOutput` or other ``*Output`` object (defined in shiny or other related packages). If it is set to ``NULL``, there is no output component in the app.
-# -output_ui_float Whether the UI defined by ``output_ui`` floats at the mouse positions.
-# -containment Whether the resizing is restricted in a certain parent div? Value can be ``TRUE``/``FALSE`` or a JQuery selector.
-# -internal Internally used.
-# -... Pass to the UI container which is wrapped by `shiny::fluidPage`.
-#
-# == details
-# This function generates HTML fragment for the interactive UI. See the example in `makeInteractiveComplexHeatmap` page.
-#
-# ``layout`` is defined as follows (``1`` for the original heatmap, ``2`` for the selected sub-heatmap and ``3`` is for the output:
-#
-# - ``"(1-2)|3"``: Heatmap and sub-heatmap are in a same row, and output is in a second row. This is the default layout.
-# - ``"1|(2-3)"``: Heatmap is in a single row, while sub-heatmap and output are in a second row.
-# - ``"1-2-3"``: All three components are in a same row.
-# - ``"1|2|3"``: Each component is in a single row.
-# - ``"1-(2|3)"``: Being different from the other four layouts, this is a two-column layout. Heatmap is in a sigle column. Sub-heatmap and output are vertically aligned and the two are in the second column. 
-#
-# The hover event is implemented with https://github.com/websanova/mousestop .
-#
-# == value
-# A UI that can be used in Shiny.
+#' UI for the interactive complex heatmaps
+#'
+#' @param heatmap_id ID of the plot. If it is not specified, an internal ID is assigned.
+#' @param title1 Title of the original heatmap.
+#' @param title2 Title of the sub-heatmap.
+#' @param title3 Title of the output.
+#' @param width1 Width of the original heatmap.
+#' @param height1 Height of the original heatmap.
+#' @param width2 Width of the sub-heatmap.
+#' @param height2 Height of the sub-heatmap.
+#' @param width3 Width of the output div.
+#' @param layout One of `"(1|2)-3"`, `"1-(2|3)"`, `"1-2-3"`, `"1|2|3"`, `"1|(2-3)"`. If `brush` is not set with the argument `response`, which means there is no sub-heatmap panel, the code `2` can be omitted.
+#' @param compact If the value is `TRUE`, there will be no sub-heatmap, and output floats at the mouse position when click/hover on the original heatmap.
+#' @param action Which action for selecting single cells on the heatmap? Value should be `click`, `hover` or `dblclick`.
+#' @param cursor When moving mouse on heatmap, whether to show the cursors on the four sides?
+#' @param response Which action needs to be responded on the server side? Value should be in `click`/`hover`/`dblclick`, `brush` and `brush-output`.
+#'          `brush` responds in two places which are the sub-heatmap and the output components and `brush-output` only responds in the output component.
+#' @param brush_opt A list of parameters passed to [`shiny::brushOpts()`]. Do not set an ID for the brush. An internal brush ID is automatically set.
+#' @param output_ui A [`shiny::htmlOutput()`] or other `*Output` object (defined in shiny or other related packages). If it is set to `NULL`, there is no output component in the app.
+#' @param output_ui_float Whether the UI defined by `output_ui` floats at the mouse positions.
+#' @param containment Whether the resizing is restricted in a certain parent div? Value can be `TRUE`/`FALSE` or a JQuery selector.
+#' @param internal Internally used.
+#' @param ... Pass to the UI container which is wrapped by [`shiny::fluidPage()`].
+#'
+#' @details
+#' This function generates HTML fragment for the interactive UI. See the example in [`makeInteractiveComplexHeatmap()`] page.
+#'
+#' `layout` is defined as follows (`1` for the original heatmap, `2` for the selected sub-heatmap and `3` is for the output:
+#'
+#' - `"(1-2)|3"`: Heatmap and sub-heatmap are in a same row, and output is in a second row. This is the default layout.
+#' - `"1|(2-3)"`: Heatmap is in a single row, while sub-heatmap and output are in a second row.
+#' - `"1-2-3"`: All three components are in a same row.
+#' - `"1|2|3"`: Each component is in a single row.
+#' - `"1-(2|3)"`: Being different from the other four layouts, this is a two-column layout. Heatmap is in a sigle column. Sub-heatmap and output are vertically aligned and the two are in the second column. 
+#'
+#' The hover event is implemented with https://github.com/websanova/mousestop .
+#'
+#' @return
+#' A UI that can be used in Shiny.
+#' @export
 InteractiveComplexHeatmapOutput = function(heatmap_id = NULL, 
 	title1 = "Original heatmap", title2 = "Selected sub-heatmap", 
 	title3 = if(output_ui_float) NULL else "Output",
@@ -209,54 +208,53 @@ InteractiveComplexHeatmapOutput = function(heatmap_id = NULL,
 }
 
 
-# == title
-# UI for the original heatmap
-#
-# == param
-# -heatmap_id ID of the plot.
-# -title Title of the original heatmap.
-# -width Width of the original heatmap.
-# -height Height of the original heatmap.
-# -action Which action for selecting single cells on the heatmap? Value should be ``click``, ``hover`` or ``dblclick``.
-# -cursor When moving mouse on heatmap, whether to show the cursors on the four sides?
-# -response Which action needs to be responded on the server side? Value should be in ``click``/``hover``/``dblclick``, ``brush`` and ``brush-output``.
-#          ``brush`` responds in two places which are the sub-heatmap and the output components and ``brush-output`` only responds in the output component.
-# -brush_opt A list of parameters passed to `shiny::brushOpts`. Do not set an ID for the brush. An internal brush ID is automatically set.
-# -containment Whether the resizing is restricted in a certain parent div? Value can be ``TRUE``/``FALSE`` or a JQuery selector.
-# -internal Internally used.
-#
-# == seealso
-# `subHeatmapOutput`, `HeatmapInfoOutput`.
-#
-# == example
-# if(interactive()) {
-#     require(shinydashboard)
-#     m = matrix(rnorm(100), 10)
-#     ht = Heatmap(m)
-#
-#     body = dashboardBody(
-#         fluidRow(
-#             box(title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
-#                 originalHeatmapOutput("ht")
-#             ),
-#             box(title = "Sub-heatmap", width = 4, solidHeader = TRUE, status = "primary",
-#                 subHeatmapOutput("ht")
-#             ),
-#             box(title = "Output", width = 4, solidHeader = TRUE, status = "primary",
-#                 HeatmapInfoOutput("ht")
-#             )
-#         )
-#     )
-#     ui = dashboardPage(
-#         dashboardHeader(),
-#         dashboardSidebar(),
-#         body
-#     )
-#     server = function(input, output, session) {
-#         makeInteractiveComplexHeatmap(input, output, session, ht, "ht")
-#     }
-#     shinyApp(ui, server)
-# }
+#' UI for the original heatmap
+#'
+#' @param heatmap_id ID of the plot.
+#' @param title Title of the original heatmap.
+#' @param width Width of the original heatmap.
+#' @param height Height of the original heatmap.
+#' @param action Which action for selecting single cells on the heatmap? Value should be `click`, `hover` or `dblclick`.
+#' @param cursor When moving mouse on heatmap, whether to show the cursors on the four sides?
+#' @param response Which action needs to be responded on the server side? Value should be in `click`/`hover`/`dblclick`, `brush` and `brush-output`.
+#'          `brush` responds in two places which are the sub-heatmap and the output components and `brush-output` only responds in the output component.
+#' @param brush_opt A list of parameters passed to [`shiny::brushOpts()`]. Do not set an ID for the brush. An internal brush ID is automatically set.
+#' @param containment Whether the resizing is restricted in a certain parent div? Value can be `TRUE`/`FALSE` or a JQuery selector.
+#' @param internal Internally used.
+#'
+#' @seealso
+#' [`subHeatmapOutput()`], [`HeatmapInfoOutput()`].
+#' @export
+#' @import fontawesome
+#' @examples
+#' if(interactive()) {
+#'     require(shinydashboard)
+#'     m = matrix(rnorm(100), 10)
+#'     ht = Heatmap(m)
+#'
+#'     body = dashboardBody(
+#'         fluidRow(
+#'             box(title = "Original heatmap", width = 4, solidHeader = TRUE, status = "primary",
+#'                 originalHeatmapOutput("ht")
+#'            ),
+#'             box(title = "Sub-heatmap", width = 4, solidHeader = TRUE, status = "primary",
+#'                 subHeatmapOutput("ht")
+#'             ),
+#'             box(title = "Output", width = 4, solidHeader = TRUE, status = "primary",
+#'                 HeatmapInfoOutput("ht")
+#'             )
+#'         )
+#'     )
+#'     ui = dashboardPage(
+#'         dashboardHeader(),
+#'         dashboardSidebar(),
+#'         body
+#'     )
+#'     server = function(input, output, session) {
+#'         makeInteractiveComplexHeatmap(input, output, session, ht, "ht")
+#'     }
+#'     shinyApp(ui, server)
+#' }
 originalHeatmapOutput = function(heatmap_id, title = NULL,
 	width = 450, height = 350, 
 	action = "click", cursor = TRUE,
@@ -513,22 +511,20 @@ originalHeatmapOutput = function(heatmap_id, title = NULL,
 	main_heatmap_ui
 }
 
-# == title
-# UI for the sub-heatmaps
-#
-# == param
-# -heatmap_id ID of the plot.
-# -title Title of the sub-heatmap.
-# -width Width of the sub-heatmap.
-# -height Height of the sub-heatmap.
-# -containment Whether the resizing is restricted in a certain parent div? Value can be ``TRUE``/``FALSE`` or a JQuery selector.
-# -internal Internally used.
-#
-# == seealso
-# `originalHeatmapOutput`.
-#
-# == example
-# # See examples on the help page of originalHeatmapOutput()
+#' UI for the sub-heatmaps
+#'
+#' @param heatmap_id ID of the plot.
+#' @param title Title of the sub-heatmap.
+#' @param width Width of the sub-heatmap.
+#' @param height Height of the sub-heatmap.
+#' @param containment Whether the resizing is restricted in a certain parent div? Value can be `TRUE`/`FALSE` or a JQuery selector.
+#' @param internal Internally used.
+#'
+#' @seealso
+#' [`originalHeatmapOutput()`].
+#' @export
+#' @examples
+#' # See examples on the help page of originalHeatmapOutput()
 subHeatmapOutput = function(heatmap_id, title = NULL,
 	width = 400, height = 350, containment = FALSE, internal = FALSE) {
 
@@ -659,26 +655,24 @@ default_output_ui = function(heatmap_id) {
 }
 
 
-# == title
-# UI for the output
-#
-# == param
-# -heatmap_id ID of the plot.
-# -title Title of the output.
-# -width Width of the output div.
-# -output_ui A `shiny::htmlOutput` or other ``*Output`` object (defined in shiny or other related packages).
-# -output_ui_float Whether the UI defined by ``output_ui`` floats at the mouse positions.
-# -action It is only used when ``output_ui_float = TRUE`` to properly bind the floating frame to the event on heatmap (i.e. ``click``, ``hover`` or ``dblclick``).
-#      If `HeatmapInfoOutput` is executed after `originalHeatmapOutput`, the value for it is automatically decided
-# -response It is only used when ``output_ui_float = TRUE`` and ``response = "brush"`` or ``response = "brush-output"``, so that single clicking or hovering won't have any effect, in other word, there is only response from brushing.
-#       If `HeatmapInfoOutput` is executed after `originalHeatmapOutput`, the value for it is automatically decided
-# -internal Internally used.
-#
-# == seealso
-# `originalHeatmapOutput`, `subHeatmapOutput`.
-#
-# == example
-# # See examples on the help page of originalHeatmapOutput()
+#' UI for the output
+#'
+#' @param heatmap_id ID of the plot.
+#' @param title Title of the output.
+#' @param width Width of the output div.
+#' @param output_ui A [`shiny::htmlOutput()`] or other `*Output` object (defined in shiny or other related packages).
+#' @param output_ui_float Whether the UI defined by `output_ui` floats at the mouse positions.
+#' @param action It is only used when `output_ui_float = TRUE` to properly bind the floating frame to the event on heatmap (i.e. `click`, `hover` or `dblclick`).
+#'      If [`HeatmapInfoOutput()`] is executed after [`originalHeatmapOutput()`], the value for it is automatically decided.
+#' @param response It is only used when `output_ui_float = TRUE` and `response = "brush"` or `response = "brush-output"`, so that single clicking or hovering won't have any effect, in other word, there is only response from brushing.
+#'       If [`HeatmapInfoOutput()`] is executed after [`originalHeatmapOutput()`], the value for it is automatically decided.
+#' @param internal Internally used.
+#'
+#' @seealso
+#' [`originalHeatmapOutput()`], [`subHeatmapOutput()`].
+#' @export
+#' @examples
+#' # See examples on the help page of originalHeatmapOutput()
 HeatmapInfoOutput = function(heatmap_id, title = NULL, width = 400, 
 	output_ui = default_output_ui(heatmap_id), 
 	output_ui_float = FALSE, action = NULL, response = NULL, internal = FALSE) {
@@ -761,7 +755,7 @@ HeatmapInfoOutput = function(heatmap_id, title = NULL, width = 400,
 add_js_css_dep = function(heatmap_id, js_file, css_file, envir = parent.frame()) {
 
 	if(identical(topenv(), .GlobalEnv)) {
-    	ht_js = paste(readLines(qq("~/project/development/InteractiveComplexHeatmap/inst/template/@{js_file}")), collapse = "\n")
+    	ht_js = paste(readLines(qq("~/project/InteractiveComplexHeatmap/inst/template/@{js_file}")), collapse = "\n")
     	version = "0.0.1"
     } else {
     	ht_js = paste(readLines(system.file("template", js_file, package = "InteractiveComplexHeatmap")), collapse = "\n")
@@ -771,19 +765,12 @@ add_js_css_dep = function(heatmap_id, js_file, css_file, envir = parent.frame())
     temp_js = paste0("<script>\n", temp_js, "\n</script>\n")
 
     if(identical(topenv(), .GlobalEnv)) {
-    	ht_css = paste(readLines(qq("~/project/development/InteractiveComplexHeatmap/inst/template/@{css_file}")), collapse = "\n")
+    	ht_css = paste(readLines(qq("~/project/InteractiveComplexHeatmap/inst/template/@{css_file}")), collapse = "\n")
     } else {
 		ht_css = paste(readLines(system.file("template", css_file, package = "InteractiveComplexHeatmap")), collapse = "\n")
     }
     temp_css = qq(ht_css, envir = envir)
     temp_css = paste0("<style>\n", temp_css, "\n</style>")
 
-    htmltools::htmlDependency(
-		name   = qq("interactive-complex-heatmap-@{heatmap_id}-@{gsub('.(js|css)$', '', basename(js_file))}"),
-		version = version,
-		package    = "InteractiveComplexHeatmap",
-		src        = "www",
-		script     = "foo.js",
-		head = paste0(temp_js, "\n", temp_css)
-    )
+    htmltools::HTML(paste0(temp_js, "\n", temp_css))
 }
